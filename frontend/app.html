@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — POPE AI</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
+<body class="bg">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="dashboard.html">
+<div class="logo"></div>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">POPE AI • V2</div>
+</div>
+</a>
+<div class="row gap">
+<span class="badge" data-tickets="">AI: - • Expert: -</span>
+<a class="btn ghost" href="expert.html">Revue experte</a>
+<button class="btn ghost" id="btnCopy">Copier</button>
+<button class="btn" data-logout="">Déconnexion</button>
+</div>
+</div>
+</header>
+<main class="container app">
+<section class="card left">
+<h2>Génération guidée</h2>
+<label class="label">Cas d’usage</label>
+<select class="input" id="usecase">
+<option value="note_strategique">Note stratégique (Décision / Arbitrage)</option>
+<option value="courrier">Courrier administratif (réponse / relance)</option>
+<option value="deliberation">Projet de délibération (structure)</option>
+<option value="synthese_reunion">Synthèse de réunion</option>
+<option value="cadrage_projet">Cadrage projet / PMO</option>
+</select>
+<label class="label">Contexte (collectivité, enjeux, contraintes)</label>
+<textarea class="input" id="context" placeholder="Ex : Conseil départemental, enjeux BP 2026, contraintes CRC, calendrier, parties prenantes…" rows="7"></textarea>
+<label class="label">Objectif du livrable</label>
+<input class="input" id="objective" placeholder="Ex : note d’arbitrage pour le Président / CODIR"/>
+<label class="label">Éléments factuels (sans données sensibles)</label>
+<textarea class="input" id="facts" placeholder="Ex : chiffres, dates, périmètre, options, contraintes…" rows="6"></textarea>
+<div class="row gap wrap">
+<button class="btn" id="btnGenerate">Générer</button>
+<button class="btn ghost" id="btnRefine">Améliorer (style cabinet)</button>
+<button class="btn ghost" id="btnRisk">Contrôle risques (juridique/RGPD)</button>
+</div>
+<div class="fineprint">🔒 Conseil : n’insérez pas de données personnelles (agents, dossiers, adresses, santé…).</div>
+<div class="divider"></div>
+<div class="panel">
+<h3>Besoin d’une relecture humaine ?</h3>
+<p class="muted">Utilisez POPE Expert : envoi direct à l’équipe POPE + message de confirmation.</p>
+<div class="row gap wrap">
+<a class="btn" href="expert.html">Demander une revue experte</a>
+<a class="btn ghost" href="pricing.html">Voir les offres</a>
+</div>
+</div>
+</section>
+<section class="card right">
+<div class="row between">
+<h2>Résultat</h2>
+<span class="badge" id="status">Prêt</span>
+</div>
+<div class="output" id="output"><div class="muted">Clique “Générer” pour produire un premier draft.</div></div>
+</section>
+</main>
+  <script src="./auth-guard.js"></script>
+  <script type="module">
+    import { apiFetch } from './api.js';
+    import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
+
+    if (!requireLogin('app.html')) {}
+    wireLogout();
+
+    const el = (id) => document.getElementById(id);
+    const status = (txt) => el('status').textContent = txt;
+
+    function buildPayload(mode){
+      return {
+        mode,
+        usecase: el('usecase').value,
+        context: el('context').value.trim(),
+        objective: el('objective').value.trim(),
+        facts: el('facts').value.trim(),
+        locale: 'fr-FR'
+      };
+    }
+
+    function setOutput(text){
+      el('output').textContent = text;
+    }
+
+    async function refreshWallet(){
+      try {
+        const me = await apiFetch('/auth/me');
+        setTicketsBadge(me.wallet);
+      } catch {}
+    }
+
+    async function callAI(mode){
+      const payload = buildPayload(mode);
+      const raw = (payload.context + "\n" + payload.facts).toLowerCase();
+      const forbiddenHints = ['numéro de sécurité sociale','nss','dossier médical','diagnostic','adresse','téléphone','date de naissance','iban','rib'];
+      if (forbiddenHints.some(k => raw.includes(k))) {
+        setOutput('⚠️ Données potentiellement sensibles détectées. Merci de retirer/anonymiser avant génération.');
+        return;
+      }
+
+      status('En cours…');
+      try {
+        const data = await apiFetch('/ai/generate', { method:'POST', body: payload });
+        status('Terminé');
+        setOutput(data.text || '(vide)');
+        setTicketsBadge(data.wallet);
+      } catch (e) {
+        console.error(e);
+        status('Erreur');
+        if (e.status === 402 && e.data?.error === 'no_tickets') {
+          setOutput('🚫 Plus de tickets POPE AI. Rendez-vous dans “Offres” pour souscrire.');
+          showToast('Plus de tickets', 'warn');
+          return;
+        }
+        if (e.status === 400 && e.data?.error === 'sensitive_data') {
+          setOutput('⚠️ Données sensibles détectées. Merci d\'anonymiser/supprimer avant usage.');
+          showToast('Données sensibles', 'warn');
+          return;
+        }
+        setOutput('Erreur API : ' + (e.data?.detail || e.data?.error || e.message));
+        showToast('Erreur génération', 'err');
+      }
+    }
+
+    el('btnGenerate')?.addEventListener('click', () => callAI('generate'));
+    el('btnRefine')?.addEventListener('click', () => callAI('refine'));
+    el('btnRisk')?.addEventListener('click', () => callAI('risk_check'));
+
+    el('btnCopy')?.addEventListener('click', async () => {
+      const txt = el('output').textContent || '';
+      await navigator.clipboard.writeText(txt);
+      status('Copié ✓');
+      showToast('Copié', 'ok');
+      setTimeout(() => status('Prêt'), 900);
+    });
+
+    refreshWallet();
+  </script>
+</body>
+</html>

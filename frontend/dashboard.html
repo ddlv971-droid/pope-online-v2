@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Tableau de bord</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
+<body class="bg">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="index.html">
+<div class="logo"></div>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Tableau de bord • V2</div>
+</div>
+</a>
+<div class="row gap">
+<span class="badge" data-tickets="">AI: - • Expert: -</span>
+<a class="btn ghost" href="app.html">POPE AI</a>
+<a class="btn ghost" href="expert.html">Expert</a>
+<button class="btn" data-logout="">Déconnexion</button>
+</div>
+</div>
+</header>
+<main class="container app" style="grid-template-columns:1fr">
+<section class="card left" style="max-width:980px;margin:0 auto">
+<div class="row between">
+<h2>Mon compte</h2>
+<a class="btn ghost" href="pricing.html">Voir les offres</a>
+</div>
+<div class="grid2" style="margin-top:12px">
+<div class="panel">
+<h3>Tickets</h3>
+<div class="kpi" id="kpi">—</div>
+<div class="muted">Après vérification email, vos 3 tickets gratuits POPE AI sont crédités (si éligible).</div>
+</div>
+<div class="panel">
+<h3>Actions rapides</h3>
+<div class="row gap wrap">
+<a class="btn" href="app.html">Générer</a>
+<a class="btn ghost" href="expert.html">Demander une revue</a>
+<a class="btn ghost" href="mission.html">Décrire une mission</a>
+</div>
+</div>
+</div>
+<div class="divider"></div>
+<h3>Historique (200 derniers)</h3>
+<div class="output" id="history"><div class="muted">Chargement…</div></div>
+</section>
+</main>
+  <script src="./auth-guard.js"></script>
+  <script type="module">
+    import { apiFetch } from './api.js';
+    import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
+
+    if (!requireLogin('dashboard.html')) {}
+
+    wireLogout();
+
+    const kpi = document.getElementById('kpi');
+    const history = document.getElementById('history');
+
+    async function load(){
+      try {
+        const me = await apiFetch('/auth/me');
+        setTicketsBadge(me.wallet);
+        kpi.textContent = `AI: ${me.wallet.tickets_ai} • Expert: ${me.wallet.tickets_expert}`;
+
+        const u = await apiFetch('/usage');
+        if (!u.items?.length) {
+          history.innerHTML = '<div class="muted">Aucun événement pour le moment.</div>';
+          return;
+        }
+        const rows = u.items.map(it => {
+          const d = new Date(it.created_at).toLocaleString('fr-FR');
+          return `• ${d} — <b>${it.kind}</b> ${it.meta ? `<span class="muted">${escapeHtml(JSON.stringify(it.meta))}</span>` : ''}`;
+        }).join('<br>');
+        history.innerHTML = rows;
+      } catch(e){
+        console.error(e);
+        showToast('Impossible de charger le tableau de bord', 'err');
+        history.textContent = 'Erreur.';
+      }
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+    }
+
+    load();
+  </script>
+</body>
+</html>

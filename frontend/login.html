@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Connexion</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
+<body class="bg">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="index.html">
+<div class="logo"></div>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Connexion</div>
+</div>
+</a>
+<div class="row gap">
+<a class="btn" href="signup.html">Créer un compte</a>
+</div>
+</div>
+</header>
+<main class="auth-wrap">
+<section class="auth-card" style="max-width:640px;margin:0 auto">
+<h2>Connexion</h2>
+<label class="label">Email</label>
+<input class="input" id="email" placeholder="prenom.nom@..."/>
+<label class="label">Mot de passe</label>
+<input class="input" id="password" placeholder="••••••••" type="password"/>
+<div class="row gap wrap" style="margin-top:14px">
+<button class="btn" id="btn">Se connecter</button>
+<a class="btn ghost" href="pricing.html">Offres</a>
+</div>
+<div class="fineprint" id="msg"></div>
+</section>
+</main>
+<script type="module">
+    import { apiFetch, setToken } from './api.js';
+    import { showToast, getFingerprint } from './app.js';
+
+    const el = (id) => document.getElementById(id);
+
+    function getNext() {
+      const u = new URL(window.location.href);
+      return u.searchParams.get('next') || 'dashboard.html';
+    }
+
+    el('btn').addEventListener('click', async () => {
+      const email = el('email').value.trim();
+      const password = el('password').value;
+      try {
+        const fp = await getFingerprint();
+        const data = await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email, password, fp }});
+        setToken(data.token);
+        showToast('Connecté ✓', 'ok');
+        if (!data.user.isEmailVerified) {
+          el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour obtenir vos 3 tickets gratuits.';
+        }
+        setTimeout(() => window.location.href = getNext(), 450);
+      } catch (e) {
+        console.error(e);
+        showToast('Connexion impossible', 'err');
+        el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
+      }
+    });
+  </script>
+</body>
+</html>

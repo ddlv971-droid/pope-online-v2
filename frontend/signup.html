@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Créer un compte</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
+<body class="bg">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="index.html">
+<div class="logo"></div>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Créer un compte</div>
+</div>
+</a>
+<div class="row gap">
+<a class="btn ghost" href="login.html">Connexion</a>
+</div>
+</div>
+</header>
+<main class="auth-wrap">
+<section class="auth-card" style="max-width:720px;margin:0 auto">
+<h2>Créer un compte</h2>
+<p class="muted">Après inscription, vous devrez <b>vérifier votre email</b>. Les <b>3 tickets gratuits</b> POPE AI sont attribués après vérification (anti-abus inclus).</p>
+<label class="label">Nom / Prénom</label>
+<input class="input" id="fullName" placeholder="Denis Delzer"/>
+<label class="label">Organisation</label>
+<input class="input" id="organization" placeholder="Conseil départemental / commune / cabinet…"/>
+<label class="label">Email</label>
+<input class="input" id="email" placeholder="prenom.nom@..."/>
+<label class="label">Mot de passe (8 caractères min.)</label>
+<input class="input" id="password" placeholder="••••••••" type="password"/>
+<label class="row gap" style="align-items:flex-start;margin-top:10px">
+<input id="cgu" style="margin-top:4px" type="checkbox"/>
+<span class="muted">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles (RGPD).</span>
+</label>
+<div class="row gap wrap" style="margin-top:14px">
+<button class="btn" id="btn">Créer mon compte</button>
+<a class="btn ghost" href="pricing.html">Voir les offres</a>
+</div>
+<div class="fineprint" id="msg"></div>
+</section>
+</main>
+<script type="module">
+    import { apiFetch } from './api.js';
+    import { showToast, getFingerprint } from './app.js';
+
+    const el = (id) => document.getElementById(id);
+
+    el('btn').addEventListener('click', async () => {
+      const email = el('email').value.trim();
+      const password = el('password').value;
+      const fullName = el('fullName').value.trim();
+      const organization = el('organization').value.trim();
+      const cgu = el('cgu').checked;
+
+      if (!cgu) return showToast('Merci d’accepter les conditions / RGPD.', 'warn');
+
+      try {
+        const fp = await getFingerprint();
+        await apiFetch('/auth/signup', {
+          method: 'POST',
+          auth: false,
+          body: { email, password, fullName, organization, fp }
+        });
+        showToast('Compte créé. Vérifiez votre email.', 'ok');
+        el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
+      } catch (e) {
+        console.error(e);
+        const code = e?.data?.error || 'erreur';
+        showToast('Erreur: ' + code, 'err');
+        el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
+      }
+    });
+  </script>
+</body>
+</html>

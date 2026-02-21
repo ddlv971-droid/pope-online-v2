@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Vérification email</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
+<body class="bg">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="index.html">
+<div class="logo"></div>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Vérification email</div>
+</div>
+</a>
+<div class="row gap">
+<a class="btn ghost" href="login.html">Connexion</a>
+</div>
+</div>
+</header>
+<main class="auth-wrap">
+<section class="auth-card" style="max-width:720px;margin:0 auto">
+<h2>Vérification en cours…</h2>
+<div class="output" id="out"><div class="muted">Merci de patienter.</div></div>
+<div class="row gap wrap" style="margin-top:14px">
+<a class="btn" href="login.html">Se connecter</a>
+  <a class="btn ghost" href="login.html?next=app.html">Aller à POPE AI</a>
+</div>
+</section>
+</main>
+<script type="module">
+    import { apiFetch } from './api.js';
+    import { showToast, getFingerprint } from './app.js';
+
+    const out = document.getElementById('out');
+    const u = new URL(window.location.href);
+    const token = u.searchParams.get('token') || '';
+
+    async function run(){
+      if (!token) {
+        out.textContent = 'Token manquant.';
+        return;
+      }
+      try {
+        const fp = await getFingerprint();
+        const data = await apiFetch('/auth/verify', { method:'POST', auth:false, body:{ token, fp }});
+        const n = data.awardedFreeTickets || 0;
+        showToast('Email vérifié ✓', 'ok');
+        out.textContent = n > 0
+          ? `✅ Email vérifié. ${n} tickets gratuits POPE AI ont été crédités.`
+          : `✅ Email vérifié. Aucun ticket gratuit n’a été attribué (anti-abus / vérification).`;
+      } catch (e) {
+        console.error(e);
+        showToast('Vérification impossible', 'err');
+        out.textContent = 'Erreur: ' + (e?.data?.error || e.message);
+      }
+    }
+
+    run();
+  </script>
+</body>
+</html>
