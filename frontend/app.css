@@ -468,3 +468,59 @@ button.secondary, a.secondary{
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+/* =========================================================
+   DASHBOARD — Tickets & Actions rapides responsive (override)
+   ========================================================= */
+
+/* 1) Si le wrapper du dashboard est en flex (souvent .row/.between), on autorise le wrap */
+@media (max-width: 980px){
+  /* wrappers fréquents */
+  .dashboard .row,
+  main .row{
+    flex-wrap: wrap;
+  }
+}
+
+/* 2) Les deux panneaux doivent prendre toute la largeur quand l'écran est petit */
+@media (max-width: 980px){
+  /* cibles robustes : on élargit tous les "cards" du dashboard */
+  .dashboard .card{
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* si un layout fixe impose des colonnes */
+  .dashboard [style*="grid-template-columns"],
+  .dashboard [style*="flex:"]{
+    max-width: 100%;
+  }
+}
+
+/* 3) Si Tickets/Actions rapides sont dans un conteneur en 2 colonnes (grid), on le casse en 1 colonne */
+@media (max-width: 980px){
+  .dashboard .grid2,
+  .dashboard .grid-2,
+  .dashboard .cols-2,
+  .dashboard .cards-2{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 4) Si Tickets/Actions rapides sont côte à côte via flex avec largeurs fixes, on force la pile verticale */
+@media (max-width: 980px){
+  .dashboard .row > .card,
+  .dashboard .row > section,
+  .dashboard .row > aside,
+  .dashboard .row > div{
+    min-width: 0;
+  }
+  .dashboard .row > .card{
+    flex: 1 1 100%;
+  }
+}
+
+/* 5) Confort mobile: padding et boutons */
+@media (max-width: 520px){
+  .dashboard .card{ padding: 14px; }
+  .dashboard .btn{ width: 100%; }
+}
