@@ -225,8 +225,8 @@ a{color:inherit}
 .hero-logo::before{
   content:"";
   position:absolute;
-  width:480px;
-  height:260px;
+  width: min(480px, 92vw);
+  height: min(260px, 52vw);
   background: radial-gradient(
     circle,
     rgba(0,121,193,.14) 0%,
@@ -403,3 +403,22 @@ button.secondary, a.secondary{
   background: url("./assets/popeonline-logo.png") center/contain no-repeat;
 }
 /*test*/
+
+
+/* --- Responsive enhancements (V2.2) --- */
+@media (max-width: 720px){
+  .topbar .row{flex-wrap:wrap; align-items:flex-start;}
+  .nav{width:100%; margin-left:0; justify-content:flex-start;}
+  .nav a{padding:10px 10px;}
+  .hero-actions{flex-direction:column; align-items:stretch;}
+  .hero-actions .btn{width:100%;}
+  .pills{flex-wrap:wrap;}
+}
+
+@media (max-width: 520px){
+  .container{padding:0 14px;}
+  .h1{font-size:30px;}
+  .hero-media{height:180px;}
+  .card{padding:14px;}
+  .auth-card{padding:16px;}
+}
