@@ -7,7 +7,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node scripts/db_init.js && node server.js",
     "dev": "node server.js",
     "db:init": "node scripts/db_init.js"
   },
