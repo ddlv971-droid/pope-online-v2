@@ -13,6 +13,7 @@ import usageRoutes from './routes/usage.js';
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(express.json({ limit: '250kb' }));
 
 // CORS (strict)
