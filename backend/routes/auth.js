@@ -214,14 +214,14 @@ router.post('/verify', async (req, res) => {
       if (!suspicious) {
         const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
         if (!fpAlready) {
-          awardedFreeTickets = 3;
+          awardedFreeTickets = 999;
           await client.query(
-            `update wallets set tickets_ai = tickets_ai + 3, updated_at=now() where user_id=$1`,
+            `update wallets set tickets_ai = tickets_ai + 999, updated_at=now() where user_id=$1`,
             [row.user_id]
           );
           await client.query(
             `insert into usage_logs(user_id, kind, meta) values($1,'free_trial_awarded',$2::jsonb)`,
-            [row.user_id, JSON.stringify({ tickets: 3 })]
+            [row.user_id, JSON.stringify({ tickets: 999 })]
           );
         }
       }
