@@ -14,12 +14,14 @@
   function openPopy(){
     panel.classList.add("is-open");
     panel.setAttribute("aria-hidden", "false");
+    widget.classList.add("is-open");
     backdrop && backdrop.classList.add("is-open");
     if(input) input.focus();
   }
   function closePopy(){
     panel.classList.remove("is-open");
     panel.setAttribute("aria-hidden", "true");
+    widget.classList.remove("is-open");
     backdrop && backdrop.classList.remove("is-open");
   }
   function addMessage(text, role){

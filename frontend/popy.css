@@ -11,6 +11,20 @@
   gap:12px;
 }
 
+.popy-widget.is-open{
+  z-index:3505;
+}
+
+.popy-widget.is-open .popy-launcher{
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(8px) scale(.96);
+}
+
+.popy-widget .popy-launcher{
+  transition:opacity .18s ease, transform .18s ease;
+}
+
 .popy-launcher{
   appearance:none;
   border:0;
@@ -148,14 +162,15 @@
   left:50%;
   top:50%;
   transform:translate(-50%, -50%);
-  z-index:3400;
+  z-index:3510;
+  max-width:min(410px, calc(100vw - 24px));
 }
 .popy-backdrop{
   position:fixed;
   inset:0;
   background:rgba(7,22,42,.26);
   backdrop-filter:blur(4px);
-  z-index:3300;
+  z-index:3490;
   display:none;
 }
 .popy-backdrop.is-open{display:block;}
