@@ -115,6 +115,26 @@
 .popy-input{flex:1;min-width:0;border:1px solid rgba(13,43,77,.12);border-radius:14px;padding:12px 14px;font:inherit;}
 .popy-send{appearance:none;border:0;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg, #0079C1, #03A0D7);color:#fff;font-weight:800;cursor:pointer;}
 
+
+
+/* Centered widget on homepage */
+.popy-center-widget{
+  position:relative;
+  right:auto;
+  bottom:auto;
+  z-index:6;
+  align-items:center;
+}
+
+.popy-center-widget.is-open{
+  z-index:3505;
+}
+
+.popy-center-widget .popy-launcher{
+  position:relative;
+  opacity:1;
+  pointer-events:auto;
+}
 /* Index centered POPY */
 .popy-center-dock{
   position:relative;
