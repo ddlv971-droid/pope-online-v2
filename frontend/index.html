@@ -14,26 +14,30 @@
     <div class="tree-bg tree-bg-private" aria-hidden="true"></div>
     <div class="tree-bg tree-bg-public" aria-hidden="true"></div>
     <div class="tree-divider" aria-hidden="true"></div>
+    <div class="tree-glow tree-glow-left" aria-hidden="true"></div>
+    <div class="tree-glow tree-glow-right" aria-hidden="true"></div>
 
     <header class="tree-header" aria-label="Introduction">
       <span class="tree-header-kicker">POPE Online • Deux univers, une même exigence</span>
-      <h1 class="tree-hero-copy">Décuplez votre efficacité métier avec un accompagnement premium, clair et opérationnel.</h1>
+      <h1 class="tree-hero-copy">Choisissez un univers pensé pour décupler votre efficacité métier avec élégance, méthode et clarté.</h1>
     </header>
 
     <section class="tree-side tree-side-private" aria-labelledby="private-title">
       <div class="tree-side-panel tree-side-panel-private">
         <span class="tree-badge">Secteur privé</span>
-        <h2 id="private-title" class="tree-side-title">Déléguez vos contraintes administratives et concentrez-vous sur votre métier.</h2>
-        <p class="tree-side-copy">Artisans, TPE, indépendants et commerçants : POPE Online simplifie vos démarches, structure vos dossiers et vous aide à gagner un temps précieux.</p>
+        <h2 id="private-title" class="tree-side-title">Déléguez l’administratif. Conservez l’énergie de votre métier.</h2>
+        <p class="tree-side-copy">Pour les artisans, TPE, indépendants et commerçants qui veulent avancer plus vite, avec un accompagnement simple, réactif et structuré.</p>
 
-        <div class="branch-flow branch-flow-private" aria-label="Services secteur privé">
-          <span class="branch-chip branch-chip-1">Réponses aux marchés publics</span>
-          <span class="branch-chip branch-chip-2">Aide administrative sur mesure</span>
-          <span class="branch-chip branch-chip-3">Formalités, dossiers et suivi</span>
-          <span class="branch-chip branch-chip-4">Parcours simple et rassurant</span>
-        </div>
+        <div class="tree-side-divider" aria-hidden="true"></div>
 
-        <a class="btn tree-cta tree-cta-private" href="private.html">Entrer côté privé</a>
+        <ul class="branch-flow branch-flow-private" aria-label="Services secteur privé">
+          <li class="branch-item branch-item-1">Réponses aux marchés publics</li>
+          <li class="branch-item branch-item-2">Aide administrative sur mesure</li>
+          <li class="branch-item branch-item-3">Formalités, dossiers et suivi</li>
+          <li class="branch-item branch-item-4">Parcours simple et rassurant</li>
+        </ul>
+
+        <a class="btn tree-cta tree-cta-private" href="private.html">Accéder à l’espace privé</a>
       </div>
     </section>
 
@@ -42,64 +46,68 @@
         <img src="./assets/popeonline-logo.png" alt="Logo POPE Online" class="tree-logo-main"/>
       </a>
       
-<div class="popy-inline-anchor">
-  <div class="popy-inline-wrap">
-    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
-    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
-  </div>
-</div>
+      <div class="popy-center-dock">
+        <div id="popyBackdrop" class="popy-backdrop"></div>
+        <div id="popyWidget" class="popy-widget popy-center-widget">
+          <button id="popyLauncher" class="popy-launcher popy-launcher-center" aria-label="Ouvrir POPY">
+            <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
+            <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
+          </button>
 
-      <div class="tree-core-note">Choisissez l’univers qui correspond à votre activité et accédez à un accompagnement à la hauteur de vos enjeux.</div>
+          <section id="popyPanel" class="popy-panel popy-center-panel" aria-hidden="true">
+            <div class="popy-header">
+              <div class="popy-header-left">
+                <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
+                <div>
+                  <strong>POPY</strong>
+                  <div class="popy-subtitle">Assistant de navigation POPE Online</div>
+                </div>
+              </div>
+              <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
+            </div>
+
+            <div id="popyMessages" class="popy-messages">
+              <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous aider à choisir le bon univers ou vous guider vers les offres, la connexion et la prise de contact.</div>
+            </div>
+
+            <div class="popy-suggestions">
+              <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
+              <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
+              <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
+              <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
+              <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
+            </div>
+
+            <form id="popyForm" class="popy-form">
+              <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
+              <button type="submit" class="popy-send">Envoyer</button>
+            </form>
+          </section>
+        </div>
+      </div>
+
+      <div class="tree-core-note">Choisissez l’univers qui correspond à votre activité et accédez à un accompagnement premium, clair et opérationnel.</div>
     </section>
 
     <section class="tree-side tree-side-public" aria-labelledby="public-title">
       <div class="tree-side-panel tree-side-panel-public">
         <span class="tree-badge tree-badge-public">Secteur public</span>
-        <h2 id="public-title" class="tree-side-title tree-side-title-public">Accédez à la V2 conçue pour la rigueur institutionnelle et les environnements publics.</h2>
-        <p class="tree-side-copy tree-side-copy-public">Collectivités, établissements et organisations publiques : un environnement pensé pour la fiabilité, la structuration et la sécurisation des livrables.</p>
+        <h2 id="public-title" class="tree-side-title tree-side-title-public">Sécurisez vos livrables grâce à un accompagnement conçu pour la rigueur institutionnelle.</h2>
+        <p class="tree-side-copy tree-side-copy-public">Pour les collectivités, établissements et organisations qui attendent un cadre fiable, des livrables sécurisés et une expérience plus structurée.</p>
 
-        <div class="branch-flow branch-flow-public" aria-label="Services secteur public">
-          <span class="branch-chip branch-chip-public branch-chip-1">Livrables administratifs sécurisés</span>
-          <span class="branch-chip branch-chip-public branch-chip-2">IA guidée + expertise métier</span>
-          <span class="branch-chip branch-chip-public branch-chip-3">Cadre responsable et traçable</span>
-          <span class="branch-chip branch-chip-public branch-chip-4">Accès à la V2 publique</span>
-        </div>
+        <div class="tree-side-divider tree-side-divider-public" aria-hidden="true"></div>
 
-        <a class="btn tree-cta tree-cta-public" href="public.html">Entrer côté public</a>
+        <ul class="branch-flow branch-flow-public" aria-label="Services secteur public">
+          <li class="branch-item branch-item-public branch-item-1">Livrables administratifs sécurisés</li>
+          <li class="branch-item branch-item-public branch-item-2">IA guidée + expertise métier</li>
+          <li class="branch-item branch-item-public branch-item-3">Cadre responsable et traçable</li>
+          <li class="branch-item branch-item-public branch-item-4">Accès à l'expertise publique</li>
+        </ul>
+
+        <a class="btn tree-cta tree-cta-public" href="public.html">Accéder à l’espace public</a>
       </div>
     </section>
   </main>
-
-<link rel="stylesheet" href="popy.css" />
-<div class="popy-widget" data-popy-widget>
-  <button class="popy-launcher" data-popy-launcher aria-label="Ouvrir POPY">
-    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
-    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
-  </button>
-  <section class="popy-panel" data-popy-panel aria-hidden="true">
-    <div class="popy-header">
-      <div class="popy-header-left">
-        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
-        <div><div class="popy-header-title">POPY</div><div class="popy-subtitle">Assistant de navigation POPE Online</div></div>
-      </div>
-      <button class="popy-close" data-popy-close aria-label="Fermer">×</button>
-    </div>
-    <div class="popy-messages" data-popy-messages>
-      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
-    </div>
-    <div class="popy-suggestions">
-      <button class="popy-chip" data-popy-prompt="Je veux aller vers le privé">Privé</button>
-      <button class="popy-chip" data-popy-prompt="Je veux aller vers le public">Public</button>
-      <button class="popy-chip" data-popy-prompt="Je veux créer un compte">Créer un compte</button>
-      <button class="popy-chip" data-popy-prompt="Je veux connaître les offres">Offres</button>
-      <button class="popy-chip" data-popy-prompt="Je veux vous contacter">Contact</button>
-    </div>
-    <form class="popy-form" data-popy-form>
-      <input class="popy-input" data-popy-input type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
-      <button type="submit" class="popy-send">Envoyer</button>
-    </form>
-  </section>
-</div>
-<script src="popy.js"></script>
+<script defer src="popy.js"></script>
 </body>
 </html>
