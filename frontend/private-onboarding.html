@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>POPE Online — Aidez-nous à vous connaître</title>
+  <meta name="description" content="Parcours progressif POPE Online pour qualifier simplement le profil et le besoin des clients du secteur privé." />
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="app.css"/>
+  <link rel="stylesheet" href="popy.css"/>
+</head>
+<body class="bg bg-v3">
+  <header class="topbar topbar-v3">
+    <div class="container">
+      <div class="row">
+        <a class="brand" href="private.html">
+          <img src="./assets/popeonline-logo.png" alt="PopeOnline"/>
+          <div>
+            <div class="title">POPE Online</div>
+            <div class="sub">Parcours privé • Qualification progressive</div>
+          </div>
+        </a>
+        <nav class="nav">
+          <a class="btn secondary" href="private.html">Retour au site privé</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container onboarding-page">
+    <section class="glass-card onboarding-shell">
+      <div class="onboarding-intro">
+        <span class="badge">Étape 1 à 3</span>
+        <h1 class="h2">Aidez-nous à vous connaître</h1>
+        <p class="p">Ce parcours a été conçu pour rester simple, progressif et rassurant. En quelques étapes, nous pourrons mieux comprendre votre activité et préparer une réponse adaptée.</p>
+      </div>
+
+      <div class="stepper" aria-label="Progression">
+        <div class="step is-active" data-step-indicator="1"><span>1</span><small>Activité</small></div>
+        <div class="step" data-step-indicator="2"><span>2</span><small>Profil</small></div>
+        <div class="step" data-step-indicator="3"><span>3</span><small>Besoin</small></div>
+      </div>
+
+      <form id="privateWizard" class="wizard-form">
+        <section class="wizard-step is-active" data-step="1">
+          <label class="label" for="activityDomain">Votre domaine d’activité</label>
+          <select class="input" id="activityDomain" name="activityDomain" required>
+            <option value="">Sélectionnez votre domaine</option>
+            <option>BTP / artisanat</option>
+            <option>Commerce</option>
+            <option>Services</option>
+            <option>Transport</option>
+            <option>Restauration</option>
+            <option>Profession libérale</option>
+            <option>Agriculture</option>
+            <option>Immobilier</option>
+            <option>Industrie / production</option>
+            <option>Numérique / communication</option>
+            <option>Autre</option>
+          </select>
+          <div id="otherDomainWrap" class="conditional-field" hidden>
+            <label class="label" for="otherDomain">Précisez votre domaine</label>
+            <input class="input" id="otherDomain" name="otherDomain" placeholder="Ex : événementiel, maintenance nautique, bien-être…"/>
+          </div>
+          <label class="label" for="companyName">Nom de votre structure</label>
+          <input class="input" id="companyName" name="companyName" placeholder="Ex : Martin Bâtiment" required/>
+          <div class="wizard-actions">
+            <button type="button" class="btn primary" data-next>Suivant</button>
+          </div>
+        </section>
+
+        <section class="wizard-step" data-step="2">
+          <label class="label" for="fullName">Votre nom et prénom</label>
+          <input class="input" id="fullName" name="fullName" placeholder="Ex : Jean Martin" required/>
+          <label class="label" for="contactMethod">Le moyen de contact que vous préférez</label>
+          <select class="input" id="contactMethod" name="contactMethod" required>
+            <option value="">Choisissez une option</option>
+            <option>Téléphone</option>
+            <option>Mail</option>
+            <option>WhatsApp</option>
+          </select>
+          <label class="label" for="contactValue">Votre coordonnée principale</label>
+          <input class="input" id="contactValue" name="contactValue" placeholder="Numéro ou email" required/>
+          <div class="wizard-actions between">
+            <button type="button" class="btn ghost" data-prev>Précédent</button>
+            <button type="button" class="btn primary" data-next>Suivant</button>
+          </div>
+        </section>
+
+        <section class="wizard-step" data-step="3">
+          <label class="label" for="requestType">Quel type d’aide recherchez-vous ?</label>
+          <select class="input" id="requestType" name="requestType" required>
+            <option value="">Sélectionnez un besoin</option>
+            <option>Réponse à un marché public</option>
+            <option>Aide administrative générale</option>
+            <option>Montage de dossier</option>
+            <option>Rédaction / mise en forme de documents</option>
+            <option>Démarches numériques</option>
+            <option>Autre demande</option>
+          </select>
+          <label class="label" for="requestDetails">Expliquez simplement votre besoin</label>
+          <textarea class="input" id="requestDetails" name="requestDetails" rows="7" placeholder="Décrivez votre besoin, le contexte, l’échéance éventuelle et ce que vous attendez de nous." required></textarea>
+          <label class="row gap" style="align-items:flex-start;margin-top:10px">
+            <input id="consent" type="checkbox" style="margin-top:4px" required/>
+            <span class="muted">J’accepte que ces informations soient utilisées pour être recontacté et pour qualifier ma demande.</span>
+          </label>
+          <div class="wizard-actions between">
+            <button type="button" class="btn ghost" data-prev>Précédent</button>
+            <button type="submit" class="btn primary">Envoyer ma demande</button>
+          </div>
+        </section>
+      </form>
+
+      <section id="wizardSummary" class="wizard-summary" hidden>
+        <span class="badge">Demande préparée</span>
+        <h2 class="h2" style="margin-top:10px">Merci, votre demande est prête à être transmise.</h2>
+        <p class="p">Vous pouvez maintenant l’envoyer par mail en un clic ou revenir au site privé.</p>
+        <div class="summary-card card soft" id="summaryContent"></div>
+        <div class="wizard-actions">
+          <a class="btn primary" id="sendMailCta" href="#">Envoyer par mail</a>
+          <a class="btn secondary" href="private.html">Retour au site privé</a>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="private-onboarding.js"></script>
+
+<div id="popyBackdrop" class="popy-backdrop"></div>
+<div id="popyWidget" class="popy-widget">
+  <button id="popyLauncher" class="popy-launcher popy-launcher-fixed" aria-label="Ouvrir POPY">
+    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
+    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
+  </button>
+
+  <section id="popyPanel" class="popy-panel" aria-hidden="true">
+    <div class="popy-header">
+      <div class="popy-header-left">
+        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
+        <div>
+          <strong>POPY</strong>
+          <div class="popy-subtitle">Assistant de navigation POPE Online</div>
+        </div>
+      </div>
+      <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
+    </div>
+
+    <div id="popyMessages" class="popy-messages">
+      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
+    </div>
+
+    <div class="popy-suggestions">
+      <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
+      <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
+      <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
+      <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
+      <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
+    </div>
+
+    <form id="popyForm" class="popy-form">
+      <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
+      <button type="submit" class="popy-send">Envoyer</button>
+    </form>
+  </section>
+</div>
+<script defer src="popy.js"></script>
+</body>
+</html>

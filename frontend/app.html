@@ -146,5 +146,44 @@
 
     refreshWallet();
   </script>
+
+<div id="popyBackdrop" class="popy-backdrop"></div>
+<div id="popyWidget" class="popy-widget">
+  <button id="popyLauncher" class="popy-launcher popy-launcher-fixed" aria-label="Ouvrir POPY">
+    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
+    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
+  </button>
+
+  <section id="popyPanel" class="popy-panel" aria-hidden="true">
+    <div class="popy-header">
+      <div class="popy-header-left">
+        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
+        <div>
+          <strong>POPY</strong>
+          <div class="popy-subtitle">Assistant de navigation POPE Online</div>
+        </div>
+      </div>
+      <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
+    </div>
+
+    <div id="popyMessages" class="popy-messages">
+      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
+    </div>
+
+    <div class="popy-suggestions">
+      <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
+      <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
+      <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
+      <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
+      <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
+    </div>
+
+    <form id="popyForm" class="popy-form">
+      <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
+      <button type="submit" class="popy-send">Envoyer</button>
+    </form>
+  </section>
+</div>
+<script defer src="popy.js"></script>
 </body>
 </html>

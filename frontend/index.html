@@ -3,208 +3,111 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>POPE Online — IA + Expertise humaine</title>
-  <meta name="description" content="POPE Online : génération guidée + validation experte pour sécuriser vos livrables." />
+  <title>POPE Online — Public & Privé</title>
+  <meta name="description" content="POPE Online vous oriente vers son univers public ou privé avec une expérience premium, fluide et stratégique." />
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="app.css"/>
+  <link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg">
-  <header class="topbar">
-    <div class="container">
-      <div class="row">
-        <a class="brand" href="index.html">
-          <img src="./assets/popeonline-logo.png" alt="PopeOnline"/>
-          <div>
-            <div class="title">POPE Online</div>
-            <div class="sub">IA utile • sécurisée • opérationnelle</div>
-          </div>
-        </a>
+<body class="bg bg-v3">
+  <main class="tree-landing premium-tree-landing" aria-label="Accueil V3 POPE Online">
+    <div class="tree-bg tree-bg-private" aria-hidden="true"></div>
+    <div class="tree-bg tree-bg-public" aria-hidden="true"></div>
+    <div class="tree-divider" aria-hidden="true"></div>
+    <div class="tree-glow tree-glow-left" aria-hidden="true"></div>
+    <div class="tree-glow tree-glow-right" aria-hidden="true"></div>
 
-        <nav class="nav">
-          <a href="#offres">Offres</a>
-          <a href="#methode">Méthode</a>
-          <a href="pricing.html">Tarifs</a>
-          <a class="btn secondary" href="login.html">Se connecter</a>
-          <a class="btn primary" href="signup.html">Créer un compte</a>
-        </nav>
+    <header class="tree-header" aria-label="Introduction">
+      <span class="tree-header-kicker">POPE Online • Deux univers, une même exigence</span>
+      <h1 class="tree-hero-copy">Choisissez un univers pensé pour décupler votre efficacité métier avec élégance, méthode et clarté.</h1>
+    </header>
+
+    <section class="tree-side tree-side-private" aria-labelledby="private-title">
+      <div class="tree-side-panel tree-side-panel-private">
+        <span class="tree-badge">Secteur privé</span>
+        <h2 id="private-title" class="tree-side-title">Déléguez l’administratif. Conservez l’énergie de votre métier.</h2>
+        <p class="tree-side-copy">Pour les artisans, TPE, indépendants et commerçants qui veulent avancer plus vite, avec un accompagnement simple, réactif et structuré.</p>
+
+        <div class="tree-side-divider" aria-hidden="true"></div>
+
+        <ul class="branch-flow branch-flow-private" aria-label="Services secteur privé">
+          <li class="branch-item branch-item-1">Réponses aux marchés publics</li>
+          <li class="branch-item branch-item-2">Aide administrative sur mesure</li>
+          <li class="branch-item branch-item-3">Formalités, dossiers et suivi</li>
+          <li class="branch-item branch-item-4">Parcours simple et rassurant</li>
+        </ul>
+
+        <a class="btn tree-cta tree-cta-private" href="private.html">Accéder à l’espace privé</a>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <main class="container">
-    <section class="hero">
-      <div class="hero-wrap">
-        <div class="hero-main">
-          <div class="kicker">🧠 IA + expertise métier combinées</div>
-          <h1 class="h1">Produisez des livrables fiables, puis sécurisez-les avec une <span style="color:var(--pope-blue)">revue experte</span>.</h1>
-          <p class="p">
-            POPE Online combine une <b>génération guidée</b> et une <b>validation humaine</b> pour vous aider à produire
-            des notes, rapports, délibérations, cadrages et synthèses — rapidement, proprement, et sans données sensibles.
-          </p>
+    <section class="tree-core" aria-label="POPE Online">
+      <a class="tree-logo-stage" href="index.html" aria-label="Accueil POPE Online">
+        <img src="./assets/popeonline-logo.png" alt="Logo POPE Online" class="tree-logo-main"/>
+      </a>
+      
+      <div class="popy-center-dock">
+        <div id="popyBackdrop" class="popy-backdrop"></div>
+        <div id="popyWidget" class="popy-widget popy-center-widget">
+          <button id="popyLauncher" class="popy-launcher popy-launcher-center" aria-label="Ouvrir POPY">
+            <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
+            <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
+          </button>
 
-          <div class="hero-actions">
-            <a class="btn primary" href="signup.html">Essayer POPE AI (3 tickets offerts)</a>
-            <!-- <a class="btn secondary" href="expert.html">Demander une revue experte</a> -->
-            <a class="btn ghost" href="pricing.html">Voir les offres</a>
-	  </div>
-	  <br></br><br></br>
-          <div class="pills">
-            <div class="pill">✔ Accès vérifié & protégé</div>
-            <div class="pill">✔ Usage responsable</div>
-            <div class="pill">✔ Suivi & archivage des livrables</div>
-          </div> 
-
-          <div class="hero-logo" aria-hidden="true">
-            <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-          </div>
-
-          <div class="hero-media" aria-hidden="true"></div>
-        </div>
-
-        <div class="card soft">
-          <span class="badge">Démarrage rapide</span>
-          <h2 class="h2" style="margin-top:10px">Trois parcours, une même exigence : la qualité.</h2>
-          <p class="p">Choisissez votre mode d’accompagnement selon l’enjeu : autonomie, validation, ou mission complète.</p>
-
-          <div style="height:12px"></div>
-
-          <div class="card" style="box-shadow:none;margin-bottom:12px">
-            <span class="badge">A — POPE AI</span>
-            <div class="mini">Génération guidée</div>
-            <p class="p">3 tickets offerts après vérification email. Puis abonnement annuel.</p>
-            <div class="hero-actions" style="margin-top:10px">
-              <a id="ctaApp" class="btn primary" href="signup.html">Créer un compte</a>
+          <section id="popyPanel" class="popy-panel popy-center-panel" aria-hidden="true">
+            <div class="popy-header">
+              <div class="popy-header-left">
+                <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
+                <div>
+                  <strong>POPY</strong>
+                  <div class="popy-subtitle">Assistant de navigation POPE Online</div>
+                </div>
+              </div>
+              <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
             </div>
-          </div>
 
-          <div class="card" style="box-shadow:none;margin-bottom:12px">
-            <span class="badge">B — POPE Expert</span>
-            <div class="mini">Validation humaine</div>
-            <p class="p">Relecture juridique/finances/organisation. Demande envoyée automatiquement.</p>
-            <div class="hero-actions" style="margin-top:10px">
-              <a class="btn secondary" href="expert.html">Envoyer une demande</a>
+            <div id="popyMessages" class="popy-messages">
+              <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous aider à choisir le bon univers ou vous guider vers les offres, la connexion et la prise de contact.</div>
             </div>
-          </div>
 
-          <div class="card" style="box-shadow:none">
-            <span class="badge">C — Mission</span>
-            <div class="mini">Accompagnement sur mesure</div>
-            <p class="p">Pilotage, organisation, performance, évaluation : réponse cabinet de bout en bout.</p>
-            <div class="hero-actions" style="margin-top:10px">
-              <a class="btn secondary" href="mission.html">Qualifier un besoin</a>
+            <div class="popy-suggestions">
+              <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
+              <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
+              <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
+              <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
+              <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
             </div>
-          </div>
+
+            <form id="popyForm" class="popy-form">
+              <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
+              <button type="submit" class="popy-send">Envoyer</button>
+            </form>
+          </section>
         </div>
       </div>
+
+      <div class="tree-core-note">Choisissez l’univers qui correspond à votre activité et accédez à un accompagnement premium, clair et opérationnel.</div>
     </section>
 
-    <section id="offres" class="section">
-      <div class="split-title">
-        <h2 class="h2">Offres</h2>
-        <div class="right">Une montée en gamme simple : IA → Expert → Mission</div>
-      </div>
+    <section class="tree-side tree-side-public" aria-labelledby="public-title">
+      <div class="tree-side-panel tree-side-panel-public">
+        <span class="tree-badge tree-badge-public">Secteur public</span>
+        <h2 id="public-title" class="tree-side-title tree-side-title-public">Sécurisez vos livrables grâce à un accompagnement conçu pour la rigueur institutionnelle.</h2>
+        <p class="tree-side-copy tree-side-copy-public">Pour les collectivités, établissements et organisations qui attendent un cadre fiable, des livrables sécurisés et une expérience plus structurée.</p>
 
-      <div class="grid grid-3">
-        <div class="card lift">
-          <span class="badge">POPE AI</span>
-          <h3 style="margin:10px 0 6px">Génération guidée</h3>
-          <p class="p">Un parcours structuré, un résultat exploitable, et une consommation de tickets transparente.</p>
-          <div class="mini">À partir de 1 000€ HT/an</div>
-          <div class="hero-actions" style="margin-top:12px">
-            <a class="btn primary" href="pricing.html">Voir les formules</a>
-            <a class="btn secondary" href="signup.html">Essayer</a>
-          </div>
-        </div>
+        <div class="tree-side-divider tree-side-divider-public" aria-hidden="true"></div>
 
-        <div class="card lift">
-          <span class="badge">POPE Expert</span>
-          <h3 style="margin:10px 0 6px">Revue & sécurisation</h3>
-          <p class="p">Renforcer la base juridique, clarifier les options, expliciter les risques et arbitrages.</p>
-          <div class="mini">80€ HT / ticket expert</div>
-          <div class="hero-actions" style="margin-top:12px">
-            <a class="btn primary" href="expert.html">Envoyer une demande</a>
-            <a class="btn secondary" href="pricing.html">Voir les packs</a>
-          </div>
-        </div>
+        <ul class="branch-flow branch-flow-public" aria-label="Services secteur public">
+          <li class="branch-item branch-item-public branch-item-1">Livrables administratifs sécurisés</li>
+          <li class="branch-item branch-item-public branch-item-2">IA guidée + expertise métier</li>
+          <li class="branch-item branch-item-public branch-item-3">Cadre responsable et traçable</li>
+          <li class="branch-item branch-item-public branch-item-4">Accès à l'expertise publique</li>
+        </ul>
 
-        <div class="card lift">
-          <span class="badge">Mission</span>
-          <h3 style="margin:10px 0 6px">Accompagnement complet</h3>
-          <p class="p">Une proposition structurée, un pilotage, des livrables, et des jalons clairs.</p>
-          <div class="mini">Sur devis</div>
-          <div class="hero-actions" style="margin-top:12px">
-            <a class="btn primary" href="mission.html">Qualifier un besoin</a>
-            <a class="btn secondary" href="pricing.html">Comprendre l’approche</a>
-          </div>
-        </div>
+        <a class="btn tree-cta tree-cta-public" href="public.html">Accéder à l’espace public</a>
       </div>
     </section>
-
-    <section id="methode" class="section">
-      <div class="card soft">
-        <div class="split-title">
-          <h2 class="h2">Méthode</h2>
-          <div class="right">Pensé pour des livrables publics : clarté, conformité, traçabilité</div>
-        </div>
-
-        <div class="grid grid-3" style="margin-top:10px">
-          <div class="card" style="box-shadow:none">
-            <span class="badge">1</span>
-            <div class="mini">Vous structurez</div>
-            <p class="p">Cas d’usage, contexte, objectif, éléments factuels (sans données sensibles).</p>
-          </div>
-          <div class="card" style="box-shadow:none">
-            <span class="badge">2</span>
-            <div class="mini">POPE AI produit</div>
-            <p class="p">Un draft “style cabinet”, avec une logique de décision et des points de vigilance.</p>
-          </div>
-          <div class="card" style="box-shadow:none">
-            <span class="badge">3</span>
-            <div class="mini">POPE Expert sécurise</div>
-            <p class="p">Option : relecture humaine, consolidation, et mise en cohérence.</p>
-          </div>
-        </div>
-
-        <div style="height:12px"></div>
-        <div class="card" style="box-shadow:none">
-          <div class="mini">Sécurité & conformité</div>
-          <p class="p">POPE Online est conçu pour éviter l’usage de données personnelles. Utilisez des informations neutres et anonymisées.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div>
-          <div style="font-weight:950;font-size:18px">Prêt à lancer votre premier livrable ?</div>
-          <div style="color:var(--muted2);margin-top:4px">3 tickets offerts après vérification email.</div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn primary" href="signup.html">Créer un compte</a>
-          <a class="btn secondary" href="pricing.html">Voir les tarifs</a>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      © POPE Online • contact@pope-online.com • Conseil : n’insérez pas de données personnelles.
-    </footer>
   </main>
-
-  <script>
-    // CTA intelligent : évite de laisser croire qu'on peut accéder à l'app sans compte.
-    (function(){
-      const token = localStorage.getItem('pope_token') || sessionStorage.getItem('pope_token');
-      const cta = document.getElementById('ctaApp');
-      if(!cta) return;
-      if(token){
-        cta.textContent = "Accéder à l’app";
-        cta.href = "app.html";
-      } else {
-        cta.textContent = "Créer un compte";
-        cta.href = "signup.html";
-      }
-    })();
-  </script>
+<script defer src="popy.js"></script>
 </body>
 </html>
