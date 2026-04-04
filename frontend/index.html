@@ -24,17 +24,16 @@
     </a>
     
     <nav class="po-menu po-menu-extended" aria-label="Navigation principale">
-      <a href="private.html">Espace privé</a>
-      <a href="public.html">Espace public</a>
-      <a href="legal.html">Mentions légales</a>
+      <a href="private.html" class="po-link-private">Espace privé</a>
+      <a href="public.html" class="po-link-public">Espace public</a>
+      
       <a class="po-menu-contact po-menu-contact-mail" href="mailto:contact@pope-online.com">✉️ Contact mail</a>
       <a class="po-menu-contact po-menu-contact-phone" href="tel:0800911911">📞 0800 911 911</a>
-      <a class="po-menu-cta" href="login.html">Connexion</a>
       <a class="po-menu-cta" href="signup.html?next=dashboard.html">Créer un compte</a>
     </nav>
   </header>
 
-  <main class="po-home-v5-main">
+<main class="po-home-v5-main">
     <section class="po-intro-band" aria-label="Animation d’introduction">
       <div class="po-intro-shell">
         <div class="po-intro-scene">
@@ -73,6 +72,45 @@
       </div>
     </section>
 
+ <!-- <main class="po-home-v5-main">
+    <section class="po-intro-band" aria-label="Animation d’introduction">
+      <div class="po-intro-shell">
+        <div class="po-intro-scene">
+          <div class="po-intro-final-bg"></div>
+
+          <div class="po-intro-final-logo-wrap">
+            <img id="finalLogo">
+
+
+<div class="po-intro-slogan-line" id="introSlogan">
+<h1 class="slogan slogan-1">Deux univers, une même exigence</h1>
+<h1 class="slogan slogan-2">La fluidité d'un outil pensé pour l'action</h1>
+</div>
+
+
+
+    <div class="po-intro-slogan" id="introSlogan">
+      DEUX UNIVERS, UNE MÊME EXIGENCE
+    </div>
+     <div class="po-intro-final-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online">
+          </div>
+
+          <div class="po-intro-mosaic-stage" id="mosaicStage">
+            <div class="po-intro-panels">
+              <div class="po-intro-panel" style="--i:0"><img src="./assets/mosaic.png" alt=""></div>
+              <div class="po-intro-panel" style="--i:1"><img src="./assets/mosaic.png" alt=""></div>
+              <div class="po-intro-panel" style="--i:2"><img src="./assets/mosaic.png" alt=""></div>
+              <div class="po-intro-panel" style="--i:3"><img src="./assets/mosaic.png" alt=""></div>
+              <div class="po-intro-panel" style="--i:4"><img src="./assets/mosaic.png" alt=""></div>
+            </div>
+            <div class="po-intro-mosaic-watermark">
+              <img src="./assets/popeoline-logo-ligne.png" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
     <section class="po-split-v5 po-split-v5-2" aria-label="Choix d’univers">
       <article class="po-card-v5 po-card-private po-card-v5-rich">
         <div class="po-card-v5-topline">Espace privé</div>
@@ -109,100 +147,132 @@
   <footer class="po-footer-v5">
     <div class="po-footer-v5-inner">
       <span>© POPE Online</span>
-      <a href="legal.html">Mentions légales</a>
-      <a href="legal.html#cookies">Gestion des cookies</a>
+      <a href="legal.html">Mentions légales</a> | <a href="privacy.html">Confidentialité</a>
       <a href="mailto:contact@pope-online.com">Contact mail</a>
     </div>
   </footer>
 
-  <div class="po-cookie-backdrop" id="cookieBackdrop" hidden></div>
-  <div class="po-cookie-modal" id="cookieModal" hidden aria-live="polite" aria-label="Gestion des cookies">
-    <div class="po-cookie-tag">Confidentialité</div>
-    <h2>Votre expérience, vos préférences.</h2>
-    <p>Nous utilisons des cookies pour améliorer l’expérience, mesurer l’audience et proposer un parcours fluide. Vous pouvez tout accepter, tout refuser ou personnaliser vos préférences.</p>
-    <div class="po-cookie-actions">
-      <button class="po-btn po-btn-ghost" id="cookieDecline">Tout refuser</button>
-      <button class="po-btn po-btn-ghost" id="cookiePrefs">Personnaliser</button>
-      <button class="po-btn po-btn-solid" id="cookieAccept">Tout accepter</button>
+  
+
+
+  <div class="cookie-overlay" id="cookieOverlay" hidden></div>
+  <section class="cookie-modal" id="cookieModal" hidden aria-labelledby="cookieTitle" aria-modal="true" role="dialog">
+    <div class="cookie-header">
+      <div class="cookie-badge">POPE Online</div>
+      <h2 id="cookieTitle">La protection de vos données est notre priorité</h2>
     </div>
-    <p class="po-cookie-note">Vous pourrez modifier votre choix à tout moment depuis les mentions légales.</p>
-  </div>
 
-  
-  
-  
+    <div class="cookie-content">
+      <p>POPE Online utilise des cookies strictement nécessaires au fonctionnement de la plateforme SaaS, à la sécurité des accès et à l’amélioration de l’expérience utilisateur.</p>
+      <p>Vous pouvez accepter tous les cookies, continuer sans accepter ou personnaliser vos choix. Votre décision est enregistrée et la fenêtre se ferme immédiatement après votre sélection.</p>
+    </div>
+
+    <div class="cookie-buttons">
+      <button id="cookieDecline" class="cookie-btn secondary" type="button">Continuer sans accepter</button>
+      <button id="cookieSettings" class="cookie-btn secondary" type="button">Paramétrer vos choix</button>
+      <button id="cookieAccept" class="cookie-btn primary" type="button">Tout accepter</button>
+    </div>
+  </section>
+
+
 <script>
-(function(){
-const panels=[...document.querySelectorAll('.po-intro-panel')];
-const logo=document.getElementById('finalLogo');
-const slogan=document.getElementById('introSlogan');
+document.addEventListener("DOMContentLoaded", function () {
+  const overlay = document.getElementById("cookieOverlay");
+  const modal = document.getElementById("cookieModal");
+  const accept = document.getElementById("cookieAccept");
+  const decline = document.getElementById("cookieDecline");
+  const settings = document.getElementById("cookieSettings");
+  const STORAGE_KEY = "pope_cookie_choice";
 
-function shuffle(a){
-return a.sort(()=>Math.random()-0.5)
-}
+  if (!overlay || !modal || !accept || !decline || !settings) return;
 
-function reset(){
-logo.classList.remove('show');
-slogan.classList.remove('show');
-panels.forEach(p=>p.classList.remove('hide'));
-}
+  function openCookies() {
+    overlay.hidden = false;
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
 
-function loop(){
-reset();
+  function closeCookies(choice) {
+    try {
+      localStorage.setItem(STORAGE_KEY, choice);
+    } catch (e) {}
+    modal.hidden = true;
+    overlay.hidden = true;
+    document.body.style.overflow = "";
+  }
 
-setTimeout(()=>{
-let order=shuffle([...panels]);
-order.forEach((p,i)=>{
-setTimeout(()=>p.classList.add('hide'),i*250);
+  let existingChoice = null;
+  try {
+    existingChoice = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {}
+
+  if (!existingChoice) {
+    openCookies();
+  }
+
+  accept.addEventListener("click", function () {
+    closeCookies("accepted");
+  });
+
+  decline.addEventListener("click", function () {
+    closeCookies("declined");
+  });
+
+  settings.addEventListener("click", function () {
+    closeCookies("customized");
+  });
+
+  overlay.addEventListener("click", function () {
+    closeCookies("dismissed");
+  });
 });
+</script>
 
+
+<script>
+window.addEventListener("load",function(){
+const panels=document.querySelectorAll('.po-intro-panel');
+const logo=document.getElementById('finalLogo');
+
+if(!panels.length) return;
+
+function restart(){
+panels.forEach(p=>p.classList.remove('hide'));
 setTimeout(()=>{
-slogan.classList.add('show');
-
-setTimeout(()=>{
-slogan.classList.remove('show');
-logo.classList.add('show');
-},4000);
-
-},1500);
-
-setTimeout(loop,16000);
-
-},8000);
+panels.forEach((p,i)=>{
+setTimeout(()=>p.classList.add('hide'),i*200);
+});
+},2000);
 }
 
-window.addEventListener('load',()=>setTimeout(loop,600));
-})();
+setInterval(restart,15000);
+});
 </script>
 
 
 <script>
 (function(){
+
+const slogans=[
+"Décuplez votre efficacité métier",
+"Transformez vos idées en actions",
+"Accélérez vos décisions stratégiques",
+"Pilotez vos projets avec précision"
+];
 
 const slogan=document.getElementById("introSlogan");
+let i=0;
 
-function sequence(){
-
-slogan.classList.remove("show2");
-slogan.classList.add("show1");
-
-setTimeout(()=>{
-slogan.classList.remove("show1");
-slogan.classList.add("show2");
-},4000);
-
-setTimeout(()=>{
-slogan.classList.remove("show2");
-},8000);
-
+function rotate(){
+if(!slogan) return;
+slogan.textContent=slogans[i];
+i=(i+1)%slogans.length;
 }
 
-window.addEventListener("load",()=>{
-setTimeout(sequence,4500);
-setInterval(sequence,16000);
-});
+setInterval(rotate,4000);
 
 })();
 </script>
+
 </body>
 </html>
