@@ -1,190 +1,164 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — POPE AI</title>
+<title>POPE Online — Génération guidée</title>
 <link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/><link rel="stylesheet" href="popy.css"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg">
+<body class="bg po-v5-harmony po-public-v24">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="dashboard.html">
-<div class="logo"></div>
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
 <div>
 <div class="brand-title">POPE Online</div>
-<div class="brand-sub">POPE AI • V2</div>
+<div class="brand-sub">Génération guidée</div>
 </div>
 </a>
-<div class="row gap">
-<span class="badge" data-tickets="">AI: - • Expert: -</span>
-<a class="btn ghost" href="expert.html">Revue experte</a>
-<button class="btn ghost" id="btnCopy">Copier</button>
+<div class="row gap wrap">
+<span class="badge" data-tickets="">Accès sécurisé</span>
+<a class="btn ghost" href="expert.html">Relecture experte</a>
 <button class="btn" data-logout="">Déconnexion</button>
 </div>
 </div>
 </header>
-<main class="container app">
+
+<main class="container app app-v24">
 <section class="card left">
-<h2>Génération guidée</h2>
-<label class="label">Cas d’usage</label>
-<select class="input" id="usecase">
-<option value="note_strategique">Note stratégique (Décision / Arbitrage)</option>
-<option value="courrier">Courrier administratif (réponse / relance)</option>
-<option value="deliberation">Projet de délibération (structure)</option>
-<option value="synthese_reunion">Synthèse de réunion</option>
-<option value="cadrage_projet">Cadrage projet / PMO</option>
-</select>
-<label class="label">Contexte (collectivité, enjeux, contraintes)</label>
-<textarea class="input" id="context" placeholder="Ex : Conseil départemental, enjeux BP 2026, contraintes CRC, calendrier, parties prenantes…" rows="7"></textarea>
-<label class="label">Objectif du livrable</label>
-<input class="input" id="objective" placeholder="Ex : note d’arbitrage pour le Président / CODIR"/>
-<label class="label">Éléments factuels (sans données sensibles)</label>
-<textarea class="input" id="facts" placeholder="Ex : chiffres, dates, périmètre, options, contraintes…" rows="6"></textarea>
-<div class="row gap wrap">
-<button class="btn" id="btnGenerate">Générer</button>
-<button class="btn ghost" id="btnRefine">Améliorer (style cabinet)</button>
-<button class="btn ghost" id="btnRisk">Contrôle risques (juridique/RGPD)</button>
+<div class="split-title">
+  <div>
+    <h2>Produire un livrable sécurisé</h2>
+    <div class="muted">Un module recentré pour produire un premier draft structuré dans un cadre responsable et traçable.</div>
+  </div>
+  <span class="badge" id="status">Prêt</span>
 </div>
-<div class="fineprint">🔒 Conseil : n’insérez pas de données personnelles (agents, dossiers, adresses, santé…).</div>
+
+<label class="label">Type de livrable</label>
+<select class="input" id="usecase">
+<option value="note_strategique">Note stratégique / arbitrage</option>
+<option value="courrier">Courrier administratif</option>
+<option value="deliberation">Projet de délibération</option>
+<option value="synthese_reunion">Synthèse de réunion</option>
+<option value="cadrage_projet">Cadrage projet / pilotage</option>
+</select>
+
+<div class="grid2 grid2-v24">
+  <div>
+    <label class="label">Contexte</label>
+    <textarea class="input" id="context" placeholder="Collectivité, enjeu, contraintes, échéance, destinataires..." rows="8"></textarea>
+  </div>
+  <div>
+    <label class="label">Objectif du livrable</label>
+    <textarea class="input" id="objective" placeholder="Décision attendue, arbitrage, message clé, finalité..." rows="8"></textarea>
+  </div>
+</div>
+
+<label class="label">Éléments factuels utiles</label>
+<textarea class="input" id="facts" placeholder="Dates, chiffres, options, risques, contraintes, éléments de contexte..." rows="8"></textarea>
+
+<div class="row gap wrap">
+  <button class="btn" id="btnGenerate">Produire un livrable sécurisé</button>
+  <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
+</div>
+<div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
+
 <div class="divider"></div>
 <div class="panel">
-<h3>Besoin d’une relecture humaine ?</h3>
-<p class="muted">Utilisez POPE Expert : envoi direct à l’équipe POPE + message de confirmation.</p>
-<div class="row gap wrap">
-<a class="btn" href="expert.html">Demander une revue experte</a>
-<a class="btn ghost" href="pricing.html">Voir les offres</a>
-</div>
+  <h3>Après génération</h3>
+  <p class="muted">Vous pouvez poursuivre avec une relecture experte ou décrire un besoin plus large pour un accompagnement sur mesure.</p>
+  <div class="row gap wrap">
+    <a class="btn ghost" href="expert.html">Relecture experte</a>
+    <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
+  </div>
 </div>
 </section>
+
 <section class="card right">
 <div class="row between">
 <h2>Résultat</h2>
-<span class="badge" id="status">Prêt</span>
+<span class="badge">Premier draft</span>
 </div>
-<div class="output" id="output"><div class="muted">Clique “Générer” pour produire un premier draft.</div></div>
+<div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
 </section>
 </main>
-  <script src="./auth-guard.js"></script>
-  <script type="module">
-    import { apiFetch } from './api.js';
-    import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 
-    if (!requireLogin('app.html')) {}
-    wireLogout();
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 
-    const el = (id) => document.getElementById(id);
-    const status = (txt) => el('status').textContent = txt;
+if (!requireLogin('app.html')) {}
+wireLogout();
 
-    function buildPayload(mode){
-      return {
-        mode,
-        usecase: el('usecase').value,
-        context: el('context').value.trim(),
-        objective: el('objective').value.trim(),
-        facts: el('facts').value.trim(),
-        locale: 'fr-FR'
-      };
+const el = (id) => document.getElementById(id);
+const status = (txt) => el('status').textContent = txt;
+
+function buildPayload(){
+  return {
+    mode: 'generate',
+    usecase: el('usecase').value,
+    context: el('context').value.trim(),
+    objective: el('objective').value.trim(),
+    facts: el('facts').value.trim(),
+    locale: 'fr-FR'
+  };
+}
+
+function setOutput(text){
+  el('output').textContent = text;
+}
+
+async function refreshWallet(){
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+  } catch {}
+}
+
+async function callAI(){
+  const payload = buildPayload();
+  const raw = (payload.context + "\n" + payload.facts).toLowerCase();
+  const forbiddenHints = ['numéro de sécurité sociale','nss','dossier médical','diagnostic','adresse','téléphone','date de naissance','iban','rib'];
+  if (forbiddenHints.some(k => raw.includes(k))) {
+    setOutput('⚠️ Données potentiellement sensibles détectées. Merci de retirer ou anonymiser les informations avant génération.');
+    return;
+  }
+
+  status('En cours…');
+  try {
+    const data = await apiFetch('/ai/generate', { method:'POST', body: payload });
+    status('Terminé');
+    setOutput(data.text || '(vide)');
+    setTicketsBadge(data.wallet);
+  } catch (e) {
+    console.error(e);
+    status('Erreur');
+    if (e.status === 402 && e.data?.error === 'no_tickets') {
+      setOutput('🚫 Votre offre gratuite ou votre accès actuel ne permet plus de générer de nouveaux livrables pour le moment.');
+      showToast('Accès temporairement limité', 'warn');
+      return;
     }
-
-    function setOutput(text){
-      el('output').textContent = text;
+    if (e.status === 400 && e.data?.error === 'sensitive_data') {
+      setOutput('⚠️ Le contenu semble contenir des données sensibles. Merci de les retirer puis réessayez.');
+      showToast('Données sensibles détectées', 'warn');
+      return;
     }
+    setOutput('Erreur : ' + (e?.data?.error || e.message));
+    showToast('Erreur de génération', 'err');
+  }
+}
 
-    async function refreshWallet(){
-      try {
-        const me = await apiFetch('/auth/me');
-        setTicketsBadge(me.wallet);
-      } catch {}
-    }
-
-    async function callAI(mode){
-      const payload = buildPayload(mode);
-      const raw = (payload.context + "\n" + payload.facts).toLowerCase();
-      const forbiddenHints = ['numéro de sécurité sociale','nss','dossier médical','diagnostic','adresse','téléphone','date de naissance','iban','rib'];
-      if (forbiddenHints.some(k => raw.includes(k))) {
-        setOutput('⚠️ Données potentiellement sensibles détectées. Merci de retirer/anonymiser avant génération.');
-        return;
-      }
-
-      status('En cours…');
-      try {
-        const data = await apiFetch('/ai/generate', { method:'POST', body: payload });
-        status('Terminé');
-        setOutput(data.text || '(vide)');
-        setTicketsBadge(data.wallet);
-      } catch (e) {
-        console.error(e);
-        status('Erreur');
-        if (e.status === 402 && e.data?.error === 'no_tickets') {
-          setOutput('🚫 Plus de tickets POPE AI. Rendez-vous dans “Offres” pour souscrire.');
-          showToast('Plus de tickets', 'warn');
-          return;
-        }
-        if (e.status === 400 && e.data?.error === 'sensitive_data') {
-          setOutput('⚠️ Données sensibles détectées. Merci d\'anonymiser/supprimer avant usage.');
-          showToast('Données sensibles', 'warn');
-          return;
-        }
-        setOutput('Erreur API : ' + (e.data?.detail || e.data?.error || e.message));
-        showToast('Erreur génération', 'err');
-      }
-    }
-
-    el('btnGenerate')?.addEventListener('click', () => callAI('generate'));
-    el('btnRefine')?.addEventListener('click', () => callAI('refine'));
-    el('btnRisk')?.addEventListener('click', () => callAI('risk_check'));
-
-    el('btnCopy')?.addEventListener('click', async () => {
-      const txt = el('output').textContent || '';
-      await navigator.clipboard.writeText(txt);
-      status('Copié ✓');
-      showToast('Copié', 'ok');
-      setTimeout(() => status('Prêt'), 900);
-    });
-
-    refreshWallet();
-  </script>
-
-<div id="popyBackdrop" class="popy-backdrop"></div>
-<div id="popyWidget" class="popy-widget">
-  <button id="popyLauncher" class="popy-launcher popy-launcher-fixed" aria-label="Ouvrir POPY">
-    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
-    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
-  </button>
-
-  <section id="popyPanel" class="popy-panel" aria-hidden="true">
-    <div class="popy-header">
-      <div class="popy-header-left">
-        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
-        <div>
-          <strong>POPY</strong>
-          <div class="popy-subtitle">Assistant de navigation POPE Online</div>
-        </div>
-      </div>
-      <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
-    </div>
-
-    <div id="popyMessages" class="popy-messages">
-      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
-    </div>
-
-    <div class="popy-suggestions">
-      <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
-      <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
-      <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
-      <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
-      <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
-    </div>
-
-    <form id="popyForm" class="popy-form">
-      <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
-      <button type="submit" class="popy-send">Envoyer</button>
-    </form>
-  </section>
-</div>
-<script defer src="popy.js"></script>
+el('btnGenerate').addEventListener('click', callAI);
+document.getElementById('btnCopy')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(el('output').textContent || '');
+    showToast('Résultat copié', 'ok');
+  } catch {}
+});
+refreshWallet();
+</script>
 </body>
 </html>

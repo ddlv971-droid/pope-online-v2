@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>POPE Online — Connexion</title>
 <link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/><link rel="stylesheet" href="popy.css"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg">
+<body class="bg po-v5-harmony">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="index.html">
-<div class="logo"></div>
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
 <div>
 <div class="brand-title">POPE Online</div>
 <div class="brand-sub">Connexion</div>
 </div>
 </a>
 <div class="row gap">
-<a class="btn" href="signup.html">Créer un compte</a>
+<a class="btn ghost" href="signup.html">Créer un compte</a>
 </div>
 </div>
 </header>
@@ -32,79 +32,40 @@
 <input class="input" id="password" placeholder="••••••••" type="password"/>
 <div class="row gap wrap" style="margin-top:14px">
 <button class="btn" id="btn">Se connecter</button>
-<a class="btn ghost" href="pricing.html">Offres</a>
+<!-- <a class="btn ghost" href="pricing.html">Voir les parcours</a> -->
 </div>
 <div class="fineprint" id="msg"></div>
 </section>
 </main>
 <script type="module">
-    import { apiFetch, setToken } from './api.js';
-    import { showToast, getFingerprint } from './app.js';
+import { apiFetch, setToken } from './api.js';
+import { showToast, getFingerprint } from './app.js';
 
-    const el = (id) => document.getElementById(id);
+const el = (id) => document.getElementById(id);
+function getNext() {
+  const u = new URL(window.location.href);
+  return u.searchParams.get('next') || 'dashboard.html';
+}
 
-    function getNext() {
-      const u = new URL(window.location.href);
-      return u.searchParams.get('next') || 'dashboard.html';
+el('btn').addEventListener('click', async () => {
+  const email = el('email').value.trim();
+  const password = el('password').value;
+  try {
+    const fp = await getFingerprint();
+    const data = await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email, password, fp }});
+    setToken(data.token);
+    showToast('Connecté ✓', 'ok');
+    if (!data.user.isEmailVerified) {
+      el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour activer votre offre gratuite de démarrage.';
     }
-
-    el('btn').addEventListener('click', async () => {
-      const email = el('email').value.trim();
-      const password = el('password').value;
-      try {
-        const fp = await getFingerprint();
-        const data = await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email, password, fp }});
-        setToken(data.token);
-        showToast('Connecté ✓', 'ok');
-        if (!data.user.isEmailVerified) {
-          el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour obtenir vos 3 tickets gratuits.';
-        }
-        setTimeout(() => window.location.href = getNext(), 450);
-      } catch (e) {
-        console.error(e);
-        showToast('Connexion impossible', 'err');
-        el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
-      }
-    });
-  </script>
-
-<div id="popyBackdrop" class="popy-backdrop"></div>
-<div id="popyWidget" class="popy-widget">
-  <button id="popyLauncher" class="popy-launcher popy-launcher-fixed" aria-label="Ouvrir POPY">
-    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
-    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
-  </button>
-
-  <section id="popyPanel" class="popy-panel" aria-hidden="true">
-    <div class="popy-header">
-      <div class="popy-header-left">
-        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
-        <div>
-          <strong>POPY</strong>
-          <div class="popy-subtitle">Assistant de navigation POPE Online</div>
-        </div>
-      </div>
-      <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
-    </div>
-
-    <div id="popyMessages" class="popy-messages">
-      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
-    </div>
-
-    <div class="popy-suggestions">
-      <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
-      <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
-      <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
-      <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
-      <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
-    </div>
-
-    <form id="popyForm" class="popy-form">
-      <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
-      <button type="submit" class="popy-send">Envoyer</button>
-    </form>
-  </section>
-</div>
-<script defer src="popy.js"></script>
+    setTimeout(() => window.location.href = getNext(), 450);
+  } catch (e) {
+    console.error(e);
+    showToast('Connexion impossible', 'err');
+    el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
+  }
+});
+</script>
+<script src="popy.js"></script>
 </body>
 </html>

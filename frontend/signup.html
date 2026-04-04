@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>POPE Online — Créer un compte</title>
 <link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/><link rel="stylesheet" href="popy.css"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg">
+<body class="bg po-v5-harmony">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="index.html">
-<div class="logo"></div>
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
 <div>
 <div class="brand-title">POPE Online</div>
 <div class="brand-sub">Créer un compte</div>
@@ -26,96 +26,57 @@
 <main class="auth-wrap">
 <section class="auth-card" style="max-width:720px;margin:0 auto">
 <h2>Créer un compte</h2>
-<p class="muted">Après inscription, vous devrez <b>vérifier votre email</b>. Les <b>3 tickets gratuits</b> POPE AI sont attribués après vérification (anti-abus inclus).</p>
+<p class="muted">Après inscription, vous devrez <b>vérifier votre email</b>. Votre <b>offre gratuite de démarrage</b> est activée après vérification et contrôle anti-abus.</p>
 <label class="label">Nom / Prénom</label>
-<input class="input" id="fullName" placeholder="Denis Delzer"/>
+<input class="input" id="fullName" placeholder="Denis Delver"/>
 <label class="label">Organisation</label>
-<input class="input" id="organization" placeholder="Conseil départemental / commune / cabinet…"/>
+<input class="input" id="organization" placeholder="Collectivité, établissement, entreprise…"/>
 <label class="label">Email</label>
 <input class="input" id="email" placeholder="prenom.nom@..."/>
 <label class="label">Mot de passe (8 caractères min.)</label>
 <input class="input" id="password" placeholder="••••••••" type="password"/>
 <label class="row gap" style="align-items:flex-start;margin-top:10px">
 <input id="cgu" style="margin-top:4px" type="checkbox"/>
-<span class="muted">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles (RGPD).</span>
+<span class="muted">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles.</span>
 </label>
 <div class="row gap wrap" style="margin-top:14px">
 <button class="btn" id="btn">Créer mon compte</button>
-<a class="btn ghost" href="pricing.html">Voir les offres</a>
+
 </div>
-<div class="fineprint" id="msg"></div>
+<div class="fineprint" id="msg"></div><div class="fineprint" style="margin-top:12px">Votre compte pourra être supprimé à tout moment depuis votre espace ou par demande dédiée.</div>
 </section>
 </main>
 <script type="module">
-    import { apiFetch } from './api.js';
-    import { showToast, getFingerprint } from './app.js';
+import { apiFetch } from './api.js';
+import { showToast, getFingerprint } from './app.js';
 
-    const el = (id) => document.getElementById(id);
+const el = (id) => document.getElementById(id);
 
-    el('btn').addEventListener('click', async () => {
-      const email = el('email').value.trim();
-      const password = el('password').value;
-      const fullName = el('fullName').value.trim();
-      const organization = el('organization').value.trim();
-      const cgu = el('cgu').checked;
+el('btn').addEventListener('click', async () => {
+  const email = el('email').value.trim();
+  const password = el('password').value;
+  const fullName = el('fullName').value.trim();
+  const organization = el('organization').value.trim();
+  const cgu = el('cgu').checked;
 
-      if (!cgu) return showToast('Merci d’accepter les conditions / RGPD.', 'warn');
+  if (!cgu) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
 
-      try {
-        const fp = await getFingerprint();
-        await apiFetch('/auth/signup', {
-          method: 'POST',
-          auth: false,
-          body: { email, password, fullName, organization, fp }
-        });
-        showToast('Compte créé. Vérifiez votre email.', 'ok');
-        el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
-      } catch (e) {
-        console.error(e);
-        const code = e?.data?.error || 'erreur';
-        showToast('Erreur: ' + code, 'err');
-        el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
-      }
+  try {
+    const fp = await getFingerprint();
+    await apiFetch('/auth/signup', {
+      method: 'POST',
+      auth: false,
+      body: { email, password, fullName, organization, fp }
     });
-  </script>
-
-<div id="popyBackdrop" class="popy-backdrop"></div>
-<div id="popyWidget" class="popy-widget">
-  <button id="popyLauncher" class="popy-launcher popy-launcher-fixed" aria-label="Ouvrir POPY">
-    <div class="popy-teaser">Que puis-je faire pour vous faciliter la tâche ?</div>
-    <img src="./assets/popy.png" alt="POPY, assistant Pope Online" class="popy-avatar" />
-  </button>
-
-  <section id="popyPanel" class="popy-panel" aria-hidden="true">
-    <div class="popy-header">
-      <div class="popy-header-left">
-        <img src="./assets/popy.png" alt="POPY" class="popy-header-avatar" />
-        <div>
-          <strong>POPY</strong>
-          <div class="popy-subtitle">Assistant de navigation POPE Online</div>
-        </div>
-      </div>
-      <button id="popyClose" class="popy-close" aria-label="Fermer">×</button>
-    </div>
-
-    <div id="popyMessages" class="popy-messages">
-      <div class="popy-msg bot">Bonjour, je suis <strong>POPY</strong>. Je peux vous orienter vers l’univers privé ou public, les offres, la connexion ou la prise de contact.</div>
-    </div>
-
-    <div class="popy-suggestions">
-      <button class="popy-chip" data-prompt="Je veux aller vers le privé">Privé</button>
-      <button class="popy-chip" data-prompt="Je veux aller vers le public">Public</button>
-      <button class="popy-chip" data-prompt="Je veux créer un compte">Créer un compte</button>
-      <button class="popy-chip" data-prompt="Je veux connaître les offres">Offres</button>
-      <button class="popy-chip" data-prompt="Je veux vous contacter">Contact</button>
-    </div>
-
-    <form id="popyForm" class="popy-form">
-      <input id="popyInput" class="popy-input" type="text" placeholder="Posez votre question à POPY..." autocomplete="off" />
-      <button type="submit" class="popy-send">Envoyer</button>
-    </form>
-  </section>
-</div>
-<script defer src="popy.js"></script>
+    showToast('Compte créé. Vérifiez votre email.', 'ok');
+    el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
+  } catch (e) {
+    console.error(e);
+    showToast('Erreur: ' + (e?.data?.error || e.message), 'err');
+    el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
+  }
+});
+</script>
+<script src="popy.js"></script>
 </body>
 </html>

@@ -213,3 +213,11 @@
   .popy-launcher-center .popy-avatar{width:132px;min-width:0;}
   .popy-panel{width:min(94vw, 410px);}
 }
+
+/* V2.7.1 remove rectangular sections */
+.no-rect-section{
+background:transparent !important;
+border:none !important;
+box-shadow:none !important;
+border-radius:0 !important;
+}

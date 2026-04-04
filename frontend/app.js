@@ -1,82 +1,93 @@
-import { apiFetch, setToken, getToken } from './api.js';
-
-const el = (id) => document.getElementById(id);
-
-export function showToast(message, type='info') {
-  let host = document.querySelector('.toast-host');
-  if (!host) {
-    host = document.createElement('div');
-    host.className = 'toast-host';
-    document.body.appendChild(host);
+export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
+  const token = localStorage.getItem('pope_token');
+  const headers = { 'Content-Type':'application/json' };
+  if (auth && token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(path.startsWith('http') ? path : `/api${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data?.error || `HTTP ${res.status}`);
+    err.status = res.status;
+    err.data = data;
+    throw err;
   }
-  const t = document.createElement('div');
-  t.className = `toast toast-${type}`;
-  t.textContent = message;
-  host.appendChild(t);
-  setTimeout(() => { t.classList.add('out'); }, 2400);
-  setTimeout(() => { t.remove(); }, 3000);
+  return data;
 }
 
-export async function getFingerprint() {
-  const s = [
-    navigator.userAgent,
-    screen.width,
-    screen.height,
-    navigator.language,
-    new Date().getTimezoneOffset()
-  ].join('|');
+export function setToken(token){
+  localStorage.setItem('pope_token', token);
+}
+export function getToken(){
+  return localStorage.getItem('pope_token');
+}
+export function clearToken(){
+  localStorage.removeItem('pope_token');
+}
 
-  // simple sha-256 via WebCrypto
-  const enc = new TextEncoder().encode(s);
+export async function getFingerprint(){
+  const raw = [navigator.userAgent, navigator.language, screen.width, screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
+  const enc = new TextEncoder().encode(raw);
   const digest = await crypto.subtle.digest('SHA-256', enc);
-  const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
-  return hash;
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-export function requireLogin(redirectTo) {
-  const t = getToken();
-  if (!t) {
-    const to = redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : '';
-    window.location.href = `login.html${to}`;
+export function requireLogin(next='dashboard.html'){
+  const token = getToken();
+  if (!token) {
+    window.location.href = `login.html?next=${encodeURIComponent(next)}`;
     return false;
   }
   return true;
 }
 
-export async function loadMe() {
-  return apiFetch('/auth/me', { auth: true });
-}
-
-// Attach common UI behaviors if elements exist
-export function wireLogout() {
-  const btn = document.querySelector('[data-logout]');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    setToken('');
-    showToast('Déconnecté', 'ok');
-    setTimeout(() => window.location.href = 'index.html', 400);
+export function wireLogout(){
+  document.querySelectorAll('[data-logout]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      clearToken();
+      showToast('Déconnecté', 'ok');
+      setTimeout(() => window.location.href = 'index.html', 400);
+    });
   });
 }
 
 export function setTicketsBadge(wallet) {
   const t = document.querySelector('[data-tickets]');
   if (!t) return;
-  t.textContent = `AI: ${wallet?.tickets_ai ?? 0} • Expert: ${wallet?.tickets_expert ?? 0}`;
+  const ready = (wallet?.tickets_ai ?? 0) + (wallet?.tickets_expert ?? 0) > 0;
+  t.textContent = ready ? 'Accès activé' : 'Espace sécurisé';
 }
 
-// Minimal styling for toasts (injected once)
+export function showToast(text, tone='ok'){
+  let host = document.querySelector('.toast-host');
+  if (!host) {
+    host = document.createElement('div');
+    host.className = 'toast-host';
+    document.body.appendChild(host);
+  }
+  const el = document.createElement('div');
+  el.className = `toast ${tone}`;
+  el.textContent = text;
+  host.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(8px)';
+    setTimeout(() => el.remove(), 220);
+  }, 2300);
+}
+
 (function ensureToastStyles(){
   if (document.getElementById('toast-style')) return;
   const style = document.createElement('style');
   style.id = 'toast-style';
   style.textContent = `
-.toast-host{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:10px;z-index:9999}
-.toast{padding:12px 14px;border-radius:12px;backdrop-filter: blur(10px);box-shadow:0 12px 32px rgba(0,0,0,.25);font-weight:600;max-width:320px}
-.toast-info{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.92)}
-.toast-ok{background:rgba(3,160,215,.18);border:1px solid rgba(3,160,215,.35);color:#e9fbff}
-.toast-warn{background:rgba(255,210,92,.15);border:1px solid rgba(255,210,92,.35);color:#fff7db}
-.toast-err{background:rgba(255,90,90,.15);border:1px solid rgba(255,90,90,.35);color:#ffecec}
-.toast.out{opacity:0;transform:translateY(6px);transition:all .6s ease}
-`;
+  .toast-host{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+  .toast{padding:12px 14px;border-radius:14px;color:#fff;font-weight:800;box-shadow:0 10px 26px rgba(7,22,42,.16);transition:opacity .2s ease,transform .2s ease}
+  .toast.ok{background:linear-gradient(135deg,#0c5ea8,#03A0D7)}
+  .toast.warn{background:linear-gradient(135deg,#b7791f,#d69e2e)}
+  .toast.err{background:linear-gradient(135deg,#a3214b,#d92d8f)}
+  `;
   document.head.appendChild(style);
 })();
