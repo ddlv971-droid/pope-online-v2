@@ -53,31 +53,8 @@
         <div class="po-contact-choice"><a class="po-btn po-btn-solid" href="mailto:contact@pope-online.com">Contactez-nous</a><a class="po-btn po-btn-ghost" href="tel:0800911911">📞 0800 911 911</a></div>
       </aside>
     </section>
-   <!-- <main class="po-page-wrap po-page-wrap-v24 po-page-wrap-v26"> 
-  <section class="po-page-hero po-page-hero-v24 po-page-hero-v26 po-page-hero-flat"> 
-      <div class="po-page-copy po-page-copy-v25 po-page-copy-v26"> 
-        <div class="po-overline">Décuplez votre efficacité métier</div>
-        <h1>Déléguez votre administratif. Gardez la main sur votre activité.</h1>
-        <p>POPE Online accompagne les artisans, indépendants, TPE, commerçants, petites structures et, selon le besoin, les entreprises de 10 à 50 salariés qui veulent mieux absorber leur charge administrative sans ralentir leur développement.</p>
-        <div class="po-page-actions">
-          <a class="po-btn po-btn-solid" href="private-onboarding.html">Démarrer le parcours</a>
-          <a class="po-btn po-btn-ghost po-btn-gift" href="signup.html?next=private.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true"/>Démarrer l’offre gratuite</a>
-        </div>
-       </div> 
-      <aside class="po-side-card po-side-card-accent po-side-card-v25 po-side-card-v26 po-side-card-flat">
-        <span class="po-card-label">Contact simplifié</span>
-        <h2>Un premier échange clair, rapide et guidé.</h2>
-        <p>Décrivez votre besoin en quelques minutes. Nous vous recontactons avec un cadrage initial adapté à votre situation.</p>
-        <ul>
-          <li>Qualification progressive</li>
-          <li>Réponse humaine et contextualisée</li>
-          <li>Orientation vers le bon niveau d’appui</li>
-        </ul>
-        <div class="po-contact-choice"><a class="po-btn po-btn-solid" href="mailto:contact@pope-online.com">Contactez-nous</a><a class="po-btn po-btn-ghost" href="tel:0800911911">📞 0800 911 911</a></div>
-      </aside>
-    </section> -->
 
-    <section id="cibles" class="po-section no-rect-section">
+<section id="cibles" class="po-section no-rect-section">
       <div class="po-section-head no-rect-section">
         <div class="po-overline">Cibles</div>
         <h2>Pour qui ?</h2>
@@ -189,14 +166,43 @@
   </div> -->
 
 <script>
-document.addEventListener("DOMContentLoaded",function(){
- const btn=document.getElementById("burgerBtn");
- const menu=document.querySelector(".po-menu");
- if(btn && menu){
-   btn.addEventListener("click",()=>menu.classList.toggle("open"));
- }
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('burgerBtn');
+  const menu = document.querySelector('.po-menu');
+  if (!btn || !menu) return;
+
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-label', 'Ouvrir le menu');
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const isOpen = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  menu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (window.innerWidth <= 768) closeMenu();
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) closeMenu();
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 768) {
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
 });
 </script>
-
 </body>
 </html>
