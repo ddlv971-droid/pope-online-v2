@@ -3892,3 +3892,122 @@ font-weight:600;
     padding:22px 18px;
   }
 }
+
+/* === V5.4 mobile corrections === */
+@media (max-width: 980px){
+  .po-menu-extended{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:12px;
+    width:100%;
+    align-items:stretch;
+  }
+
+  .po-menu-extended .po-link-public{
+    grid-column:1;
+    grid-row:1;
+  }
+
+  .po-menu-extended .po-link-private{
+    grid-column:2;
+    grid-row:1;
+  }
+
+  .po-menu-extended .po-menu-contact-mail{
+    grid-column:1 / -1;
+    grid-row:2;
+  }
+
+  .po-menu-extended .po-menu-contact-phone{
+    grid-column:1 / -1;
+    grid-row:3;
+  }
+
+  .po-menu-extended .po-menu-cta{
+    grid-column:1 / -1;
+    grid-row:4;
+    width:100%;
+    justify-content:center !important;
+    text-align:center !important;
+    display:flex !important;
+    min-height:56px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+
+  .po-menu-extended > a{
+    width:100%;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .po-intro-shell{
+    border-radius:28px;
+  }
+
+  .po-intro-scene{
+    height:clamp(290px, 54vw, 360px) !important;
+    min-height:290px !important;
+  }
+
+  .po-intro-final-logo-wrap{
+    padding:18px 20px;
+  }
+
+  .po-intro-slogan-line{
+    width:100% !important;
+    max-width:none !important;
+    padding:0 20px !important;
+  }
+
+  .po-intro-slogan-line .slogan{
+    font-size:clamp(24px, 5vw, 40px) !important;
+    line-height:1.16 !important;
+    letter-spacing:0 !important;
+    margin:0;
+    white-space:normal;
+    word-break:normal;
+    overflow-wrap:anywhere;
+  }
+
+  .po-split-v5 .po-card-private,
+  .po-split-v5-2 .po-card-private{
+    order:1 !important;
+  }
+
+  .po-split-v5 .po-card-public,
+  .po-split-v5-2 .po-card-public{
+    order:2 !important;
+  }
+}
+
+@media (max-width: 640px){
+  .po-menu-extended{
+    gap:10px;
+  }
+
+  .po-menu-extended .po-link-public,
+  .po-menu-extended .po-link-private{
+    min-height:48px;
+    padding:10px 12px;
+  }
+
+  .po-intro-scene{
+    height:320px !important;
+    min-height:320px !important;
+  }
+
+  .po-intro-final-logo-wrap{
+    padding:20px 16px 18px;
+  }
+
+  .po-intro-slogan-line{
+    padding:0 14px !important;
+    top:58% !important;
+  }
+
+  .po-intro-slogan-line .slogan{
+    font-size:clamp(20px, 7vw, 32px) !important;
+    line-height:1.14 !important;
+  }
+}
