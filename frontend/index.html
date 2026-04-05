@@ -22,6 +22,7 @@
         <small>Privé &amp; Public</small>
       </span>
     </a>
+<button class="po-burger" id="burgerBtn">☰</button>
 
     <nav class="po-menu po-menu-extended" aria-label="Navigation principale">
       <a href="private.html" class="po-link-private">Espace privé</a>
@@ -202,5 +203,16 @@
     setInterval(rotate, 4000);
   })();
   </script>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+ const btn=document.getElementById("burgerBtn");
+ const menu=document.querySelector(".po-menu");
+ if(btn && menu){
+   btn.addEventListener("click",()=>menu.classList.toggle("open"));
+ }
+});
+</script>
+
 </body>
 </html>

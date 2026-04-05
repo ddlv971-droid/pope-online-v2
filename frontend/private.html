@@ -18,6 +18,7 @@
         <small>Espace privé</small>
       </span>
     </a>
+<button class="po-burger" id="burgerBtn">☰</button>
     
     <nav class="po-menu po-menu-extended">
       <a href="#cibles">Cibles</a>
@@ -186,5 +187,16 @@
       </form>
     </section>
   </div> -->
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+ const btn=document.getElementById("burgerBtn");
+ const menu=document.querySelector(".po-menu");
+ if(btn && menu){
+   btn.addEventListener("click",()=>menu.classList.toggle("open"));
+ }
+});
+</script>
+
 </body>
 </html>
