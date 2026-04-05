@@ -3628,3 +3628,267 @@ text-decoration:none;
 font-weight:600;
 }
 
+
+
+/* ===== V5.3 debug & harmonisation ===== */
+.po-menu-cta{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  min-height:46px;
+  padding:12px 18px;
+  line-height:1.1;
+  white-space:nowrap;
+}
+
+.po-intro-final-logo-wrap{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:18px;
+  z-index:4;
+  pointer-events:none;
+}
+
+#finalLogo{
+  display:block;
+  width:min(70vw, 720px);
+  max-width:100%;
+  height:auto;
+}
+
+.po-intro-slogan-line{
+  opacity:1 !important;
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  transform:none !important;
+  width:min(92vw, 1200px) !important;
+  max-width:1200px !important;
+  text-align:center;
+  z-index:5;
+}
+
+.po-intro-slogan-line .slogan{
+  opacity:1 !important;
+  margin:0;
+  color:#ffffff;
+  text-shadow:0 10px 30px rgba(2, 16, 34, .34);
+}
+
+.po-home-v5-2 .po-home-card-actions{
+  align-items:stretch;
+}
+
+.po-home-v5-2 .po-home-card-actions .po-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.po-legal-page-shell{
+  position:relative;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.po-legal-watermark{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:0;
+}
+
+.po-legal-watermark img{
+  width:min(88vw, 1000px);
+  opacity:.06;
+  filter:grayscale(100%);
+}
+
+.po-legal-wrap-unified{
+  position:relative;
+  z-index:1;
+  width:min(100%, 1280px);
+  margin:0 auto;
+  padding:38px 22px 64px;
+}
+
+.po-legal-hero-unified{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  padding:34px 32px;
+  background:linear-gradient(135deg, rgba(255,255,255,.96), rgba(244,249,255,.93));
+  border:1px solid rgba(7,22,42,.08);
+  box-shadow:0 18px 48px rgba(7,22,42,.08);
+}
+
+.po-legal-hero-unified h1,
+.po-legal-card-unified h2{
+  color:#0066ff;
+}
+
+.po-legal-hero-unified h1{
+  margin:8px 0 12px;
+  font-size:clamp(32px, 4vw, 54px);
+  line-height:1.05;
+}
+
+.po-legal-hero-unified p{
+  margin:0;
+  max-width:920px;
+  color:#4a6078;
+  line-height:1.65;
+}
+
+.po-legal-grid-unified{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:18px;
+  margin-top:22px;
+}
+
+.po-legal-card-unified{
+  position:relative;
+  overflow:hidden;
+  min-height:100%;
+  padding:26px 24px;
+  border-radius:24px;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(7,22,42,.08);
+  box-shadow:0 14px 36px rgba(7,22,42,.06);
+}
+
+.po-legal-card-unified::before{
+  content:"";
+  position:absolute;
+  inset:auto auto 0 0;
+  width:100%;
+  height:4px;
+  background:linear-gradient(90deg, rgba(0,102,255,.9), rgba(3,160,215,.55));
+}
+
+.po-legal-card-unified h2{
+  margin:0 0 12px;
+  font-size:22px;
+  line-height:1.15;
+}
+
+.po-legal-card-unified p,
+.po-legal-card-unified li{
+  color:#29425b;
+  line-height:1.68;
+}
+
+.po-legal-card-unified ul{
+  margin:0;
+  padding-left:18px;
+}
+
+.po-legal-card-full{
+  grid-column:1 / -1;
+}
+
+@media (max-width: 980px){
+  .po-split-v5,
+  .po-split-v5-2{
+    grid-template-columns:1fr 1fr !important;
+    gap:12px;
+    align-items:stretch;
+  }
+
+  .po-split-v5 .po-card-public,
+  .po-split-v5-2 .po-card-public{
+    order:1;
+  }
+
+  .po-split-v5 .po-card-private,
+  .po-split-v5-2 .po-card-private{
+    order:2;
+  }
+
+  .po-card-v5-rich{
+    min-height:auto;
+  }
+
+  .po-card-v5{
+    padding:20px 16px;
+  }
+
+  .po-card-v5-topline{
+    font-size:20px;
+  }
+
+  .po-card-intro,
+  .po-card-list li{
+    font-size:14px;
+  }
+
+  .po-menu-cta{
+    width:100%;
+  }
+
+  .po-legal-grid-unified{
+    grid-template-columns:1fr;
+  }
+
+  .po-legal-card-full{
+    grid-column:auto;
+  }
+}
+
+@media (max-width: 640px){
+  #finalLogo{
+    width:min(82vw, 440px);
+  }
+
+  .po-intro-slogan-line .slogan{
+    font-size:clamp(24px, 7vw, 34px) !important;
+    line-height:1.18;
+  }
+
+  .po-split-v5,
+  .po-split-v5-2{
+    grid-template-columns:1fr 1fr !important;
+    gap:10px;
+  }
+
+  .po-home-v5-2 .po-home-card-actions .po-btn{
+    width:100%;
+    min-height:44px;
+    padding-inline:12px;
+  }
+
+  .po-card-v5{
+    padding:18px 14px;
+  }
+
+  .po-card-v5-topline{
+    font-size:18px;
+  }
+
+  .po-card-intro,
+  .po-card-list li{
+    font-size:13px;
+  }
+
+  .po-legal-wrap-unified{
+    padding:20px 14px 48px;
+  }
+
+  .po-legal-hero-unified,
+  .po-legal-card-unified{
+    border-radius:22px;
+    padding:22px 18px;
+  }
+}
