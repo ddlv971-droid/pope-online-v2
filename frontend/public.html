@@ -18,9 +18,11 @@
         <small>Espace public</small>
       </span>
     </a>
-<button class="po-burger" id="burgerBtn">☰</button>
+    <button class="po-burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="poMobileMenu">
+      <span></span><span></span><span></span>
+    </button>
     
-    <nav class="po-menu po-menu-extended">
+    <nav class="po-menu po-menu-extended" id="poMobileMenu">
       <a href="#profils">Profils</a>
       <a href="#usages">Usages</a>
       <a href="#parcours">Parcours</a>
@@ -53,8 +55,30 @@
         </ul>
       </aside>
     </section>
+  <!-- main class="po-page-wrap po-page-wrap-v24 po-page-wrap-v26">
+    <section class="po-page-hero po-page-hero-v24 po-page-hero-v26 po-page-hero-flat">
+      <div class="po-page-copy po-page-copy-v25 po-page-copy-v26">
+        <div class="po-overline">Positionnement institutionnel</div>
+        <h1>Un&nbsp;accompagnement&nbsp;sur&nbsp;mesure pour vos livrables publics stratégiques.</h1>
+        <p>POPE Online aide les collectivités, établissements et organisations à produire vite, mieux cadrer leurs arbitrages et sécuriser leurs livrables dans un cadre responsable, traçable et premium.</p>
+        <div class="po-page-actions">
+          <a class="po-btn po-btn-solid po-btn-solid-public" href="signup.html?next=dashboard.html">Accéder à l’espace public</a>
+          <a class="po-btn po-btn-ghost po-btn-gift" href="signup.html?next=public.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true"/>Démarrer l’offre gratuite</a>
+        </div>
+      </div>
+      <aside class="po-side-card po-side-card-accent po-side-card-public po-side-card-v25 po-side-card-v26 po-side-card-flat">
+        <span class="po-card-label">Qualification du besoin</span>
+        <h2>Un espace premium sur mesure, sans friction tarifaire affichée.</h2>
+        <p>Après l’envoi de votre besoin : analyse, prise de contact, proposition adaptée, cadrage puis accompagnement.</p>
+        <ul>
+          <li>Prise de contact humaine</li>
+          <li>Accompagnement personnalisé</li>
+          <li>Sécurisation institutionnelle</li>
+        </ul>
+      </aside>
+    </section> -->
 
-<section id="profils" class="po-section no-rect-section">
+    <section id="profils" class="po-section no-rect-section">
       <div class="po-section-head no-rect-section">
         <div class="po-overline">Profils utilisateurs</div>
         <h2>Pour qui ?</h2>
@@ -171,42 +195,46 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const btn = document.getElementById('burgerBtn');
-  const menu = document.querySelector('.po-menu');
-  if (!btn || !menu) return;
+  const burger = document.querySelector('.po-burger');
+  const menu = document.getElementById('poMobileMenu');
+  if (!burger || !menu) return;
 
-  btn.setAttribute('aria-expanded', 'false');
-  btn.setAttribute('aria-label', 'Ouvrir le menu');
-
-  function closeMenu() {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-  }
-
-  btn.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
+  burger.addEventListener('click', function () {
     const isOpen = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    burger.classList.toggle('is-open', isOpen);
+    burger.setAttribute('aria-expanded', String(isOpen));
+    document.body.classList.toggle('po-menu-open', isOpen);
   });
 
-  menu.querySelectorAll('a').forEach(function (link) {
-    link.addEventListener('click', function () {
-      if (window.innerWidth <= 768) closeMenu();
+  menu.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', function(){
+      menu.classList.remove('open');
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('po-menu-open');
     });
   });
 
-  document.addEventListener('click', function (e) {
-    if (!menu.contains(e.target) && !btn.contains(e.target)) closeMenu();
+  document.addEventListener('click', function (event) {
+    if (window.innerWidth > 980) return;
+    if (!menu.classList.contains('open')) return;
+    if (menu.contains(event.target) || burger.contains(event.target)) return;
+    menu.classList.remove('open');
+    burger.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('po-menu-open');
   });
 
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) {
+  window.addEventListener('resize', function(){
+    if (window.innerWidth > 980) {
       menu.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('po-menu-open');
     }
   });
 });
 </script>
+
 </body>
 </html>
