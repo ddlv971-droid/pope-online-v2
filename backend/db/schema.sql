@@ -1,3 +1,4 @@
+
 create extension if not exists pgcrypto;
 
 create table if not exists users (
@@ -30,19 +31,36 @@ create table if not exists devices (
   first_seen_at timestamptz not null default now(),
   last_seen_at timestamptz not null default now()
 );
--- prevent duplicates for the same user/device
+
 create unique index if not exists uq_devices_user_fp on devices(user_id, fp_hash);
-
-
 create index if not exists idx_devices_fp on devices(fp_hash);
 create index if not exists idx_devices_ip on devices(ip_hash);
 
 create table if not exists wallets (
   user_id uuid primary key references users(id) on delete cascade,
+  plan_code text not null default 'FREE',
+  status text not null default 'pending_verification',
   tickets_ai integer not null default 0,
   tickets_expert integer not null default 0,
+  public_dossiers_used integer not null default 0,
+  private_dossiers_used integer not null default 0,
+  public_dossiers_limit integer not null default 1,
+  private_dossiers_limit integer not null default 1,
+  private_users_limit integer not null default 1,
+  trial_started_at timestamptz,
+  trial_expires_at timestamptz,
   updated_at timestamptz not null default now()
 );
+
+alter table wallets add column if not exists plan_code text not null default 'FREE';
+alter table wallets add column if not exists status text not null default 'pending_verification';
+alter table wallets add column if not exists public_dossiers_used integer not null default 0;
+alter table wallets add column if not exists private_dossiers_used integer not null default 0;
+alter table wallets add column if not exists public_dossiers_limit integer not null default 1;
+alter table wallets add column if not exists private_dossiers_limit integer not null default 1;
+alter table wallets add column if not exists private_users_limit integer not null default 1;
+alter table wallets add column if not exists trial_started_at timestamptz;
+alter table wallets add column if not exists trial_expires_at timestamptz;
 
 create table if not exists usage_logs (
   id uuid primary key default gen_random_uuid(),

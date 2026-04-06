@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -13,14 +14,22 @@ import usageRoutes from './routes/usage.js';
 dotenv.config();
 
 const app = express();
-app.set("trust proxy", 1);
+app.set('trust proxy', 1);
+
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
+  next();
+});
+
 app.use(express.json({ limit: '250kb' }));
 
-// CORS (strict)
 const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // server-to-server / curl
+    if (!origin) return cb(null, true);
     if (allowedOrigins.length === 0) return cb(null, true);
     if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error('CORS blocked'), false);
@@ -30,7 +39,6 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-// Global rate limit (light)
 app.use(rateLimit({
   windowMs: 60 * 1000,
   max: 120,
@@ -39,7 +47,7 @@ app.use(rateLimit({
 }));
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, v: 2 });
+  res.json({ ok: true, v: 6 });
 });
 
 app.use('/auth', authRoutes);
@@ -59,5 +67,5 @@ app.use((err, _req, res, _next) => {
 
 const port = process.env.PORT || 8787;
 app.listen(port, () => {
-  console.log(`POPE Online V2 API listening on :${port}`);
+  console.log(`POPE Online V6 API listening on :${port}`);
 });

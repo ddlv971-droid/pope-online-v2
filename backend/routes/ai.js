@@ -1,3 +1,4 @@
+
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { requireAuth } from '../middleware/auth.js';
@@ -31,16 +32,47 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
     const result = await withClient(async (client) => {
       await client.query('begin');
 
-      const w = await client.query('select tickets_ai from wallets where user_id=$1 for update', [userId]);
-      const tickets = Number(w.rows?.[0]?.tickets_ai ?? 0);
+      const wRes = await client.query('select * from wallets where user_id=$1 for update', [userId]);
+      const wallet = wRes.rows[0];
+      if (!wallet) {
+        await client.query('rollback');
+        return { ok: false, status: 403, body: { error: 'wallet_missing' } };
+      }
+
+      if (wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now()) {
+        await client.query(
+          `update wallets
+              set status='trial_expired',
+                  tickets_ai=0,
+                  updated_at=now()
+            where user_id=$1`,
+          [userId]
+        );
+        await client.query('commit');
+        return {
+          ok: false,
+          status: 402,
+          body: {
+            error: 'trial_expired',
+            message: "Votre période gratuite est terminée\nContactez-nous pour définir l'offre adaptée à votre besoin"
+          }
+        };
+      }
+
+      const tickets = Number(wallet.tickets_ai ?? 0);
       if (tickets <= 0) {
         await client.query('rollback');
-        return { ok: false, status: 402, body: { error: 'no_tickets' } };
+        return {
+          ok: false,
+          status: 402,
+          body: {
+            error: 'no_tickets',
+            message: "Votre période gratuite est terminée\nContactez-nous pour définir l'offre adaptée à votre besoin"
+          }
+        };
       }
 
       await client.query('update wallets set tickets_ai = tickets_ai - 1, updated_at=now() where user_id=$1', [userId]);
-
-      // do the expensive call outside the transaction? We keep minimal: commit, call, then log.
       await client.query('commit');
 
       const system = buildSystemPrompt();
@@ -48,16 +80,16 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
       const text = await callMistral({ system, user });
 
       await client.query(
-        'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
+        `insert into usage_logs(user_id, kind, meta)
+         values($1,$2,$3::jsonb)`,
         [userId, 'ai_generate', JSON.stringify({ usecase: payload.usecase, mode: payload.mode, len: combined.length })]
       );
 
-      const w2 = await client.query('select tickets_ai, tickets_expert from wallets where user_id=$1', [userId]);
+      const w2 = await client.query('select * from wallets where user_id=$1', [userId]);
       return { ok: true, text, wallet: w2.rows[0] };
     });
 
     if (!result.ok) return res.status(result.status).json(result.body);
-
     return res.json({ text: result.text, wallet: result.wallet });
   } catch (e) {
     console.error(e);

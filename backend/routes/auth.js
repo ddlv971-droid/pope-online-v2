@@ -1,6 +1,8 @@
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
@@ -8,12 +10,40 @@ import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours } from '../ser
 
 const router = express.Router();
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 12,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_attempts' }
+});
+
 function signJwt(user) {
   return jwt.sign(
     { sub: user.id, email: user.email },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
+}
+
+function trialExpiryDate(days = 15) {
+  return new Date(Date.now() + days * 24 * 3600 * 1000);
+}
+
+function walletPayload(row = {}) {
+  return {
+    plan_code: row.plan_code || 'FREE',
+    status: row.status || 'pending_verification',
+    tickets_ai: Number(row.tickets_ai || 0),
+    tickets_expert: Number(row.tickets_expert || 0),
+    public_dossiers_used: Number(row.public_dossiers_used || 0),
+    private_dossiers_used: Number(row.private_dossiers_used || 0),
+    public_dossiers_limit: Number(row.public_dossiers_limit || 1),
+    private_dossiers_limit: Number(row.private_dossiers_limit || 1),
+    private_users_limit: Number(row.private_users_limit || 1),
+    trial_started_at: row.trial_started_at || null,
+    trial_expires_at: row.trial_expires_at || null
+  };
 }
 
 router.post('/signup', async (req, res) => {
@@ -42,8 +72,6 @@ router.post('/signup', async (req, res) => {
       }
 
       const password_hash = await bcrypt.hash(password, 12);
-
-      // suspicion check BEFORE creating (using already existing devices)
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
       const userIns = await client.query(
@@ -54,7 +82,14 @@ router.post('/signup', async (req, res) => {
       );
       const user = userIns.rows[0];
 
-      await client.query('insert into wallets(user_id, tickets_ai, tickets_expert) values($1,0,0)', [user.id]);
+      await client.query(
+        `insert into wallets(
+          user_id, plan_code, status, tickets_ai, tickets_expert,
+          public_dossiers_used, private_dossiers_used,
+          public_dossiers_limit, private_dossiers_limit, private_users_limit
+        ) values($1,'FREE','pending_verification',0,0,0,0,1,1,1)`,
+        [user.id]
+      );
 
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
@@ -62,7 +97,6 @@ router.post('/signup', async (req, res) => {
         [user.id, fp_hash, ip_hash, user_agent_hash]
       );
 
-      // create verification token
       const token = randomToken(24);
       const token_hash = sha256Hex(token);
       const expires = nowPlusHours(24);
@@ -77,7 +111,6 @@ router.post('/signup', async (req, res) => {
       const base = (process.env.FRONTEND_BASE_URL || '').replace(/\/$/, '');
       const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
 
-      // Send verification email
       await sendMail({
         to: email,
         subject: 'POPE Online — Vérification de votre compte',
@@ -85,7 +118,7 @@ router.post('/signup', async (req, res) => {
         html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
       });
 
-      return res.json({ ok: true });
+      return res.json({ ok: true, message: 'verification_email_sent' });
     });
   } catch (e) {
     console.error(e);
@@ -93,7 +126,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim();
@@ -109,7 +142,7 @@ router.post('/login', async (req, res) => {
   try {
     await withClient(async (client) => {
       const u = await client.query(
-        `select id, email, password_hash, is_email_verified, is_suspicious
+        `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization
            from users
           where email=$1`,
         [email]
@@ -120,32 +153,28 @@ router.post('/login', async (req, res) => {
       const ok = await bcrypt.compare(password, user.password_hash);
       if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
-      // upsert device
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
          values($1,$2,$3,$4)
          on conflict do nothing`,
         [user.id, fp_hash, ip_hash, user_agent_hash]
       );
-
-      await client.query(
-        `update devices set last_seen_at=now() where user_id=$1 and fp_hash=$2`,
-        [user.id, fp_hash]
-      );
-
+      await client.query(`update devices set last_seen_at=now() where user_id=$1 and fp_hash=$2`, [user.id, fp_hash]);
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
 
-      const w = await client.query('select tickets_ai, tickets_expert from wallets where user_id=$1', [user.id]);
-
+      const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
+
       return res.json({
         token,
         user: {
           email: user.email,
+          fullName: user.full_name,
+          organization: user.organization,
           isEmailVerified: user.is_email_verified,
           isSuspicious: user.is_suspicious
         },
-        wallet: w.rows[0] || { tickets_ai: 0, tickets_expert: 0 }
+        wallet: walletPayload(w.rows[0])
       });
     });
   } catch (e) {
@@ -154,7 +183,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/verify', async (req, res) => {
+async function handleVerify(req, res) {
   const token = String(req.body?.token || '').trim();
   const fp = String(req.body?.fp || '').trim();
   if (!token) return res.status(400).json({ error: 'missing_token' });
@@ -162,7 +191,6 @@ router.post('/verify', async (req, res) => {
 
   const token_hash = sha256Hex(token);
   const fp_hash = fpHash(fp);
-
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
@@ -171,7 +199,7 @@ router.post('/verify', async (req, res) => {
       await client.query('begin');
 
       const v = await client.query(
-        `select ev.id, ev.user_id, ev.expires_at, ev.used_at, u.is_email_verified, u.is_suspicious
+        `select ev.id, ev.user_id, ev.expires_at, ev.used_at, u.is_suspicious
            from email_verifications ev
            join users u on u.id = ev.user_id
           where ev.token_hash=$1
@@ -195,11 +223,8 @@ router.post('/verify', async (req, res) => {
         return res.status(400).json({ error: 'token_expired' });
       }
 
-      // Mark verification used
       await client.query('update email_verifications set used_at=now() where id=$1', [row.id]);
       await client.query('update users set is_email_verified=true where id=$1', [row.user_id]);
-
-      // Ensure device exists
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
          values($1,$2,$3,$4)
@@ -207,56 +232,106 @@ router.post('/verify', async (req, res) => {
         [row.user_id, fp_hash, ip_hash, user_agent_hash]
       );
 
-      // Anti-abuse: award 3 free AI tickets only if not suspicious AND fingerprint hasn't claimed before
       let awardedFreeTickets = 0;
       let suspicious = row.is_suspicious;
 
       if (!suspicious) {
         const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
         if (!fpAlready) {
-          awardedFreeTickets = 999;
+          awardedFreeTickets = 10;
+          const startedAt = new Date();
+          const expiresAt = trialExpiryDate(15);
+
           await client.query(
-            `update wallets set tickets_ai = tickets_ai + 999, updated_at=now() where user_id=$1`,
-            [row.user_id]
+            `update wallets
+                set plan_code='FREE',
+                    status='trial_active',
+                    tickets_ai = $2,
+                    tickets_expert = 0,
+                    public_dossiers_used = 0,
+                    private_dossiers_used = 0,
+                    public_dossiers_limit = 1,
+                    private_dossiers_limit = 1,
+                    private_users_limit = 1,
+                    trial_started_at = $3,
+                    trial_expires_at = $4,
+                    updated_at = now()
+              where user_id=$1`,
+            [row.user_id, awardedFreeTickets, startedAt, expiresAt]
           );
+
           await client.query(
-            `insert into usage_logs(user_id, kind, meta) values($1,'free_trial_awarded',$2::jsonb)`,
-            [row.user_id, JSON.stringify({ tickets: 999 })]
+            `insert into usage_logs(user_id, kind, meta)
+             values($1,'free_trial_awarded',$2::jsonb)`,
+            [row.user_id, JSON.stringify({ plan: 'FREE', duration_days: 15, tickets_ai: 10, public_dossiers_limit: 1, private_dossiers_limit: 1, private_users_limit: 1 })]
+          );
+        } else {
+          await client.query(
+            `update wallets
+                set status='verified_no_trial',
+                    updated_at=now()
+              where user_id=$1`,
+            [row.user_id]
           );
         }
       }
 
-      // If fingerprint looks suspicious now, mark suspicious (post-check)
       const computed = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
       if (computed && !row.is_suspicious) {
         suspicious = true;
         await client.query('update users set is_suspicious=true where id=$1', [row.user_id]);
       }
 
+      const walletRes = await client.query('select * from wallets where user_id=$1', [row.user_id]);
+      const tokenRes = await client.query('select id, email, full_name, organization, is_email_verified, is_suspicious from users where id=$1', [row.user_id]);
+
       await client.query('commit');
-      return res.json({ ok: true, awardedFreeTickets, suspicious });
+
+      const user = tokenRes.rows[0];
+      return res.json({
+        ok: true,
+        token: signJwt(user),
+        awardedFreeTickets,
+        suspicious,
+        user: {
+          email: user.email,
+          fullName: user.full_name,
+          organization: user.organization,
+          isEmailVerified: user.is_email_verified,
+          isSuspicious: user.is_suspicious
+        },
+        wallet: walletPayload(walletRes.rows[0])
+      });
     });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });
   }
-});
+}
 
-// JWT required: return current user + wallet
-router.get("/me", async (req, res) => {
-  const h = req.headers.authorization || "";
-  const token = h.startsWith("Bearer ") ? h.slice(7) : null;
-  if (!token) return res.status(401).json({ error: "unauthorized" });
+router.post('/verify', handleVerify);
+router.post('/verify-email', handleVerify);
+
+router.get('/me', async (req, res) => {
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'unauthorized' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     await withClient(async (client) => {
-      const u = await client.query("select id, email, full_name, organization, is_email_verified, is_suspicious, created_at from users where id=$1", [decoded.sub]);
-      if (!u.rowCount) return res.status(401).json({ error: "unauthorized" });
-      const w = await client.query("select tickets_ai, tickets_expert from wallets where user_id=$1", [decoded.sub]);
-      return res.json({ user: u.rows[0], wallet: w.rows[0] || { tickets_ai:0, tickets_expert:0 } });
+      const u = await client.query(
+        `select id, email, full_name, organization, is_email_verified, is_suspicious, created_at
+           from users
+          where id=$1`,
+        [decoded.sub]
+      );
+      if (!u.rowCount) return res.status(401).json({ error: 'unauthorized' });
+
+      const w = await client.query('select * from wallets where user_id=$1', [decoded.sub]);
+      return res.json({ user: u.rows[0], wallet: walletPayload(w.rows[0]) });
     });
-  } catch (e) {
-    return res.status(401).json({ error: "unauthorized" });
+  } catch {
+    return res.status(401).json({ error: 'unauthorized' });
   }
 });
 

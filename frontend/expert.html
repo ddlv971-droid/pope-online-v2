@@ -19,6 +19,7 @@
 </div>
 </a>
 <div class="row gap wrap">
+<a class="btn ghost" href="about.html">Qui sommes-nous</a>
 <span class="badge" data-tickets="">Accès sécurisé</span>
 <a class="btn ghost" href="app.html">Génération guidée</a>
 <a class="btn ghost" href="pricing.html">Parcours</a>
@@ -84,8 +85,8 @@ el('btnSend').addEventListener('click', async () => {
     showToast('Demande transmise', 'ok');
   } catch (e) {
     console.error(e);
-    if (e.status === 402 && e.data?.error === 'no_tickets') {
-      el('msg').textContent = '⚠️ Votre accès actuel ne permet pas de soumettre une nouvelle demande pour le moment.';
+    if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
+      el('msg').textContent = '⚠️ Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.';
       showToast('Accès temporairement limité', 'warn');
       return;
     }

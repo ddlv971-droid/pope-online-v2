@@ -26,12 +26,12 @@
 <div class="fineprint" id="out">Vérification en cours…</div>
 <div class="row gap wrap" style="margin-top:14px">
 <a class="btn" href="login.html">Se connecter</a>
-<a class="btn ghost" href="login.html?next=app.html">Aller à la génération guidée</a>
+<a class="btn ghost" href="public.html">Retour à l’espace public</a>
 </div>
 </section>
 </main>
 <script type="module">
-import { apiFetch } from './api.js';
+import { apiFetch, setToken } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
@@ -46,11 +46,11 @@ async function run(){
   try {
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
-    const n = data.awardedFreeTickets || 0;
+    if (data?.token) setToken(data.token);
+    const next = localStorage.getItem('pope_post_signup_next') || 'dashboard.html';
     showToast('Email vérifié ✓', 'ok');
-    out.textContent = n > 0
-      ? '✅ Email vérifié. Votre offre gratuite de démarrage est maintenant activée.'
-      : '✅ Email vérifié. Votre compte est activé.';
+    out.textContent = '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers votre espace en cours…';
+    setTimeout(() => { window.location.href = next; }, 900);
   } catch (e) {
     console.error(e);
     showToast('Vérification impossible', 'err');

@@ -1,1 +1,3 @@
 /*    /index.html   200
+
+/about    /about.html   200

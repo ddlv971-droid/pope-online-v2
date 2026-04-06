@@ -19,6 +19,7 @@
 </div>
 </a>
 <div class="row gap wrap">
+<a class="btn ghost" href="about.html">Qui sommes-nous</a>
 <span class="badge" data-tickets="">Accès sécurisé</span>
 <a class="btn ghost" href="expert.html">Relecture experte</a>
 <button class="btn" data-logout="">Déconnexion</button>
@@ -136,8 +137,8 @@ async function callAI(){
   } catch (e) {
     console.error(e);
     status('Erreur');
-    if (e.status === 402 && e.data?.error === 'no_tickets') {
-      setOutput('🚫 Votre offre gratuite ou votre accès actuel ne permet plus de générer de nouveaux livrables pour le moment.');
+    if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
+      setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
       showToast('Accès temporairement limité', 'warn');
       return;
     }

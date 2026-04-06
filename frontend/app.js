@@ -1,8 +1,10 @@
+import { API_BASE } from './api.js';
+
 export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
   const token = localStorage.getItem('pope_token');
   const headers = { 'Content-Type':'application/json' };
   if (auth && token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(path.startsWith('http') ? path : `/api${path}`, {
+  const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined
@@ -55,9 +57,18 @@ export function wireLogout(){
 
 export function setTicketsBadge(wallet) {
   const t = document.querySelector('[data-tickets]');
-  if (!t) return;
-  const ready = (wallet?.tickets_ai ?? 0) + (wallet?.tickets_expert ?? 0) > 0;
-  t.textContent = ready ? 'Accès activé' : 'Espace sécurisé';
+  if (!t || !wallet) return;
+  const expiry = wallet?.trial_expires_at ? new Date(wallet.trial_expires_at) : null;
+  const expired = expiry && expiry.getTime() < Date.now();
+  if (expired) {
+    t.textContent = 'Offre expirée';
+    return;
+  }
+  if ((wallet?.tickets_ai ?? 0) > 0) {
+    t.textContent = `${wallet.tickets_ai} ticket${wallet.tickets_ai > 1 ? 's' : ''} IA restant${wallet.tickets_ai > 1 ? 's' : ''}`;
+    return;
+  }
+  t.textContent = 'Accès sécurisé';
 }
 
 export function showToast(text, tone='ok'){
