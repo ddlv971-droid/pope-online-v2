@@ -35,8 +35,20 @@ import { apiFetch, setToken } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
+const actions = document.querySelector('.row.gap.wrap');
 const u = new URL(window.location.href);
 const token = u.searchParams.get('token') || '';
+
+function buildTrialRoute(accountSpace, wallet){
+  const page = accountSpace === 'private' ? 'trial-start-private.html' : 'trial-start-public.html';
+  const params = new URLSearchParams();
+  if (wallet?.trialExpiresAt) params.set('trialEnds', wallet.trialExpiresAt);
+  if (typeof wallet?.ticketsAi !== 'undefined') params.set('ticketsAi', String(wallet.ticketsAi));
+  if (typeof wallet?.publicDossiersLimit !== 'undefined') params.set('publicDossiersLimit', String(wallet.publicDossiersLimit));
+  if (typeof wallet?.privateDossiersLimit !== 'undefined') params.set('privateDossiersLimit', String(wallet.privateDossiersLimit));
+  if (typeof wallet?.privateUsersLimit !== 'undefined') params.set('privateUsersLimit', String(wallet.privateUsersLimit));
+  return `${page}${params.toString() ? `?${params.toString()}` : ''}`;
+}
 
 async function run(){
   if (!token) {
@@ -47,12 +59,25 @@ async function run(){
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
     if (data?.token) setToken(data.token);
-    const accountSpace = data?.user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
-    const fallbackNext = accountSpace === 'private' ? 'parcours.html' : 'login.html';
-    const next = localStorage.getItem('pope_post_signup_next') || fallbackNext;
+    const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
+    const next = buildTrialRoute(accountSpace, data?.wallet || {});
+    try {
+      localStorage.setItem('pope_account_space', accountSpace);
+      localStorage.removeItem('pope_post_signup_next');
+      if (accountSpace === 'public') {
+        localStorage.setItem('pope_public_login_next', 'dashboard.html');
+      }
+    } catch {}
     showToast('Email vérifié ✓', 'ok');
-    out.textContent = accountSpace === 'private' ? '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers votre parcours privé en cours…' : '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers la connexion publique en cours…';
-    setTimeout(() => { window.location.href = next; }, 900);
+    out.textContent = accountSpace === 'private'
+      ? '✅ Email vérifié. Votre offre gratuite privée de 15 jours démarre maintenant. Redirection en cours…'
+      : '✅ Email vérifié. Votre offre gratuite publique de 15 jours démarre maintenant. Redirection en cours…';
+    if (actions) {
+      actions.innerHTML = accountSpace === 'private'
+        ? '<a class="btn" href="trial-start-private.html">Voir mon offre privée</a><a class="btn ghost" href="private.html">Retour à l’espace privé</a>'
+        : '<a class="btn" href="trial-start-public.html">Voir mon offre publique</a><a class="btn ghost" href="public.html">Retour à l’espace public</a>';
+    }
+    setTimeout(() => { window.location.href = next; }, 1000);
   } catch (e) {
     console.error(e);
     showToast('Vérification impossible', 'err');

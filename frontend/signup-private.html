@@ -68,6 +68,11 @@ const redirectAfterVerify = 'parcours.html';
 try {
   localStorage.setItem('pope_post_signup_next', redirectAfterVerify);
   localStorage.setItem('pope_account_space', accountSpace);
+  if (accountSpace === 'public') {
+    localStorage.setItem('pope_public_login_next', 'dashboard.html');
+  } else {
+    localStorage.removeItem('pope_public_login_next');
+  }
 } catch {}
 
 el('togglePassword').addEventListener('click', () => {

@@ -56,7 +56,9 @@ function getNext(user) {
   const explicitNext = u.searchParams.get('next');
   if (explicitNext) return explicitNext;
   if (user?.accountSpace === 'private') return 'parcours.html';
-  return localStorage.getItem('pope_post_signup_next') || 'dashboard.html';
+  const stored = localStorage.getItem('pope_public_login_next');
+  if (stored && stored !== 'login.html') return stored;
+  return 'dashboard.html';
 }
 
 el('togglePassword').addEventListener('click', () => {
@@ -78,6 +80,11 @@ el('btn').addEventListener('click', async () => {
       el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour activer votre offre gratuite.';
       return;
     }
+    try {
+      localStorage.removeItem('pope_post_signup_next');
+      localStorage.removeItem('pope_public_login_next');
+      localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public');
+    } catch {}
     setTimeout(() => window.location.href = getNext(data.user), 350);
   } catch (e) {
     console.error(e);
