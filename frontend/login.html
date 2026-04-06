@@ -51,9 +51,12 @@ import { apiFetch, setToken } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const el = (id) => document.getElementById(id);
-function getNext() {
+function getNext(user) {
   const u = new URL(window.location.href);
-  return u.searchParams.get('next') || localStorage.getItem('pope_post_signup_next') || 'dashboard.html';
+  const explicitNext = u.searchParams.get('next');
+  if (explicitNext) return explicitNext;
+  if (user?.accountSpace === 'private') return 'parcours.html';
+  return localStorage.getItem('pope_post_signup_next') || 'dashboard.html';
 }
 
 el('togglePassword').addEventListener('click', () => {
@@ -75,7 +78,7 @@ el('btn').addEventListener('click', async () => {
       el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour activer votre offre gratuite.';
       return;
     }
-    setTimeout(() => window.location.href = getNext(), 350);
+    setTimeout(() => window.location.href = getNext(data.user), 350);
   } catch (e) {
     console.error(e);
     showToast('Connexion impossible', 'err');

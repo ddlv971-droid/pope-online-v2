@@ -47,9 +47,11 @@ async function run(){
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
     if (data?.token) setToken(data.token);
-    const next = localStorage.getItem('pope_post_signup_next') || 'dashboard.html';
+    const accountSpace = data?.user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
+    const fallbackNext = accountSpace === 'private' ? 'parcours.html' : 'login.html';
+    const next = localStorage.getItem('pope_post_signup_next') || fallbackNext;
     showToast('Email vérifié ✓', 'ok');
-    out.textContent = '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers votre espace en cours…';
+    out.textContent = accountSpace === 'private' ? '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers votre parcours privé en cours…' : '✅ Email vérifié. Votre offre gratuite de 15 jours est activée. Redirection vers la connexion publique en cours…';
     setTimeout(() => { window.location.href = next; }, 900);
   } catch (e) {
     console.error(e);

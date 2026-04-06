@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Créer un compte</title>
+<title>POPE Online — Choisir votre espace</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
@@ -15,93 +15,42 @@
       <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div>
         <div class="brand-title">POPE Online</div>
-        <div class="brand-sub">Créer un compte</div>
+        <div class="brand-sub">Choisissez votre espace</div>
       </div>
     </a>
-    <div class="row gap wrap">      
-      <a class="btn ghost" href="public.html">Espace public</a>
-      <a class="btn ghost" href="private.html">Espace privé</a>
-    </div>
   </div>
 </header>
 
 <main class="auth-wrap">
-  <section class="auth-card" style="max-width:760px;margin:0 auto">
+  <section class="auth-card" style="max-width:980px;margin:0 auto">
     <h2>Créer un compte</h2>
-    <p class="auth-note-premium"><strong>Merci pour votre inscription sur POPE Online.</strong><br/>Commencez une expérience qui décuplera votre efficacité métier.</p>
-    <p class="muted">La création de compte est unique pour tout POPE Online. Après vérification de votre email, votre offre gratuite de 15 jours est activée et la redirection est automatiquement préparée selon votre parcours.</p>
-
-    <label class="label">Nom / Prénom</label>
-    <input class="input" id="fullName" placeholder="XXXX yyyy"/>
-
-    <label class="label">Organisation</label>
-    <input class="input" id="organization" placeholder="Collectivité, établissement, entreprise…"/>
-
-    <label class="label">Email</label>
-    <input class="input" id="email" placeholder="xxxx@..."/>
-
-    <label class="label">Mot de passe (8 caractères min.)</label>
-    <div class="password-wrap">
-      <input class="input" id="password" placeholder="••••••••" type="password"/>
-      <button class="password-toggle" id="togglePassword" type="button" aria-label="Afficher le mot de passe"></button>
+    <p class="auth-note-premium"><strong>Avant de créer votre compte, choisissez l’univers concerné.</strong><br/>Chaque parcours de création est désormais dissocié pour mieux orienter votre redirection après validation.</p>
+    <div class="po-signup-choice-grid">
+      <article class="po-signup-choice-card">
+        <span class="badge">Espace public</span>
+        <h3>Collectivités, établissements et organisations</h3>
+        <p class="muted">Après validation de votre compte, vous serez automatiquement redirigé vers la page de connexion de l’espace public.</p>
+        <ul class="po-signup-choice-list">
+          <li>Connexion dédiée à l’IA publique</li>
+          <li>Offre gratuite encadrée</li>
+          <li>Parcours orienté usages publics</li>
+        </ul>
+        <a class="btn" href="signup-public.html">Créer un compte public</a>
+      </article>
+      <article class="po-signup-choice-card po-signup-choice-card-private">
+        <span class="badge">Espace privé</span>
+        <h3>Artisans, indépendants, TPE, commerçants et petites structures</h3>
+        <p class="muted">Après validation de votre compte, vous serez automatiquement redirigé vers la page parcours de l’espace privé.</p>
+        <ul class="po-signup-choice-list">
+          <li>Qualification progressive</li>
+          <li>Accès immédiat au parcours privé</li>
+          <li>Orientation rapide vers le bon accompagnement</li>
+        </ul>
+        <a class="btn" href="signup-private.html">Créer un compte privé</a>
+      </article>
     </div>
-
-    <label class="row gap" style="align-items:flex-start;margin-top:10px">
-      <input id="cgu" style="margin-top:4px" type="checkbox"/>
-      <span class="muted"> <span class="consent-text">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles</span>.</span>
-    </label>
-
-    <div class="row gap wrap" style="margin-top:16px">
-      <button class="btn" id="btn">Créer mon compte</button>
-    </div>
-
-    <div class="fineprint" id="msg"></div>
-    <div class="fineprint" style="margin-top:12px">Votre compte pourra être supprimé à tout moment depuis votre espace ou par demande dédiée.</div>
   </section>
 </main>
-
-<script type="module">
-import { apiFetch } from './api.js';
-import { showToast, getFingerprint } from './app.js';
-
-const el = (id) => document.getElementById(id);
-const url = new URL(window.location.href);
-const next = url.searchParams.get('next') || 'dashboard.html';
-
-try { localStorage.setItem('pope_post_signup_next', next); } catch {}
-
-el('togglePassword').addEventListener('click', () => {
-  const input = el('password');
-  const showing = input.type === 'text';
-  input.type = showing ? 'password' : 'text';
-  el('togglePassword').setAttribute('aria-label', showing ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
-});
-
-el('btn').addEventListener('click', async () => {
-  const email = el('email').value.trim();
-  const password = el('password').value;
-  const fullName = el('fullName').value.trim();
-  const organization = el('organization').value.trim();
-  const cgu = el('cgu').checked;
-
-  if (!cgu) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
-
-  try {
-    const fp = await getFingerprint();
-    await apiFetch('/auth/signup', {
-      method: 'POST',
-      auth: false,
-      body: { email, password, fullName, organization, fp }
-    });
-    showToast('Compte créé. Vérifiez votre email.', 'ok');
-    el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé. Vérifiez votre boîte mail pour activer votre offre gratuite et votre redirection.';
-  } catch (e) {
-    console.error(e);
-    showToast('Erreur: ' + (e?.data?.error || e.message), 'err');
-    el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
-  }
-});
-</script>
 <script src="popy.js"></script>
 </body>
 </html>

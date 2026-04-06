@@ -36,10 +36,10 @@
   function replyFor(userText){
     const text=(userText||"").toLowerCase().trim();
     if(text.includes("privé") || text.includes("prive") || text.includes("artisan") || text.includes("tpe") || text.includes("commer")) {
-      return {answer:`Je peux vous orienter vers l’univers <strong>privé</strong>, prévu pour les artisans, indépendants, TPE, commerçants et petites structures.`, actions:[{label:"Aller vers le privé", href:"private.html"},{label:"🎁 Offre gratuite", href:"signup.html?next=private.html"}]};
+      return {answer:`Je peux vous orienter vers l’univers <strong>privé</strong>, prévu pour les artisans, indépendants, TPE, commerçants et petites structures.`, actions:[{label:"Aller vers le privé", href:"private.html"},{label:"🎁 Offre gratuite", href:"signup.html"}]};
     }
     if(text.includes("public") || text.includes("collectivité") || text.includes("collectivite") || text.includes("administration") || text.includes("dgs")) {
-      return {answer:`Je peux vous rediriger vers l’univers <strong>public</strong>, conçu pour les collectivités, établissements et organisations.`, actions:[{label:"Aller vers le public", href:"public.html"},{label:"🎁 Offre gratuite", href:"signup.html?next=public.html"}]};
+      return {answer:`Je peux vous rediriger vers l’univers <strong>public</strong>, conçu pour les collectivités, établissements et organisations.`, actions:[{label:"Aller vers le public", href:"public.html"},{label:"🎁 Offre gratuite", href:"signup.html"}]};
     }
     if(text.includes("gratuit") || text.includes("cadeau") || text.includes("offre")) {
       return {answer:`Vous pouvez démarrer avec l’<strong>offre gratuite</strong> en créant votre compte.`, actions:[{label:"Créer un compte", href:"signup.html"}]};

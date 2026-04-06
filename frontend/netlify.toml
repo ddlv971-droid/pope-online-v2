@@ -40,3 +40,18 @@
   from = "/about"
   to = "/about.html"
   status = 200
+
+[[redirects]]
+  from = "/signup-public"
+  to = "/signup-public.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup-private"
+  to = "/signup-private.html"
+  status = 200
+
+[[redirects]]
+  from = "/parcours"
+  to = "/parcours.html"
+  status = 200

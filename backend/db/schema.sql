@@ -7,6 +7,7 @@ create table if not exists users (
   password_hash text not null,
   full_name text,
   organization text,
+  account_space text not null default 'public',
   is_email_verified boolean not null default false,
   is_suspicious boolean not null default false,
   created_at timestamptz not null default now(),
@@ -92,3 +93,6 @@ create table if not exists mission_requests (
   status text not null default 'new',
   created_at timestamptz not null default now()
 );
+
+
+alter table users add column if not exists account_space text not null default 'public';

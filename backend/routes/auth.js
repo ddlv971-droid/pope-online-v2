@@ -52,10 +52,12 @@ router.post('/signup', async (req, res) => {
   const fullName = String(req.body?.fullName || '').trim() || null;
   const organization = String(req.body?.organization || '').trim() || null;
   const fp = String(req.body?.fp || '').trim();
+  const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
 
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
   if (password.length < 8) return res.status(400).json({ error: 'password_too_short' });
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
+  if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
 
   const fp_hash = fpHash(fp);
   const ip_hash = ipToHash(req);
@@ -75,10 +77,10 @@ router.post('/signup', async (req, res) => {
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
       const userIns = await client.query(
-        `insert into users(email, password_hash, full_name, organization, is_suspicious)
-         values($1,$2,$3,$4,$5)
-         returning id, email, is_email_verified, is_suspicious`,
-        [email, password_hash, fullName, organization, suspicious]
+        `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious)
+         values($1,$2,$3,$4,$5,$6)
+         returning id, email, account_space, is_email_verified, is_suspicious`,
+        [email, password_hash, fullName, organization, accountSpace, suspicious]
       );
       const user = userIns.rows[0];
 
@@ -130,6 +132,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim();
+  const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
 
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
   if (!password) return res.status(400).json({ error: 'missing_password' });
@@ -142,7 +145,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   try {
     await withClient(async (client) => {
       const u = await client.query(
-        `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization
+        `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space
            from users
           where email=$1`,
         [email]
@@ -171,6 +174,7 @@ router.post('/login', loginLimiter, async (req, res) => {
           email: user.email,
           fullName: user.full_name,
           organization: user.organization,
+          accountSpace: user.account_space,
           isEmailVerified: user.is_email_verified,
           isSuspicious: user.is_suspicious
         },
@@ -186,6 +190,7 @@ router.post('/login', loginLimiter, async (req, res) => {
 async function handleVerify(req, res) {
   const token = String(req.body?.token || '').trim();
   const fp = String(req.body?.fp || '').trim();
+  const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
   if (!token) return res.status(400).json({ error: 'missing_token' });
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
 
@@ -199,7 +204,7 @@ async function handleVerify(req, res) {
       await client.query('begin');
 
       const v = await client.query(
-        `select ev.id, ev.user_id, ev.expires_at, ev.used_at, u.is_suspicious
+        `select ev.id, ev.user_id, ev.expires_at, ev.used_at, u.is_suspicious, u.account_space
            from email_verifications ev
            join users u on u.id = ev.user_id
           where ev.token_hash=$1
@@ -283,7 +288,7 @@ async function handleVerify(req, res) {
       }
 
       const walletRes = await client.query('select * from wallets where user_id=$1', [row.user_id]);
-      const tokenRes = await client.query('select id, email, full_name, organization, is_email_verified, is_suspicious from users where id=$1', [row.user_id]);
+      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious from users where id=$1', [row.user_id]);
 
       await client.query('commit');
 
@@ -297,6 +302,7 @@ async function handleVerify(req, res) {
           email: user.email,
           fullName: user.full_name,
           organization: user.organization,
+          accountSpace: user.account_space,
           isEmailVerified: user.is_email_verified,
           isSuspicious: user.is_suspicious
         },
@@ -320,7 +326,7 @@ router.get('/me', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     await withClient(async (client) => {
       const u = await client.query(
-        `select id, email, full_name, organization, is_email_verified, is_suspicious, created_at
+        `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at
            from users
           where id=$1`,
         [decoded.sub]
