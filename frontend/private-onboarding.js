@@ -106,7 +106,7 @@ form?.addEventListener('submit', (e) => {
     "",
     "Merci."
   ].join("\r\n");
-  sendMailCta.href = `mailto:contact@popeconsulting-group.com?subject=Demande%20client%20priv%C3%A9%20-%20POPE%20Online&body=${encodeURIComponent(lines)}`;
+  sendMailCta.href = `mailto:contact@pope-online.com?subject=Demande%20client%20priv%C3%A9%20-%20POPE%20Online&body=${encodeURIComponent(lines)}`;
 
   form.hidden = true;
   document.querySelector('.stepper').hidden = true;
