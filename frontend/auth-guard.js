@@ -4,7 +4,7 @@
     return localStorage.getItem('pope_token') || sessionStorage.getItem('pope_token');
   }
 
-  const protectedFiles = ['app.html', 'dashboard.html', 'expert.html', 'mission.html', 'private-onboarding.html', 'account.html'];
+  const protectedFiles = ['app.html', 'dashboard.html', 'dashboard-private.html', 'expert.html', 'mission.html', 'private-onboarding.html', 'account.html', 'profile.html', 'dashboard-admin.html'];
   const path = (window.location.pathname || '').toLowerCase();
 
   const isProtected = protectedFiles.some(f => path.endsWith('/' + f) || path.endsWith(f));

@@ -1,11 +1,28 @@
+
 import jwt from 'jsonwebtoken';
 
-export function requireAuth(req, res, next) {
+function extract(req) {
   const h = req.headers.authorization || '';
-  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  return h.startsWith('Bearer ') ? h.slice(7) : null;
+}
+
+export function requireAuth(req, res, next) {
+  const token = extract(req);
+  if (!token) return res.status(401).json({ error: 'unauthorized' });
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+}
+
+export function requireAdmin(req, res, next) {
+  const token = extract(req);
   if (!token) return res.status(401).json({ error: 'unauthorized' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
     req.user = decoded;
     return next();
   } catch {
@@ -14,8 +31,7 @@ export function requireAuth(req, res, next) {
 }
 
 export function optionalAuth(req, _res, next) {
-  const h = req.headers.authorization || '';
-  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  const token = extract(req);
   if (!token) return next();
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET);

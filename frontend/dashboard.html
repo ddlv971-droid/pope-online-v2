@@ -31,14 +31,14 @@
 <section class="card left" style="max-width:1040px;margin:0 auto">
   <div class="row between">
     <h2>Mon espace</h2>
-    <div class="row gap wrap"><a class="btn ghost" href="pricing.html">Voir les parcours</a><a class="btn ghost" href="account.html">Sécurité du compte</a></div>
+    <div class="row gap wrap"><a class="btn ghost" href="pricing.html">Voir les parcours</a><a class="btn ghost" href="profile.html">Mon compte</a></div>
   </div>
 
   <div class="grid2" style="margin-top:12px">
     <div class="panel">
       <h3>Accès</h3>
       <div class="kpi" id="kpi">—</div>
-      <div class="muted">Votre espace est prêt pour la génération guidée, la relecture experte et l’accompagnement sur mesure.</div>
+      <div class="muted">Votre espace public est prêt pour la génération guidée, la relecture experte et l’accompagnement sur mesure.</div>
     </div>
     <div class="panel">
       <h3>Actions rapides</h3>
@@ -78,7 +78,7 @@ async function refresh() {
   try {
     const me = await apiFetch('/auth/me');
     setTicketsBadge(me.wallet);
-    kpi.textContent = me.user?.isEmailVerified ? 'Compte vérifié' : 'Compte créé';
+    const exp = me.wallet?.trial_expires_at ? new Date(me.wallet.trial_expires_at) : null; if (exp && exp.getTime() < Date.now()) { kpi.textContent = 'Offre gratuite expirée — nous vous contacterons pour définir l’offre idéale pour votre besoin.'; } else { kpi.textContent = me.user?.isEmailVerified ? 'Compte vérifié' : 'Compte créé'; }
   } catch (e) {
     kpi.textContent = 'Session active';
   }

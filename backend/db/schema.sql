@@ -96,3 +96,24 @@ create table if not exists mission_requests (
 
 
 alter table users add column if not exists account_space text not null default 'public';
+
+
+alter table users add column if not exists phone_country text;
+alter table users add column if not exists phone_number text;
+alter table users add column if not exists phone_full text;
+alter table users add column if not exists role text not null default 'client';
+alter table users add column if not exists must_change_password boolean not null default false;
+
+create table if not exists client_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete set null,
+  company_name text,
+  requester_name text,
+  requester_email text not null,
+  requester_phone text,
+  need_text text not null,
+  status text not null default 'new',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_client_messages_user on client_messages(user_id, created_at desc);

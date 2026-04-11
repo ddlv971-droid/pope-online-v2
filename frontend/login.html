@@ -3,96 +3,24 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Connexion</title>
+<title>POPE Online — Connexion client</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
 </head>
 <body class="bg po-v5-harmony">
-<header class="topbar">
-  <div class="container row between">
-    <a class="brand link" href="public.html">
-      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div>
-        <div class="brand-title">POPE Online</div>
-        <div class="brand-sub">Connexion espace public</div>
-      </div>
-    </a>
-    <div class="row gap wrap">      
-      <a class="btn ghost" href="signup.html">Créer un compte</a>
-    </div>
-  </div>
-</header>
-
-<main class="auth-wrap">
-  <section class="auth-card" style="max-width:640px;margin:0 auto">
-    <h2>Connexion</h2>
-    <p class="muted">La connexion est réservée à l’espace public. Pour l’espace privé, la création de compte est requise avant le parcours.</p>
-
-    <label class="label">Email</label>
-    <input class="input" id="email" placeholder="xxxx@..."/>
-
-    <label class="label">Mot de passe</label>
-    <div class="password-wrap">
-      <input class="input" id="password" placeholder="••••••••" type="password"/>
-      <button class="password-toggle" id="togglePassword" type="button" aria-label="Afficher le mot de passe"></button>
-    </div>
-
-    <div class="row gap wrap" style="margin-top:14px">
-      <button class="btn" id="btn">Se connecter</button>
-      <a class="btn ghost" href="public.html">Retour à l’espace public</a>
-    </div>
-    <div class="fineprint" id="msg"></div>
-  </section>
-</main>
-
+<header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div></a><div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div></div></header>
+<main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
+<h2>Connexion</h2><p class="muted">Connexion commune aux espaces public, privé et à l’administration via les identifiants autorisés.</p>
+<label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..."/>
+<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password"/><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
+<div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button></div>
+<div class="fineprint" id="msg"></div></section></main>
 <script type="module">
 import { apiFetch, setToken } from './api.js';
 import { showToast, getFingerprint } from './app.js';
-
 const el = (id) => document.getElementById(id);
-function getNext(user) {
-  const u = new URL(window.location.href);
-  const explicitNext = u.searchParams.get('next');
-  if (explicitNext) return explicitNext;
-  if (user?.accountSpace === 'private') return 'parcours.html';
-  const stored = localStorage.getItem('pope_public_login_next');
-  if (stored && stored !== 'login.html') return stored;
-  return 'dashboard.html';
-}
-
-el('togglePassword').addEventListener('click', () => {
-  const input = el('password');
-  const showing = input.type === 'text';
-  input.type = showing ? 'password' : 'text';
-  el('togglePassword').setAttribute('aria-label', showing ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
-});
-
-el('btn').addEventListener('click', async () => {
-  const email = el('email').value.trim();
-  const password = el('password').value;
-  try {
-    const fp = await getFingerprint();
-    const data = await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email, password, fp }});
-    setToken(data.token);
-    showToast('Connecté ✓', 'ok');
-    if (!data.user.isEmailVerified) {
-      el('msg').textContent = '⚠️ Email non vérifié : vérifiez votre boîte mail pour activer votre offre gratuite.';
-      return;
-    }
-    try {
-      localStorage.removeItem('pope_post_signup_next');
-      localStorage.removeItem('pope_public_login_next');
-      localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public');
-    } catch {}
-    setTimeout(() => window.location.href = getNext(data.user), 350);
-  } catch (e) {
-    console.error(e);
-    showToast('Connexion impossible', 'err');
-    el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
-  }
-});
-</script>
-<script src="popy.js"></script>
-</body>
-</html>
+function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
+el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email:identifier, identifier, password:el('password').value, fp } }); setToken(data.token); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { el('msg').textContent='Erreur: '+(e?.data?.error||e.message); showToast('Connexion impossible','err'); } });
+</script><script src="popy.js"></script></body></html>

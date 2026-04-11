@@ -71,7 +71,7 @@
         </ul>
         <div class="po-home-card-actions">
           <a class="po-btn po-btn-solid" href="private.html">Accéder à l’espace privé</a>
-          <a class="po-btn po-btn-ghost po-btn-gift" href="signup.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
+          <a class="po-btn po-btn-ghost po-btn-gift" href="offre-gratuite.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
         </div>
       </article>
 
@@ -86,7 +86,7 @@
         </ul>
         <div class="po-home-card-actions">
           <a class="po-btn po-btn-solid po-btn-solid-public" href="public.html">Accéder à l’espace public</a>
-          <a class="po-btn po-btn-ghost po-btn-gift" href="signup.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
+          <a class="po-btn po-btn-ghost po-btn-gift" href="offre-gratuite.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
         </div>
       </article>
     </section>
@@ -124,6 +124,19 @@
       <button id="cookieAccept" class="cookie-btn primary" type="button">Tout accepter</button>
     </div>
   </section>
+  <section class="cookie-modal" id="cookiePrefsModal" hidden aria-labelledby="cookiePrefsTitle" aria-modal="true" role="dialog">
+    <div class="cookie-header"><div class="cookie-badge">Préférences</div><h2 id="cookiePrefsTitle">Paramétrer vos cookies</h2></div>
+    <div class="cookie-content">
+      <label class="row gap wrap"><input type="checkbox" checked disabled/> Cookies essentiels (obligatoires)</label>
+      <label class="row gap wrap"><input type="checkbox" id="cookieAnalytics"/> Cookies analytiques</label>
+      <label class="row gap wrap"><input type="checkbox" id="cookieFunctional"/> Cookies fonctionnels</label>
+      <label class="row gap wrap"><input type="checkbox" id="cookieMarketing"/> Cookies marketing</label>
+    </div>
+    <div class="cookie-buttons">
+      <button id="cookieSavePrefs" class="cookie-btn primary" type="button">Enregistrer mes préférences</button>
+      <button id="cookieBackMain" class="cookie-btn secondary" type="button">Retour</button>
+    </div>
+  </section>
 
   <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -132,6 +145,12 @@
     const accept = document.getElementById("cookieAccept");
     const decline = document.getElementById("cookieDecline");
     const settings = document.getElementById("cookieSettings");
+    const prefsModal = document.getElementById("cookiePrefsModal");
+    const analytics = document.getElementById("cookieAnalytics");
+    const functional = document.getElementById("cookieFunctional");
+    const marketing = document.getElementById("cookieMarketing");
+    const savePrefs = document.getElementById("cookieSavePrefs");
+    const backMain = document.getElementById("cookieBackMain");
     const STORAGE_KEY = "pope_cookie_choice";
 
     if (!overlay || !modal || !accept || !decline || !settings) return;
@@ -139,14 +158,24 @@
     function openCookies() {
       overlay.hidden = false;
       modal.hidden = false;
+      if (prefsModal) prefsModal.hidden = true;
       document.body.style.overflow = "hidden";
     }
 
-    function closeCookies(choice) {
+    function openPrefs() {
+      overlay.hidden = false;
+      modal.hidden = true;
+      if (prefsModal) prefsModal.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeCookies(choice, prefs) {
       try {
         localStorage.setItem(STORAGE_KEY, choice);
+        if (prefs) localStorage.setItem('pope_cookie_prefs', JSON.stringify(prefs));
       } catch (e) {}
       modal.hidden = true;
+      if (prefsModal) prefsModal.hidden = true;
       overlay.hidden = true;
       document.body.style.overflow = "";
     }
@@ -159,7 +188,9 @@
     if (!existingChoice) openCookies();
     accept.addEventListener("click", function () { closeCookies("accepted"); });
     decline.addEventListener("click", function () { closeCookies("declined"); });
-    settings.addEventListener("click", function () { closeCookies("customized"); });
+    settings.addEventListener("click", function () { openPrefs(); });
+    if (savePrefs) savePrefs.addEventListener("click", function () { closeCookies("customized", { analytics: !!analytics.checked, functional: !!functional.checked, marketing: !!marketing.checked }); });
+    if (backMain) backMain.addEventListener("click", function () { openCookies(); });
     overlay.addEventListener("click", function () { closeCookies("dismissed"); });
   });
   </script>

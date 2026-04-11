@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
+import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours } from '../services/security.js';
@@ -20,7 +21,7 @@ const loginLimiter = rateLimit({
 
 function signJwt(user) {
   return jwt.sign(
-    { sub: user.id, email: user.email },
+    { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public' },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
@@ -46,11 +47,18 @@ function walletPayload(row = {}) {
   };
 }
 
+function cleanPhone(v) {
+  return String(v || '').trim() || null;
+}
+
 router.post('/signup', async (req, res) => {
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   const fullName = String(req.body?.fullName || '').trim() || null;
   const organization = String(req.body?.organization || '').trim() || null;
+  const phoneCountry = cleanPhone(req.body?.phoneCountry);
+  const phoneNumber = cleanPhone(req.body?.phoneNumber);
+  const phoneFull = cleanPhone(req.body?.phoneFull);
   const fp = String(req.body?.fp || '').trim();
   const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
 
@@ -66,7 +74,6 @@ router.post('/signup', async (req, res) => {
   try {
     await withClient(async (client) => {
       await client.query('begin');
-
       const existing = await client.query('select 1 from users where email=$1', [email]);
       if (existing.rowCount) {
         await client.query('rollback');
@@ -77,10 +84,10 @@ router.post('/signup', async (req, res) => {
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
       const userIns = await client.query(
-        `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious)
-         values($1,$2,$3,$4,$5,$6)
-         returning id, email, account_space, is_email_verified, is_suspicious`,
-        [email, password_hash, fullName, organization, accountSpace, suspicious]
+        `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious, phone_country, phone_number, phone_full)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9)
+         returning id, email, account_space, is_email_verified, is_suspicious, role, phone_country, phone_number, phone_full`,
+        [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
       );
       const user = userIns.rows[0];
 
@@ -107,16 +114,21 @@ router.post('/signup', async (req, res) => {
          values($1,$2,$3)`,
         [user.id, token_hash, expires]
       );
-
       await client.query('commit');
 
       const base = (process.env.FRONTEND_BASE_URL || '').replace(/\/$/, '');
       const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
-
       await sendMail({
         to: email,
         subject: 'POPE Online — Vérification de votre compte',
-        text: `Bonjour,\n\nVeuillez vérifier votre compte POPE Online en cliquant sur ce lien :\n${verifyUrl}\n\nCe lien expire dans 24h.\n\n— POPE Online`,
+        text: `Bonjour,
+
+Veuillez vérifier votre compte POPE Online en cliquant sur ce lien :
+${verifyUrl}
+
+Ce lien expire dans 24h.
+
+— POPE Online`,
         html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
       });
 
@@ -129,10 +141,12 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
-  const email = normalizeEmail(req.body?.email);
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim();
-  const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
 
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
   if (!password) return res.status(400).json({ error: 'missing_password' });
@@ -145,13 +159,13 @@ router.post('/login', loginLimiter, async (req, res) => {
   try {
     await withClient(async (client) => {
       const u = await client.query(
-        `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space
+        `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
+                phone_country, phone_number, phone_full
            from users
           where email=$1`,
         [email]
       );
       if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
-
       const user = u.rows[0];
       const ok = await bcrypt.compare(password, user.password_hash);
       if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
@@ -164,19 +178,24 @@ router.post('/login', loginLimiter, async (req, res) => {
       );
       await client.query(`update devices set last_seen_at=now() where user_id=$1 and fp_hash=$2`, [user.id, fp_hash]);
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
-
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
 
       return res.json({
         token,
         user: {
+          id: user.id,
           email: user.email,
           fullName: user.full_name,
           organization: user.organization,
           accountSpace: user.account_space,
           isEmailVerified: user.is_email_verified,
-          isSuspicious: user.is_suspicious
+          isSuspicious: user.is_suspicious,
+          role: user.role || 'client',
+          mustChangePassword: !!user.must_change_password,
+          phoneCountry: user.phone_country,
+          phoneNumber: user.phone_number,
+          phoneFull: user.phone_full
         },
         wallet: walletPayload(w.rows[0])
       });
@@ -187,10 +206,50 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 });
 
+router.post('/admin-login', loginLimiter, async (req, res) => {
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
+  const password = String(req.body?.password || '');
+  const fp = String(req.body?.fp || '').trim() || 'admin-dashboard';
+
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  if (!password) return res.status(400).json({ error: 'missing_password' });
+
+  const fp_hash = fpHash(fp);
+  const ip_hash = ipToHash(req);
+  const user_agent_hash = uaToHash(req);
+
+  try {
+    await withClient(async (client) => {
+      const u = await client.query(`select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
+                phone_country, phone_number, phone_full
+           from users
+          where email=$1`, [email]);
+      if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
+      const user = u.rows[0];
+      const ok = await bcrypt.compare(password, user.password_hash);
+      if (!ok || user.role !== 'admin') return res.status(401).json({ error: 'invalid_credentials' });
+
+      await client.query(`insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
+         values($1,$2,$3,$4)
+         on conflict do nothing`, [user.id, fp_hash, ip_hash, user_agent_hash]);
+      await client.query('update devices set last_seen_at=now() where user_id=$1 and fp_hash=$2', [user.id, fp_hash]);
+      await client.query('update users set last_login_at=now() where id=$1', [user.id]);
+      const w = await client.query('select * from wallets where user_id=$1', [user.id]);
+      const token = signJwt(user);
+      return res.json({ token, user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
 async function handleVerify(req, res) {
   const token = String(req.body?.token || '').trim();
   const fp = String(req.body?.fp || '').trim();
-  const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
   if (!token) return res.status(400).json({ error: 'missing_token' });
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
 
@@ -202,7 +261,6 @@ async function handleVerify(req, res) {
   try {
     await withClient(async (client) => {
       await client.query('begin');
-
       const v = await client.query(
         `select ev.id, ev.user_id, ev.expires_at, ev.used_at, u.is_suspicious, u.account_space
            from email_verifications ev
@@ -211,22 +269,10 @@ async function handleVerify(req, res) {
           limit 1`,
         [token_hash]
       );
-
-      if (!v.rowCount) {
-        await client.query('rollback');
-        return res.status(400).json({ error: 'invalid_token' });
-      }
-
+      if (!v.rowCount) { await client.query('rollback'); return res.status(400).json({ error: 'invalid_token' }); }
       const row = v.rows[0];
-      if (row.used_at) {
-        await client.query('rollback');
-        return res.status(400).json({ error: 'token_used' });
-      }
-
-      if (new Date(row.expires_at).getTime() < Date.now()) {
-        await client.query('rollback');
-        return res.status(400).json({ error: 'token_expired' });
-      }
+      if (row.used_at) { await client.query('rollback'); return res.status(400).json({ error: 'token_used' }); }
+      if (new Date(row.expires_at).getTime() < Date.now()) { await client.query('rollback'); return res.status(400).json({ error: 'token_expired' }); }
 
       await client.query('update email_verifications set used_at=now() where id=$1', [row.id]);
       await client.query('update users set is_email_verified=true where id=$1', [row.user_id]);
@@ -239,59 +285,33 @@ async function handleVerify(req, res) {
 
       let awardedFreeTickets = 0;
       let suspicious = row.is_suspicious;
-
       if (!suspicious) {
         const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
         if (!fpAlready) {
           awardedFreeTickets = 10;
           const startedAt = new Date();
           const expiresAt = trialExpiryDate(15);
-
           await client.query(
             `update wallets
-                set plan_code='FREE',
-                    status='trial_active',
-                    tickets_ai = $2,
-                    tickets_expert = 0,
-                    public_dossiers_used = 0,
-                    private_dossiers_used = 0,
-                    public_dossiers_limit = 1,
-                    private_dossiers_limit = 1,
-                    private_users_limit = 1,
-                    trial_started_at = $3,
-                    trial_expires_at = $4,
-                    updated_at = now()
+                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=0,
+                    public_dossiers_used=0, private_dossiers_used=0,
+                    public_dossiers_limit=1, private_dossiers_limit=1, private_users_limit=1,
+                    trial_started_at=$3, trial_expires_at=$4, updated_at=now()
               where user_id=$1`,
             [row.user_id, awardedFreeTickets, startedAt, expiresAt]
           );
-
-          await client.query(
-            `insert into usage_logs(user_id, kind, meta)
-             values($1,'free_trial_awarded',$2::jsonb)`,
-            [row.user_id, JSON.stringify({ plan: 'FREE', duration_days: 15, tickets_ai: 10, public_dossiers_limit: 1, private_dossiers_limit: 1, private_users_limit: 1 })]
-          );
         } else {
-          await client.query(
-            `update wallets
-                set status='verified_no_trial',
-                    updated_at=now()
-              where user_id=$1`,
-            [row.user_id]
-          );
+          await client.query(`update wallets set status='verified_no_trial', updated_at=now() where user_id=$1`, [row.user_id]);
         }
       }
-
       const computed = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
       if (computed && !row.is_suspicious) {
         suspicious = true;
         await client.query('update users set is_suspicious=true where id=$1', [row.user_id]);
       }
-
       const walletRes = await client.query('select * from wallets where user_id=$1', [row.user_id]);
-      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious from users where id=$1', [row.user_id]);
-
+      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [row.user_id]);
       await client.query('commit');
-
       const user = tokenRes.rows[0];
       return res.json({
         ok: true,
@@ -304,7 +324,12 @@ async function handleVerify(req, res) {
           organization: user.organization,
           accountSpace: user.account_space,
           isEmailVerified: user.is_email_verified,
-          isSuspicious: user.is_suspicious
+          isSuspicious: user.is_suspicious,
+          role: user.role || 'client',
+          mustChangePassword: !!user.must_change_password,
+          phoneCountry: user.phone_country,
+          phoneNumber: user.phone_number,
+          phoneFull: user.phone_full
         },
         wallet: walletPayload(walletRes.rows[0])
       });
@@ -318,26 +343,75 @@ async function handleVerify(req, res) {
 router.post('/verify', handleVerify);
 router.post('/verify-email', handleVerify);
 
-router.get('/me', async (req, res) => {
-  const h = req.headers.authorization || '';
-  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
-  if (!token) return res.status(401).json({ error: 'unauthorized' });
+router.get('/me', requireAuth, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     await withClient(async (client) => {
       const u = await client.query(
-        `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at
+        `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at, role, must_change_password,
+                phone_country, phone_number, phone_full
            from users
           where id=$1`,
-        [decoded.sub]
+        [req.user.sub]
       );
       if (!u.rowCount) return res.status(401).json({ error: 'unauthorized' });
-
-      const w = await client.query('select * from wallets where user_id=$1', [decoded.sub]);
+      const w = await client.query('select * from wallets where user_id=$1', [req.user.sub]);
       return res.json({ user: u.rows[0], wallet: walletPayload(w.rows[0]) });
     });
   } catch {
     return res.status(401).json({ error: 'unauthorized' });
+  }
+});
+
+router.put('/me', requireAuth, async (req, res) => {
+  const fullName = String(req.body?.fullName || '').trim() || null;
+  const organization = String(req.body?.organization || '').trim() || null;
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
+  const phoneCountry = cleanPhone(req.body?.phoneCountry);
+  const phoneNumber = cleanPhone(req.body?.phoneNumber);
+  const phoneFull = cleanPhone(req.body?.phoneFull);
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  try {
+    await withClient(async (client) => {
+      const dup = await client.query('select id from users where email=$1 and id<>$2 limit 1', [email, req.user.sub]);
+      if (dup.rowCount) return res.status(409).json({ error: 'email_exists' });
+      await client.query(
+        `update users
+            set full_name=$2, organization=$3, email=$4, phone_country=$5, phone_number=$6, phone_full=$7
+          where id=$1`,
+        [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
+      );
+      const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [req.user.sub]);
+      return res.json({ ok: true, user: u.rows[0] });
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+router.put('/change-password', requireAuth, async (req, res) => {
+  const currentPassword = String(req.body?.currentPassword || '');
+  const newPassword = String(req.body?.newPassword || '');
+  if (newPassword.length < 8) return res.status(400).json({ error: 'password_too_short' });
+  try {
+    await withClient(async (client) => {
+      const u = await client.query('select id, password_hash, must_change_password from users where id=$1', [req.user.sub]);
+      if (!u.rowCount) return res.status(404).json({ error: 'user_not_found' });
+      const user = u.rows[0];
+      if (!user.must_change_password) {
+        const ok = await bcrypt.compare(currentPassword, user.password_hash);
+        if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
+      }
+      const password_hash = await bcrypt.hash(newPassword, 12);
+      await client.query('update users set password_hash=$2, must_change_password=false where id=$1', [req.user.sub, password_hash]);
+      return res.json({ ok: true });
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
   }
 });
 
