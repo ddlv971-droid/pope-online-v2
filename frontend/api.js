@@ -1,5 +1,5 @@
 
-export const API_BASE = window.API_BASE || localStorage.getItem('pope_api_base') || 'http://localhost:8787';
+export const API_BASE = window.API_BASE || localStorage.getItem('pope_api_base') || "https://pope-online-v2.onrender.com";
 
 export function getToken() {
   return localStorage.getItem('pope_token') || '';
