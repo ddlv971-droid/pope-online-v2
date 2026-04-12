@@ -52,5 +52,14 @@
   </section>
 </main>
 <script src="popy.js"></script>
+
+<script>
+window.addEventListener("load",function(){
+  document.querySelectorAll("input").forEach(i=>{
+    if(i.type!=="hidden"){ i.value=""; }
+  });
+});
+</script>
+
 </body>
 </html>

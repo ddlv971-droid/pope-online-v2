@@ -16,25 +16,25 @@
 <p class="auth-note-premium"><strong>Merci pour votre inscription sur POPE Online.</strong><br/>Commencez une expérience qui décuplera votre efficacité métier.</p>
 <p class="muted">Ce compte est destiné à l’espace privé. Après validation de votre email, vous pourrez vous connecter et nous soumettre votre besoin.</p>
 <div class="panel" style="margin:14px 0 6px"><strong>Offre gratuite private</strong><ul style="margin:8px 0 0 18px"><li>15 jours d’essai</li><li>1 dossier privé gratuit*</li></ul></div>
-<label class="label">Nom / Prénom</label><input class="input" id="fullName" placeholder="XXXX yyyy"/>
-<label class="label">Organisation / Société</label><input class="input" id="organization" placeholder="Artisans,TPE, indépendants…"/>
-<label class="label">Email</label><input class="input" id="email" placeholder="xxxx@..."/>
+<label class="label">Nom / Prénom</label><input class="input" id="fullName" placeholder="XXXX yyyy"/ autocomplete="off">
+<label class="label">Organisation / Société</label><input class="input" id="organization" placeholder="Artisans,TPE, indépendants…"/ autocomplete="off">
+<label class="label">Email</label><input class="input" id="email" placeholder="xxxx@..."/ autocomplete="off">
 <label class="label">Téléphone</label>
 <div class="po-phone-grid">
   <div>
     <label class="label small">Indicatif</label>
     <select class="input" id="phoneCountrySelect"></select>
-    <input type="hidden" id="phoneCountry"/>
+    <input type="hidden" id="phoneCountry"/ autocomplete="off">
   </div>
   <div>
     <label class="label small">Numéro</label>
-    <input class="input" id="phoneNumber" placeholder="Votre numéro"/>
+    <input class="input" id="phoneNumber" placeholder="Votre numéro"/ autocomplete="off">
   </div>
 </div>
-<input type="hidden" id="phoneFull"/>
+<input type="hidden" id="phoneFull"/ autocomplete="off">
 <label class="label">Mot de passe (8 caractères min.)</label>
-<div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password"/><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
-<label class="row gap" style="align-items:flex-start;margin-top:10px"><input id="cgu" style="margin-top:4px" type="checkbox"/><span class="muted"><span class="consent-text">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles</span>.</span></label>
+<div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password"/ autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
+<label class="row gap" style="align-items:flex-start;margin-top:10px"><input id="cgu" style="margin-top:4px" type="checkbox"/ autocomplete="off"><span class="muted"><span class="consent-text">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles</span>.</span></label>
 <div class="row gap wrap" style="margin-top:16px"><button class="btn" id="btn">Créer mon compte privé</button><a class="btn ghost" href="signup.html">Changer d’espace</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
@@ -55,4 +55,13 @@ el('btn').addEventListener('click', async () => {
     el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
   } catch (e) { el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message); showToast('Erreur de création', 'err'); }
 });
-</script><script src="popy.js"></script></body></html>
+</script><script src="popy.js"></script>
+<script>
+window.addEventListener("load",function(){
+  document.querySelectorAll("input").forEach(i=>{
+    if(i.type!=="hidden"){ i.value=""; }
+  });
+});
+</script>
+
+</body></html>
