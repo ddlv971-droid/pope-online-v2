@@ -116,15 +116,21 @@ router.post('/signup', async (req, res) => {
         [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
       );
       const user = userIns.rows[0];
-
-      await client.query(
-        `insert into wallets(
-          user_id, plan_code, status, tickets_ai, tickets_expert,
-          public_dossiers_used, private_dossiers_used,
-          public_dossiers_limit, private_dossiers_limit, private_users_limit
-        ) values($1,'FREE','pending_verification',0,0,0,0,1,1,1)`,
-        [user.id]
-      );
+const entitlements = resolveFreeTrialEntitlements(accountSpace);
+     await client.query(
+  `insert into wallets(
+    user_id, plan_code, status, tickets_ai, tickets_expert,
+    public_dossiers_used, private_dossiers_used,
+    public_dossiers_limit, private_dossiers_limit, private_users_limit
+  ) values($1,'FREE','pending_verification',$2,0,0,0,$3,$4,$5)`,
+  [
+    user.id,
+    entitlements.ticketsAi,
+    entitlements.publicDossiersLimit,
+    entitlements.privateDossiersLimit,
+    entitlements.privateUsersLimit
+  ]
+);
 
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
