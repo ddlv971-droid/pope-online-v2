@@ -14,7 +14,7 @@
 <h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
 <label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..."/ autocomplete="off">
 <label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password"/ autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
-<div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button></div>
+<div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script type="module">
 import { apiFetch, setToken } from './api.js';

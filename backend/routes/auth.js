@@ -238,6 +238,137 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 });
 
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_attempts' }
+});
+
+router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
+  const email = normalizeEmail(req.body?.email);
+  const genericResponse = { ok: true, message: 'reset_email_sent_if_account_exists' };
+
+  if (!email || !email.includes('@')) return res.json(genericResponse);
+
+  try {
+    await withClient(async (client) => {
+      const userRes = await client.query(
+        `select id, email from users where email=$1 limit 1`,
+        [email]
+      );
+      if (!userRes.rowCount) return;
+
+      const user = userRes.rows[0];
+      const token = randomToken(32);
+      const token_hash = sha256Hex(token);
+      const expires = nowPlusHours(1);
+
+      await client.query('begin');
+      await client.query(
+        `update password_resets
+            set used_at=coalesce(used_at, now())
+          where user_id=$1 and used_at is null`,
+        [user.id]
+      );
+      await client.query(
+        `insert into password_resets(user_id, token_hash, expires_at)
+         values($1,$2,$3)`,
+        [user.id, token_hash, expires]
+      );
+      await client.query('commit');
+
+      const base = resolveFrontendBaseUrl();
+      const resetUrl = `${base}/reset-password.html?token=${encodeURIComponent(token)}`;
+      await sendMail({
+        to: user.email,
+        subject: 'POPE Online — Réinitialisation de votre mot de passe',
+        text: `Bonjour,
+
+Une demande de réinitialisation de mot de passe a été enregistrée pour votre compte POPE Online.
+
+Pour définir un nouveau mot de passe, cliquez sur ce lien :
+${resetUrl}
+
+Ce lien expire dans 1 heure.
+Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message.
+
+— POPE Online`,
+        html: `<p>Bonjour,</p><p>Une demande de réinitialisation de mot de passe a été enregistrée pour votre compte POPE Online.</p><p><a href="${resetUrl}">Définir un nouveau mot de passe</a></p><p><small>Ce lien expire dans 1 heure.</small></p><p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message.</p><p>— POPE Online</p>`
+      });
+    });
+
+    return res.json(genericResponse);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
+  const token = String(req.body?.token || '').trim();
+  const password = String(req.body?.password || '');
+
+  if (!token) return res.status(400).json({ error: 'missing_token' });
+  if (password.length < 8) return res.status(400).json({ error: 'password_too_short' });
+
+  const token_hash = sha256Hex(token);
+
+  try {
+    await withClient(async (client) => {
+      await client.query('begin');
+      const resetRes = await client.query(
+        `select pr.id, pr.user_id, pr.expires_at, pr.used_at, u.email
+           from password_resets pr
+           join users u on u.id = pr.user_id
+          where pr.token_hash=$1
+          limit 1`,
+        [token_hash]
+      );
+
+      if (!resetRes.rowCount) {
+        await client.query('rollback');
+        return res.status(400).json({ error: 'invalid_or_expired_token' });
+      }
+
+      const reset = resetRes.rows[0];
+      if (reset.used_at || new Date(reset.expires_at).getTime() < Date.now()) {
+        await client.query('rollback');
+        return res.status(400).json({ error: 'invalid_or_expired_token' });
+      }
+
+      const password_hash = await bcrypt.hash(password, 12);
+      await client.query(
+        `update users
+            set password_hash=$1,
+                must_change_password=false
+          where id=$2`,
+        [password_hash, reset.user_id]
+      );
+      await client.query(
+        `update password_resets
+            set used_at=now()
+          where id=$1`,
+        [reset.id]
+      );
+      await client.query(
+        `update password_resets
+            set used_at=coalesce(used_at, now())
+          where user_id=$1 and id<>$2 and used_at is null`,
+        [reset.user_id, reset.id]
+      );
+      await client.query('commit');
+
+      return res.json({ ok: true, message: 'password_reset_success' });
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
 router.post('/admin-login', loginLimiter, async (req, res) => {
   const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
