@@ -41,13 +41,14 @@ export async function computeSuspicion({ client, fp_hash, ip_hash, user_agent_ha
 }
 
 export async function hasPriorFreeTrialOnFingerprint({ client, fp_hash }) {
-  // if any user with same fp_hash has tickets_ai >= 3 at some point, we consider free trial already used.
+  // Un essai gratuit est considéré comme déjà consommé dès lors qu'un compte lié à la même empreinte
+  // a déjà bénéficié d'une période d'essai, quel que soit le nombre de tickets IA.
   const r = await client.query(
     `select 1
        from devices d
        join wallets w on w.user_id = d.user_id
       where d.fp_hash = $1
-        and w.tickets_ai >= 3
+        and (w.trial_started_at is not null or w.trial_expires_at is not null or w.status in ('trial_active','trial_expired','verified_no_trial'))
       limit 1`,
     [fp_hash]
   );

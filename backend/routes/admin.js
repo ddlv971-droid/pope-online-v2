@@ -7,6 +7,14 @@ import { requireAdmin } from '../middleware/auth.js';
 const router = express.Router();
 router.use(requireAdmin);
 
+function resolveFreeTrialEntitlements(accountSpace = 'public') {
+  const space = String(accountSpace || 'public').trim().toLowerCase();
+  if (space === 'private') {
+    return { ticketsAi: 0, publicDossiersLimit: 0, privateDossiersLimit: 1, privateUsersLimit: 1 };
+  }
+  return { ticketsAi: 10, publicDossiersLimit: 1, privateDossiersLimit: 0, privateUsersLimit: 1 };
+}
+
 router.get('/users', async (_req, res) => {
   try {
     const result = await withClient(async (client) => {
@@ -38,6 +46,7 @@ router.post('/users', async (req, res) => {
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
   try {
     const passwordHash = await bcrypt.hash(password, 12);
+    const entitlements = resolveFreeTrialEntitlements(accountSpace);
     const result = await withClient(async (client) => {
       await client.query('begin');
       const dup = await client.query('select id from users where email=$1', [email]);
@@ -49,7 +58,7 @@ router.post('/users', async (req, res) => {
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
       await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','trial_active',0,1,1,1) on conflict do nothing`, [ins.rows[0].id]);
+                          values($1,'CUSTOM','trial_active',$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });

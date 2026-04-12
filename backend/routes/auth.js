@@ -51,6 +51,23 @@ function cleanPhone(v) {
   return String(v || '').trim() || null;
 }
 
+function resolveFreeTrialEntitlements(accountSpace = 'public') {
+  const space = String(accountSpace || 'public').trim().toLowerCase();
+  if (space === 'private') {
+    return {
+      ticketsAi: 0,
+      publicDossiersLimit: 0,
+      privateDossiersLimit: 1,
+      privateUsersLimit: 1
+    };
+  }
+  return {
+    ticketsAi: 10,
+    publicDossiersLimit: 1,
+    privateDossiersLimit: 0,
+    privateUsersLimit: 1
+  };
+}
 
 function resolveFrontendBaseUrl() {
   const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
@@ -297,17 +314,18 @@ async function handleVerify(req, res) {
       if (!suspicious) {
         const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
         if (!fpAlready) {
-          awardedFreeTickets = 10;
+          const entitlements = resolveFreeTrialEntitlements(row.account_space);
+          awardedFreeTickets = entitlements.ticketsAi;
           const startedAt = new Date();
           const expiresAt = trialExpiryDate(15);
           await client.query(
             `update wallets
                 set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=0,
                     public_dossiers_used=0, private_dossiers_used=0,
-                    public_dossiers_limit=1, private_dossiers_limit=1, private_users_limit=1,
-                    trial_started_at=$3, trial_expires_at=$4, updated_at=now()
+                    public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
+                    trial_started_at=$6, trial_expires_at=$7, updated_at=now()
               where user_id=$1`,
-            [row.user_id, awardedFreeTickets, startedAt, expiresAt]
+            [row.user_id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit, startedAt, expiresAt]
           );
         } else {
           await client.query(`update wallets set status='verified_no_trial', updated_at=now() where user_id=$1`, [row.user_id]);

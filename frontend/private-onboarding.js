@@ -1,5 +1,5 @@
 import { apiFetch } from './api.js';
-import { showToast } from './app.js';
+import { showToast, requireLogin } from './app.js';
 
 const form = document.getElementById('privateWizard');
 const steps = Array.from(document.querySelectorAll('.wizard-step'));
@@ -9,6 +9,9 @@ const activityDomain = document.getElementById('activityDomain');
 const summarySection = document.getElementById('wizardSummary');
 const summaryContent = document.getElementById('summaryContent');
 let currentStep = 0;
+let accountUser = null;
+
+requireLogin('private-onboarding.html');
 
 function updateSteps() {
   steps.forEach((step, index) => {
@@ -72,28 +75,29 @@ document.addEventListener('click', (e) => {
 async function prefillFromAccount() {
   try {
     const me = await apiFetch('/auth/me');
-    const user = me?.user || {};
-    const organization = user.organization || '';
-    const fullName = user.full_name || user.fullName || '';
-    const email = user.email || '';
-    const phone = user.phone_full || user.phoneFull || '';
+    accountUser = me?.user || {};
+    const organization = accountUser.organization || accountUser.organizationName || '';
+    const fullName = accountUser.full_name || accountUser.fullName || '';
+    const email = accountUser.email || '';
+    const phone = accountUser.phone_full || accountUser.phoneFull || accountUser.phone_number || accountUser.phoneNumber || '';
 
     const companyField = document.getElementById('companyName');
     const nameField = document.getElementById('fullName');
     const contactMethodField = document.getElementById('contactMethod');
     const contactValueField = document.getElementById('contactValue');
 
-    if (companyField && organization) companyField.value = organization;
-    if (nameField && fullName) nameField.value = fullName;
+    if (companyField) companyField.value = companyField.value || organization;
+    if (nameField) nameField.value = nameField.value || fullName;
     if (contactMethodField) {
-      if (email) contactMethodField.value = 'Mail';
-      else if (phone) contactMethodField.value = 'Téléphone';
+      if (phone) contactMethodField.value = 'Téléphone';
+      else if (email) contactMethodField.value = 'Mail';
     }
     if (contactValueField) {
-      contactValueField.value = email || phone || '';
+      contactValueField.value = contactValueField.value || phone || email || '';
     }
   } catch (e) {
     console.warn('Préremplissage indisponible', e);
+    showToast('Préremplissage indisponible pour le moment', 'warn');
   }
 }
 
@@ -105,13 +109,22 @@ form?.addEventListener('submit', async (e) => {
   const domain = data.get('activityDomain') === 'Autre' ? data.get('otherDomain') : data.get('activityDomain');
   const payload = {
     domain,
-    companyName: data.get('companyName'),
-    fullName: data.get('fullName'),
-    contactMethod: data.get('contactMethod'),
-    contactValue: data.get('contactValue'),
-    requestType: data.get('requestType'),
-    requestDetails: data.get('requestDetails')
+    companyName: String(data.get('companyName') || '').trim(),
+    fullName: String(data.get('fullName') || '').trim(),
+    contactMethod: String(data.get('contactMethod') || '').trim(),
+    contactValue: String(data.get('contactValue') || '').trim(),
+    requestType: String(data.get('requestType') || '').trim(),
+    requestDetails: String(data.get('requestDetails') || '').trim()
   };
+
+  const accountEmail = String(accountUser?.email || '').trim();
+  const accountPhone = String(accountUser?.phone_full || accountUser?.phoneFull || accountUser?.phone_number || accountUser?.phoneNumber || '').trim();
+  const requesterEmail = payload.contactMethod === 'Mail'
+    ? payload.contactValue
+    : accountEmail;
+  const requesterPhone = payload.contactMethod === 'Téléphone' || payload.contactMethod === 'WhatsApp'
+    ? payload.contactValue
+    : accountPhone;
 
   try {
     await apiFetch('/client/message', {
@@ -119,8 +132,8 @@ form?.addEventListener('submit', async (e) => {
       body: {
         companyName: payload.companyName,
         requesterName: payload.fullName,
-        requesterEmail: payload.contactMethod === 'Mail' ? payload.contactValue : '',
-        requesterPhone: payload.contactMethod === 'Téléphone' || payload.contactMethod === 'WhatsApp' ? payload.contactValue : '',
+        requesterEmail,
+        requesterPhone,
         needText: [
           `Domaine d'activité : ${payload.domain || '-'}`,
           `Structure : ${payload.companyName || '-'}`,
@@ -130,7 +143,8 @@ form?.addEventListener('submit', async (e) => {
           '',
           'Détails :',
           payload.requestDetails || '-'
-        ].join('\n')
+        ].join('
+')
       }
     });
 
@@ -139,18 +153,19 @@ form?.addEventListener('submit', async (e) => {
       <p><strong>Structure :</strong> ${payload.companyName || '-'}</p>
       <p><strong>Contact :</strong> ${payload.fullName || '-'} — ${payload.contactMethod || '-'} : ${payload.contactValue || '-'}</p>
       <p><strong>Besoin :</strong> ${payload.requestType || '-'}</p>
-      <p><strong>Détails :</strong><br>${String(payload.requestDetails || '-').replace(/\n/g, '<br>')}</p>
-      <p style="margin-top:12px"><strong>Votre demande a été transmise.</strong> Un conseiller POPE Online vous contactera rapidement.</p>
+      <p><strong>Détails :</strong><br>${String(payload.requestDetails || '-').replace(/
+/g, '<br>')}</p>
+      <p style="margin-top:12px"><strong>Message transmis.</strong> Un conseiller POPE Online vous contactera rapidement.</p>
     `;
 
     form.hidden = true;
     document.querySelector('.stepper').hidden = true;
     summarySection.hidden = false;
-    showToast('Votre demande a été transmise', 'ok');
+    showToast('Message transmis', 'ok');
   } catch (e) {
     console.error(e);
     showToast('Envoi impossible', 'err');
-    alert('Votre demande n’a pas pu être transmise pour le moment.');
+    alert(`Votre demande n’a pas pu être transmise pour le moment. ${e?.data?.error || e.message || ''}`.trim());
   }
 });
 
