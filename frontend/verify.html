@@ -77,7 +77,7 @@ async function run(){
         ? '<a class="btn" href="trial-start-private.html">Voir mon offre privée</a><a class="btn ghost" href="private.html">Retour à l’espace privé</a>'
         : '<a class="btn" href="trial-start-public.html">Voir mon offre publique</a><a class="btn ghost" href="public.html">Retour à l’espace public</a>';
     }
-    setTimeout(() => { window.location.href = next; }, 1000);
+    window.location.replace(next);
   } catch (e) {
     console.error(e);
     showToast('Vérification impossible', 'err');
