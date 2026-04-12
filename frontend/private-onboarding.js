@@ -1,3 +1,6 @@
+import { apiFetch } from './api.js';
+import { showToast } from './app.js';
+
 const form = document.getElementById('privateWizard');
 const steps = Array.from(document.querySelectorAll('.wizard-step'));
 const indicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
@@ -5,7 +8,6 @@ const otherDomainWrap = document.getElementById('otherDomainWrap');
 const activityDomain = document.getElementById('activityDomain');
 const summarySection = document.getElementById('wizardSummary');
 const summaryContent = document.getElementById('summaryContent');
-const sendMailCta = document.getElementById('sendMailCta');
 let currentStep = 0;
 
 function updateSteps() {
@@ -67,7 +69,35 @@ document.addEventListener('click', (e) => {
   }
 });
 
-form?.addEventListener('submit', (e) => {
+async function prefillFromAccount() {
+  try {
+    const me = await apiFetch('/auth/me');
+    const user = me?.user || {};
+    const organization = user.organization || '';
+    const fullName = user.full_name || user.fullName || '';
+    const email = user.email || '';
+    const phone = user.phone_full || user.phoneFull || '';
+
+    const companyField = document.getElementById('companyName');
+    const nameField = document.getElementById('fullName');
+    const contactMethodField = document.getElementById('contactMethod');
+    const contactValueField = document.getElementById('contactValue');
+
+    if (companyField && organization) companyField.value = organization;
+    if (nameField && fullName) nameField.value = fullName;
+    if (contactMethodField) {
+      if (email) contactMethodField.value = 'Mail';
+      else if (phone) contactMethodField.value = 'Téléphone';
+    }
+    if (contactValueField) {
+      contactValueField.value = email || phone || '';
+    }
+  } catch (e) {
+    console.warn('Préremplissage indisponible', e);
+  }
+}
+
+form?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!validateStep(currentStep)) return;
 
@@ -83,41 +113,50 @@ form?.addEventListener('submit', (e) => {
     requestDetails: data.get('requestDetails')
   };
 
-  summaryContent.innerHTML = `
-    <p><strong>Domaine :</strong> ${payload.domain || '-'}</p>
-    <p><strong>Structure :</strong> ${payload.companyName || '-'}</p>
-    <p><strong>Contact :</strong> ${payload.fullName || '-'} — ${payload.contactMethod || '-'} : ${payload.contactValue || '-'}</p>
-    <p><strong>Besoin :</strong> ${payload.requestType || '-'}</p>
-    <p><strong>Détails :</strong><br>${String(payload.requestDetails || '-').replace(/\n/g, '<br>')}</p>
-  `;
+  try {
+    await apiFetch('/client/message', {
+      method: 'POST',
+      body: {
+        companyName: payload.companyName,
+        requesterName: payload.fullName,
+        requesterEmail: payload.contactMethod === 'Mail' ? payload.contactValue : '',
+        requesterPhone: payload.contactMethod === 'Téléphone' || payload.contactMethod === 'WhatsApp' ? payload.contactValue : '',
+        needText: [
+          `Domaine d'activité : ${payload.domain || '-'}`,
+          `Structure : ${payload.companyName || '-'}`,
+          `Contact préféré : ${payload.contactMethod || '-'}`,
+          `Coordonnée : ${payload.contactValue || '-'}`,
+          `Type de besoin : ${payload.requestType || '-'}`,
+          '',
+          'Détails :',
+          payload.requestDetails || '-'
+        ].join('\n')
+      }
+    });
 
-  const lines = [
-    "Bonjour POPE Online,",
-    "",
-    "Voici ma demande :",
-    "",
-    `- Domaine d'activité : ${payload.domain || '-'}`,
-    `- Structure : ${payload.companyName || '-'}`,
-    `- Nom : ${payload.fullName || '-'}`,
-    `- Contact préféré : ${payload.contactMethod || '-'}`,
-    `- Coordonnée : ${payload.contactValue || '-'}`,
-    `- Type de besoin : ${payload.requestType || '-'}`,
-    `- Détails : ${payload.requestDetails || '-'}`,
-    "",
-    "Merci."
-  ].join("\r\n");
-  sendMailCta.href = `mailto:contact@pope-online.com?subject=Demande%20client%20priv%C3%A9%20-%20POPE%20Online&body=${encodeURIComponent(lines)}`;
+    summaryContent.innerHTML = `
+      <p><strong>Domaine :</strong> ${payload.domain || '-'}</p>
+      <p><strong>Structure :</strong> ${payload.companyName || '-'}</p>
+      <p><strong>Contact :</strong> ${payload.fullName || '-'} — ${payload.contactMethod || '-'} : ${payload.contactValue || '-'}</p>
+      <p><strong>Besoin :</strong> ${payload.requestType || '-'}</p>
+      <p><strong>Détails :</strong><br>${String(payload.requestDetails || '-').replace(/\n/g, '<br>')}</p>
+      <p style="margin-top:12px"><strong>Votre demande a été transmise.</strong> Un conseiller POPE Online vous contactera rapidement.</p>
+    `;
 
-  form.hidden = true;
-  document.querySelector('.stepper').hidden = true;
-  summarySection.hidden = false;
+    form.hidden = true;
+    document.querySelector('.stepper').hidden = true;
+    summarySection.hidden = false;
+    showToast('Votre demande a été transmise', 'ok');
+  } catch (e) {
+    console.error(e);
+    showToast('Envoi impossible', 'err');
+    alert('Votre demande n’a pas pu être transmise pour le moment.');
+  }
 });
 
 updateSteps();
+prefillFromAccount();
 
-
-// V3 fix: relax step 2 validation so the journey can continue once the name is filled.
-// contact method/value remain optional at this stage and can be clarified during contact.
 (function(){
   const fullNameField = document.getElementById('fullName');
   const contactMethodField = document.getElementById('contactMethod');

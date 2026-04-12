@@ -51,6 +51,15 @@ function cleanPhone(v) {
   return String(v || '').trim() || null;
 }
 
+
+function resolveFrontendBaseUrl() {
+  const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
+  if (!raw) return 'https://pope-online.com';
+  return raw.replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
+            .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com');
+}
+
+
 router.post('/signup', async (req, res) => {
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
@@ -116,7 +125,7 @@ router.post('/signup', async (req, res) => {
       );
       await client.query('commit');
 
-      const base = (process.env.FRONTEND_BASE_URL || '').replace(/\/$/, '');
+      const base = resolveFrontendBaseUrl();
       const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
       await sendMail({
         to: email,

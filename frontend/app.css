@@ -335,11 +335,13 @@ input, select, textarea, button{font-family:inherit;}
   background: linear-gradient(180deg, #ffffff, #f6fbff);
   border:1px solid var(--line);
   border-radius: 14px;
-  padding:14px;
-  min-height: 260px;
+  padding:18px 20px;
+  min-height: 320px;
+  width:100%;
   white-space: pre-wrap;
-  line-height:1.55;
+  line-height:1.65;
   color: var(--ink);
+  overflow-wrap:anywhere;
 }
 
 /* Toast */
@@ -4551,7 +4553,7 @@ display:inline-block;
 .iti{width:100%;}
 
 
-.po-phone-grid{display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:end}
+.po-phone-grid{display:grid;grid-template-columns:minmax(136px,172px) minmax(0,1fr);gap:12px;align-items:end}
 .label.small{font-size:.82rem;margin-bottom:6px;display:block}
 @media (max-width: 700px){.po-phone-grid{grid-template-columns:1fr}}
 
@@ -4579,3 +4581,16 @@ body.bg > footer{position:relative;z-index:3;}
   .offre-free-wrap{padding:18px !important;}
   .offre-free-wrap .row.gap.wrap .btn{width:100%;min-width:0;}
 }
+
+
+.app.app-fullwidth-result{
+  grid-template-columns:1fr;
+}
+.app.app-fullwidth-result .card.left,
+.app.app-fullwidth-result .card.right{
+  width:100%;
+  max-width:1180px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.app.app-fullwidth-result .card.right{margin-top:16px;}
