@@ -11,7 +11,8 @@ const limiter = rateLimit({ windowMs: 60 * 1000, max: 12, standardHeaders: true,
 router.post('/message', requireAuth, limiter, async (req, res) => {
   const companyName = String(req.body?.companyName || '').trim() || null;
   const requesterName = String(req.body?.requesterName || '').trim() || null;
-  const requesterEmail = String(req.body?.requesterEmail || req.user?.email || '').trim();
+  const suppliedEmail = String(req.body?.requesterEmail || '').trim();
+  const requesterEmail = suppliedEmail && suppliedEmail.includes('@') ? suppliedEmail : String(req.user?.email || '').trim();
   const requesterPhone = String(req.body?.requesterPhone || '').trim() || null;
   const needText = String(req.body?.needText || '').trim();
   if (!requesterEmail || !requesterEmail.includes('@')) return res.status(400).json({ error: 'invalid_email' });
