@@ -32,7 +32,11 @@ const FR_MESSAGES = {
   missing_description: "La description est manquante.",
   missing_need: "Le besoin est manquant.",
   satisfaction_mail_sent: "L'e-mail de satisfaction a bien été envoyé.",
-  satisfaction_mail_already_sent: "L'e-mail de satisfaction a déjà été envoyé."
+  satisfaction_mail_already_sent: "L'e-mail de satisfaction a déjà été envoyé.",
+  mail_send_failed: "L'envoi de l'e-mail a échoué. Vérifiez la configuration de contact@pope-online.com.",
+  missing_satisfaction_token: "Le lien du formulaire de satisfaction est incomplet.",
+  missing_satisfaction_answers: "Merci de renseigner tous les critères de satisfaction.",
+  satisfaction_response_sent: "Votre retour a bien été transmis. Merci.",
 };
 
 export function t(code, fallback = '') {

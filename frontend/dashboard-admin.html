@@ -25,7 +25,7 @@
 </header>
 
 <main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:1240px;margin:0 auto;width:100%">
+  <section class="card left" style="max-width:1320px;margin:0 auto;width:100%">
     <div id="adminLoginBox">
       <h2>Connexion administrateur</h2>
       <p class="muted">Identifiant par défaut : <strong>POPADMIN</strong> — mot de passe initial : <strong>admin</strong>.</p>
@@ -48,66 +48,80 @@
     </div>
 
     <div id="adminApp" hidden>
-      <div class="po-admin-toolbar">
+      <section class="po-admin-hero">
         <div>
-          <h2 class="po-admin-card-title">Gestion des comptes clients</h2>
-          <div class="muted">Suivi centralisé des inscriptions, des accès et des actions de satisfaction client.</div>
+          <div class="po-admin-eyebrow">Pilotage commercial et relation client</div>
+          <h1>Gestion des comptes clients</h1>
+          <p>Créez des comptes, ajustez les accès, envoyez les enquêtes de satisfaction et suivez en un coup d'œil les actions déjà réalisées.</p>
         </div>
-        <div class="row gap wrap">
-          <span class="badge">Clients <span id="userCount">0</span></span>
+        <div class="po-admin-hero-actions">
+          <div class="po-admin-kpi"><span>Clients</span><strong id="userCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Mails satisfaction</span><strong id="sentCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Réponses reçues</span><strong id="answeredCount">0</strong></div>
           <button class="btn ghost" id="refreshUsers">Actualiser</button>
         </div>
-      </div>
+      </section>
 
-      <div class="po-admin-grid" style="margin-top:18px">
-        <div class="panel">
-          <h3>Créer un client</h3>
+      <div class="po-admin-layout">
+        <aside class="panel po-admin-create-card">
+          <div class="po-admin-panel-head">
+            <div>
+              <h3>Créer un client</h3>
+              <p class="muted">Création rapide d'un compte opérationnel avec mot de passe provisoire.</p>
+            </div>
+          </div>
           <label class="label">Nom / Prénom</label>
-          <input id="newFullName" class="input"/>
+          <input id="newFullName" class="input" placeholder="Nom du client"/>
           <label class="label">Organisation</label>
-          <input id="newOrg" class="input"/>
+          <input id="newOrg" class="input" placeholder="Structure ou société"/>
           <label class="label">Email</label>
-          <input id="newEmail" class="input"/>
+          <input id="newEmail" class="input" placeholder="client@exemple.com"/>
           <label class="label">Téléphone</label>
-          <input id="newPhone" class="input"/>
-          <label class="label">Type</label>
-          <select id="newSpace" class="input">
-            <option value="public">Public</option>
-            <option value="private">Privé</option>
-          </select>
-          <label class="label">Mot de passe initial</label>
-          <input id="newPwd" class="input" value="Temporaire123!"/>
-          <div class="row gap wrap" style="margin-top:14px">
-            <button class="btn" id="createUserBtn">Créer le compte</button>
+          <input id="newPhone" class="input" placeholder="+590 ..."/>
+          <div class="grid2 po-admin-mini-grid">
+            <div>
+              <label class="label">Type</label>
+              <select id="newSpace" class="input">
+                <option value="public">Public</option>
+                <option value="private">Privé</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Mot de passe initial</label>
+              <input id="newPwd" class="input" value="Temporaire123!"/>
+            </div>
           </div>
+          <button class="btn" id="createUserBtn" style="margin-top:16px">Créer le compte</button>
           <div class="fineprint" id="createUserMsg"></div>
-        </div>
+        </aside>
 
-        <div class="po-admin-shell">
+        <section class="po-admin-main">
           <div class="panel">
-            <div class="row between wrap">
-              <h3>Comptes créés</h3>
-              <div class="muted">Passage en offre standard, ajustement des tickets et envoi du mail de satisfaction.</div>
+            <div class="po-admin-panel-head">
+              <div>
+                <h3>Comptes créés</h3>
+                <p class="muted">Tableau réorganisé pour modifier les offres, mettre à jour les accès et piloter les enquêtes de satisfaction.</p>
+              </div>
             </div>
-            <div style="overflow:auto">
-              <table class="po-admin-table" id="usersTable">
-                <thead>
-                  <tr>
-                    <th>Client</th>
-                    <th>Type</th>
-                    <th>Offre</th>
-                    <th>Statut</th>
-                    <th>Tickets IA</th>
-                    <th>Échéance</th>
-                    <th>Satisfaction</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
+
+            <div class="po-admin-filters">
+              <input id="userSearch" class="input" placeholder="Rechercher un client, un e-mail ou une organisation"/>
+              <select id="offerFilter" class="input">
+                <option value="all">Toutes les offres</option>
+                <option value="FREE">Free trial</option>
+                <option value="STANDARD">Offre standard</option>
+              </select>
+              <select id="satisfactionFilter" class="input">
+                <option value="all">Toutes satisfactions</option>
+                <option value="pending">Mail non envoyé</option>
+                <option value="sent">Mail envoyé</option>
+                <option value="answered">Réponse reçue</option>
+              </select>
             </div>
+
+            <div class="po-admin-list" id="usersList"></div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   </section>
@@ -119,6 +133,7 @@ import { clearToken, wireLogout, showToast } from './app.js';
 
 wireLogout();
 const el = (id) => document.getElementById(id);
+let usersCache = [];
 
 function escapeHtml(value='') {
   return String(value ?? '')
@@ -130,10 +145,195 @@ function escapeHtml(value='') {
 }
 
 function formatDate(value) {
-  if (!value) return '';
+  if (!value) return '—';
   const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return '';
+  if (Number.isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('fr-FR');
+}
+
+function getOfferValue(user) {
+  return (user.plan_code || '').toUpperCase() === 'STANDARD' || user.status === 'active' ? 'STANDARD' : 'FREE';
+}
+
+function getStatusLabel(status) {
+  return {
+    trial_active: 'Essai actif',
+    active: 'Compte débloqué',
+    trial_expired: 'Essai expiré',
+    verified_no_trial: 'Vérifié sans essai'
+  }[status] || 'À vérifier';
+}
+
+function getSatisfactionBadge(user) {
+  if (user.satisfaction_response_received_at) return '<span class="po-admin-pill answered">Réponse reçue</span>';
+  if (user.satisfaction_mail_sent_at) return `<span class="po-admin-pill sent">Envoyé le ${formatDate(user.satisfaction_mail_sent_at)}</span>`;
+  return '<span class="po-admin-pill pending">À envoyer</span>';
+}
+
+function buildUserCard(u) {
+  const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
+  const offerValue = getOfferValue(u);
+  const statusValue = u.status || 'trial_active';
+  return `
+    <article class="po-admin-user-card" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${u.satisfaction_response_received_at ? 'answered' : (u.satisfaction_mail_sent_at ? 'sent' : 'pending')}">
+      <div class="po-admin-user-main">
+        <div class="po-admin-user-top">
+          <div>
+            <h4>${escapeHtml(u.full_name || 'Client sans nom')}</h4>
+            <div class="po-admin-user-meta">${escapeHtml(u.organization || 'Organisation non renseignée')}</div>
+            <div class="po-admin-user-meta">${escapeHtml(u.email || '')}${u.phone_full ? ` • ${escapeHtml(u.phone_full)}` : ''}</div>
+          </div>
+          <div class="po-admin-user-badges">
+            <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
+            <span class="po-admin-pill neutral">${getStatusLabel(statusValue)}</span>
+            ${getSatisfactionBadge(u)}
+          </div>
+        </div>
+
+        <div class="po-admin-controls-grid">
+          <label>
+            <span class="po-admin-field-label">Offre</span>
+            <select data-field="planCode" class="input">
+              <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
+              <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
+            </select>
+          </label>
+          <label>
+            <span class="po-admin-field-label">Statut</span>
+            <select data-field="status" class="input">
+              <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
+              <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
+              <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
+              <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
+            </select>
+          </label>
+          <label>
+            <span class="po-admin-field-label">Tickets IA</span>
+            <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
+          </label>
+          <label>
+            <span class="po-admin-field-label">Échéance</span>
+            <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
+          </label>
+        </div>
+      </div>
+      <div class="po-admin-actions-col">
+        <button class="btn ghost save">Enregistrer</button>
+        <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
+        <button class="btn ghost promote">Passer en offre standard</button>
+        <button class="btn ghost delete">Supprimer</button>
+      </div>
+      <input type="hidden" data-field="publicLimit" value="${Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0))}">
+      <input type="hidden" data-field="privateLimit" value="${Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0))}">
+      <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
+    </article>`;
+}
+
+function updateStats(users) {
+  el('userCount').textContent = String(users.length);
+  el('sentCount').textContent = String(users.filter((u) => !!u.satisfaction_mail_sent_at).length);
+  el('answeredCount').textContent = String(users.filter((u) => !!u.satisfaction_response_received_at).length);
+}
+
+function attachCardActions(card, user) {
+  const saveBtn = card.querySelector('.save');
+  const deleteBtn = card.querySelector('.delete');
+  const satisfactionBtn = card.querySelector('.satisfaction');
+  const promoteBtn = card.querySelector('.promote');
+
+  card.querySelector('[data-field="planCode"]').addEventListener('change', (event) => {
+    const status = card.querySelector('[data-field="status"]');
+    if (event.target.value === 'STANDARD' && status.value !== 'active') status.value = 'active';
+  });
+
+  promoteBtn.addEventListener('click', () => {
+    card.querySelector('[data-field="planCode"]').value = 'STANDARD';
+    card.querySelector('[data-field="status"]').value = 'active';
+    showToast('Le compte est prêt à être enregistré en offre standard.', 'ok');
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    try {
+      const payload = {
+        wallet: {
+          planCode: card.querySelector('[data-field="planCode"]').value,
+          status: card.querySelector('[data-field="status"]').value,
+          ticketsAi: Number(card.querySelector('[data-field="ticketsAi"]').value || 0),
+          trialExpiresAt: card.querySelector('[data-field="expiry"]').value || null,
+          publicDossiersLimit: Number(card.querySelector('[data-field="publicLimit"]').value || 0),
+          privateDossiersLimit: Number(card.querySelector('[data-field="privateLimit"]').value || 0),
+          privateUsersLimit: Number(card.querySelector('[data-field="privateUsersLimit"]').value || 1)
+        }
+      };
+      await apiFetch('/admin/users/' + user.id, { method:'PUT', body: payload });
+      showToast('Compte mis à jour', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'err');
+    }
+  });
+
+  satisfactionBtn.addEventListener('click', async () => {
+    try {
+      await apiFetch('/admin/users/' + user.id + '/send-satisfaction', { method:'POST', body:{} });
+      showToast('Mail de satisfaction envoyé', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'warn');
+    }
+  });
+
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('Supprimer ce compte ?')) return;
+    try {
+      await apiFetch('/admin/users/' + user.id, { method:'DELETE' });
+      showToast('Compte supprimé', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'err');
+    }
+  });
+}
+
+function renderUsers(users) {
+  const list = el('usersList');
+  list.innerHTML = '';
+  if (!users.length) {
+    list.innerHTML = '<div class="po-admin-empty">Aucun compte ne correspond aux filtres actuels.</div>';
+    return;
+  }
+  users.forEach((user) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = buildUserCard(user);
+    const card = wrapper.firstElementChild;
+    list.appendChild(card);
+    attachCardActions(card, user);
+  });
+}
+
+function applyFilters() {
+  const q = el('userSearch').value.trim().toLowerCase();
+  const offer = el('offerFilter').value;
+  const satisfaction = el('satisfactionFilter').value;
+  const filtered = usersCache.filter((user) => {
+    const matchesQ = !q || `${user.full_name||''} ${user.organization||''} ${user.email||''}`.toLowerCase().includes(q);
+    const matchesOffer = offer === 'all' || getOfferValue(user) === offer;
+    const satValue = user.satisfaction_response_received_at ? 'answered' : (user.satisfaction_mail_sent_at ? 'sent' : 'pending');
+    const matchesSat = satisfaction === 'all' || satValue === satisfaction;
+    return matchesQ && matchesOffer && matchesSat;
+  });
+  renderUsers(filtered);
+}
+
+async function loadUsers() {
+  try {
+    const data = await apiFetch('/admin/users');
+    usersCache = data.users || [];
+    updateStats(usersCache);
+    applyFilters();
+  } catch (e) {
+    if (getToken()) showToast(getApiMessage(e), 'err');
+  }
 }
 
 async function adminLogin() {
@@ -156,134 +356,11 @@ async function adminLogin() {
   }
 }
 
-function buildRow(u) {
-  const satisfactionSent = !!u.satisfaction_mail_sent_at;
-  const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
-  const offerValue = (u.plan_code || '').toUpperCase() === 'STANDARD' || u.status === 'active' ? 'STANDARD' : 'FREE';
-  const statusValue = u.status || 'trial_active';
-  const publicLimit = Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0));
-  const privateLimit = Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0));
-  return `<tr data-user-id="${u.id}">
-    <td>
-      <strong>${escapeHtml(u.full_name || '')}</strong>
-      <div class="fineprint">${escapeHtml(u.organization || '')}</div>
-      <div class="fineprint">${escapeHtml(u.email || '')}</div>
-      <div class="fineprint">${escapeHtml(u.phone_full || '')}</div>
-    </td>
-    <td>${escapeHtml(u.account_space || '')}</td>
-    <td>
-      <select data-field="planCode" class="input">
-        <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
-        <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
-      </select>
-    </td>
-    <td>
-      <select data-field="status" class="input">
-        <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
-        <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
-        <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
-        <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
-      </select>
-    </td>
-    <td><input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" style="width:100px"></td>
-    <td><input data-field="expiry" value="${trialExpiry}" class="input" type="date" style="width:170px"></td>
-    <td>
-      <span class="po-admin-status ${satisfactionSent ? 'sent' : ''}">
-        ${satisfactionSent ? 'Envoyé le ' + formatDate(u.satisfaction_mail_sent_at) : 'Non envoyé'}
-      </span>
-    </td>
-    <td>
-      <div class="row gap wrap">
-        <button class="btn ghost save">Enregistrer</button>
-        <button class="btn ghost satisfaction">${satisfactionSent ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
-        <button class="btn ghost delete">Supprimer</button>
-      </div>
-      <input type="hidden" data-field="publicLimit" value="${publicLimit}">
-      <input type="hidden" data-field="privateLimit" value="${privateLimit}">
-      <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
-    </td>
-  </tr>`;
-}
-
-async function loadUsers() {
-  try {
-    const data = await apiFetch('/admin/users');
-    el('userCount').textContent = String(data.users.length);
-    const tbody = document.querySelector('#usersTable tbody');
-    tbody.innerHTML = '';
-    data.users.forEach((u) => {
-      const wrapper = document.createElement('tbody');
-      wrapper.innerHTML = buildRow(u);
-      const tr = wrapper.firstElementChild;
-      const saveBtn = tr.querySelector('.save');
-      const deleteBtn = tr.querySelector('.delete');
-      const satisfactionBtn = tr.querySelector('.satisfaction');
-
-      tr.querySelector('[data-field="planCode"]').addEventListener('change', (event) => {
-        const status = tr.querySelector('[data-field="status"]');
-        if (event.target.value === 'STANDARD' && status.value !== 'active') status.value = 'active';
-      });
-
-      saveBtn.addEventListener('click', async () => {
-        try {
-          const planCode = tr.querySelector('[data-field="planCode"]').value;
-          const status = tr.querySelector('[data-field="status"]').value;
-          const ticketsAi = Number(tr.querySelector('[data-field="ticketsAi"]').value || 0);
-          const expiryValue = tr.querySelector('[data-field="expiry"]').value;
-          const publicLimit = Number(tr.querySelector('[data-field="publicLimit"]').value || 0);
-          const privateLimit = Number(tr.querySelector('[data-field="privateLimit"]').value || 0);
-          const privateUsersLimit = Number(tr.querySelector('[data-field="privateUsersLimit"]').value || 1);
-          await apiFetch('/admin/users/' + u.id, {
-            method:'PUT',
-            body:{
-              wallet:{
-                planCode,
-                status,
-                ticketsAi,
-                publicDossiersLimit: publicLimit,
-                privateDossiersLimit: privateLimit,
-                privateUsersLimit,
-                trialExpiresAt: expiryValue ? new Date(expiryValue).toISOString() : null
-              }
-            }
-          });
-          showToast('Compte mis à jour', 'ok');
-          await loadUsers();
-        } catch (e) {
-          showToast(getApiMessage(e), 'err');
-        }
-      });
-
-      satisfactionBtn.addEventListener('click', async () => {
-        try {
-          await apiFetch('/admin/users/' + u.id + '/send-satisfaction', { method:'POST', body:{} });
-          showToast('Mail de satisfaction envoyé', 'ok');
-          await loadUsers();
-        } catch (e) {
-          showToast(getApiMessage(e), 'warn');
-        }
-      });
-
-      deleteBtn.addEventListener('click', async () => {
-        if (!confirm('Supprimer ce compte ?')) return;
-        try {
-          await apiFetch('/admin/users/' + u.id, { method:'DELETE' });
-          showToast('Compte supprimé', 'ok');
-          await loadUsers();
-        } catch (e) {
-          showToast(getApiMessage(e), 'err');
-        }
-      });
-
-      tbody.appendChild(tr);
-    });
-  } catch (e) {
-    if (getToken()) showToast(getApiMessage(e), 'err');
-  }
-}
-
 el('adminLoginBtn').addEventListener('click', adminLogin);
 el('refreshUsers').addEventListener('click', loadUsers);
+el('userSearch').addEventListener('input', applyFilters);
+el('offerFilter').addEventListener('change', applyFilters);
+el('satisfactionFilter').addEventListener('change', applyFilters);
 
 el('createUserBtn').addEventListener('click', async () => {
   try {
@@ -299,6 +376,7 @@ el('createUserBtn').addEventListener('click', async () => {
       }
     });
     el('createUserMsg').textContent = 'Compte créé.';
+    ['newFullName','newOrg','newEmail','newPhone'].forEach((id) => el(id).value = '');
     showToast('Client créé', 'ok');
     await loadUsers();
   } catch (e) {

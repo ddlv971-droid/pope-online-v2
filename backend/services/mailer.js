@@ -1,8 +1,8 @@
 // Provider-agnostic mail sender (Resend or SendGrid)
 
-export async function sendMail({ to, subject, text, html }) {
+export async function sendMail({ to, from: customFrom, replyTo, subject, text, html }) {
   const provider = (process.env.MAIL_PROVIDER || 'resend').toLowerCase();
-  const from = process.env.MAIL_FROM;
+  const from = customFrom || process.env.MAIL_FROM;
   const apiKey = process.env.MAIL_API_KEY;
 
   if (!to) throw new Error('MAIL: missing to');
@@ -22,7 +22,8 @@ export async function sendMail({ to, subject, text, html }) {
         to: Array.isArray(to) ? to : [to],
         subject,
         text,
-        html
+        html,
+        reply_to: replyTo || undefined
       })
     });
     const out = await r.text();
@@ -45,6 +46,7 @@ export async function sendMail({ to, subject, text, html }) {
       body: JSON.stringify({
         personalizations: [{ to: (Array.isArray(to) ? to : [to]).map(email => ({ email })) }],
         from: { email: from },
+        reply_to: replyTo ? { email: replyTo } : undefined,
         subject,
         content: [
           html ? { type: 'text/html', value: html } : null,

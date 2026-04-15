@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Enquête satisfaction</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="index.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub">Formulaire de satisfaction client</div>
+      </div>
+    </a>
+  </div>
+</header>
+
+<main class="container app" style="grid-template-columns:1fr">
+  <section class="card left" style="max-width:980px;margin:0 auto;width:100%">
+    <section class="po-satisfaction-hero">
+      <div>
+        <div class="po-admin-eyebrow">Votre avis compte</div>
+        <h1>Merci pour votre inscription à POPE Online</h1>
+        <p>Merci de nous consacrer quelques instants. Ce questionnaire nous aide à améliorer l'accompagnement, la fluidité de la plateforme et la qualité de service apportée à chaque client.</p>
+      </div>
+      <div class="po-satisfaction-legend">
+        <span class="level level-1">Mauvais</span>
+        <span class="level level-2">Insuffisant</span>
+        <span class="level level-3">Moyen</span>
+        <span class="level level-4">Correct</span>
+        <span class="level level-5">Satisfaisant</span>
+        <span class="level level-6">Très bon</span>
+        <span class="level level-7">Excellent</span>
+      </div>
+    </section>
+
+    <form id="satisfactionForm" class="panel po-satisfaction-form">
+      <div id="criteriaWrap"></div>
+      <label class="label">Commentaire complémentaire</label>
+      <textarea id="comment" class="input" rows="5" placeholder="Un commentaire libre pour nous aider à progresser"></textarea>
+      <div class="row gap wrap" style="margin-top:18px">
+        <button class="btn" type="submit">Envoyer mon retour</button>
+        <span class="fineprint" id="formMsg"></span>
+      </div>
+    </form>
+  </section>
+</main>
+
+<script type="module">
+import { apiFetch, getApiMessage } from './api.js';
+import { showToast } from './app.js';
+
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token') || '';
+const criteria = [
+  { key: 'first_contact', label: 'Votre satisfaction concernant le premier contact avec un conseiller POPE Online' },
+  { key: 'ergonomics', label: 'Votre satisfaction vis-à-vis de l’ergonomie et de la facilité d’utilisation des fonctionnalités du site' },
+  { key: 'clarity', label: 'Votre satisfaction concernant la clarté des parcours et des services proposés' },
+  { key: 'fluidity', label: 'Votre satisfaction concernant la rapidité et la fluidité globale de la plateforme' },
+  { key: 'relevance', label: 'Votre satisfaction sur la pertinence de l’accompagnement et la compréhension de votre besoin' }
+];
+const levels = [
+  { score: 1, label: 'Mauvais' },
+  { score: 2, label: 'Insuffisant' },
+  { score: 3, label: 'Passable' },
+  { score: 4, label: 'Moyen' },
+  { score: 5, label: 'Satisfaisant' },
+  { score: 6, label: 'Très bon' },
+  { score: 7, label: 'Excellent' }
+];
+
+const wrap = document.getElementById('criteriaWrap');
+const msg = document.getElementById('formMsg');
+
+wrap.innerHTML = criteria.map((criterion, idx) => `
+  <section class="po-satisfaction-criterion">
+    <h3>${idx + 1}. ${criterion.label}</h3>
+    <div class="po-rating-scale">
+      ${levels.map((level) => `
+        <label class="po-rating-option score-${level.score}">
+          <input type="radio" name="${criterion.key}" value="${level.score}" required>
+          <span class="dot"></span>
+          <span class="text">${level.label}</span>
+        </label>
+      `).join('')}
+    </div>
+  </section>
+`).join('');
+
+document.getElementById('satisfactionForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    const payload = {
+      token,
+      comment: document.getElementById('comment').value.trim(),
+      criteria: criteria.map((criterion) => {
+        const selected = document.querySelector(`input[name="${criterion.key}"]:checked`);
+        const score = Number(selected?.value || 0);
+        const label = levels.find((item) => item.score === score)?.label || '';
+        return { key: criterion.key, label: criterion.label, value: label, score };
+      })
+    };
+    await apiFetch('/client/satisfaction-submit', { method: 'POST', auth: false, body: payload });
+    msg.textContent = 'Merci. Votre retour a bien été transmis à contact@pope-online.com.';
+    showToast('Retour envoyé', 'ok');
+    event.target.reset();
+  } catch (e) {
+    msg.textContent = getApiMessage(e);
+    showToast('Envoi impossible', 'err');
+  }
+});
+</script>
+</body>
+</html>

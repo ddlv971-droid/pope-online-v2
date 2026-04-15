@@ -1,5 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
@@ -15,12 +16,60 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
   return { ticketsAi: 10, publicDossiersLimit: 1, privateDossiersLimit: 0, privateUsersLimit: 1 };
 }
 
+function buildSatisfactionLink(user) {
+  const frontendBase = (process.env.FRONTEND_BASE_URL || 'https://pope-online.com').replace(/\/$/, '');
+  const token = jwt.sign(
+    {
+      scope: 'satisfaction',
+      sub: user.id,
+      email: user.email,
+      fullName: user.full_name || '',
+      organization: user.organization || ''
+    },
+    process.env.JWT_SECRET || 'dev-secret',
+    { expiresIn: '30d' }
+  );
+  return `${frontendBase}/satisfaction.html?token=${encodeURIComponent(token)}`;
+}
+
+function satisfactionMailHtml(user, formUrl) {
+  const displayName = user.full_name ? ` ${user.full_name}` : '';
+  return `<!doctype html>
+<html lang="fr">
+  <body style="margin:0;padding:0;background:#f4f8fb;font-family:Arial,sans-serif;color:#0b2440;">
+    <div style="max-width:720px;margin:0 auto;padding:32px 18px;">
+      <div style="background:#ffffff;border:1px solid #dce7f0;border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(11,36,64,.08);">
+        <div style="padding:28px 28px 18px;background:linear-gradient(135deg,#0b2440,#0079c1);color:#fff;">
+          <h1 style="margin:0;font-size:24px;line-height:1.2;">Merci pour votre inscription à POPE Online</h1>
+          <p style="margin:12px 0 0;line-height:1.6;opacity:.95;">Votre retour nous aide à améliorer l'accompagnement, la qualité de service et l'expérience de la plateforme.</p>
+        </div>
+        <div style="padding:28px;">
+          <p style="margin:0 0 16px;line-height:1.7;">Bonjour${displayName},</p>
+          <p style="margin:0 0 16px;line-height:1.7;">Nous vous remercions pour votre inscription à <strong>POPE Online</strong>. Afin de continuer à faire évoluer la plateforme dans le bon sens, nous vous invitons à répondre à un court formulaire de satisfaction.</p>
+          <p style="margin:0 0 12px;line-height:1.7;">Le questionnaire vous permettra notamment d'évaluer :</p>
+          <ul style="margin:0 0 22px 18px;padding:0;line-height:1.8;">
+            <li>la qualité du premier contact avec un conseiller POPE Online ;</li>
+            <li>l'ergonomie et la facilité d'utilisation des fonctionnalités du site ;</li>
+            <li>la clarté des parcours et des services proposés ;</li>
+            <li>la rapidité et la fluidité d'utilisation de la plateforme ;</li>
+            <li>la pertinence globale de l'accompagnement proposé.</li>
+          </ul>
+          <p style="margin:0 0 24px;line-height:1.7;">Le formulaire est simple, rapide et se complète à l'aide d'un baromètre visuel allant de <strong>mauvais</strong> à <strong>excellent</strong>.</p>
+          <a href="${formUrl}" style="display:inline-block;background:#0079c1;color:#fff;text-decoration:none;padding:14px 22px;border-radius:14px;font-weight:700;">Accéder au formulaire de satisfaction</a>
+          <p style="margin:24px 0 0;line-height:1.7;color:#50627a;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br><span style="word-break:break-all;">${formUrl}</span></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>`;
+}
+
 router.get('/users', async (_req, res) => {
   try {
     const result = await withClient(async (client) => {
       const q = await client.query(`
         select u.id, u.full_name, u.organization, u.email, u.phone_full, u.account_space, u.role, u.must_change_password,
-               u.satisfaction_mail_sent_at,
+               u.satisfaction_mail_sent_at, u.satisfaction_response_received_at,
                w.plan_code, w.status, w.tickets_ai, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
@@ -134,22 +183,14 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
         return { status: 409, body: { error: 'satisfaction_mail_already_sent', sentAt: user.satisfaction_mail_sent_at } };
       }
 
+      const formUrl = buildSatisfactionLink(user);
       await sendMail({
         to: user.email,
-        subject: 'POPE Online — Votre avis nous intéresse',
-        text: `Bonjour${user.full_name ? ' ' + user.full_name : ''},
-
-Merci pour votre inscription sur POPE Online.
-
-Votre retour compte pour nous afin d'améliorer l'expérience proposée à nos clients.
-Vous pouvez nous répondre directement à ce message en quelques lignes pour nous indiquer :
-- ce qui vous a plu ;
-- ce qui pourrait être amélioré ;
-- les fonctionnalités que vous attendez en priorité.
-
-Merci par avance pour votre retour.
-
-— L'équipe POPE Online`
+        from: process.env.MAIL_FROM || 'contact@pope-online.com',
+        replyTo: process.env.MAIL_TO || 'contact@pope-online.com',
+        subject: 'POPE Online — Merci pour votre inscription',
+        text: `Bonjour${user.full_name ? ' ' + user.full_name : ''},\n\nMerci pour votre inscription à POPE Online.\n\nNous vous invitons à compléter notre formulaire de satisfaction :\n${formUrl}\n\nVotre retour est précieux pour améliorer l'expérience proposée.\n\n— L'équipe POPE Online`,
+        html: satisfactionMailHtml(user, formUrl)
       });
 
       await client.query(
@@ -166,7 +207,7 @@ Merci par avance pour votre retour.
     return res.status(result.status).json(result.body);
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: 'server_error' });
+    return res.status(500).json({ error: 'mail_send_failed' });
   }
 });
 
