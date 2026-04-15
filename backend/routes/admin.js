@@ -1,8 +1,8 @@
-
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { sendMail } from '../services/mailer.js';
 
 const router = express.Router();
 router.use(requireAdmin);
@@ -20,6 +20,7 @@ router.get('/users', async (_req, res) => {
     const result = await withClient(async (client) => {
       const q = await client.query(`
         select u.id, u.full_name, u.organization, u.email, u.phone_full, u.account_space, u.role, u.must_change_password,
+               u.satisfaction_mail_sent_at,
                w.plan_code, w.status, w.tickets_ai, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
@@ -96,12 +97,73 @@ router.put('/users/:id', async (req, res) => {
              private_users_limit=excluded.private_users_limit,
              trial_expires_at=excluded.trial_expires_at,
              updated_at=now()`,
-          [id, w.planCode || 'CUSTOM', w.status || 'trial_active', Number(w.ticketsAi || 0), Number(w.publicDossiersLimit || 1), Number(w.privateDossiersLimit || 1), Number(w.privateUsersLimit || 1), w.trialExpiresAt || null]
+          [
+            id,
+            w.planCode || 'CUSTOM',
+            w.status || 'trial_active',
+            Number(w.ticketsAi ?? 0),
+            Number(w.publicDossiersLimit ?? 1),
+            Number(w.privateDossiersLimit ?? 1),
+            Number(w.privateUsersLimit ?? 1),
+            w.trialExpiresAt || null
+          ]
         );
       }
       await client.query('commit');
       return res.json({ ok: true });
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+router.post('/users/:id/send-satisfaction', async (req, res) => {
+  try {
+    const result = await withClient(async (client) => {
+      const q = await client.query(
+        `select id, email, full_name, organization, satisfaction_mail_sent_at
+           from users
+          where id=$1
+          limit 1`,
+        [req.params.id]
+      );
+      if (!q.rowCount) return { status: 404, body: { error: 'user_not_found' } };
+      const user = q.rows[0];
+      if (user.satisfaction_mail_sent_at) {
+        return { status: 409, body: { error: 'satisfaction_mail_already_sent', sentAt: user.satisfaction_mail_sent_at } };
+      }
+
+      await sendMail({
+        to: user.email,
+        subject: 'POPE Online — Votre avis nous intéresse',
+        text: `Bonjour${user.full_name ? ' ' + user.full_name : ''},
+
+Merci pour votre inscription sur POPE Online.
+
+Votre retour compte pour nous afin d'améliorer l'expérience proposée à nos clients.
+Vous pouvez nous répondre directement à ce message en quelques lignes pour nous indiquer :
+- ce qui vous a plu ;
+- ce qui pourrait être amélioré ;
+- les fonctionnalités que vous attendez en priorité.
+
+Merci par avance pour votre retour.
+
+— L'équipe POPE Online`
+      });
+
+      await client.query(
+        `update users
+            set satisfaction_mail_sent_at=now(),
+                satisfaction_mail_sent_by=$2
+          where id=$1`,
+        [req.params.id, req.user.sub]
+      );
+
+      return { status: 200, body: { ok: true, message: 'satisfaction_mail_sent' } };
+    });
+
+    return res.status(result.status).json(result.body);
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });

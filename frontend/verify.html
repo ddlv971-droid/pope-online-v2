@@ -31,7 +31,7 @@
 </section>
 </main>
 <script type="module">
-import { apiFetch, setToken } from './api.js';
+import { apiFetch, setToken, getApiMessage } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
@@ -81,7 +81,7 @@ async function run(){
   } catch (e) {
     console.error(e);
     showToast('Vérification impossible', 'err');
-    out.textContent = 'Erreur: ' + (e?.data?.error || e.message);
+    out.textContent = 'Erreur : ' + getApiMessage(e);
   }
 }
 run();

@@ -1,4 +1,318 @@
 <!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>POPE Online — Administration</title><link href="app.css" rel="stylesheet"/><link href="./assets/favicon.png" rel="icon" type="image/png"/></head>
-<body class="bg po-v5-harmony"><header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Dashboard administrateur</div></div></a><div class="row gap wrap"><a class="btn ghost" href="profile.html">Mon compte</a><button class="btn" data-logout>Déconnexion</button></div></div></header>
-<main class="container app" style="grid-template-columns:1fr"><section class="card left" style="max-width:1120px;margin:0 auto"><div id="adminLoginBox"><h2>Connexion administrateur</h2><p class="muted">Identifiant par défaut : <strong>POPADMIN</strong> — mot de passe initial : <strong>admin</strong>.</p><div class="grid2"><div><label class="label">Identifiant</label><input id="adminIdentifier" class="input" value="POPADMIN"/><label class="label">Mot de passe</label><input id="adminPassword" class="input" type="password" value="admin"/></div><div><div class="panel"><h3>Sécurisation</h3><p class="muted">Le changement de mot de passe est imposé à la première connexion puis reste possible à tout moment depuis “Mon compte”.</p><button class="btn" id="adminLoginBtn">Se connecter</button><div class="fineprint" id="adminLoginMsg"></div></div></div></div></div><div id="adminApp" hidden><div class="row between"><h2>Gestion des comptes</h2><div class="row gap wrap"><button class="btn ghost" id="refreshUsers">Actualiser</button></div></div><div class="panel" style="margin:16px 0"><h3>Créer un client</h3><div class="grid2"><div><label class="label">Nom / Prénom</label><input id="newFullName" class="input"/><label class="label">Organisation</label><input id="newOrg" class="input"/><label class="label">Email</label><input id="newEmail" class="input"/></div><div><label class="label">Téléphone</label><input id="newPhone" class="input"/><label class="label">Type</label><select id="newSpace" class="input"><option value="public">Public</option><option value="private">Privé</option></select><label class="label">Mot de passe initial</label><input id="newPwd" class="input" value="Temporaire123!"/></div></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="createUserBtn">Créer le compte</button><div class="fineprint" id="createUserMsg"></div></div></div><div class="panel"><div class="row between"><h3>Comptes créés</h3><span class="badge" id="userCount">0</span></div><div style="overflow:auto"><table class="po-admin-table" id="usersTable"><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Type</th><th>Plan</th><th>Tickets IA</th><th>Échéance</th><th>Actions</th></tr></thead><tbody></tbody></table></div></div></div></section></main><script type="module">import { apiFetch, setToken, getToken } from './api.js'; import { clearToken, wireLogout, showToast } from './app.js'; wireLogout(); const el=(id)=>document.getElementById(id); async function adminLogin() { try { const data = await apiFetch('/auth/admin-login',{method:'POST',auth:false,body:{identifier:el('adminIdentifier').value.trim(),password:el('adminPassword').value,fp:'admin-dashboard'}}); if(data?.user?.role!=='admin') throw new Error('forbidden'); setToken(data.token); el('adminLoginBox').hidden=true; el('adminApp').hidden=false; if(data.user.mustChangePassword) el('adminLoginMsg').textContent='Changement de mot de passe requis dans Mon compte.'; await loadUsers(); showToast('Administration ouverte','ok'); } catch(e){ el('adminLoginMsg').textContent='Erreur: '+(e?.data?.error||e.message); showToast('Connexion admin impossible','err'); } } async function loadUsers(){ try{ const data=await apiFetch('/admin/users'); el('userCount').textContent=String(data.users.length); const tbody=document.querySelector('#usersTable tbody'); tbody.innerHTML=''; data.users.forEach(u=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${u.full_name||''}<div class="fineprint">${u.organization||''}</div></td><td>${u.email||''}</td><td>${u.phone_full||''}</td><td>${u.account_space||''}</td><td>${u.plan_code||''}<div class="fineprint">${u.status||''}</div></td><td><input data-field="tickets" value="${u.tickets_ai||0}" class="input" style="width:90px"></td><td><input data-field="expiry" value="${u.trial_expires_at?new Date(u.trial_expires_at).toISOString().slice(0,10):''}" class="input" style="width:160px"></td><td><div class="row gap wrap"><button class="btn ghost save">Enregistrer</button><button class="btn ghost delete">Supprimer</button></div></td>`; tr.querySelector('.save').addEventListener('click', async()=>{ try{ const ticketsAi=tr.querySelector('[data-field=tickets]').value; const expiry=tr.querySelector('[data-field=expiry]').value?new Date(tr.querySelector('[data-field=expiry]').value).toISOString():null; await apiFetch('/admin/users/'+u.id,{method:'PUT',body:{wallet:{planCode:'CUSTOM',status:'trial_active',ticketsAi,publicDossiersLimit:1,privateDossiersLimit:1,privateUsersLimit:1,trialExpiresAt:expiry}}}); showToast('Compte mis à jour','ok'); }catch(e){ showToast('Mise à jour impossible','err'); } }); tr.querySelector('.delete').addEventListener('click', async()=>{ if(!confirm('Supprimer ce compte ?')) return; try{ await apiFetch('/admin/users/'+u.id,{method:'DELETE'}); tr.remove(); showToast('Compte supprimé','ok'); }catch(e){ showToast('Suppression impossible','err'); } }); tbody.appendChild(tr); }); }catch(e){ if(getToken()) showToast('Lecture admin impossible','err'); } } el('adminLoginBtn').addEventListener('click', adminLogin); el('refreshUsers').addEventListener('click', loadUsers); el('createUserBtn').addEventListener('click', async()=>{ try{ await apiFetch('/admin/users',{method:'POST',body:{fullName:el('newFullName').value.trim(),organization:el('newOrg').value.trim(),email:el('newEmail').value.trim(),phoneFull:el('newPhone').value.trim(),accountSpace:el('newSpace').value,password:el('newPwd').value}}); el('createUserMsg').textContent='Compte créé.'; await loadUsers(); showToast('Client créé','ok'); }catch(e){ el('createUserMsg').textContent='Erreur: '+(e?.data?.error||e.message); showToast('Création impossible','err'); } }); if(getToken()) loadUsers().then(()=>{el('adminLoginBox').hidden=true;el('adminApp').hidden=false;}).catch(()=>clearToken());</script></body></html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Administration</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="index.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub">Dashboard administrateur</div>
+      </div>
+    </a>
+    <div class="row gap wrap">
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+      <button class="btn" data-logout>Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<main class="container app" style="grid-template-columns:1fr">
+  <section class="card left" style="max-width:1240px;margin:0 auto;width:100%">
+    <div id="adminLoginBox">
+      <h2>Connexion administrateur</h2>
+      <p class="muted">Identifiant par défaut : <strong>POPADMIN</strong> — mot de passe initial : <strong>admin</strong>.</p>
+      <div class="grid2">
+        <div>
+          <label class="label">Identifiant</label>
+          <input id="adminIdentifier" class="input" value="POPADMIN"/>
+          <label class="label">Mot de passe</label>
+          <input id="adminPassword" class="input" type="password" value="admin"/>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Sécurisation</h3>
+            <p class="muted">Le changement de mot de passe est imposé à la première connexion puis reste possible à tout moment depuis “Mon compte”.</p>
+            <button class="btn" id="adminLoginBtn">Se connecter</button>
+            <div class="fineprint" id="adminLoginMsg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminApp" hidden>
+      <div class="po-admin-toolbar">
+        <div>
+          <h2 class="po-admin-card-title">Gestion des comptes clients</h2>
+          <div class="muted">Suivi centralisé des inscriptions, des accès et des actions de satisfaction client.</div>
+        </div>
+        <div class="row gap wrap">
+          <span class="badge">Clients <span id="userCount">0</span></span>
+          <button class="btn ghost" id="refreshUsers">Actualiser</button>
+        </div>
+      </div>
+
+      <div class="po-admin-grid" style="margin-top:18px">
+        <div class="panel">
+          <h3>Créer un client</h3>
+          <label class="label">Nom / Prénom</label>
+          <input id="newFullName" class="input"/>
+          <label class="label">Organisation</label>
+          <input id="newOrg" class="input"/>
+          <label class="label">Email</label>
+          <input id="newEmail" class="input"/>
+          <label class="label">Téléphone</label>
+          <input id="newPhone" class="input"/>
+          <label class="label">Type</label>
+          <select id="newSpace" class="input">
+            <option value="public">Public</option>
+            <option value="private">Privé</option>
+          </select>
+          <label class="label">Mot de passe initial</label>
+          <input id="newPwd" class="input" value="Temporaire123!"/>
+          <div class="row gap wrap" style="margin-top:14px">
+            <button class="btn" id="createUserBtn">Créer le compte</button>
+          </div>
+          <div class="fineprint" id="createUserMsg"></div>
+        </div>
+
+        <div class="po-admin-shell">
+          <div class="panel">
+            <div class="row between wrap">
+              <h3>Comptes créés</h3>
+              <div class="muted">Passage en offre standard, ajustement des tickets et envoi du mail de satisfaction.</div>
+            </div>
+            <div style="overflow:auto">
+              <table class="po-admin-table" id="usersTable">
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Type</th>
+                    <th>Offre</th>
+                    <th>Statut</th>
+                    <th>Tickets IA</th>
+                    <th>Échéance</th>
+                    <th>Satisfaction</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { apiFetch, setToken, getToken, getApiMessage } from './api.js';
+import { clearToken, wireLogout, showToast } from './app.js';
+
+wireLogout();
+const el = (id) => document.getElementById(id);
+
+function escapeHtml(value='') {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function formatDate(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('fr-FR');
+}
+
+async function adminLogin() {
+  try {
+    const data = await apiFetch('/auth/admin-login', {
+      method:'POST',
+      auth:false,
+      body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard' }
+    });
+    if (data?.user?.role !== 'admin') throw new Error('forbidden');
+    setToken(data.token);
+    el('adminLoginBox').hidden = true;
+    el('adminApp').hidden = false;
+    el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';
+    await loadUsers();
+    showToast('Administration ouverte', 'ok');
+  } catch (e) {
+    el('adminLoginMsg').textContent = 'Erreur : ' + getApiMessage(e);
+    showToast('Connexion admin impossible', 'err');
+  }
+}
+
+function buildRow(u) {
+  const satisfactionSent = !!u.satisfaction_mail_sent_at;
+  const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
+  const offerValue = (u.plan_code || '').toUpperCase() === 'STANDARD' || u.status === 'active' ? 'STANDARD' : 'FREE';
+  const statusValue = u.status || 'trial_active';
+  const publicLimit = Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0));
+  const privateLimit = Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0));
+  return `<tr data-user-id="${u.id}">
+    <td>
+      <strong>${escapeHtml(u.full_name || '')}</strong>
+      <div class="fineprint">${escapeHtml(u.organization || '')}</div>
+      <div class="fineprint">${escapeHtml(u.email || '')}</div>
+      <div class="fineprint">${escapeHtml(u.phone_full || '')}</div>
+    </td>
+    <td>${escapeHtml(u.account_space || '')}</td>
+    <td>
+      <select data-field="planCode" class="input">
+        <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
+        <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
+      </select>
+    </td>
+    <td>
+      <select data-field="status" class="input">
+        <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
+        <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
+        <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
+        <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
+      </select>
+    </td>
+    <td><input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" style="width:100px"></td>
+    <td><input data-field="expiry" value="${trialExpiry}" class="input" type="date" style="width:170px"></td>
+    <td>
+      <span class="po-admin-status ${satisfactionSent ? 'sent' : ''}">
+        ${satisfactionSent ? 'Envoyé le ' + formatDate(u.satisfaction_mail_sent_at) : 'Non envoyé'}
+      </span>
+    </td>
+    <td>
+      <div class="row gap wrap">
+        <button class="btn ghost save">Enregistrer</button>
+        <button class="btn ghost satisfaction">${satisfactionSent ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
+        <button class="btn ghost delete">Supprimer</button>
+      </div>
+      <input type="hidden" data-field="publicLimit" value="${publicLimit}">
+      <input type="hidden" data-field="privateLimit" value="${privateLimit}">
+      <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
+    </td>
+  </tr>`;
+}
+
+async function loadUsers() {
+  try {
+    const data = await apiFetch('/admin/users');
+    el('userCount').textContent = String(data.users.length);
+    const tbody = document.querySelector('#usersTable tbody');
+    tbody.innerHTML = '';
+    data.users.forEach((u) => {
+      const wrapper = document.createElement('tbody');
+      wrapper.innerHTML = buildRow(u);
+      const tr = wrapper.firstElementChild;
+      const saveBtn = tr.querySelector('.save');
+      const deleteBtn = tr.querySelector('.delete');
+      const satisfactionBtn = tr.querySelector('.satisfaction');
+
+      tr.querySelector('[data-field="planCode"]').addEventListener('change', (event) => {
+        const status = tr.querySelector('[data-field="status"]');
+        if (event.target.value === 'STANDARD' && status.value !== 'active') status.value = 'active';
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        try {
+          const planCode = tr.querySelector('[data-field="planCode"]').value;
+          const status = tr.querySelector('[data-field="status"]').value;
+          const ticketsAi = Number(tr.querySelector('[data-field="ticketsAi"]').value || 0);
+          const expiryValue = tr.querySelector('[data-field="expiry"]').value;
+          const publicLimit = Number(tr.querySelector('[data-field="publicLimit"]').value || 0);
+          const privateLimit = Number(tr.querySelector('[data-field="privateLimit"]').value || 0);
+          const privateUsersLimit = Number(tr.querySelector('[data-field="privateUsersLimit"]').value || 1);
+          await apiFetch('/admin/users/' + u.id, {
+            method:'PUT',
+            body:{
+              wallet:{
+                planCode,
+                status,
+                ticketsAi,
+                publicDossiersLimit: publicLimit,
+                privateDossiersLimit: privateLimit,
+                privateUsersLimit,
+                trialExpiresAt: expiryValue ? new Date(expiryValue).toISOString() : null
+              }
+            }
+          });
+          showToast('Compte mis à jour', 'ok');
+          await loadUsers();
+        } catch (e) {
+          showToast(getApiMessage(e), 'err');
+        }
+      });
+
+      satisfactionBtn.addEventListener('click', async () => {
+        try {
+          await apiFetch('/admin/users/' + u.id + '/send-satisfaction', { method:'POST', body:{} });
+          showToast('Mail de satisfaction envoyé', 'ok');
+          await loadUsers();
+        } catch (e) {
+          showToast(getApiMessage(e), 'warn');
+        }
+      });
+
+      deleteBtn.addEventListener('click', async () => {
+        if (!confirm('Supprimer ce compte ?')) return;
+        try {
+          await apiFetch('/admin/users/' + u.id, { method:'DELETE' });
+          showToast('Compte supprimé', 'ok');
+          await loadUsers();
+        } catch (e) {
+          showToast(getApiMessage(e), 'err');
+        }
+      });
+
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    if (getToken()) showToast(getApiMessage(e), 'err');
+  }
+}
+
+el('adminLoginBtn').addEventListener('click', adminLogin);
+el('refreshUsers').addEventListener('click', loadUsers);
+
+el('createUserBtn').addEventListener('click', async () => {
+  try {
+    await apiFetch('/admin/users', {
+      method:'POST',
+      body:{
+        fullName: el('newFullName').value.trim(),
+        organization: el('newOrg').value.trim(),
+        email: el('newEmail').value.trim(),
+        phoneFull: el('newPhone').value.trim(),
+        accountSpace: el('newSpace').value,
+        password: el('newPwd').value
+      }
+    });
+    el('createUserMsg').textContent = 'Compte créé.';
+    showToast('Client créé', 'ok');
+    await loadUsers();
+  } catch (e) {
+    el('createUserMsg').textContent = 'Erreur : ' + getApiMessage(e);
+    showToast('Création impossible', 'err');
+  }
+});
+
+if (getToken()) {
+  loadUsers().then(() => {
+    el('adminLoginBox').hidden = true;
+    el('adminApp').hidden = false;
+  }).catch(() => clearToken());
+}
+</script>
+</body>
+</html>

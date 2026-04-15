@@ -4594,3 +4594,19 @@ body.bg > footer{position:relative;z-index:3;}
   margin-right:auto;
 }
 .app.app-fullwidth-result .card.right{margin-top:16px;}
+
+
+.icon-only{min-width:46px;padding-left:12px;padding-right:12px}
+.export-select{min-width:140px;max-width:160px}
+.output{white-space:pre-wrap;line-height:1.65}
+.po-admin-shell{display:grid;gap:18px}
+.po-admin-shell .panel{margin:0}
+.po-admin-grid{display:grid;grid-template-columns:320px 1fr;gap:18px}
+.po-admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.po-admin-card-title{margin:0 0 8px}
+.po-admin-status{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;background:rgba(7,22,42,.05);border:1px solid rgba(7,22,42,.08)}
+.po-admin-status.sent{background:rgba(3,160,215,.10);border-color:rgba(3,160,215,.22)}
+.po-admin-table select.input,.po-admin-table input.input{min-width:120px}
+@media (max-width: 980px){
+  .po-admin-grid{grid-template-columns:1fr}
+}

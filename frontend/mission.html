@@ -55,7 +55,7 @@
 
 <script src="./auth-guard.js"></script>
 <script type="module">
-import { apiFetch } from './api.js';
+import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 if (!requireLogin('mission.html')) {}
 wireLogout();
@@ -84,7 +84,7 @@ el('btnSend').addEventListener('click', async () => {
     showToast('Demande transmise', 'ok');
   } catch (e) {
     console.error(e);
-    el('msg').textContent = 'Erreur: ' + (e?.data?.error || e.message);
+    el('msg').textContent = 'Erreur : ' + getApiMessage(e);
     showToast('Envoi impossible', 'err');
   }
 });

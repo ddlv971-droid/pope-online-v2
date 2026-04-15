@@ -1,5 +1,3 @@
-export const API_BASE = window.API_BASE || localStorage.getItem('pope_api_base') || "https://pope-online-v2.onrender.com";
-
 const FR_MESSAGES = {
   invalid_credentials: "Identifiants invalides.",
   invalid_email: "Adresse e-mail invalide.",
@@ -37,40 +35,24 @@ const FR_MESSAGES = {
   satisfaction_mail_already_sent: "L'e-mail de satisfaction a déjà été envoyé."
 };
 
-export function translateApiMessage(code, fallback = '') {
+export function t(code, fallback = '') {
   if (!code) return fallback || '';
   return FR_MESSAGES[code] || fallback || code;
 }
 
-export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenue.') {
-  const data = payloadOrError?.data || payloadOrError || {};
-  return data?.error_label || data?.message_label || translateApiMessage(data?.error || data?.message, payloadOrError?.message || fallback);
-}
-
-export function getToken() {
-  return localStorage.getItem('pope_token') || '';
-}
-
-export function setToken(token) {
-  if (token) localStorage.setItem('pope_token', token);
-  else localStorage.removeItem('pope_token');
-}
-
-export async function apiFetch(path, { method='GET', body=null, auth=true } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (auth) {
-    const t = getToken();
-    if (t) headers['Authorization'] = `Bearer ${t}`;
+export function localizeApiBody(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const out = { ...body };
+  if (typeof out.error === 'string') {
+    out.error_code = out.error;
+    out.error_label = t(out.error, out.error);
   }
-  const res = await fetch(`${API_BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : null });
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
-  if (!res.ok) {
-    const err = new Error(getApiMessage(data, 'api_error'));
-    err.status = res.status;
-    err.data = data;
-    throw err;
+  if (typeof out.message === 'string') {
+    out.message_code = out.message;
+    out.message_label = t(out.message, out.message);
   }
-  return data;
+  if (!out.message && typeof out.error === 'string') {
+    out.message = t(out.error, out.error);
+  }
+  return out;
 }

@@ -78,9 +78,21 @@
 </section>
 
 <section class="card right">
-<div class="row between">
+<div class="row between wrap">
 <h2>Résultat</h2>
+<div class="row gap wrap">
 <span class="badge">Premier draft</span>
+<button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button>
+<select class="input export-select" id="exportFormat" aria-label="Format d’export">
+  <option value="">Exporter…</option>
+  <option value="txt">TXT</option>
+  <option value="md">Markdown</option>
+  <option value="html">HTML</option>
+  <option value="json">JSON</option>
+  <option value="doc">DOC</option>
+</select>
+<button class="btn ghost" id="btnExport">Exporter</button>
+</div>
 </div>
 <div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
 </section>
@@ -88,7 +100,7 @@
 
 <script src="./auth-guard.js"></script>
 <script type="module">
-import { apiFetch } from './api.js';
+import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 
 if (!requireLogin('app.html')) {}
@@ -121,10 +133,10 @@ async function refreshWallet(){
 
 async function callAI(){
   const payload = buildPayload();
-  const raw = (payload.context + "\n" + payload.facts).toLowerCase();
-  const forbiddenHints = ['numéro de sécurité sociale','nss','dossier médical','diagnostic','adresse','téléphone','date de naissance','iban','rib'];
-  if (forbiddenHints.some(k => raw.includes(k))) {
-    setOutput('⚠️ Données potentiellement sensibles détectées. Merci de retirer ou anonymiser les informations avant génération.');
+  const raw = `${payload.context}\n${payload.objective}\n${payload.facts}`;
+  const sensitiveHints = [/\b(?:num[eé]ro\s+de\s+s[ée]curit[ée]\s+sociale|nss|iban|rib|carte\s+bancaire|carte\s+vitale)\b/i, /\b\d{13}\b/, /\bfr\d{2}[a-z0-9]{11,30}\b/i];
+  if (sensitiveHints.some((re) => re.test(raw))) {
+    setOutput('⚠️ Des données directement sensibles semblent présentes. Merci de les anonymiser avant génération.');
     return;
   }
 
@@ -147,9 +159,53 @@ async function callAI(){
       showToast('Données sensibles détectées', 'warn');
       return;
     }
-    setOutput('Erreur : ' + (e?.data?.error || e.message));
+    setOutput('Erreur : ' + getApiMessage(e));
     showToast('Erreur de génération', 'err');
   }
+}
+
+function downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+function buildExportContent(format) {
+  const usecaseLabel = el('usecase').selectedOptions?.[0]?.textContent?.trim() || '';
+  const payload = buildPayload();
+  const result = el('output').textContent || '';
+  const stamp = new Date().toLocaleString('fr-FR');
+  if (format === 'json') {
+    return {
+      filename: 'pope-online-livrable.json',
+      mime: 'application/json;charset=utf-8',
+      content: JSON.stringify({ generatedAt: stamp, usecase: usecaseLabel, payload, result }, null, 2)
+    };
+  }
+  if (format === 'md') {
+    return {
+      filename: 'pope-online-livrable.md',
+      mime: 'text/markdown;charset=utf-8',
+      content: `# Livrable POPE Online\n\n- **Date** : ${stamp}\n- **Type** : ${usecaseLabel}\n\n## Contexte\n${payload.context || '-'}\n\n## Objectif\n${payload.objective || '-'}\n\n## Éléments factuels utiles\n${payload.facts || '-'}\n\n## Génération IA\n${result}\n`
+    };
+  }
+  if (format === 'html' || format === 'doc') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${usecaseLabel}</p><section><h2>Contexte</h2><pre>${payload.context || '-'}</pre></section><section><h2>Objectif</h2><pre>${payload.objective || '-'}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${payload.facts || '-'}</pre></section><section><h2>Génération IA</h2><pre>${result}</pre></section></body></html>`;
+    return {
+      filename: format === 'doc' ? 'pope-online-livrable.doc' : 'pope-online-livrable.html',
+      mime: 'text/html;charset=utf-8',
+      content: html
+    };
+  }
+  return {
+    filename: 'pope-online-livrable.txt',
+    mime: 'text/plain;charset=utf-8',
+    content: `Livrable POPE Online\nDate : ${stamp}\nType : ${usecaseLabel}\n\nContexte\n${payload.context || '-'}\n\nObjectif\n${payload.objective || '-'}\n\nÉléments factuels utiles\n${payload.facts || '-'}\n\nGénération IA\n${result}\n`
+  };
 }
 
 el('btnGenerate').addEventListener('click', callAI);
@@ -157,7 +213,21 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(el('output').textContent || '');
     showToast('Résultat copié', 'ok');
-  } catch {}
+  } catch {
+    showToast('Copie impossible', 'err');
+  }
+});
+
+document.getElementById('btnExport')?.addEventListener('click', () => {
+  const format = el('exportFormat').value || 'txt';
+  const resultText = (el('output').textContent || '').trim();
+  if (!resultText || resultText.startsWith('Cliquez sur')) {
+    showToast('Aucun résultat à exporter', 'warn');
+    return;
+  }
+  const file = buildExportContent(format);
+  downloadFile(file.filename, file.content, file.mime);
+  showToast(`Export ${format.toUpperCase()} prêt`, 'ok');
 });
 refreshWallet();
 </script>

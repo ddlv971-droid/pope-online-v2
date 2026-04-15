@@ -12,6 +12,7 @@ import billingRoutes from './routes/billing.js';
 import usageRoutes from './routes/usage.js';
 import adminRoutes from './routes/admin.js';
 import clientRoutes from './routes/client.js';
+import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
 
@@ -26,6 +27,11 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json({ limit: '250kb' }));
+app.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+  res.json = (body) => originalJson(localizeApiBody(body));
+  next();
+});
 
 const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({
@@ -41,7 +47,7 @@ app.use(cors({
 app.options('*', cors());
 app.use(rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta2-improved' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export' }));
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/expert', expertRoutes);

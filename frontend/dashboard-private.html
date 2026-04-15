@@ -64,7 +64,7 @@
 
   <script src="./auth-guard.js"></script>
   <script type="module">
-    import { apiFetch } from './api.js';
+    import { apiFetch, getApiMessage } from './api.js';
     import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 
     requireLogin('dashboard-private.html');
@@ -108,7 +108,7 @@
         showToast('Demande envoyée', 'ok');
       } catch (error) {
         console.error(error);
-        el('needMsg').textContent = 'Erreur: ' + (error?.data?.error || error.message);
+        el('needMsg').textContent = 'Erreur : ' + getApiMessage(error);
         showToast('Envoi impossible', 'err');
       }
     });

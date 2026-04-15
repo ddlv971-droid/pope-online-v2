@@ -129,3 +129,6 @@ create table if not exists password_resets (
 );
 
 create index if not exists idx_password_resets_user on password_resets(user_id, created_at desc);
+
+alter table users add column if not exists satisfaction_mail_sent_at timestamptz;
+alter table users add column if not exists satisfaction_mail_sent_by uuid references users(id) on delete set null;
