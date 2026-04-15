@@ -4686,3 +4686,51 @@ body.bg > footer{position:relative;z-index:3;}
   .po-admin-hero-actions,.po-admin-actions-col,.po-admin-filters,.po-admin-controls-grid,.po-rating-scale,.po-satisfaction-legend{grid-template-columns:1fr}
   .po-admin-user-top{flex-direction:column}
 }
+
+
+.po-admin-user-badges{align-items:center}
+.po-admin-score{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:900;border:1px solid rgba(7,22,42,.08);min-height:36px}
+.po-admin-score small{font-size:11px;font-weight:800;opacity:.9;text-transform:uppercase;letter-spacing:.03em}
+.po-admin-score.score-na{background:rgba(7,22,42,.05);color:#5b6b82}
+.po-admin-score.score-low{background:rgba(198,40,40,.10);border-color:rgba(198,40,40,.18);color:#9d1f1f}
+.po-admin-score.score-mid{background:rgba(251,192,45,.18);border-color:rgba(251,192,45,.28);color:#8a5a00}
+.po-admin-score.score-good{background:rgba(67,160,71,.12);border-color:rgba(67,160,71,.22);color:#0d6b39}
+.po-admin-actions-col{align-content:start}
+.po-admin-delete-wrap{margin-top:6px;padding-top:6px;border-top:1px solid rgba(7,22,42,.08)}
+.po-admin-actions-col .delete{width:100%}
+@media (max-width: 980px){
+  .po-admin-delete-wrap{grid-column:1/-1}
+}
+
+
+/* ===== Admin analytics upgrade ===== */
+.po-admin-hero-analytics{margin-bottom:18px}
+.po-admin-hero-actions-analytics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.po-admin-kpi-alert{border-color:rgba(198,40,40,.18);background:linear-gradient(180deg,#fff,#fff5f5)}
+.po-admin-content-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start}
+.po-admin-score-wrap{display:grid;gap:10px;align-content:start}
+.po-admin-score-panel{border:1px solid rgba(7,22,42,.08);border-radius:20px;padding:16px 14px;background:#fff;display:grid;gap:6px;min-height:116px;align-content:center}
+.po-admin-score-panel .value{font-size:30px;font-weight:900;line-height:1;color:#0b2440}
+.po-admin-score-panel .meta{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#5b6b82}
+.po-admin-score-panel.good{background:rgba(67,160,71,.08);border-color:rgba(67,160,71,.18)}
+.po-admin-score-panel.follow{background:rgba(251,192,45,.14);border-color:rgba(251,192,45,.28)}
+.po-admin-score-panel.risk{background:rgba(198,40,40,.08);border-color:rgba(198,40,40,.18)}
+.po-admin-score-panel.na{background:rgba(7,22,42,.04)}
+.po-admin-risk{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid rgba(7,22,42,.08)}
+.po-admin-risk.good{background:rgba(67,160,71,.12);border-color:rgba(67,160,71,.22);color:#0d6b39}
+.po-admin-risk.follow{background:rgba(251,192,45,.18);border-color:rgba(251,192,45,.30);color:#8a5a00}
+.po-admin-risk.risk{background:rgba(198,40,40,.12);border-color:rgba(198,40,40,.22);color:#9d1f1f}
+.po-admin-risk.neutral{background:rgba(7,22,42,.05);color:#5b6b82}
+.po-admin-user-card.is-risk{border-color:rgba(198,40,40,.24);box-shadow:0 12px 30px rgba(198,40,40,.08)}
+.po-admin-user-card.is-follow{border-color:rgba(251,192,45,.34)}
+.po-admin-actions-col .contact{display:flex;align-items:center;justify-content:center;text-decoration:none}
+.po-admin-actions-col .danger{border-color:rgba(198,40,40,.18);color:#9d1f1f;background:#fff6f6}
+.po-admin-delete-wrap{margin-top:0;padding-top:10px;border-top:1px solid rgba(7,22,42,.08)}
+
+@media (max-width: 1180px){
+  .po-admin-hero-actions-analytics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .po-admin-content-grid{grid-template-columns:1fr}
+}
+@media (max-width: 720px){
+  .po-admin-hero-actions-analytics{grid-template-columns:1fr}
+}

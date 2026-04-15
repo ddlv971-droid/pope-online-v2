@@ -25,7 +25,7 @@
 </header>
 
 <main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:1320px;margin:0 auto;width:100%">
+  <section class="card left" style="max-width:1380px;margin:0 auto;width:100%">
     <div id="adminLoginBox">
       <h2>Connexion administrateur</h2>
       <p class="muted">Identifiant par défaut : <strong>POPADMIN</strong> — mot de passe initial : <strong>admin</strong>.</p>
@@ -48,16 +48,18 @@
     </div>
 
     <div id="adminApp" hidden>
-      <section class="po-admin-hero">
+      <section class="po-admin-hero po-admin-hero-analytics">
         <div>
           <div class="po-admin-eyebrow">Pilotage commercial et relation client</div>
           <h1>Gestion des comptes clients</h1>
-          <p>Créez des comptes, ajustez les accès, envoyez les enquêtes de satisfaction et suivez en un coup d'œil les actions déjà réalisées.</p>
+          <p>Créez des comptes, ajustez les accès, suivez les enquêtes de satisfaction et identifiez immédiatement les clients à risque pour agir sans délai.</p>
         </div>
-        <div class="po-admin-hero-actions">
-          <div class="po-admin-kpi"><span>Clients</span><strong id="userCount">0</strong></div>
-          <div class="po-admin-kpi"><span>Mails satisfaction</span><strong id="sentCount">0</strong></div>
-          <div class="po-admin-kpi"><span>Réponses reçues</span><strong id="answeredCount">0</strong></div>
+        <div class="po-admin-hero-actions po-admin-hero-actions-analytics">
+          <div class="po-admin-kpi"><span>Clients total</span><strong id="userCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Enquêtes envoyées</span><strong id="sentCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Taux de réponse</span><strong id="responseRate">0 %</strong></div>
+          <div class="po-admin-kpi"><span>Note moyenne globale</span><strong id="avgScore">—</strong></div>
+          <div class="po-admin-kpi po-admin-kpi-alert"><span>Clients à risque</span><strong id="riskCount">0</strong></div>
           <button class="btn ghost" id="refreshUsers">Actualiser</button>
         </div>
       </section>
@@ -100,7 +102,7 @@
             <div class="po-admin-panel-head">
               <div>
                 <h3>Comptes créés</h3>
-                <p class="muted">Tableau réorganisé pour modifier les offres, mettre à jour les accès et piloter les enquêtes de satisfaction.</p>
+                <p class="muted">Les clients les plus sensibles remontent automatiquement en haut du tableau afin de faciliter les relances et le traitement prioritaire.</p>
               </div>
             </div>
 
@@ -116,6 +118,9 @@
                 <option value="pending">Mail non envoyé</option>
                 <option value="sent">Mail envoyé</option>
                 <option value="answered">Réponse reçue</option>
+                <option value="risk">Clients à risque</option>
+                <option value="follow">À suivre</option>
+                <option value="good">Satisfaits</option>
               </select>
             </div>
 
@@ -164,18 +169,62 @@ function getStatusLabel(status) {
   }[status] || 'À vérifier';
 }
 
+function getSatisfactionFlowStatus(user) {
+  if (user.satisfaction_response_received_at) return 'answered';
+  if (user.satisfaction_mail_sent_at) return 'sent';
+  return 'pending';
+}
+
+function getSatisfactionScore(user) {
+  const n = Number(user.satisfaction_score_10 || 0);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.round(n * 10) / 10;
+}
+
+function getRiskProfile(user) {
+  const score = getSatisfactionScore(user);
+  if (score === null) return { key: 'na', label: 'Sans note', className: 'neutral', priority: 3 };
+  if (score < 5) return { key: 'risk', label: 'À risque', className: 'risk', priority: 0 };
+  if (score < 8) return { key: 'follow', label: 'À suivre', className: 'follow', priority: 1 };
+  return { key: 'good', label: 'Satisfait', className: 'good', priority: 2 };
+}
+
 function getSatisfactionBadge(user) {
-  if (user.satisfaction_response_received_at) return '<span class="po-admin-pill answered">Réponse reçue</span>';
-  if (user.satisfaction_mail_sent_at) return `<span class="po-admin-pill sent">Envoyé le ${formatDate(user.satisfaction_mail_sent_at)}</span>`;
+  const flow = getSatisfactionFlowStatus(user);
+  if (flow === 'answered') return '<span class="po-admin-pill answered">Réponse reçue</span>';
+  if (flow === 'sent') return `<span class="po-admin-pill sent">Envoyé le ${formatDate(user.satisfaction_mail_sent_at)}</span>`;
   return '<span class="po-admin-pill pending">À envoyer</span>';
+}
+
+function getSatisfactionScoreBadge(user) {
+  const score = getSatisfactionScore(user);
+  if (score === null) return '<span class="po-admin-score score-na">— <small>En attente</small></span>';
+  const cls = score >= 8 ? 'score-good' : score >= 5 ? 'score-mid' : 'score-low';
+  return `<span class="po-admin-score ${cls}">${String(score).replace('.', ',')}/10</span>`;
+}
+
+function getRiskBadge(user) {
+  const profile = getRiskProfile(user);
+  return `<span class="po-admin-risk ${profile.className}">${profile.label}</span>`;
+}
+
+function getScoreCell(user) {
+  const score = getSatisfactionScore(user);
+  const profile = getRiskProfile(user);
+  if (score === null) {
+    return `<div class="po-admin-score-panel na"><div class="value">—</div><div class="meta">Aucune réponse</div></div>`;
+  }
+  return `<div class="po-admin-score-panel ${profile.className}"><div class="value">${String(score).replace('.', ',')}/10</div><div class="meta">${profile.label}</div></div>`;
 }
 
 function buildUserCard(u) {
   const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
   const offerValue = getOfferValue(u);
   const statusValue = u.status || 'trial_active';
+  const flow = getSatisfactionFlowStatus(u);
+  const risk = getRiskProfile(u);
   return `
-    <article class="po-admin-user-card" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${u.satisfaction_response_received_at ? 'answered' : (u.satisfaction_mail_sent_at ? 'sent' : 'pending')}">
+    <article class="po-admin-user-card ${risk.className === 'risk' ? 'is-risk' : risk.className === 'follow' ? 'is-follow' : ''}" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${flow}" data-risk="${risk.key}" data-score="${getSatisfactionScore(u) ?? -1}">
       <div class="po-admin-user-main">
         <div class="po-admin-user-top">
           <div>
@@ -187,41 +236,52 @@ function buildUserCard(u) {
             <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
             <span class="po-admin-pill neutral">${getStatusLabel(statusValue)}</span>
             ${getSatisfactionBadge(u)}
+            ${getRiskBadge(u)}
           </div>
         </div>
 
-        <div class="po-admin-controls-grid">
-          <label>
-            <span class="po-admin-field-label">Offre</span>
-            <select data-field="planCode" class="input">
-              <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
-              <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
-            </select>
-          </label>
-          <label>
-            <span class="po-admin-field-label">Statut</span>
-            <select data-field="status" class="input">
-              <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
-              <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
-              <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
-              <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
-            </select>
-          </label>
-          <label>
-            <span class="po-admin-field-label">Tickets IA</span>
-            <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
-          </label>
-          <label>
-            <span class="po-admin-field-label">Échéance</span>
-            <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
-          </label>
+        <div class="po-admin-content-grid">
+          <div class="po-admin-controls-grid">
+            <label>
+              <span class="po-admin-field-label">Offre</span>
+              <select data-field="planCode" class="input">
+                <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
+                <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
+              </select>
+            </label>
+            <label>
+              <span class="po-admin-field-label">Statut</span>
+              <select data-field="status" class="input">
+                <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
+                <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
+                <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
+                <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
+              </select>
+            </label>
+            <label>
+              <span class="po-admin-field-label">Tickets IA</span>
+              <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
+            </label>
+            <label>
+              <span class="po-admin-field-label">Échéance</span>
+              <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
+            </label>
+          </div>
+          <div class="po-admin-score-wrap">
+            <div class="po-admin-field-label">Note satisfaction globale</div>
+            ${getScoreCell(u)}
+            ${getSatisfactionScoreBadge(u)}
+          </div>
         </div>
       </div>
       <div class="po-admin-actions-col">
         <button class="btn ghost save">Enregistrer</button>
         <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
         <button class="btn ghost promote">Passer en offre standard</button>
-        <button class="btn ghost delete">Supprimer</button>
+        <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
+        <div class="po-admin-delete-wrap">
+          <button class="btn ghost delete danger">Supprimer</button>
+        </div>
       </div>
       <input type="hidden" data-field="publicLimit" value="${Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0))}">
       <input type="hidden" data-field="privateLimit" value="${Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0))}">
@@ -229,10 +289,39 @@ function buildUserCard(u) {
     </article>`;
 }
 
+function round1(value) {
+  return Math.round(value * 10) / 10;
+}
+
 function updateStats(users) {
+  const sent = users.filter((u) => !!u.satisfaction_mail_sent_at).length;
+  const answered = users.filter((u) => !!u.satisfaction_response_received_at).length;
+  const scored = users.map(getSatisfactionScore).filter((v) => v !== null);
+  const avg = scored.length ? round1(scored.reduce((a, b) => a + b, 0) / scored.length) : null;
+  const risk = users.filter((u) => getRiskProfile(u).key === 'risk').length;
+  const responseRate = sent ? Math.round((answered / sent) * 100) : 0;
+
   el('userCount').textContent = String(users.length);
-  el('sentCount').textContent = String(users.filter((u) => !!u.satisfaction_mail_sent_at).length);
-  el('answeredCount').textContent = String(users.filter((u) => !!u.satisfaction_response_received_at).length);
+  el('sentCount').textContent = String(sent);
+  el('responseRate').textContent = `${responseRate} %`;
+  el('avgScore').textContent = avg === null ? '—' : `${String(avg).replace('.', ',')}/10`;
+  el('riskCount').textContent = String(risk);
+}
+
+function sortUsers(users) {
+  return [...users].sort((a, b) => {
+    const pa = getRiskProfile(a).priority;
+    const pb = getRiskProfile(b).priority;
+    if (pa !== pb) return pa - pb;
+    const sa = getSatisfactionScore(a);
+    const sb = getSatisfactionScore(b);
+    if (sa !== null && sb !== null && sa !== sb) return sa - sb;
+    if (sa === null && sb !== null) return 1;
+    if (sa !== null && sb === null) return -1;
+    const da = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    if (da !== 0) return da;
+    return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'fr');
+  });
 }
 
 function attachCardActions(card, user) {
@@ -273,7 +362,7 @@ function attachCardActions(card, user) {
     }
   });
 
-  satisfactionBtn.addEventListener('click', async () => {
+  satisfactionBtn?.addEventListener('click', async () => {
     try {
       await apiFetch('/admin/users/' + user.id + '/send-satisfaction', { method:'POST', body:{} });
       showToast('Mail de satisfaction envoyé', 'ok');
@@ -302,7 +391,7 @@ function renderUsers(users) {
     list.innerHTML = '<div class="po-admin-empty">Aucun compte ne correspond aux filtres actuels.</div>';
     return;
   }
-  users.forEach((user) => {
+  sortUsers(users).forEach((user) => {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = buildUserCard(user);
     const card = wrapper.firstElementChild;
@@ -318,8 +407,9 @@ function applyFilters() {
   const filtered = usersCache.filter((user) => {
     const matchesQ = !q || `${user.full_name||''} ${user.organization||''} ${user.email||''}`.toLowerCase().includes(q);
     const matchesOffer = offer === 'all' || getOfferValue(user) === offer;
-    const satValue = user.satisfaction_response_received_at ? 'answered' : (user.satisfaction_mail_sent_at ? 'sent' : 'pending');
-    const matchesSat = satisfaction === 'all' || satValue === satisfaction;
+    const flow = getSatisfactionFlowStatus(user);
+    const risk = getRiskProfile(user).key;
+    const matchesSat = satisfaction === 'all' || flow === satisfaction || risk === satisfaction;
     return matchesQ && matchesOffer && matchesSat;
   });
   renderUsers(filtered);

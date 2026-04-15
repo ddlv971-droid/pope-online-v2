@@ -17,7 +17,9 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 function buildSatisfactionLink(user) {
-  const frontendBase = (process.env.FRONTEND_BASE_URL || 'https://pope-online.com').replace(/\/$/, '');
+  const frontendBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '')
+    .replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
+    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com') || 'https://pope-online.com';
   const token = jwt.sign(
     {
       scope: 'satisfaction',
@@ -69,7 +71,13 @@ router.get('/users', async (_req, res) => {
     const result = await withClient(async (client) => {
       const q = await client.query(`
         select u.id, u.full_name, u.organization, u.email, u.phone_full, u.account_space, u.role, u.must_change_password,
-               u.satisfaction_mail_sent_at, u.satisfaction_response_received_at,
+               u.satisfaction_mail_sent_at, u.satisfaction_response_received_at, u.satisfaction_last_response,
+               round(
+                 coalesce((
+                   select avg((elem->>'score')::numeric)
+                   from jsonb_array_elements(coalesce(u.satisfaction_last_response->'criteria', '[]'::jsonb)) elem
+                 ), 0) * 10.0 / 7.0
+               , 1) as satisfaction_score_10,
                w.plan_code, w.status, w.tickets_ai, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
