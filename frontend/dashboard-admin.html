@@ -59,7 +59,11 @@
           <div class="po-admin-kpi"><span>Enquêtes envoyées</span><strong id="sentCount">0</strong></div>
           <div class="po-admin-kpi"><span>Taux de réponse</span><strong id="responseRate">0 %</strong></div>
           <div class="po-admin-kpi"><span>Note moyenne globale</span><strong id="avgScore">—</strong></div>
-          <div class="po-admin-kpi po-admin-kpi-alert"><span>Clients à risque</span><strong id="riskCount">0</strong></div>
+          <button class="po-admin-kpi po-admin-kpi-alert po-admin-kpi-button" id="riskKpi" type="button">
+            <span>Clients à risque</span>
+            <strong id="riskCount">0</strong>
+            <small>Cliquer pour afficher la liste</small>
+          </button>
           <button class="btn ghost" id="refreshUsers">Actualiser</button>
         </div>
       </section>
@@ -102,7 +106,7 @@
             <div class="po-admin-panel-head">
               <div>
                 <h3>Comptes créés</h3>
-                <p class="muted">Les clients les plus sensibles remontent automatiquement en haut du tableau afin de faciliter les relances et le traitement prioritaire.</p>
+                <p class="muted">Les clients à risque remontent automatiquement en tête. Le KPI rouge est cliquable pour afficher directement la liste prioritaire.</p>
               </div>
             </div>
 
@@ -124,6 +128,14 @@
               </select>
             </div>
 
+            <div class="po-admin-filter-banner" id="filterBanner" hidden>
+              <div>
+                <strong id="filterBannerTitle">Filtre actif</strong>
+                <p id="filterBannerText">Liste filtrée.</p>
+              </div>
+              <button type="button" class="btn ghost" id="clearRiskFilter">Voir tous les clients</button>
+            </div>
+
             <div class="po-admin-list" id="usersList"></div>
           </div>
         </section>
@@ -139,6 +151,7 @@ import { clearToken, wireLogout, showToast } from './app.js';
 wireLogout();
 const el = (id) => document.getElementById(id);
 let usersCache = [];
+let lastFilteredUsers = [];
 
 function escapeHtml(value='') {
   return String(value ?? '')
@@ -225,64 +238,68 @@ function buildUserCard(u) {
   const risk = getRiskProfile(u);
   return `
     <article class="po-admin-user-card ${risk.className === 'risk' ? 'is-risk' : risk.className === 'follow' ? 'is-follow' : ''}" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${flow}" data-risk="${risk.key}" data-score="${getSatisfactionScore(u) ?? -1}">
-      <div class="po-admin-user-main">
-        <div class="po-admin-user-top">
-          <div>
-            <h4>${escapeHtml(u.full_name || 'Client sans nom')}</h4>
-            <div class="po-admin-user-meta">${escapeHtml(u.organization || 'Organisation non renseignée')}</div>
-            <div class="po-admin-user-meta">${escapeHtml(u.email || '')}${u.phone_full ? ` • ${escapeHtml(u.phone_full)}` : ''}</div>
+      <div class="po-admin-user-top">
+        <div class="po-admin-user-identity">
+          <h4>${escapeHtml(u.full_name || 'Client sans nom')}</h4>
+          <div class="po-admin-user-meta">
+            <div>${escapeHtml(u.organization || 'Organisation non renseignée')}</div>
+            <div>${escapeHtml(u.email || '—')}${u.phone_full ? ` <span class="po-admin-meta-sep">•</span> ${escapeHtml(u.phone_full)}` : ''}</div>
           </div>
-          <div class="po-admin-user-badges">
-            <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
-            <span class="po-admin-pill neutral">${getStatusLabel(statusValue)}</span>
-            ${getSatisfactionBadge(u)}
-            ${getRiskBadge(u)}
+        </div>
+        <div class="po-admin-user-badges">
+          <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
+          <span class="po-admin-pill neutral">${escapeHtml(getStatusLabel(statusValue))}</span>
+          ${getSatisfactionBadge(u)}
+          ${getRiskBadge(u)}
+        </div>
+      </div>
+
+      <div class="po-admin-user-body">
+        <div class="po-admin-user-fields">
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Offre</span>
+            <select data-field="planCode" class="input">
+              <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
+              <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
+            </select>
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Statut</span>
+            <select data-field="status" class="input">
+              <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
+              <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
+              <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
+              <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
+            </select>
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Tickets IA</span>
+            <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Échéance</span>
+            <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
+          </label>
+
+          <div class="po-admin-field po-admin-field-score">
+            <div class="po-admin-field-label">Note satisfaction globale</div>
+            ${getScoreCell(u)}
+            <div class="po-admin-score-inline">${getSatisfactionScoreBadge(u)}</div>
           </div>
         </div>
 
-        <div class="po-admin-content-grid">
-          <div class="po-admin-controls-grid">
-            <label>
-              <span class="po-admin-field-label">Offre</span>
-              <select data-field="planCode" class="input">
-                <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
-                <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
-              </select>
-            </label>
-            <label>
-              <span class="po-admin-field-label">Statut</span>
-              <select data-field="status" class="input">
-                <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
-                <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
-                <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
-                <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
-              </select>
-            </label>
-            <label>
-              <span class="po-admin-field-label">Tickets IA</span>
-              <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
-            </label>
-            <label>
-              <span class="po-admin-field-label">Échéance</span>
-              <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
-            </label>
-          </div>
-          <div class="po-admin-score-wrap">
-            <div class="po-admin-field-label">Note satisfaction globale</div>
-            ${getScoreCell(u)}
-            ${getSatisfactionScoreBadge(u)}
-          </div>
-        </div>
-      </div>
-      <div class="po-admin-actions-col">
-        <button class="btn ghost save">Enregistrer</button>
-        <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
-        <button class="btn ghost promote">Passer en offre standard</button>
-        <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
-        <div class="po-admin-delete-wrap">
+        <div class="po-admin-actions-col">
+          <button class="btn ghost save">Enregistrer</button>
+          <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
+          <button class="btn ghost promote">Passer en offre standard</button>
+          <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
           <button class="btn ghost delete danger">Supprimer</button>
         </div>
       </div>
+
       <input type="hidden" data-field="publicLimit" value="${Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0))}">
       <input type="hidden" data-field="privateLimit" value="${Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0))}">
       <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
@@ -306,6 +323,8 @@ function updateStats(users) {
   el('responseRate').textContent = `${responseRate} %`;
   el('avgScore').textContent = avg === null ? '—' : `${String(avg).replace('.', ',')}/10`;
   el('riskCount').textContent = String(risk);
+  el('riskKpi').disabled = risk === 0;
+  el('riskKpi').classList.toggle('is-empty', risk === 0);
 }
 
 function sortUsers(users) {
@@ -385,6 +404,7 @@ function attachCardActions(card, user) {
 }
 
 function renderUsers(users) {
+  lastFilteredUsers = users;
   const list = el('usersList');
   list.innerHTML = '';
   if (!users.length) {
@@ -400,6 +420,18 @@ function renderUsers(users) {
   });
 }
 
+function updateFilterBanner(filtered) {
+  const filter = el('satisfactionFilter').value;
+  const banner = el('filterBanner');
+  if (filter === 'risk') {
+    banner.hidden = false;
+    el('filterBannerTitle').textContent = 'Filtre actif : clients à risque';
+    el('filterBannerText').textContent = `${filtered.length} client${filtered.length > 1 ? 's' : ''} à risque affiché${filtered.length > 1 ? 's' : ''}.`;
+    return;
+  }
+  banner.hidden = true;
+}
+
 function applyFilters() {
   const q = el('userSearch').value.trim().toLowerCase();
   const offer = el('offerFilter').value;
@@ -412,6 +444,7 @@ function applyFilters() {
     const matchesSat = satisfaction === 'all' || flow === satisfaction || risk === satisfaction;
     return matchesQ && matchesOffer && matchesSat;
   });
+  updateFilterBanner(filtered);
   renderUsers(filtered);
 }
 
@@ -451,6 +484,16 @@ el('refreshUsers').addEventListener('click', loadUsers);
 el('userSearch').addEventListener('input', applyFilters);
 el('offerFilter').addEventListener('change', applyFilters);
 el('satisfactionFilter').addEventListener('change', applyFilters);
+el('riskKpi').addEventListener('click', () => {
+  if (el('riskKpi').disabled) return;
+  el('satisfactionFilter').value = 'risk';
+  applyFilters();
+  el('usersList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+el('clearRiskFilter').addEventListener('click', () => {
+  el('satisfactionFilter').value = 'all';
+  applyFilters();
+});
 
 el('createUserBtn').addEventListener('click', async () => {
   try {
