@@ -254,8 +254,8 @@ function buildUserCard(u) {
         </div>
       </div>
 
-      <div class="po-admin-user-body">
-        <div class="po-admin-user-fields">
+      <div class="po-admin-user-body po-admin-user-body-flat">
+        <div class="po-admin-user-fields po-admin-user-fields-flat">
           <label class="po-admin-field">
             <span class="po-admin-field-label">Offre</span>
             <select data-field="planCode" class="input">
@@ -284,14 +284,14 @@ function buildUserCard(u) {
             <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
           </label>
 
-          <div class="po-admin-field po-admin-field-score">
+          <div class="po-admin-field po-admin-field-score po-admin-field-score-flat">
             <div class="po-admin-field-label">Note satisfaction globale</div>
             ${getScoreCell(u)}
             <div class="po-admin-score-inline">${getSatisfactionScoreBadge(u)}</div>
           </div>
         </div>
 
-        <div class="po-admin-actions-col">
+        <div class="po-admin-actions-col po-admin-actions-row">
           <button class="btn ghost save">Enregistrer</button>
           <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
           <button class="btn ghost promote">Passer en offre standard</button>
