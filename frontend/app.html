@@ -79,16 +79,17 @@
 
 <section class="card right">
 <div class="row between wrap">
-<h2>Résultat</h2> <span class="badge" id="status">Prêt</span>
+<h2>Résultat</h2> 
+<div class="split-title">
+  <span class="badge" id="status">Prêt</span>
+</div>
 <div class="row gap wrap">
 <span class="badge">Premier draft</span>
 <button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button>
 <select class="input export-select" id="exportFormat" aria-label="Format d’export">
   <option value="">Exporter…</option>
   <option value="txt">TXT</option>
-  <option value="md">Markdown</option>
   <option value="html">HTML</option>
-  <option value="json">JSON</option>
   <option value="doc">DOC</option>
 </select>
 <button class="btn ghost" id="btnExport">Exporter</button>
