@@ -1,97 +1,123 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Tableau de bord</title>
-<link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<link rel="stylesheet" href="popy.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POPE Online - Dashboard public</title>
+<link rel="stylesheet" href="app.css">
 </head>
-<body class="bg po-v10-dashboard">
-<header class="topbar">
-<div class="container row between">
-<a class="brand link" href="public.html">
-<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-<div>
-<div class="brand-title">POPE Online</div>
-<div class="brand-sub">Tableau de bord</div>
-</div>
-</a>
-<div class="row gap wrap">
-<span class="badge" data-tickets>Accès sécurisé</span>
-<a class="btn ghost" href="app.html">Génération guidée</a>
-<a class="btn ghost" href="expert.html">Relecture experte</a>
-<button class="btn" data-logout>Déconnexion</button>
-</div>
-</div>
-</header>
-
-<main class="container dashboard-v10-shell">
-  <section class="card dashboard-v10-hero">
-    <div class="dashboard-v10-headline">
-      <span class="badge">Espace public</span>
-      <h1>Mon espace</h1>
-      <p class="muted">Un espace premium centré sur la production, la sécurisation des livrables et l’appui expert selon le niveau d’enjeu.</p>
-    </div>
-    <div class="dashboard-v10-links">
-      <a class="btn ghost" href="pricing.html">Voir les parcours</a>
-      <a class="btn ghost" href="profile.html">Mon compte</a>
-    </div>
-  </section>
-
-  <section class="dashboard-v11-grid">
-    <article class="card dashboard-v11-service dashboard-v11-service-left">
-      <div class="dashboard-v11-service-kicker">Service complémentaire</div>
-      <h2>Relecture experte</h2>
-      <p class="muted">Faites relire, sécuriser et consolider votre livrable lorsque le niveau d’enjeu exige une validation complémentaire.</p>
-      <a class="btn ghost" href="expert.html">Accéder à la relecture experte</a>
-    </article>
-
-    <section class="card dashboard-v11-maincard">
-      <div class="dashboard-v11-mainbadge" id="kpi">Compte créé</div>
-      <h2>Produire un livrable sécurisé</h2>
-      <p class="muted">Lancez directement la génération guidée dans un espace conçu pour préparer la demande, produire un draft structuré et conserver les résultats utiles.</p>
-      <div class="dashboard-v10-maincta-wrap">
-        <a class="btn primary dashboard-v10-maincta" href="app.html">Produire un livrable sécurisé</a>
+<body>
+  <div class="container dashboard-shell">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">POPE Online</p>
+        <h1>Mon espace</h1>
+        <p class="lead">Un environnement premium centré sur la production, la sécurisation des livrables et l’appui expert selon le niveau d’enjeu.</p>
       </div>
-      <div class="dashboard-v11-meta">
-        <div><strong>Parcours</strong><span>Préparation du besoin, génération, exploitation du résultat puis montée en gamme si nécessaire.</span></div>
-        <div><strong>Public concerné</strong><span>Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission et chefs de service.</span></div>
+      <nav class="quick-links" aria-label="Navigation rapide">
+        <a href="#services">Voir les parcours</a>
+        <a href="#archives">Mes archives</a>
+      </nav>
+    </header>
+
+    <section class="hero-grid" id="services">
+      <article class="service-panel service-panel-left">
+        <span class="panel-badge">Service complémentaire</span>
+        <h2>Relecture experte</h2>
+        <p>Faites relire, sécuriser et consolider votre livrable lorsque le niveau d’enjeu exige une validation complémentaire.</p>
+        <ul class="service-list">
+          <li>Lecture critique du fond et de la forme</li>
+          <li>Vérification du niveau de sécurisation attendu</li>
+          <li>Montée en qualité avant diffusion</li>
+        </ul>
+        <button type="button" class="secondary-action">Accéder à la relecture experte</button>
+      </article>
+
+      <article class="hero-card">
+        <span class="hero-status">Compte créé</span>
+        <h2>Produire un livrable sécurisé</h2>
+        <p>Lancez directement la génération guidée dans un espace conçu pour préparer la demande, produire un draft structuré et conserver les résultats utiles.</p>
+        <button id="generateBtn" class="hero-action" type="button">Produire un livrable sécurisé</button>
+        <div id="loadingIndicator" class="loading-indicator" hidden aria-live="polite">
+          <span class="loader-dot"></span>
+          <span>Génération en cours…</span>
+        </div>
+        <div class="hero-meta">
+          <div>
+            <h3>Parcours</h3>
+            <p>Préparation du besoin, génération, exploitation du résultat puis montée en gamme si nécessaire.</p>
+          </div>
+          <div>
+            <h3>Public concerné</h3>
+            <p>Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission et chefs de service.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="service-panel service-panel-right">
+        <span class="panel-badge">Service complémentaire</span>
+        <h2>Accompagnement sur mesure</h2>
+        <p>Prolongez la génération par un appui adapté au besoin, au calendrier et au niveau d’exigence attendu.</p>
+        <ul class="service-list">
+          <li>Cadrage de la commande et des arbitrages</li>
+          <li>Structuration du besoin et priorisation</li>
+          <li>Appui expert mobilisable selon le contexte</li>
+        </ul>
+        <button type="button" class="secondary-action">Accéder à l’accompagnement</button>
+      </article>
+    </section>
+
+    <section class="panel full-width-panel prompt-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Préparer votre demande</p>
+          <h2>Décrivez votre besoin</h2>
+        </div>
+        <div class="archive-controls-inline">
+          <label class="checkbox-pill" for="autoArchiveToggle">
+            <input type="checkbox" id="autoArchiveToggle">
+            <span>Archivage automatique</span>
+          </label>
+          <button type="button" id="archiveBtn" class="ghost-action">Archiver ce résultat</button>
+        </div>
+      </div>
+      <label class="field-label" for="prompt">Contexte, objectif, éléments utiles</label>
+      <textarea id="prompt" placeholder="Décrivez ici le besoin, le contexte, les faits utiles et le niveau d’exigence attendu."></textarea>
+    </section>
+
+    <section class="panel full-width-panel result-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Résultat généré</p>
+          <h2>Livrable</h2>
+        </div>
+        <div class="result-actions">
+          <button type="button" id="copyResultBtn" class="ghost-action">Copier</button>
+          <button type="button" id="downloadResultBtn" class="ghost-action">Télécharger .txt</button>
+        </div>
+      </div>
+      <div id="result" class="rendered-result empty-state">
+        <p>La génération apparaîtra ici dans une mise en forme lisible et exploitable.</p>
       </div>
     </section>
 
-    <article class="card dashboard-v11-service dashboard-v11-service-right">
-      <div class="dashboard-v11-service-kicker">Service complémentaire</div>
-      <h2>Accompagnement sur mesure</h2>
-      <p class="muted">Prolongez la génération par un appui adapté au besoin, au calendrier et au niveau d’exigence attendu.</p>
-      <a class="btn ghost" href="mission.html">Accéder à l’accompagnement</a>
-    </article>
-  </section>
-</main>
+    <section class="panel full-width-panel archive-panel" id="archives">
+      <div class="panel-heading archive-heading">
+        <div>
+          <p class="section-kicker">Archivage local</p>
+          <h2>Historique des générations</h2>
+        </div>
+        <div class="archive-tools">
+          <input type="search" id="archiveSearch" placeholder="Rechercher dans les archives">
+          <button type="button" id="exportArchivesBtn" class="ghost-action">Exporter</button>
+          <button type="button" id="clearArchivesBtn" class="ghost-action danger-action">Vider</button>
+        </div>
+      </div>
+      <div id="archiveList" class="archive-grid"></div>
+    </section>
+  </div>
 
-<script src="./auth-guard.js"></script>
-<script type="module">
-import { apiFetch } from './api.js';
-import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
-if (!requireLogin('dashboard.html')) {}
-wireLogout();
-const kpi = document.getElementById('kpi');
-async function refresh() {
-  try {
-    const me = await apiFetch('/auth/me');
-    setTicketsBadge(me.wallet);
-    const exp = me.wallet?.trial_expires_at ? new Date(me.wallet.trial_expires_at) : null;
-    if (exp && exp.getTime() < Date.now()) {
-      kpi.textContent = 'Offre gratuite expirée';
-    } else {
-      kpi.textContent = me.user?.isEmailVerified ? 'Compte vérifié' : 'Compte créé';
-    }
-  } catch {
-    kpi.textContent = 'Session active';
-  }
-}
-refresh();
-</script>
+  <script src="archive.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
