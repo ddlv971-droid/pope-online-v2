@@ -1,9 +1,9 @@
-
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { requireAuth } from '../middleware/auth.js';
 import { withClient } from '../db/index.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
+import { getUserVaultFiles, buildAiFileContext } from './vault.js';
 import { buildSystemPrompt, buildUserPrompt, callMistral } from '../services/mistral.js';
 
 const router = express.Router();
@@ -22,12 +22,16 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
     payload.facts = clamp(payload.facts, 6000);
     payload.objective = clamp(payload.objective, 1200);
 
+    const userId = req.user.sub;
+    const uploadedFileIds = Array.isArray(payload.uploaded_file_ids) ? payload.uploaded_file_ids.slice(0, 8) : [];
+    const fileBundle = await withClient(async (client) => getUserVaultFiles(client, userId, uploadedFileIds));
+    const fileContext = buildAiFileContext(fileBundle);
+    payload.facts = [payload.facts, fileContext].filter(Boolean).join('\n\n');
+
     const combined = `${payload.context}\n${payload.objective}\n${payload.facts}`;
     if (rejectIfSensitive(combined)) {
       return res.status(400).json({ error: 'sensitive_data' });
     }
-
-    const userId = req.user.sub;
 
     const result = await withClient(async (client) => {
       await client.query('begin');
@@ -82,7 +86,7 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
       await client.query(
         `insert into usage_logs(user_id, kind, meta)
          values($1,$2,$3::jsonb)`,
-        [userId, 'ai_generate', JSON.stringify({ usecase: payload.usecase, mode: payload.mode, len: combined.length })]
+        [userId, 'ai_generate', JSON.stringify({ usecase: payload.usecase, mode: payload.mode, len: combined.length, uploadedFiles: uploadedFileIds.length })]
       );
 
       const w2 = await client.query('select * from wallets where user_id=$1', [userId]);

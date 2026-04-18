@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Dépôt sécurisé 48h</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-vault-page">
+<header class="topbar"><div class="container row between"><a class="brand link" href="dashboard.html" id="vaultHomeLink"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Dépôt sécurisé 48h</div></div></a><div class="row gap wrap"><span class="badge" data-tickets>Accès sécurisé</span><a class="btn ghost" href="app.html">Génération guidée</a><a class="btn ghost" href="expert.html">Relecture experte</a><button class="btn" data-logout>Déconnexion</button></div></div></header>
+<main class="container vault-shell"><section class="card vault-hero"><div><span class="badge">Conservation éphémère 48h</span><h1>Dépôt sécurisé de pièces</h1><p class="muted">Déposez vos pièces utiles à la génération, à la relecture experte ou à l'accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.</p></div><div class="vault-hero-note"><strong>Usages fréquents</strong><span>DCE, règlement de consultation, projet de courrier, justificatifs, trame interne, pièces transmises par POPE Online.</span></div></section><section class="vault-grid"><section class="card vault-upload-card"><h2>Déposer une pièce</h2><p class="muted">Formats conseillés pour alimentation IA : TXT, MD, CSV, JSON, HTML. Les autres formats restent disponibles en transmission sécurisée.</p><label class="label">Destination</label><select class="input" id="vaultPurpose"><option value="generation">Génération IA</option><option value="expert">Relecture experte</option><option value="mission">Accompagnement sur mesure</option><option value="general">Usage général</option></select><label class="label">Fichier</label><input class="input" id="vaultInput" type="file" /><div class="row gap wrap" style="margin-top:14px"><button class="btn primary" id="vaultUploadBtn" type="button">Déposer la pièce</button><a class="btn ghost" href="app.html">Revenir à la génération</a></div><div class="fineprint" id="vaultMsg"></div></section><section class="card vault-list-card"><div class="row between wrap" style="align-items:flex-start;gap:12px"><div><h2>Mes pièces disponibles</h2><p class="muted">Les fichiers texte peuvent être exploités dans la génération. Les autres servent de pièces jointes ou de dépôt sécurisé temporaire.</p></div><button class="btn ghost" id="vaultRefreshBtn" type="button">Actualiser</button></div><div id="vaultList" class="vault-list"></div></section></section></main>
+<script src="./auth-guard.js"></script>
+<script type="module" src="./vault-page.js"></script>
+</body>
+</html>

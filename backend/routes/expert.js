@@ -4,6 +4,7 @@ import { optionalAuth } from '../middleware/auth.js';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
+import { getUserVaultFiles, buildMailAttachments } from './vault.js';
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const expectations = clamp(String(req.body?.content || req.body?.expectations || '').trim(), 4000);
     const context = clamp(String(req.body?.context || '').trim(), 6000);
     const generationAttachment = req.body?.generation_attachment || null;
+    const vaultFileIds = Array.isArray(req.body?.vault_file_ids) ? req.body.vault_file_ids.slice(0, 8) : [];
 
     if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
     if (!objective) return res.status(400).json({ error: 'missing_objective' });
@@ -100,11 +102,17 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
       });
     }
 
+    if (userId && vaultFileIds.length) {
+      const vaultFiles = await withClient(async (client) => getUserVaultFiles(client, userId, vaultFileIds));
+      attachments.push(...buildMailAttachments(vaultFiles));
+    }
+
     await sendMail({
       to: mailTo,
       subject: `POPE Online — Demande EXPERT (${email})`,
       text:
-`Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context || '(non précisé)'}\n\nPièce jointe génération : ${generationAttachment?.result ? 'OUI' : 'NON'}\nCouverture ticket expert: ${result.usedTicket ? 'OUI (décrémenté)' : 'NON (qualifié au titre du dossier)'}\n\n— POPE Online`,
+`Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context || '(non précisé)'}\n\nPièce jointe génération : ${generationAttachment?.result ? 'OUI' : 'NON'}
+Pièces dépôt sécurisé 48h : ${vaultFileIds.length ? vaultFileIds.length : 0}\nCouverture ticket expert: ${result.usedTicket ? 'OUI (décrémenté)' : 'NON (qualifié au titre du dossier)'}\n\n— POPE Online`,
       attachments
     });
 

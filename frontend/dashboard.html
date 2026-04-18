@@ -2,106 +2,73 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Tableau de bord</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Tableau de bord public</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg po-v10-dashboard">
+<body class="bg po-v14-dashboard">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="public.html">
 <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-<div>
-<div class="brand-title">POPE Online</div>
-<div class="brand-sub">Tableau de bord</div>
-</div>
+<div><div class="brand-title">POPE Online</div><div class="brand-sub">Tableau de bord public</div></div>
 </a>
 <div class="row gap wrap">
 <span class="badge" data-tickets>Accès sécurisé</span>
-<a class="btn ghost" href="app.html">Génération guidée</a>
 <a class="btn ghost" href="expert.html">Relecture experte</a>
+<a class="btn ghost" href="vault.html">Dépôt sécurisé 48h</a>
 <button class="btn" data-logout>Déconnexion</button>
 </div>
 </div>
 </header>
-
-<main class="container dashboard-v10-shell">
-  <section class="card dashboard-v10-hero">
-    <div class="dashboard-v10-headline">
+<main class="container dash14-shell">
+  <section class="card dash14-hero">
+    <div>
       <span class="badge">Espace public</span>
       <h1>Mon espace</h1>
-      <p class="muted">Un espace premium centré sur la production, la sécurisation des livrables et l’appui expert selon le niveau d’enjeu.</p>
+      <p class="muted">Un espace premium centré sur la production, la sécurisation des livrables et l'appui expert selon le niveau d'enjeu.</p>
     </div>
-    <div class="dashboard-v10-links">
+    <div class="dash14-toplinks">
       <a class="btn ghost" href="pricing.html">Voir les parcours</a>
       <a class="btn ghost" href="profile.html">Mon compte</a>
     </div>
   </section>
-
-  <section class="dashboard-v13-grid">
-    <section class="card dashboard-v13-maincard">
-      <div class="dashboard-v13-mainbadge" id="kpi">Génération guidée</div>
+  <section class="dash14-grid dash14-grid-public">
+    <article class="card dash14-card dash14-card-main">
+      <div class="dash14-pill">Génération guidée</div>
       <h2>Produire un livrable sécurisé</h2>
-      <p class="muted">Accédez immédiatement à la génération guidée pour cadrer le besoin, produire un draft structuré puis exploiter le résultat dans un espace clair, professionnel et prêt à être consolidé.</p>
-      <div class="dashboard-v13-maincta-wrap">
-        <a class="btn primary dashboard-v13-maincta" href="app.html">Produire un livrable sécurisé</a>
+      <p>Cadrez votre besoin, produisez un premier draft structuré, exploitez le résultat puis montez en gamme si le dossier l'exige.</p>
+      <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta" href="app.html">Produire un livrable sécurisé</a></div>
+      <div class="dash14-chipgrid">
+        <div><strong>Parcours</strong><span>Préparation du besoin, génération, archivage local, relecture experte éventuelle.</span></div>
+        <div><strong>Public concerné</strong><span>Collectivités, établissements, DGS, directions, cabinets, cadres support et chargés de mission.</span></div>
       </div>
-      <div class="dashboard-v13-meta">
-        <div><strong>Parcours</strong><span>Préparation du besoin, génération, exploitation du résultat puis montée en gamme si nécessaire.</span></div>
-        <div><strong>Public concerné</strong><span>Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission et chefs de service.</span></div>
-      </div>
-    </section>
-
-    <article class="card dashboard-v13-service dashboard-v13-service-expert">
-      <div class="dashboard-v13-pill">Service expert</div>
-      <h2>Relecture experte</h2>
-      <p>Faites relire, sécuriser et consolider un livrable lorsque le niveau d’enjeu appelle un second regard professionnel.</p>
-      <ul class="dashboard-v13-list">
-        <li>Validation du fond et de la structure</li>
-        <li>Sécurisation du ton et des formulations</li>
-        <li>Choix de la génération archivée à joindre</li>
-      </ul>
-      <a class="btn secondary dashboard-v13-sidecta" href="expert.html">Accéder à la relecture experte</a>
     </article>
-
-    <article class="card dashboard-v13-service dashboard-v13-service-premium">
-      <div class="dashboard-v13-pill">Service premium</div>
-      <h2>Accompagnement sur mesure</h2>
-      <p>Prolongez la génération par un appui adapté au calendrier, au niveau de sensibilité du sujet et au degré d’exigence attendu.</p>
-      <ul class="dashboard-v13-list">
-        <li>Cadrage et priorisation des options</li>
-        <li>Appui rédactionnel ciblé</li>
-        <li>Montée en gamme selon le niveau d’enjeu</li>
-      </ul>
-      <a class="btn secondary dashboard-v13-sidecta" href="mission.html">Accéder à l’accompagnement sur mesure</a>
+    <article class="card dash14-card dash14-card-side dash14-card-expert">
+      <div class="dash14-pill">Service expert</div>
+      <h2>Relecture experte</h2>
+      <p>Faites sécuriser un livrable, un courrier sensible ou une production à fort enjeu avant diffusion ou arbitrage.</p>
+      <ul class="dash14-list"><li>Validation du fond et de la structure</li><li>Sécurisation des formulations</li><li>Pièce jointe possible depuis les générations archivées</li></ul>
+      <a class="btn secondary dash14-sidebtn" href="expert.html">Accéder à la relecture experte</a>
+    </article>
+    <article class="card dash14-card dash14-card-side dash14-card-premium">
+      <div class="dash14-pill">Service premium</div>
+      <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
+      <p>Prolongez la génération par un appui ciblé sur le calendrier, la sensibilité du dossier et le niveau d'exigence attendu.</p>
+      <ul class="dash14-list"><li>Cadrage et priorisation des options</li><li>Appui rédactionnel ciblé</li><li>Montée en gamme selon le niveau d'enjeu</li></ul>
+      <a class="btn secondary dash14-sidebtn" href="mission.html">Accéder à l'accompagnement</a>
     </article>
   </section>
 </main>
-
 <script src="./auth-guard.js"></script>
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
 if (!requireLogin('dashboard.html')) {}
 wireLogout();
-const kpi = document.getElementById('kpi');
-async function refresh() {
-  try {
-    const me = await apiFetch('/auth/me');
-    setTicketsBadge(me.wallet);
-    const exp = me.wallet?.trial_expires_at ? new Date(me.wallet.trial_expires_at) : null;
-    if (exp && exp.getTime() < Date.now()) {
-      kpi.textContent = 'Offre gratuite expirée';
-    } else {
-      kpi.textContent = 'Génération guidée';
-    }
-  } catch {
-    kpi.textContent = 'Génération guidée';
-  }
-}
-refresh();
+(async()=>{ try { const me = await apiFetch('/auth/me'); setTicketsBadge(me.wallet); } catch {} })();
 </script>
 </body>
 </html>
