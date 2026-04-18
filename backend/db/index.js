@@ -2,7 +2,6 @@ import pg from 'pg';
 
 const { Pool } = pg;
 
-<<<<<<< HEAD
 if (!String(process.env.DATABASE_URL || '').trim()) {
   throw new Error('DATABASE_URL manquante');
 }
@@ -21,11 +20,6 @@ function resolveSsl() {
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: resolveSsl()
-=======
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.PGSSLMODE === 'disable' ? false : (process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false)
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 });
 
 export async function query(text, params) {

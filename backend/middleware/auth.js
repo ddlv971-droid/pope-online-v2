@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import jwt from 'jsonwebtoken';
 
 function parseCookies(req) {
@@ -18,14 +17,6 @@ function extract(req) {
   if (h.startsWith('Bearer ')) return h.slice(7);
   const cookies = parseCookies(req);
   return cookies.pope_session || null;
-=======
-
-import jwt from 'jsonwebtoken';
-
-function extract(req) {
-  const h = req.headers.authorization || '';
-  return h.startsWith('Bearer ') ? h.slice(7) : null;
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 }
 
 export function requireAuth(req, res, next) {

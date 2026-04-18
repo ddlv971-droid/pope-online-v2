@@ -6,10 +6,6 @@
 <title>POPE Online — Génération guidée</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<<<<<<< HEAD
-=======
-<link rel="stylesheet" href="popy.css"/>
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 </head>
 <body class="bg po-v5-harmony po-public-v24">
 <header class="topbar">
@@ -65,17 +61,11 @@
 
 <div class="row gap wrap">
   <button class="btn" id="btnGenerate">Produire un livrable sécurisé</button>
-<<<<<<< HEAD
   <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver cette génération</button>
   <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
 </div>
 <div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
 <label class="archive-auto-option"><input type="checkbox" id="archiveAutoSave" /> Archiver automatiquement chaque génération sur cet appareil</label>
-=======
-  <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
-</div>
-<div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 
 <div class="divider"></div>
 <div class="panel">
@@ -104,7 +94,6 @@
 </div>
 </div>
 <div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
-<<<<<<< HEAD
 <div class="divider"></div>
 <div class="panel archive-panel" id="archives">
   <div class="row between wrap archive-head">
@@ -120,8 +109,13 @@
     </div>
   </div>
   <div class="fineprint">Conseil : pour conserver cet historique au-delà d’un changement d’ordinateur ou de navigateur, exportez régulièrement votre archive en JSON.</div>
+  <div class="archive-onboarding-grid">
+    <div class="archive-tip-card"><strong>1. Archiver</strong><span>Enregistrez une génération en un clic, ou activez l’archivage automatique sur cet appareil.</span></div>
+    <div class="archive-tip-card"><strong>2. Retrouver</strong><span>Filtrez par type, dossier, date ou favori pour retrouver rapidement un contenu utile.</span></div>
+    <div class="archive-tip-card"><strong>3. Réutiliser</strong><span>Réouvrez, dupliquez, copiez ou téléchargez une archive sans repartir de zéro.</span></div>
+  </div>
   <div class="archive-summary" id="archiveSummary"></div>
-  <div class="archive-toolbar premium-toolbar">
+  <div class="archive-toolbar premium-toolbar archive-toolbar-top">
     <input class="input" id="archiveSearch" type="search" placeholder="Rechercher dans mes prompts ou mes générations" />
     <select class="input" id="archiveFilterUsecase">
       <option value="">Tous les livrables</option>
@@ -130,6 +124,9 @@
       <option value="deliberation">Projets de délibération</option>
       <option value="synthese_reunion">Synthèses de réunion</option>
       <option value="cadrage_projet">Cadrages projet / pilotage</option>
+    </select>
+    <select class="input" id="archiveFilterFolder">
+      <option value="">Tous les dossiers</option>
     </select>
     <label class="archive-filter-toggle"><input type="checkbox" id="archiveFilterFavorites" /> Favoris uniquement</label>
     <input class="input" id="archiveDateFrom" type="date" aria-label="Date minimale" />
@@ -142,12 +139,20 @@
     </select>
     <button class="btn ghost" id="btnResetArchiveFilters" type="button">Réinitialiser</button>
   </div>
+  <div class="archive-bulkbar" id="archiveBulkbar">
+    <div class="row gap wrap archive-bulkbar-row">
+      <label class="archive-filter-toggle"><input type="checkbox" id="archiveSelectAll" /> Tout sélectionner</label>
+      <span class="archive-selection-count" id="archiveSelectionCount">0 archive sélectionnée</span>
+      <div class="row gap wrap">
+        <button class="btn ghost" id="btnBulkExport" type="button">Exporter la sélection</button>
+        <button class="btn ghost" id="btnBulkDelete" type="button">Supprimer la sélection</button>
+      </div>
+    </div>
+  </div>
   <div class="archive-list premium-list" id="archiveList">
     <div class="muted">Aucune génération archivée pour le moment.</div>
   </div>
 </div>
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 </section>
 </main>
 
@@ -155,21 +160,16 @@
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
-<<<<<<< HEAD
-import { createArchiveStore, buildArchiveFilename } from './archive.js';
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
+import { createArchiveStore, buildArchiveFilename, formatArchiveAsText, formatArchiveAsHtml } from './archive.js';
 
 if (!requireLogin('app.html')) {}
 wireLogout();
 
 const el = (id) => document.getElementById(id);
 const status = (txt) => el('status').textContent = txt;
-<<<<<<< HEAD
 let archiveStore = null;
 let currentUser = null;
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
+let selectedArchiveIds = new Set();
 
 function buildPayload(){
   return {
@@ -186,7 +186,6 @@ function setOutput(text){
   el('output').textContent = text;
 }
 
-<<<<<<< HEAD
 function escapeHtml(value='') {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
 }
@@ -225,7 +224,8 @@ function buildArchiveRecord() {
     prompt: { context: payload.context, objective: payload.objective, facts: payload.facts },
     result,
     accountSpace: currentUser?.account_space || currentUser?.accountSpace || null,
-    userEmail: currentUser?.email || null
+    userEmail: currentUser?.email || null,
+    folder: 'Mes archives'
   };
 }
 
@@ -239,10 +239,38 @@ function fillFormFromArchive(item) {
   status('Archive chargée');
 }
 
+function quote(value='') {
+  return `"${String(value).replace(/"/g, '&quot;')}"`;
+}
+
+function updateArchiveFolderFilter() {
+  const select = el('archiveFilterFolder');
+  if (!select || !archiveStore) return;
+  const current = select.value;
+  const folders = archiveStore.folders();
+  select.innerHTML = `<option value="">Tous les dossiers</option>${folders.map((folder) => `<option value=${quote(folder)}>${escapeHtml(folder)}</option>`).join('')}`;
+  select.value = folders.includes(current) ? current : '';
+}
+
+function updateSelectionCount() {
+  const count = selectedArchiveIds.size;
+  const label = count <= 1 ? 'archive sélectionnée' : 'archives sélectionnées';
+  const countNode = el('archiveSelectionCount');
+  if (countNode) countNode.textContent = `${count} ${label}`;
+  const bulkbar = el('archiveBulkbar');
+  if (bulkbar) bulkbar.classList.toggle('is-active', count > 0);
+  const selectAll = el('archiveSelectAll');
+  if (selectAll && archiveStore) {
+    const visible = Array.from(document.querySelectorAll('[data-archive-id]')).map((node) => node.dataset.archiveId);
+    selectAll.checked = Boolean(visible.length) && visible.every((id) => selectedArchiveIds.has(id));
+  }
+}
+
 function getFilters() {
   return {
     term: (el('archiveSearch')?.value || '').trim().toLowerCase(),
     usecase: el('archiveFilterUsecase')?.value || '',
+    folder: el('archiveFilterFolder')?.value || '',
     favoritesOnly: Boolean(el('archiveFilterFavorites')?.checked),
     dateFrom: el('archiveDateFrom')?.value || '',
     dateTo: el('archiveDateTo')?.value || '',
@@ -256,6 +284,7 @@ function matchesFilters(item, filters) {
     .toLowerCase();
   if (filters.term && !haystack.includes(filters.term)) return false;
   if (filters.usecase && item.usecase !== filters.usecase) return false;
+  if (filters.folder && (item.folder || 'Mes archives') !== filters.folder) return false;
   if (filters.favoritesOnly && !item.favorite) return false;
   const ts = new Date(item.updatedAt || item.createdAt).getTime();
   if (filters.dateFrom) {
@@ -278,14 +307,17 @@ function sortItems(items, sortBy) {
 }
 
 function renderArchiveSummary(items) {
-  const stats = archiveStore?.stats?.() || { total: 0, favorites: 0, byUsecase: {} };
+  const stats = archiveStore?.stats?.() || { total: 0, favorites: 0, folders: 0, newestAt: null };
   const filtered = items.length;
   const types = new Set(items.map((item) => item.usecaseLabel)).size;
+  const newestLabel = stats.newestAt ? new Date(stats.newestAt).toLocaleDateString('fr-FR') : '—';
   const summary = [
     { label: 'Archives locales', value: stats.total },
     { label: 'Résultats affichés', value: filtered },
+    { label: 'Dossiers', value: stats.folders || 1 },
     { label: 'Favoris', value: stats.favorites },
-    { label: 'Types présents', value: types }
+    { label: 'Types présents', value: types },
+    { label: 'Dernière archive', value: newestLabel }
   ];
   el('archiveSummary').innerHTML = summary.map((card) => `
     <div class="archive-stat-card">
@@ -297,32 +329,47 @@ function renderArchiveSummary(items) {
 function renderArchive(items = null) {
   const host = el('archiveList');
   if (!host || !archiveStore) return;
+  updateArchiveFolderFilter();
   const filters = getFilters();
   const source = items || archiveStore.list();
   const rows = sortItems(source.filter((item) => matchesFilters(item, filters)), filters.sortBy);
+  const existingIds = new Set(source.map((item) => item.id));
+  selectedArchiveIds = new Set([...selectedArchiveIds].filter((id) => existingIds.has(id)));
   renderArchiveSummary(rows);
   if (!rows.length) {
-    host.innerHTML = '<div class="muted">Aucune archive ne correspond à ces filtres.</div>';
+    updateSelectionCount();
+    host.innerHTML = `<div class="archive-empty-state"><strong>Aucune archive ne correspond à ces filtres.</strong><span>Essayez d’élargir les critères, ou archivez votre prochaine génération pour constituer votre base de travail.</span><div class="row gap wrap"><button class="btn" type="button" id="btnArchiveEmptyState">Archiver la génération en cours</button><button class="btn ghost" type="button" id="btnArchiveEmptyReset">Réinitialiser les filtres</button></div></div>`;
+    document.getElementById('btnArchiveEmptyState')?.addEventListener('click', () => archiveCurrentGeneration());
+    document.getElementById('btnArchiveEmptyReset')?.addEventListener('click', () => document.getElementById('btnResetArchiveFilters')?.click());
     return;
   }
   host.innerHTML = rows.map((item) => {
     const favoriteLabel = item.favorite ? '★ Favori' : '☆ Favori';
+    const isSelected = selectedArchiveIds.has(item.id);
     return `
     <article class="archive-item premium" data-archive-id="${escapeHtml(item.id)}">
       <div class="archive-item-head">
         <div class="archive-main-meta">
           <div class="archive-chip-row">
+            <label class="archive-select-chip"><input type="checkbox" data-action="select" ${isSelected ? 'checked' : ''} /> Sélection</label>
             <span class="archive-chip archive-chip-type">${escapeHtml(item.usecaseLabel || 'Génération IA')}</span>
+            <span class="archive-chip">Dossier : ${escapeHtml(item.folder || 'Mes archives')}</span>
             ${item.favorite ? '<span class="archive-chip archive-chip-favorite">Favori</span>' : ''}
             <span class="archive-chip">Mis à jour ${escapeHtml(formatDate(item.updatedAt || item.createdAt))}</span>
+            ${item.lastOpenedAt ? `<span class="archive-chip">Réouverte ${escapeHtml(formatDate(item.lastOpenedAt))}</span>` : ''}
           </div>
           <div class="archive-item-title">${escapeHtml(item.title || item.usecaseLabel || 'Génération IA')}</div>
           <div class="archive-meta">Créée le ${escapeHtml(formatDate(item.createdAt))}${item.userEmail ? ` • ${escapeHtml(item.userEmail)}` : ''}</div>
+          ${item.notes ? `<div class="archive-inline-note">📝 ${escapeHtml(truncate(item.notes, 180))}</div>` : ''}
         </div>
         <div class="row gap wrap archive-actions-grid">
           <button class="btn ghost archive-action" type="button" data-action="favorite">${favoriteLabel}</button>
           <button class="btn ghost archive-action" type="button" data-action="rename">Renommer</button>
+          <button class="btn ghost archive-action" type="button" data-action="folder">Dossier</button>
+          <button class="btn ghost archive-action" type="button" data-action="note">Note</button>
           <button class="btn ghost archive-action" type="button" data-action="load">Réouvrir</button>
+          <button class="btn ghost archive-action" type="button" data-action="copy">Copier</button>
+          <button class="btn ghost archive-action" type="button" data-action="duplicate">Dupliquer</button>
           <button class="btn ghost archive-action" type="button" data-action="download">Télécharger</button>
           <button class="btn ghost archive-action" type="button" data-action="delete">Supprimer</button>
         </div>
@@ -331,8 +378,13 @@ function renderArchive(items = null) {
         <div class="archive-preview"><strong>Prompt</strong><br>${escapeHtml(truncate([item.prompt?.context, item.prompt?.objective, item.prompt?.facts].filter(Boolean).join(' | '), 320))}</div>
         <div class="archive-preview"><strong>Génération</strong><br>${escapeHtml(truncate(item.result, 360))}</div>
       </div>
+      <div class="archive-secondary-actions">
+        <button class="btn ghost archive-mini-action" type="button" data-action="download-txt">Télécharger en TXT</button>
+        <button class="btn ghost archive-mini-action" type="button" data-action="download-html">Télécharger en HTML</button>
+      </div>
     </article>`;
   }).join('');
+  updateSelectionCount();
 }
 
 function archiveCurrentGeneration({ notifyEmpty = true } = {}) {
@@ -358,12 +410,6 @@ async function refreshWallet(){
     setTicketsBadge(me.wallet);
     archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
     renderArchive();
-=======
-async function refreshWallet(){
-  try {
-    const me = await apiFetch('/auth/me');
-    setTicketsBadge(me.wallet);
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   } catch {}
 }
 
@@ -382,10 +428,7 @@ async function callAI(){
     status('Terminé');
     setOutput(data.text || '(vide)');
     setTicketsBadge(data.wallet);
-<<<<<<< HEAD
     if (el('archiveAutoSave')?.checked) archiveCurrentGeneration({ notifyEmpty: false });
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   } catch (e) {
     console.error(e);
     status('Erreur');
@@ -415,11 +458,7 @@ function downloadFile(filename, content, mimeType) {
 }
 
 function buildExportContent(format) {
-<<<<<<< HEAD
   const usecaseLabel = currentUsecaseLabel();
-=======
-  const usecaseLabel = el('usecase').selectedOptions?.[0]?.textContent?.trim() || '';
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   const payload = buildPayload();
   const result = el('output').textContent || '';
   const stamp = new Date().toLocaleString('fr-FR');
@@ -462,10 +501,10 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
   }
 });
 
-<<<<<<< HEAD
 document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
 document.getElementById('archiveSearch')?.addEventListener('input', () => renderArchive());
 document.getElementById('archiveFilterUsecase')?.addEventListener('change', () => renderArchive());
+document.getElementById('archiveFilterFolder')?.addEventListener('change', () => renderArchive());
 document.getElementById('archiveFilterFavorites')?.addEventListener('change', () => renderArchive());
 document.getElementById('archiveDateFrom')?.addEventListener('change', () => renderArchive());
 document.getElementById('archiveDateTo')?.addEventListener('change', () => renderArchive());
@@ -473,6 +512,7 @@ document.getElementById('archiveSort')?.addEventListener('change', () => renderA
 document.getElementById('btnResetArchiveFilters')?.addEventListener('click', () => {
   el('archiveSearch').value = '';
   el('archiveFilterUsecase').value = '';
+  el('archiveFilterFolder').value = '';
   el('archiveFilterFavorites').checked = false;
   el('archiveDateFrom').value = '';
   el('archiveDateTo').value = '';
@@ -480,21 +520,30 @@ document.getElementById('btnResetArchiveFilters')?.addEventListener('click', () 
   renderArchive();
 });
 
-document.getElementById('archiveList')?.addEventListener('click', (event) => {
+document.getElementById('archiveList')?.addEventListener('click', async (event) => {
   const btn = event.target.closest('[data-action]');
   if (!btn || !archiveStore) return;
-  const item = archiveStore.get(btn.closest('[data-archive-id]')?.dataset?.archiveId);
+  const wrapper = btn.closest('[data-archive-id]');
+  const item = archiveStore.get(wrapper?.dataset?.archiveId);
   if (!item) return;
   const action = btn.dataset.action;
+  if (action === 'select') {
+    if (btn.checked) selectedArchiveIds.add(item.id);
+    else selectedArchiveIds.delete(item.id);
+    updateSelectionCount();
+    return;
+  }
   if (action === 'load') {
+    archiveStore.touch(item.id);
     fillFormFromArchive(item);
+    renderArchive();
     showToast('Archive rechargée', 'ok');
     return;
   }
   if (action === 'favorite') {
-    archiveStore.toggleFavorite(item.id);
+    const updated = archiveStore.toggleFavorite(item.id);
     renderArchive();
-    showToast(item.favorite ? 'Retiré des favoris' : 'Ajouté aux favoris', 'ok');
+    showToast(updated?.favorite ? 'Ajouté aux favoris' : 'Retiré des favoris', 'ok');
     return;
   }
   if (action === 'rename') {
@@ -505,16 +554,88 @@ document.getElementById('archiveList')?.addEventListener('click', (event) => {
     showToast('Archive renommée', 'ok');
     return;
   }
+  if (action === 'folder') {
+    const nextFolder = window.prompt('Nom du dossier :', item.folder || 'Mes archives');
+    if (nextFolder === null) return;
+    archiveStore.setFolder(item.id, nextFolder);
+    renderArchive();
+    showToast('Dossier mis à jour', 'ok');
+    return;
+  }
+  if (action === 'note') {
+    const nextNote = window.prompt('Ajouter une note interne à cette archive :', item.notes || '');
+    if (nextNote === null) return;
+    archiveStore.setNotes(item.id, nextNote);
+    renderArchive();
+    showToast('Note enregistrée', 'ok');
+    return;
+  }
+  if (action === 'copy') {
+    try {
+      await navigator.clipboard.writeText(item.result || '');
+      showToast('Génération copiée', 'ok');
+    } catch {
+      showToast('Copie impossible', 'err');
+    }
+    return;
+  }
+  if (action === 'duplicate') {
+    archiveStore.duplicate(item.id);
+    renderArchive();
+    showToast('Archive dupliquée', 'ok');
+    return;
+  }
   if (action === 'download') {
     downloadFile(buildArchiveFilename(item), JSON.stringify(item, null, 2), 'application/json;charset=utf-8');
     showToast('Archive téléchargée', 'ok');
     return;
   }
+  if (action === 'download-txt') {
+    downloadFile(buildArchiveFilename(item, 'txt'), formatArchiveAsText(item), 'text/plain;charset=utf-8');
+    showToast('Version TXT téléchargée', 'ok');
+    return;
+  }
+  if (action === 'download-html') {
+    downloadFile(buildArchiveFilename(item, 'html'), formatArchiveAsHtml(item), 'text/html;charset=utf-8');
+    showToast('Version HTML téléchargée', 'ok');
+    return;
+  }
   if (action === 'delete') {
     archiveStore.remove(item.id);
+    selectedArchiveIds.delete(item.id);
     renderArchive();
     showToast('Archive supprimée', 'ok');
   }
+});
+
+document.getElementById('archiveSelectAll')?.addEventListener('change', (event) => {
+  const visibleIds = Array.from(document.querySelectorAll('[data-archive-id]')).map((node) => node.dataset.archiveId);
+  if (event.target.checked) visibleIds.forEach((id) => selectedArchiveIds.add(id));
+  else visibleIds.forEach((id) => selectedArchiveIds.delete(id));
+  renderArchive();
+});
+
+document.getElementById('btnBulkExport')?.addEventListener('click', () => {
+  if (!archiveStore || !selectedArchiveIds.size) {
+    showToast('Aucune archive sélectionnée', 'warn');
+    return;
+  }
+  const data = archiveStore.exportMany([...selectedArchiveIds]);
+  downloadFile('pope-online-archives-selection.json', JSON.stringify(data, null, 2), 'application/json;charset=utf-8');
+  showToast('Sélection exportée', 'ok');
+});
+
+document.getElementById('btnBulkDelete')?.addEventListener('click', () => {
+  if (!archiveStore || !selectedArchiveIds.size) {
+    showToast('Aucune archive sélectionnée', 'warn');
+    return;
+  }
+  const confirmDelete = window.confirm(`Supprimer ${selectedArchiveIds.size} archive(s) sélectionnée(s) ?`);
+  if (!confirmDelete) return;
+  archiveStore.removeMany([...selectedArchiveIds]);
+  selectedArchiveIds.clear();
+  renderArchive();
+  showToast('Sélection supprimée', 'ok');
 });
 
 document.getElementById('btnExportArchive')?.addEventListener('click', () => {
@@ -552,12 +673,11 @@ document.getElementById('btnClearArchive')?.addEventListener('click', () => {
     return;
   }
   archiveStore.clear();
+  selectedArchiveIds.clear();
   renderArchive();
   showToast('Archive locale vidée', 'ok');
 });
 
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 document.getElementById('btnExport')?.addEventListener('click', () => {
   const format = el('exportFormat').value || 'txt';
   const resultText = (el('output').textContent || '').trim();

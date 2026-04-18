@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -19,7 +15,6 @@ import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
 
-<<<<<<< HEAD
 const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGIN'];
 const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
 if (missingEnv.length) {
@@ -27,8 +22,6 @@ if (missingEnv.length) {
   process.exit(1);
 }
 
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 const app = express();
 app.set('trust proxy', 1);
 app.use((req, res, next) => {
@@ -37,10 +30,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-<<<<<<< HEAD
   res.setHeader('Cache-Control', 'no-store');
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   next();
 });
 app.use(express.json({ limit: '250kb' }));
@@ -50,7 +40,6 @@ app.use((req, res, next) => {
   next();
 });
 
-<<<<<<< HEAD
 const allowedOrigins = String(process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({
   origin: (origin, cb) => {
@@ -59,27 +48,13 @@ app.use(cors({
     return cb(new Error('CORS blocked'), false);
   },
   credentials: true,
-=======
-const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
-app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true);
-    if (allowedOrigins.length === 0) return cb(null, true);
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error('CORS blocked'), false);
-  },
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.options('*', cors());
 app.use(rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false }));
 
-<<<<<<< HEAD
 app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta-secure-1704' }));
-=======
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export' }));
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/expert', expertRoutes);
@@ -96,8 +71,4 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = process.env.PORT || 8787;
-<<<<<<< HEAD
 app.listen(port, () => console.log(`POPE Online Secure API listening on :${port}`));
-=======
-app.listen(port, () => console.log(`POPE Online Beta 2 API listening on :${port}`));
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1

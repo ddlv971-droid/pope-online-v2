@@ -38,7 +38,6 @@ const FR_MESSAGES = {
   mail_send_failed: "L'envoi de l'e-mail a échoué. Vérifiez la configuration de contact@pope-online.com.",
   missing_satisfaction_token: "Le lien du formulaire de satisfaction est incomplet.",
   missing_satisfaction_answers: "Merci de renseigner tous les critères de satisfaction.",
-<<<<<<< HEAD
   satisfaction_response_sent: "Votre retour a bien été transmis. Merci."
 };
 
@@ -51,49 +50,11 @@ export function clearToken() { document.cookie = 'pope_logged_in=; Max-Age=0; pa
 export async function apiFetch(path, { method='GET', body=null } = {}) {
   const headers = { 'Content-Type': 'application/json' };
   const res = await fetch(`${API_BASE}${path}`, { method, headers, credentials: 'include', body: body ? JSON.stringify(body) : null });
-=======
-  satisfaction_response_sent: "Votre retour a bien été transmis. Merci.",
-};
-
-export function translateApiMessage(code, fallback = '') {
-  if (!code) return fallback || '';
-  return FR_MESSAGES[code] || fallback || code;
-}
-
-export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenue.') {
-  const data = payloadOrError?.data || payloadOrError || {};
-  return data?.error_label || data?.message_label || translateApiMessage(data?.error || data?.message, payloadOrError?.message || fallback);
-}
-
-export function getToken() {
-  return localStorage.getItem('pope_token') || '';
-}
-
-export function setToken(token) {
-  if (token) localStorage.setItem('pope_token', token);
-  else localStorage.removeItem('pope_token');
-}
-
-export async function apiFetch(path, { method='GET', body=null, auth=true } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (auth) {
-    const t = getToken();
-    if (t) headers['Authorization'] = `Bearer ${t}`;
-  }
-  const res = await fetch(`${API_BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : null });
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   const text = await res.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
   if (!res.ok) {
-<<<<<<< HEAD
     const err = new Error(getApiMessage(data, 'api_error')); err.status = res.status; err.data = data; throw err;
-=======
-    const err = new Error(getApiMessage(data, 'api_error'));
-    err.status = res.status;
-    err.data = data;
-    throw err;
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   }
   return data;
 }

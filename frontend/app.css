@@ -4809,7 +4809,6 @@ body.bg > footer{position:relative;z-index:3;}
   .po-admin-user-card{padding:18px}
   .po-admin-user-identity h4{font-size:22px}
 }
-<<<<<<< HEAD
 
 
 .divider{height:1px;background:var(--line);margin:18px 0;}
@@ -4861,5 +4860,24 @@ body.bg > footer{position:relative;z-index:3;}
   .premium-toolbar{grid-template-columns:1fr;}
   .archive-actions-grid{justify-content:flex-start;}
 }
-=======
->>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
+
+
+.archive-onboarding-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 8px;}
+.archive-tip-card{border:1px solid rgba(7,22,42,.08);border-radius:18px;padding:14px 16px;background:linear-gradient(180deg,#fff,#f7fbff);display:grid;gap:8px;box-shadow:0 10px 24px rgba(7,22,42,.05);}
+.archive-tip-card strong{font-size:14px;color:var(--ink);}
+.archive-tip-card span{color:var(--muted);line-height:1.55;font-size:14px;}
+.archive-toolbar-top{align-items:center;}
+.archive-bulkbar{display:none;margin:10px 0 12px;padding:12px 14px;border-radius:18px;border:1px solid rgba(7,22,42,.08);background:rgba(255,255,255,.72);}
+.archive-bulkbar.is-active{display:block;}
+.archive-selection-count{font-weight:900;color:var(--ink);}
+.archive-select-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(7,22,42,.08);background:#fff;font-size:12px;font-weight:900;color:var(--muted);}
+.archive-select-chip input{width:16px;height:16px;accent-color:var(--pope-blue);}
+.archive-inline-note{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.45;font-weight:700;}
+.archive-secondary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.archive-mini-action{min-height:40px;padding:10px 14px;}
+.archive-empty-state{display:grid;gap:12px;padding:18px;border-radius:20px;border:1px dashed rgba(7,22,42,.18);background:linear-gradient(180deg,#ffffff,#f8fbff);}
+.archive-empty-state strong{font-size:16px;color:var(--ink);}
+.archive-empty-state span{color:var(--muted);line-height:1.55;}
+@media (max-width: 1040px){
+  .archive-onboarding-grid{grid-template-columns:1fr;}
+}
