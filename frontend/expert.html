@@ -45,15 +45,21 @@
 <label class="label">Document ou éléments à relire</label>
 <textarea class="input" id="content" rows="10" placeholder="Collez votre texte ou décrivez les éléments à expertiser."></textarea>
 
-<div class="card soft" id="generationAttachmentCard" style="margin-top:16px;display:none">
-  <div class="row between wrap" style="align-items:flex-start">
+<div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-top:16px;display:none">
+  <div class="row between wrap" style="align-items:flex-start;gap:14px">
     <div>
-      <h3 style="margin:0 0 6px">Pièces jointes transmises automatiquement</h3>
-      <p class="muted" style="margin:0">Le prompt et la dernière génération issue de l’espace public seront joints à la demande si un résultat récent est disponible sur cet appareil.</p>
+      <h3 style="margin:0 0 6px">Pièce jointe issue des générations archivées</h3>
+      <p class="muted" style="margin:0">Choisissez la génération archivée à joindre à la demande de relecture experte. Le prompt et le résultat correspondants seront transmis.</p>
     </div>
-    <span class="badge" id="attachmentStatus">Aucune pièce jointe</span>
+    <span class="badge" id="attachmentStatus">Aucune archive sélectionnée</span>
   </div>
-  <div id="attachmentPreview" class="fineprint" style="margin-top:10px"></div>
+  <div class="expert-archive-picker" style="margin-top:14px">
+    <label class="label" for="archiveAttachmentSelect">Génération archivée à joindre</label>
+    <select class="input" id="archiveAttachmentSelect">
+      <option value="">Ne pas joindre de génération archivée</option>
+    </select>
+  </div>
+  <div id="attachmentPreview" class="fineprint expert-archive-preview" style="margin-top:10px"></div>
 </div>
 
 <div class="row gap wrap" style="margin-top:14px">
@@ -69,51 +75,101 @@
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
+import { createArchiveStore, isArchiveStorageAvailable } from './archive.js';
 if (!requireLogin('expert.html')) {}
 wireLogout();
 
 const el = (id) => document.getElementById(id);
-const LAST_GENERATION_KEY = 'pope_last_generation_public';
+let currentUser = null;
+let archiveStore = null;
+let selectedArchive = null;
 
-function getLastGeneration() {
-  try {
-    const raw = localStorage.getItem(LAST_GENERATION_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+function getUserKey() {
+  return currentUser?.id || currentUser?.email || 'anonymous';
+}
+
+function archiveLabel(item) {
+  const date = new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR');
+  return `${item.title || item.usecaseLabel || 'Génération IA'} — ${date}`;
 }
 
 function renderAttachmentCard() {
-  const data = getLastGeneration();
   const card = el('generationAttachmentCard');
   const status = el('attachmentStatus');
   const preview = el('attachmentPreview');
-  if (!card || !status || !preview) return;
-  if (!data?.result) {
+  const select = el('archiveAttachmentSelect');
+  if (!card || !status || !preview || !select) return;
+
+  if (!archiveStore) {
     card.style.display = 'none';
     return;
   }
-  card.style.display = 'block';
-  status.textContent = 'Prompt + génération joints';
-  const objective = data?.prompt?.objective || '—';
-  const result = String(data.result || '').replace(/\s+/g, ' ').slice(0, 260);
-  preview.innerHTML = `<strong>Objet suggéré :</strong> ${objective}<br><strong>Aperçu du résultat joint :</strong> ${result}${String(data.result || '').length > 260 ? '…' : ''}`;
-  if (!el('subject').value.trim()) {
-    el('subject').value = `Relecture experte — ${objective.slice(0, 90) || 'livrable généré'}`;
+
+  const items = archiveStore.list();
+  if (!items.length) {
+    card.style.display = 'none';
+    return;
   }
+
+  card.style.display = 'block';
+  const currentValue = select.value;
+  select.innerHTML = '<option value="">Ne pas joindre de génération archivée</option>' + items.map((item) => `<option value="${item.id}">${archiveLabel(item)}</option>`).join('');
+  if (currentValue && items.some((item) => item.id === currentValue)) {
+    select.value = currentValue;
+  } else if (selectedArchive?.id && items.some((item) => item.id === selectedArchive.id)) {
+    select.value = selectedArchive.id;
+  } else {
+    select.value = items[0].id;
+  }
+  selectedArchive = select.value ? archiveStore.get(select.value) : null;
+  updateAttachmentPreview();
+}
+
+function updateAttachmentPreview() {
+  const status = el('attachmentStatus');
+  const preview = el('attachmentPreview');
+  const select = el('archiveAttachmentSelect');
+  if (!status || !preview || !select) return;
+  selectedArchive = select.value && archiveStore ? archiveStore.get(select.value) : null;
+  if (!selectedArchive?.result) {
+    status.textContent = 'Aucune archive sélectionnée';
+    preview.innerHTML = 'Vous pouvez envoyer votre demande sans pièce jointe, ou sélectionner une génération archivée pour transmettre le prompt et le résultat associés.';
+    return;
+  }
+  status.textContent = 'Archive jointe';
+  const objective = selectedArchive?.prompt?.objective || selectedArchive.title || '—';
+  const result = String(selectedArchive.result || '').replace(/\s+/g, ' ').slice(0, 260);
+  preview.innerHTML = `<strong>Archive sélectionnée :</strong> ${archiveLabel(selectedArchive)}<br><strong>Objet suggéré :</strong> ${objective}<br><strong>Aperçu du résultat joint :</strong> ${result}${String(selectedArchive.result || '').length > 260 ? '…' : ''}`;
+  if (!el('subject').value.trim()) {
+    el('subject').value = `Relecture experte — ${String(objective).slice(0, 90) || 'livrable généré'}`;
+  }
+}
+
+function initArchiveChoices() {
+  if (!isArchiveStorageAvailable()) {
+    archiveStore = null;
+    renderAttachmentCard();
+    return;
+  }
+  try {
+    archiveStore = createArchiveStore({ userId: getUserKey() });
+  } catch {
+    archiveStore = null;
+  }
+  renderAttachmentCard();
 }
 
 async function refreshWallet(){
   try {
     const me = await apiFetch('/auth/me');
+    currentUser = me.user || null;
     setTicketsBadge(me.wallet);
   } catch {}
+  initArchiveChoices();
 }
 
 el('btnSend').addEventListener('click', async () => {
-  const attachment = getLastGeneration();
+  const attachment = selectedArchive;
   try {
     const data = await apiFetch('/expert/request', {
       method:'POST',
@@ -130,7 +186,7 @@ el('btnSend').addEventListener('click', async () => {
       }
     });
     setTicketsBadge(data.wallet);
-    el('msg').textContent = '✅ Votre demande a été transmise. Le prompt et la génération ont été joints lorsqu’un résultat local était disponible.';
+    el('msg').textContent = attachment ? '✅ Votre demande a été transmise avec la génération archivée sélectionnée en pièce jointe.' : '✅ Votre demande a été transmise sans pièce jointe de génération.';
     showToast('Demande transmise', 'ok');
   } catch (e) {
     console.error(e);
@@ -143,8 +199,8 @@ el('btnSend').addEventListener('click', async () => {
     showToast('Envoi impossible', 'err');
   }
 });
+el('archiveAttachmentSelect').addEventListener('change', updateAttachmentPreview);
 refreshWallet();
-renderAttachmentCard();
 </script>
 </body>
 </html>
