@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Génération guidée</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony po-public-v24">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="dashboard.html">
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Génération guidée</div>
+</div>
+</a>
+<div class="row gap wrap">
+<a class="btn ghost" href="about.html">Qui sommes-nous</a>
+<span class="badge" data-tickets="">Accès sécurisé</span>
+<a class="btn ghost" href="expert.html">Relecture experte</a>
+<button class="btn" data-logout="">Déconnexion</button>
+</div>
+</div>
+</header>
+
+<main class="container app app-v24 app-fullwidth-result">
+<section class="card left">
+<div class="split-title">
+  <div>
+    <h2>Produire un livrable sécurisé</h2>
+    <div class="muted">Un module recentré pour produire un premier draft structuré dans un cadre responsable et traçable.</div>
+  </div>
+  <span class="badge" id="status">Prêt</span>
+</div>
+
+<label class="label">Type de livrable</label>
+<select class="input" id="usecase">
+<option value="note_strategique">Note stratégique / arbitrage</option>
+<option value="courrier">Courrier administratif</option>
+<option value="deliberation">Projet de délibération</option>
+<option value="synthese_reunion">Synthèse de réunion</option>
+<option value="cadrage_projet">Cadrage projet / pilotage</option>
+</select>
+
+<div class="grid2 grid2-v24">
+  <div>
+    <label class="label">Contexte</label>
+    <textarea class="input" id="context" placeholder="Collectivité, enjeu, contraintes, échéance, destinataires..." rows="8"></textarea>
+  </div>
+  <div>
+    <label class="label">Objectif du livrable</label>
+    <textarea class="input" id="objective" placeholder="Décision attendue, arbitrage, message clé, finalité..." rows="8"></textarea>
+  </div>
+</div>
+
+<label class="label">Éléments factuels utiles</label>
+<textarea class="input" id="facts" placeholder="Dates, chiffres, options, risques, contraintes, éléments de contexte..." rows="8"></textarea>
+
+<div class="row gap wrap">
+  <button class="btn" id="btnGenerate">Produire un livrable sécurisé</button>
+  <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver cette génération</button>
+  <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
+</div>
+<div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
+<label class="archive-auto-option"><input type="checkbox" id="archiveAutoSave" /> Archiver automatiquement chaque génération sur cet appareil</label>
+
+<div class="divider"></div>
+<div class="panel">
+  <h3>Après génération</h3>
+  <p class="muted">Vous pouvez poursuivre avec une relecture experte ou décrire un besoin plus large pour un accompagnement sur mesure.</p>
+  <div class="row gap wrap">
+    <a class="btn ghost" href="expert.html">Relecture experte</a>
+    <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
+  </div>
+</div>
+</section>
+
+<section class="card right">
+<div class="row between wrap">
+<h2>Résultat</h2> 
+<div class="row gap wrap">
+<span class="badge">Premier draft</span>
+<button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button>
+<select class="input export-select" id="exportFormat" aria-label="Format d’export">
+  <option value="">Exporter…</option>
+  <option value="txt">TXT</option>
+  <option value="html">HTML</option>
+  <option value="doc">DOC</option>
+</select>
+<button class="btn ghost" id="btnExport">Exporter</button>
+</div>
+</div>
+<div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
+<div class="divider"></div>
+<div class="panel archive-panel" id="archives">
+  <div class="row between wrap archive-head">
+    <div>
+      <h3>Archivage local de mes générations</h3>
+      <p class="muted">Historique conservé uniquement dans ce navigateur et sur cet appareil. Aucun stockage supplémentaire côté SaaS POPE Online.</p>
+    </div>
+    <div class="row gap wrap">
+      <button class="btn ghost" id="btnExportArchive" type="button">Exporter mon archive</button>
+      <label class="btn ghost archive-import-btn" for="archiveImportInput">Importer une archive</label>
+      <input id="archiveImportInput" type="file" accept="application/json" hidden />
+      <button class="btn ghost" id="btnClearArchive" type="button">Vider l’archive</button>
+    </div>
+  </div>
+  <div class="fineprint">Conseil : pour conserver cet historique au-delà d’un changement d’ordinateur ou de navigateur, exportez régulièrement votre archive en JSON.</div>
+  <div class="archive-summary" id="archiveSummary"></div>
+  <div class="archive-toolbar premium-toolbar">
+    <input class="input" id="archiveSearch" type="search" placeholder="Rechercher dans mes prompts ou mes générations" />
+    <select class="input" id="archiveFilterUsecase">
+      <option value="">Tous les livrables</option>
+      <option value="note_strategique">Notes stratégiques / arbitrages</option>
+      <option value="courrier">Courriers administratifs</option>
+      <option value="deliberation">Projets de délibération</option>
+      <option value="synthese_reunion">Synthèses de réunion</option>
+      <option value="cadrage_projet">Cadrages projet / pilotage</option>
+    </select>
+    <label class="archive-filter-toggle"><input type="checkbox" id="archiveFilterFavorites" /> Favoris uniquement</label>
+    <input class="input" id="archiveDateFrom" type="date" aria-label="Date minimale" />
+    <input class="input" id="archiveDateTo" type="date" aria-label="Date maximale" />
+    <select class="input" id="archiveSort">
+      <option value="recent">Plus récents</option>
+      <option value="oldest">Plus anciens</option>
+      <option value="title">Titre A → Z</option>
+      <option value="favorites">Favoris d’abord</option>
+    </select>
+    <button class="btn ghost" id="btnResetArchiveFilters" type="button">Réinitialiser</button>
+  </div>
+  <div class="archive-list premium-list" id="archiveList">
+    <div class="muted">Aucune génération archivée pour le moment.</div>
+  </div>
+</div>
+</section>
+</main>
+
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { apiFetch, getApiMessage } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
+import { createArchiveStore, buildArchiveFilename } from './archive.js';
+
+if (!requireLogin('app.html')) {}
+wireLogout();
+
+const el = (id) => document.getElementById(id);
+const status = (txt) => el('status').textContent = txt;
+let archiveStore = null;
+let currentUser = null;
+
+function buildPayload(){
+  return {
+    mode: 'generate',
+    usecase: el('usecase').value,
+    context: el('context').value.trim(),
+    objective: el('objective').value.trim(),
+    facts: el('facts').value.trim(),
+    locale: 'fr-FR'
+  };
+}
+
+function setOutput(text){
+  el('output').textContent = text;
+}
+
+function escapeHtml(value='') {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+}
+
+function truncate(value='', size=220) {
+  const clean = String(value || '').trim().replace(/\s+/g, ' ');
+  if (clean.length <= size) return clean;
+  return clean.slice(0, size).trimEnd() + '…';
+}
+
+function formatDate(value) {
+  if (!value) return '—';
+  return new Date(value).toLocaleString('fr-FR');
+}
+
+function currentUsecaseLabel() {
+  return el('usecase').selectedOptions?.[0]?.textContent?.trim() || 'Génération IA';
+}
+
+function inferArchiveTitle() {
+  const payload = buildPayload();
+  const firstLine = payload.objective || payload.context || payload.facts || currentUsecaseLabel();
+  const cleaned = String(firstLine).replace(/\s+/g, ' ').trim();
+  const fragment = cleaned.length > 58 ? `${cleaned.slice(0, 58).trimEnd()}…` : cleaned;
+  return `${currentUsecaseLabel()} — ${fragment || 'sans titre'}`;
+}
+
+function buildArchiveRecord() {
+  const payload = buildPayload();
+  const result = el('output').textContent || '';
+  if (!result.trim() || result.includes('Cliquez sur')) return null;
+  return {
+    usecase: payload.usecase,
+    usecaseLabel: currentUsecaseLabel(),
+    title: inferArchiveTitle(),
+    prompt: { context: payload.context, objective: payload.objective, facts: payload.facts },
+    result,
+    accountSpace: currentUser?.account_space || currentUser?.accountSpace || null,
+    userEmail: currentUser?.email || null
+  };
+}
+
+function fillFormFromArchive(item) {
+  if (!item) return;
+  el('usecase').value = item.usecase || 'note_strategique';
+  el('context').value = item?.prompt?.context || '';
+  el('objective').value = item?.prompt?.objective || '';
+  el('facts').value = item?.prompt?.facts || '';
+  setOutput(item.result || '');
+  status('Archive chargée');
+}
+
+function getFilters() {
+  return {
+    term: (el('archiveSearch')?.value || '').trim().toLowerCase(),
+    usecase: el('archiveFilterUsecase')?.value || '',
+    favoritesOnly: Boolean(el('archiveFilterFavorites')?.checked),
+    dateFrom: el('archiveDateFrom')?.value || '',
+    dateTo: el('archiveDateTo')?.value || '',
+    sortBy: el('archiveSort')?.value || 'recent'
+  };
+}
+
+function matchesFilters(item, filters) {
+  const haystack = [item.title, item.usecaseLabel, item.prompt?.context, item.prompt?.objective, item.prompt?.facts, item.result, ...(item.tags || [])]
+    .join(' ')
+    .toLowerCase();
+  if (filters.term && !haystack.includes(filters.term)) return false;
+  if (filters.usecase && item.usecase !== filters.usecase) return false;
+  if (filters.favoritesOnly && !item.favorite) return false;
+  const ts = new Date(item.updatedAt || item.createdAt).getTime();
+  if (filters.dateFrom) {
+    const fromTs = new Date(`${filters.dateFrom}T00:00:00`).getTime();
+    if (ts < fromTs) return false;
+  }
+  if (filters.dateTo) {
+    const toTs = new Date(`${filters.dateTo}T23:59:59`).getTime();
+    if (ts > toTs) return false;
+  }
+  return true;
+}
+
+function sortItems(items, sortBy) {
+  const rows = [...items];
+  if (sortBy === 'oldest') return rows.sort((a, b) => new Date(a.updatedAt || a.createdAt) - new Date(b.updatedAt || b.createdAt));
+  if (sortBy === 'title') return rows.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' }));
+  if (sortBy === 'favorites') return rows.sort((a, b) => Number(b.favorite) - Number(a.favorite) || new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+  return rows.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+}
+
+function renderArchiveSummary(items) {
+  const stats = archiveStore?.stats?.() || { total: 0, favorites: 0, byUsecase: {} };
+  const filtered = items.length;
+  const types = new Set(items.map((item) => item.usecaseLabel)).size;
+  const summary = [
+    { label: 'Archives locales', value: stats.total },
+    { label: 'Résultats affichés', value: filtered },
+    { label: 'Favoris', value: stats.favorites },
+    { label: 'Types présents', value: types }
+  ];
+  el('archiveSummary').innerHTML = summary.map((card) => `
+    <div class="archive-stat-card">
+      <div class="archive-stat-value">${escapeHtml(String(card.value))}</div>
+      <div class="archive-stat-label">${escapeHtml(card.label)}</div>
+    </div>`).join('');
+}
+
+function renderArchive(items = null) {
+  const host = el('archiveList');
+  if (!host || !archiveStore) return;
+  const filters = getFilters();
+  const source = items || archiveStore.list();
+  const rows = sortItems(source.filter((item) => matchesFilters(item, filters)), filters.sortBy);
+  renderArchiveSummary(rows);
+  if (!rows.length) {
+    host.innerHTML = '<div class="muted">Aucune archive ne correspond à ces filtres.</div>';
+    return;
+  }
+  host.innerHTML = rows.map((item) => {
+    const favoriteLabel = item.favorite ? '★ Favori' : '☆ Favori';
+    return `
+    <article class="archive-item premium" data-archive-id="${escapeHtml(item.id)}">
+      <div class="archive-item-head">
+        <div class="archive-main-meta">
+          <div class="archive-chip-row">
+            <span class="archive-chip archive-chip-type">${escapeHtml(item.usecaseLabel || 'Génération IA')}</span>
+            ${item.favorite ? '<span class="archive-chip archive-chip-favorite">Favori</span>' : ''}
+            <span class="archive-chip">Mis à jour ${escapeHtml(formatDate(item.updatedAt || item.createdAt))}</span>
+          </div>
+          <div class="archive-item-title">${escapeHtml(item.title || item.usecaseLabel || 'Génération IA')}</div>
+          <div class="archive-meta">Créée le ${escapeHtml(formatDate(item.createdAt))}${item.userEmail ? ` • ${escapeHtml(item.userEmail)}` : ''}</div>
+        </div>
+        <div class="row gap wrap archive-actions-grid">
+          <button class="btn ghost archive-action" type="button" data-action="favorite">${favoriteLabel}</button>
+          <button class="btn ghost archive-action" type="button" data-action="rename">Renommer</button>
+          <button class="btn ghost archive-action" type="button" data-action="load">Réouvrir</button>
+          <button class="btn ghost archive-action" type="button" data-action="download">Télécharger</button>
+          <button class="btn ghost archive-action" type="button" data-action="delete">Supprimer</button>
+        </div>
+      </div>
+      <div class="archive-preview-grid">
+        <div class="archive-preview"><strong>Prompt</strong><br>${escapeHtml(truncate([item.prompt?.context, item.prompt?.objective, item.prompt?.facts].filter(Boolean).join(' | '), 320))}</div>
+        <div class="archive-preview"><strong>Génération</strong><br>${escapeHtml(truncate(item.result, 360))}</div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function archiveCurrentGeneration({ notifyEmpty = true } = {}) {
+  if (!archiveStore) {
+    showToast('Archivage local indisponible', 'err');
+    return null;
+  }
+  const record = buildArchiveRecord();
+  if (!record) {
+    if (notifyEmpty) showToast('Aucune génération à archiver', 'warn');
+    return null;
+  }
+  const saved = archiveStore.save(record);
+  renderArchive();
+  showToast('Génération archivée sur cet appareil', 'ok');
+  return saved;
+}
+
+async function refreshWallet(){
+  try {
+    const me = await apiFetch('/auth/me');
+    currentUser = me.user || null;
+    setTicketsBadge(me.wallet);
+    archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
+    renderArchive();
+  } catch {}
+}
+
+async function callAI(){
+  const payload = buildPayload();
+  const raw = `${payload.context}\n${payload.objective}\n${payload.facts}`;
+  const sensitiveHints = [/\b(?:num[eé]ro\s+de\s+s[ée]curit[ée]\s+sociale|nss|iban|rib|carte\s+bancaire|carte\s+vitale)\b/i, /\b\d{13}\b/, /\bfr\d{2}[a-z0-9]{11,30}\b/i];
+  if (sensitiveHints.some((re) => re.test(raw))) {
+    setOutput('⚠️ Des données directement sensibles semblent présentes. Merci de les anonymiser avant génération.');
+    return;
+  }
+
+  status('En cours…');
+  try {
+    const data = await apiFetch('/ai/generate', { method:'POST', body: payload });
+    status('Terminé');
+    setOutput(data.text || '(vide)');
+    setTicketsBadge(data.wallet);
+    if (el('archiveAutoSave')?.checked) archiveCurrentGeneration({ notifyEmpty: false });
+  } catch (e) {
+    console.error(e);
+    status('Erreur');
+    if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
+      setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
+      showToast('Accès temporairement limité', 'warn');
+      return;
+    }
+    if (e.status === 400 && e.data?.error === 'sensitive_data') {
+      setOutput('⚠️ Le contenu semble contenir des données sensibles. Merci de les retirer puis réessayez.');
+      showToast('Données sensibles détectées', 'warn');
+      return;
+    }
+    setOutput('Erreur : ' + getApiMessage(e));
+    showToast('Erreur de génération', 'err');
+  }
+}
+
+function downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+function buildExportContent(format) {
+  const usecaseLabel = currentUsecaseLabel();
+  const payload = buildPayload();
+  const result = el('output').textContent || '';
+  const stamp = new Date().toLocaleString('fr-FR');
+  if (format === 'json') {
+    return {
+      filename: 'pope-online-livrable.json',
+      mime: 'application/json;charset=utf-8',
+      content: JSON.stringify({ generatedAt: stamp, usecase: usecaseLabel, payload, result }, null, 2)
+    };
+  }
+  if (format === 'md') {
+    return {
+      filename: 'pope-online-livrable.md',
+      mime: 'text/markdown;charset=utf-8',
+      content: `# Livrable POPE Online\n\n- **Date** : ${stamp}\n- **Type** : ${usecaseLabel}\n\n## Contexte\n${payload.context || '-'}\n\n## Objectif\n${payload.objective || '-'}\n\n## Éléments factuels utiles\n${payload.facts || '-'}\n\n## Génération IA\n${result}\n`
+    };
+  }
+  if (format === 'html' || format === 'doc') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${usecaseLabel}</p><section><h2>Contexte</h2><pre>${payload.context || '-'}</pre></section><section><h2>Objectif</h2><pre>${payload.objective || '-'}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${payload.facts || '-'}</pre></section><section><h2>Génération IA</h2><pre>${result}</pre></section></body></html>`;
+    return {
+      filename: format === 'doc' ? 'pope-online-livrable.doc' : 'pope-online-livrable.html',
+      mime: 'text/html;charset=utf-8',
+      content: html
+    };
+  }
+  return {
+    filename: 'pope-online-livrable.txt',
+    mime: 'text/plain;charset=utf-8',
+    content: `Livrable POPE Online\nDate : ${stamp}\nType : ${usecaseLabel}\n\nContexte\n${payload.context || '-'}\n\nObjectif\n${payload.objective || '-'}\n\nÉléments factuels utiles\n${payload.facts || '-'}\n\nGénération IA\n${result}\n`
+  };
+}
+
+el('btnGenerate').addEventListener('click', callAI);
+document.getElementById('btnCopy')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(el('output').textContent || '');
+    showToast('Résultat copié', 'ok');
+  } catch {
+    showToast('Copie impossible', 'err');
+  }
+});
+
+document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
+document.getElementById('archiveSearch')?.addEventListener('input', () => renderArchive());
+document.getElementById('archiveFilterUsecase')?.addEventListener('change', () => renderArchive());
+document.getElementById('archiveFilterFavorites')?.addEventListener('change', () => renderArchive());
+document.getElementById('archiveDateFrom')?.addEventListener('change', () => renderArchive());
+document.getElementById('archiveDateTo')?.addEventListener('change', () => renderArchive());
+document.getElementById('archiveSort')?.addEventListener('change', () => renderArchive());
+document.getElementById('btnResetArchiveFilters')?.addEventListener('click', () => {
+  el('archiveSearch').value = '';
+  el('archiveFilterUsecase').value = '';
+  el('archiveFilterFavorites').checked = false;
+  el('archiveDateFrom').value = '';
+  el('archiveDateTo').value = '';
+  el('archiveSort').value = 'recent';
+  renderArchive();
+});
+
+document.getElementById('archiveList')?.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-action]');
+  if (!btn || !archiveStore) return;
+  const item = archiveStore.get(btn.closest('[data-archive-id]')?.dataset?.archiveId);
+  if (!item) return;
+  const action = btn.dataset.action;
+  if (action === 'load') {
+    fillFormFromArchive(item);
+    showToast('Archive rechargée', 'ok');
+    return;
+  }
+  if (action === 'favorite') {
+    archiveStore.toggleFavorite(item.id);
+    renderArchive();
+    showToast(item.favorite ? 'Retiré des favoris' : 'Ajouté aux favoris', 'ok');
+    return;
+  }
+  if (action === 'rename') {
+    const nextTitle = window.prompt('Nouveau titre de l’archive :', item.title || item.usecaseLabel || 'Génération IA');
+    if (nextTitle === null) return;
+    archiveStore.rename(item.id, nextTitle);
+    renderArchive();
+    showToast('Archive renommée', 'ok');
+    return;
+  }
+  if (action === 'download') {
+    downloadFile(buildArchiveFilename(item), JSON.stringify(item, null, 2), 'application/json;charset=utf-8');
+    showToast('Archive téléchargée', 'ok');
+    return;
+  }
+  if (action === 'delete') {
+    archiveStore.remove(item.id);
+    renderArchive();
+    showToast('Archive supprimée', 'ok');
+  }
+});
+
+document.getElementById('btnExportArchive')?.addEventListener('click', () => {
+  if (!archiveStore) return;
+  const data = archiveStore.exportAll();
+  if (!data.length) {
+    showToast('Aucune archive à exporter', 'warn');
+    return;
+  }
+  downloadFile('pope-online-archives-premium.json', JSON.stringify(data, null, 2), 'application/json;charset=utf-8');
+  showToast('Archive exportée', 'ok');
+});
+
+document.getElementById('archiveImportInput')?.addEventListener('change', async (event) => {
+  const file = event.target.files?.[0];
+  if (!file || !archiveStore) return;
+  try {
+    const raw = await file.text();
+    const parsed = JSON.parse(raw);
+    const count = archiveStore.importMany(parsed);
+    renderArchive();
+    showToast(`${count} archive(s) importée(s)`, 'ok');
+  } catch {
+    showToast('Import impossible', 'err');
+  } finally {
+    event.target.value = '';
+  }
+});
+
+document.getElementById('btnClearArchive')?.addEventListener('click', () => {
+  if (!archiveStore) return;
+  const items = archiveStore.list();
+  if (!items.length) {
+    showToast('Archive déjà vide', 'warn');
+    return;
+  }
+  archiveStore.clear();
+  renderArchive();
+  showToast('Archive locale vidée', 'ok');
+});
+
+document.getElementById('btnExport')?.addEventListener('click', () => {
+  const format = el('exportFormat').value || 'txt';
+  const resultText = (el('output').textContent || '').trim();
+  if (!resultText || resultText.startsWith('Cliquez sur')) {
+    showToast('Aucun résultat à exporter', 'warn');
+    return;
+  }
+  const file = buildExportContent(format);
+  downloadFile(file.filename, file.content, file.mime);
+  showToast(`Export ${format.toUpperCase()} prêt`, 'ok');
+});
+refreshWallet();
+</script>
+</body>
+</html>

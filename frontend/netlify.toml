@@ -1,0 +1,67 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/expert"
+  to = "/expert.html"
+  status = 200
+
+[[redirects]]
+  from = "/mission"
+  to = "/mission.html"
+  status = 200
+
+[[redirects]]
+  from = "/pricing"
+  to = "/pricing.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup"
+  to = "/signup.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup-public"
+  to = "/signup-public.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup-private"
+  to = "/signup-private.html"
+  status = 200
+
+[[redirects]]
+  from = "/parcours"
+  to = "/parcours.html"
+  status = 200
+
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://pope-online-v2.onrender.com https://*.onrender.com; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

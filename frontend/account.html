@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Sécurité du compte</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony po-public-v25">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="dashboard.html">
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Sécurité du compte</div>
+</div>
+</a>
+<div class="row gap wrap">
+<a class="btn ghost" href="dashboard.html">Tableau de bord</a>
+<button class="btn" data-logout="">Déconnexion</button>
+</div>
+</div>
+</header>
+
+<main class="container app" style="grid-template-columns:1fr">
+<section class="card left" style="max-width:1040px;margin:0 auto">
+  <div class="row between">
+    <h2>Protection et maîtrise de votre compte</h2>
+    <span class="badge">Sécurité</span>
+  </div>
+
+  <div class="grid2" style="margin-top:12px">
+    <div class="panel">
+      <h3>Bonnes pratiques</h3>
+      <ul>
+        <li>Choisissez un mot de passe robuste et unique.</li>
+        <li>Ne transmettez jamais de données personnelles ou sensibles dans les champs libres.</li>
+        <li>Déconnectez-vous après usage sur un poste partagé.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Maîtrise des données</h3>
+      <ul>
+        <li>Vous pouvez demander la suppression de votre compte.</li>
+        <li>Vous pouvez demander la suppression de vos demandes de contact non nécessaires.</li>
+        <li>Vous pouvez demander une clarification sur les données liées à votre compte.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3>Supprimer mon compte</h3>
+      <p class="muted">Pour éviter toute rupture du backend existant, la suppression de compte est déclenchée par une demande sécurisée adressée à l’équipe POPE Online.</p>
+      <a class="btn" href="mailto:contact@popeconsulting-group.com?subject=Demande%20de%20suppression%20de%20compte%20POPE%20Online&body=Bonjour,%0D%0A%0D%0AJe souhaite demander la suppression de mon compte POPE Online.%0D%0A%0D%0AMerci de m’indiquer la marche à suivre et les éléments nécessaires à la vérification de mon identité.%0D%0A">Demander la suppression</a>
+    </div>
+    <div class="panel">
+      <h3>Mentions légales & confidentialité</h3>
+      <p class="muted">Retrouvez les engagements d’information, la politique de confidentialité, les cookies et les conditions générales d’utilisation depuis les pages dédiées.</p>
+      <div class="row gap wrap">
+        <a class="btn ghost" href="legal.html">Mentions légales</a>
+        <a class="btn ghost" href="privacy.html">Confidentialité</a>
+        <a class="btn ghost" href="cgu.html">CGU</a>
+        <a class="btn ghost" href="legal.html#cookies">Cookies</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { requireLogin, wireLogout } from './app.js';
+if (!requireLogin('account.html')) {}
+wireLogout();
+</script>
+</body>
+</html>
