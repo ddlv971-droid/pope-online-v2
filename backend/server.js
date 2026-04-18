@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -15,13 +16,6 @@ import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
 
-const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGIN'];
-const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
-if (missingEnv.length) {
-  console.error(`❌ Variables d'environnement obligatoires manquantes : ${missingEnv.join(', ')}`);
-  process.exit(1);
-}
-
 const app = express();
 app.set('trust proxy', 1);
 app.use((req, res, next) => {
@@ -30,7 +24,6 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader('Cache-Control', 'no-store');
   next();
 });
 app.use(express.json({ limit: '250kb' }));
@@ -40,21 +33,21 @@ app.use((req, res, next) => {
   next();
 });
 
-const allowedOrigins = String(process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
+const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
+    if (allowedOrigins.length === 0) return cb(null, true);
     if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error('CORS blocked'), false);
   },
-  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.options('*', cors());
 app.use(rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta-secure-1704' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export' }));
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/expert', expertRoutes);
@@ -71,4 +64,4 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = process.env.PORT || 8787;
-app.listen(port, () => console.log(`POPE Online Secure API listening on :${port}`));
+app.listen(port, () => console.log(`POPE Online Beta 2 API listening on :${port}`));

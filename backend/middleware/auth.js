@@ -1,22 +1,9 @@
-import jwt from 'jsonwebtoken';
 
-function parseCookies(req) {
-  const raw = req.headers.cookie || '';
-  return raw.split(';').reduce((acc, item) => {
-    const idx = item.indexOf('=');
-    if (idx <= 0) return acc;
-    const key = item.slice(0, idx).trim();
-    const value = decodeURIComponent(item.slice(idx + 1).trim());
-    acc[key] = value;
-    return acc;
-  }, {});
-}
+import jwt from 'jsonwebtoken';
 
 function extract(req) {
   const h = req.headers.authorization || '';
-  if (h.startsWith('Bearer ')) return h.slice(7);
-  const cookies = parseCookies(req);
-  return cookies.pope_session || null;
+  return h.startsWith('Bearer ') ? h.slice(7) : null;
 }
 
 export function requireAuth(req, res, next) {

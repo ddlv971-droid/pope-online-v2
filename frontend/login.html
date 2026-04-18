@@ -6,6 +6,7 @@
 <title>POPE Online — Connexion client</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div></a><div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div></div></header>
@@ -16,13 +17,13 @@
 <div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script type="module">
-import { apiFetch, getApiMessage } from './api.js';
+import { apiFetch, setToken, getApiMessage } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 const el = (id) => document.getElementById(id);
 function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp } }); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
-</script>
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email:identifier, identifier, password:el('password').value, fp } }); setToken(data.token); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
+</script><script src="popy.js"></script>
 <script>
 window.addEventListener("load",function(){
   document.querySelectorAll("input").forEach(i=>{

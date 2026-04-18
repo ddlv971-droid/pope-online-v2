@@ -1,16 +1,33 @@
 import { API_BASE } from './api.js';
 
-export async function apiFetch(path, { method='GET', body } = {}) {
+export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
+  const token = localStorage.getItem('pope_token');
   const headers = { 'Content-Type':'application/json' };
-  const res = await fetch(`${API_BASE}${path}`, { method, headers, credentials:'include', body: body ? JSON.stringify(body) : undefined });
+  if (auth && token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) { const err = new Error(data?.error || `HTTP ${res.status}`); err.status = res.status; err.data = data; throw err; }
+  if (!res.ok) {
+    const err = new Error(data?.error || `HTTP ${res.status}`);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
   return data;
 }
 
-export function setToken(_token){}
-export function getToken(){ return document.cookie.includes('pope_logged_in=1') ? 'cookie-session' : ''; }
-export function clearToken(){ document.cookie = 'pope_logged_in=; Max-Age=0; path=/; SameSite=Lax'; }
+export function setToken(token){
+  localStorage.setItem('pope_token', token);
+}
+export function getToken(){
+  return localStorage.getItem('pope_token');
+}
+export function clearToken(){
+  localStorage.removeItem('pope_token');
+}
 
 export async function getFingerprint(){
   const raw = [navigator.userAgent, navigator.language, screen.width, screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
@@ -31,7 +48,9 @@ export function requireLogin(next='dashboard.html'){
 export function wireLogout(){
   document.querySelectorAll('[data-logout]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      fetch(`${API_BASE}/auth/logout`, { method:'POST', credentials:'include' }).finally(() => { clearToken(); showToast('Déconnecté', 'ok'); setTimeout(() => window.location.href = 'index.html', 400); });
+      clearToken();
+      showToast('Déconnecté', 'ok');
+      setTimeout(() => window.location.href = 'index.html', 400);
     });
   });
 }

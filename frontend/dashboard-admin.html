@@ -145,7 +145,7 @@
 </main>
 
 <script type="module">
-import { apiFetch, getToken, getApiMessage } from './api.js';
+import { apiFetch, setToken, getToken, getApiMessage } from './api.js';
 import { clearToken, wireLogout, showToast } from './app.js';
 
 wireLogout();
@@ -467,6 +467,7 @@ async function adminLogin() {
       body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard' }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
+    setToken(data.token);
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';

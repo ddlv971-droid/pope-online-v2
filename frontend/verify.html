@@ -6,6 +6,7 @@
 <title>POPE Online — Vérification email</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar">
@@ -30,7 +31,7 @@
 </section>
 </main>
 <script type="module">
-import { apiFetch, getApiMessage } from './api.js';
+import { apiFetch, setToken, getApiMessage } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
@@ -57,6 +58,7 @@ async function run(){
   try {
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
+    if (data?.token) setToken(data.token);
     const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
     const next = buildTrialRoute(accountSpace, data?.wallet || {});
     try {
@@ -84,6 +86,6 @@ async function run(){
 }
 run();
 </script>
-
+<script src="popy.js"></script>
 </body>
 </html>

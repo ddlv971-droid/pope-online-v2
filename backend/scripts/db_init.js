@@ -1,3 +1,4 @@
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,18 +12,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function seedAdmin() {
-  const shouldSeed = String(process.env.ALLOW_ADMIN_SEED || '').trim().toLowerCase() === 'true';
-  if (!shouldSeed) {
-    console.log('ℹ️ Création automatique du compte admin désactivée.');
-    return;
-  }
-  const username = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim();
-  const password = String(process.env.DEFAULT_ADMIN_PASSWORD || '').trim();
-  const email = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
-  if (!username || !password || !email) {
-    throw new Error('ALLOW_ADMIN_SEED=true exige DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD et DEFAULT_ADMIN_EMAIL.');
-  }
-  const existing = await pool.query('select id from users where email=$1 limit 1', [email]);
+  const username = process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN';
+  const password = process.env.DEFAULT_ADMIN_PASSWORD || 'admin';
+  const email = process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local';
+  const existing = await pool.query('select id from users where email=$1 or upper(full_name)=upper($2) limit 1', [email, username]);
   if (existing.rowCount) return;
   const hash = await bcrypt.hash(password, 12);
   await pool.query(
@@ -30,7 +23,7 @@ async function seedAdmin() {
      values($1,$2,$3,$4,'public',true,'admin',true)`,
     [email, hash, username, 'Administration POPE Online']
   );
-  console.log('✅ Compte admin initial créé explicitement');
+  console.log('✅ Default admin account seeded');
 }
 
 async function main() {

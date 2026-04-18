@@ -135,29 +135,3 @@ alter table users add column if not exists satisfaction_mail_sent_by uuid refere
 
 alter table users add column if not exists satisfaction_response_received_at timestamptz;
 alter table users add column if not exists satisfaction_last_response jsonb;
-
-
-create table if not exists satisfaction_tokens (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references users(id) on delete cascade,
-  token_hash text not null unique,
-  expires_at timestamptz not null,
-  used_at timestamptz,
-  created_at timestamptz not null default now(),
-  created_by uuid references users(id) on delete set null
-);
-
-create index if not exists idx_satisfaction_tokens_user on satisfaction_tokens(user_id, created_at desc);
-
-create table if not exists admin_audit_logs (
-  id uuid primary key default gen_random_uuid(),
-  admin_id uuid references users(id) on delete set null,
-  action text not null,
-  target_user_id uuid references users(id) on delete set null,
-  ip_hash text,
-  old_state jsonb,
-  new_state jsonb,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists idx_admin_audit_logs_created on admin_audit_logs(created_at desc);

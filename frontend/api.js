@@ -38,23 +38,43 @@ const FR_MESSAGES = {
   mail_send_failed: "L'envoi de l'e-mail a échoué. Vérifiez la configuration de contact@pope-online.com.",
   missing_satisfaction_token: "Le lien du formulaire de satisfaction est incomplet.",
   missing_satisfaction_answers: "Merci de renseigner tous les critères de satisfaction.",
-  satisfaction_response_sent: "Votre retour a bien été transmis. Merci."
+  satisfaction_response_sent: "Votre retour a bien été transmis. Merci.",
 };
 
-export function translateApiMessage(code, fallback = '') { if (!code) return fallback || ''; return FR_MESSAGES[code] || fallback || code; }
-export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenue.') { const data = payloadOrError?.data || payloadOrError || {}; return data?.error_label || data?.message_label || translateApiMessage(data?.error || data?.message, payloadOrError?.message || fallback); }
-export function getToken() { return document.cookie.includes('pope_logged_in=1') ? 'cookie-session' : ''; }
-export function setToken(_token) { /* auth cookie géré côté serveur */ }
-export function clearToken() { document.cookie = 'pope_logged_in=; Max-Age=0; path=/; SameSite=Lax'; }
+export function translateApiMessage(code, fallback = '') {
+  if (!code) return fallback || '';
+  return FR_MESSAGES[code] || fallback || code;
+}
 
-export async function apiFetch(path, { method='GET', body=null } = {}) {
+export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenue.') {
+  const data = payloadOrError?.data || payloadOrError || {};
+  return data?.error_label || data?.message_label || translateApiMessage(data?.error || data?.message, payloadOrError?.message || fallback);
+}
+
+export function getToken() {
+  return localStorage.getItem('pope_token') || '';
+}
+
+export function setToken(token) {
+  if (token) localStorage.setItem('pope_token', token);
+  else localStorage.removeItem('pope_token');
+}
+
+export async function apiFetch(path, { method='GET', body=null, auth=true } = {}) {
   const headers = { 'Content-Type': 'application/json' };
-  const res = await fetch(`${API_BASE}${path}`, { method, headers, credentials: 'include', body: body ? JSON.stringify(body) : null });
+  if (auth) {
+    const t = getToken();
+    if (t) headers['Authorization'] = `Bearer ${t}`;
+  }
+  const res = await fetch(`${API_BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : null });
   const text = await res.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
   if (!res.ok) {
-    const err = new Error(getApiMessage(data, 'api_error')); err.status = res.status; err.data = data; throw err;
+    const err = new Error(getApiMessage(data, 'api_error'));
+    err.status = res.status;
+    err.data = data;
+    throw err;
   }
   return data;
 }

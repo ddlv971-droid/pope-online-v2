@@ -77,33 +77,20 @@ const levels = [
 const wrap = document.getElementById('criteriaWrap');
 const msg = document.getElementById('formMsg');
 
-criteria.forEach((criterion, idx) => {
-  const section = document.createElement('section');
-  section.className = 'po-satisfaction-criterion';
-  const title = document.createElement('h3');
-  title.textContent = `${idx + 1}. ${criterion.label}`;
-  const scale = document.createElement('div');
-  scale.className = 'po-rating-scale';
-  levels.forEach((level) => {
-    const label = document.createElement('label');
-    label.className = `po-rating-option score-${level.score}`;
-    const input = document.createElement('input');
-    input.type = 'radio';
-    input.name = criterion.key;
-    input.value = String(level.score);
-    input.required = true;
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-    const text = document.createElement('span');
-    text.className = 'text';
-    text.textContent = level.label;
-    label.appendChild(input); label.appendChild(dot); label.appendChild(text);
-    scale.appendChild(label);
-  });
-  section.appendChild(title);
-  section.appendChild(scale);
-  wrap.appendChild(section);
-});
+wrap.innerHTML = criteria.map((criterion, idx) => `
+  <section class="po-satisfaction-criterion">
+    <h3>${idx + 1}. ${criterion.label}</h3>
+    <div class="po-rating-scale">
+      ${levels.map((level) => `
+        <label class="po-rating-option score-${level.score}">
+          <input type="radio" name="${criterion.key}" value="${level.score}" required>
+          <span class="dot"></span>
+          <span class="text">${level.label}</span>
+        </label>
+      `).join('')}
+    </div>
+  </section>
+`).join('');
 
 document.getElementById('satisfactionForm').addEventListener('submit', async (event) => {
   event.preventDefault();
