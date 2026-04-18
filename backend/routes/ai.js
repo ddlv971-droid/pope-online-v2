@@ -79,8 +79,9 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
       await client.query('update wallets set tickets_ai = tickets_ai - 1, updated_at=now() where user_id=$1', [userId]);
       await client.query('commit');
 
-      const system = buildSystemPrompt();
-      const user = buildUserPrompt(payload);
+      const accountSpace = req.user.accountSpace || 'public';
+      const system = buildSystemPrompt(accountSpace);
+      const user = buildUserPrompt({ ...payload, accountSpace });
       const text = await callMistral({ system, user });
 
       await client.query(

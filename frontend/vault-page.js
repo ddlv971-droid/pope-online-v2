@@ -14,12 +14,25 @@ async function toBase64(file){
 }
 function formatSize(size=0){ if(size<1024) return size+' o'; if(size<1024*1024) return (size/1024).toFixed(1)+' Ko'; return (size/1024/1024).toFixed(1)+' Mo'; }
 function hoursLeft(date){ return Math.max(0, Math.ceil((new Date(date).getTime()-Date.now())/3600000)); }
+function isPrivate(){ return currentUser?.accountSpace === 'private'; }
+function applySpaceLabels(){
+  if (!isPrivate()) return;
+  document.querySelector('.brand-sub').textContent = 'Dépôt sécurisé 48h — espace privé';
+  const hero = document.querySelector('.vault-hero .muted');
+  if (hero) hero.textContent = 'Déposez vos pièces utiles à la génération privée, à la relecture experte ou à l’accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.';
+  const note = document.querySelector('.vault-hero-note span');
+  if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
+  const intro = document.querySelector('.vault-upload-card .muted');
+  if (intro) intro.textContent = 'Formats conseillés pour alimentation IA : TXT, MD, CSV, JSON, HTML. Déposez aussi vos DCE, RC, projets de courrier et pièces de formalité pour exploitation 48h.';
+  el('vaultPurpose').innerHTML = '<option value="generation">Génération IA privée</option><option value="expert">Relecture experte</option><option value="mission">Accompagnement sur mesure</option><option value="general">Usage général</option>';
+}
 async function load(){
   try {
     const me = await apiFetch('/auth/me');
     currentUser = me.user || null;
     setTicketsBadge(me.wallet || {});
     document.getElementById('vaultHomeLink').href = currentUser?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+    applySpaceLabels();
   } catch {}
   try {
     const data = await apiFetch('/vault');

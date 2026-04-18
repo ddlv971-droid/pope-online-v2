@@ -38,13 +38,21 @@
   <section class="public-layout-v12">
     <section class="card public-form-v10 public-form-v11 public-form-v12">
       <div class="section-heading-v10"><h2>Préparer votre demande</h2><p class="muted" id="formCopy">Cadrez votre besoin, précisez l'objectif attendu et rassemblez les éléments utiles avant la génération.</p></div>
-      <label class="label">Type de livrable</label><select class="input" id="usecase"></select>
+      <label class="label">Type de livrable</label>
+      <select class="input" id="usecase"></select>
+      <section class="usecase-insight-v15" id="usecaseInsight" aria-live="polite"></section>
       <div class="grid2 grid2-v24"><div><label class="label">Contexte</label><textarea class="input" id="context" rows="8"></textarea></div><div><label class="label">Objectif du livrable</label><textarea class="input" id="objective" rows="8"></textarea></div></div>
       <label class="label">Éléments factuels utiles</label><textarea class="input" id="facts" rows="7"></textarea>
-      <section class="vault-inline-v14"><div class="row between wrap" style="align-items:flex-start;gap:12px"><div><h3>Pièces temporaires 48h</h3><p class="muted">Ajoutez des pièces utiles à la génération. Les formats texte alimentent l'IA directement ; les autres formats restent disponibles en dépôt sécurisé.</p></div><a class="btn ghost" href="vault.html">Ouvrir le dépôt sécurisé</a></div><div id="vaultInlineList" class="vault-inline-list"><div class="muted">Aucune pièce temporaire disponible pour le moment.</div></div></section>
+      <section class="vault-inline-v14">
+        <div class="row between wrap" style="align-items:flex-start;gap:12px">
+          <div><h3 id="vaultInlineTitle">Pièces temporaires 48h</h3><p class="muted" id="vaultInlineCopy">Ajoutez des pièces utiles à la génération. Les formats texte alimentent l'IA directement ; les autres formats restent disponibles en dépôt sécurisé.</p></div>
+          <a class="btn ghost" href="vault.html">Ouvrir le dépôt sécurisé</a>
+        </div>
+        <div id="vaultInlineList" class="vault-inline-list"><div class="muted">Aucune pièce temporaire disponible pour le moment.</div></div>
+      </section>
       <div class="public-cta-v10"><button class="btn primary public-generate-v10" id="btnGenerate" type="button">Produire un livrable sécurisé</button></div>
       <div class="generation-indicator generation-indicator-v10" id="generationIndicator" aria-live="polite" hidden><span class="generation-spinner" aria-hidden="true"></span><div><strong>Génération en cours…</strong><div class="muted">Votre draft est en préparation. Un seul clic suffit.</div></div></div>
-      <div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
+      <div class="fineprint" id="safeNote">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
     </section>
     <section class="card public-result-v10 public-result-v11 public-result-v12">
       <div class="result-head-v10 result-head-v11"><div><h2>Résultat généré</h2><p class="muted">Le livrable s'affiche ici avec une mise en forme lisible pour la lecture, la copie, l'export et la relecture experte.</p></div><div class="row gap wrap"><button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button><select class="input export-select" id="exportFormat" aria-label="Format d’export"><option value="">Exporter…</option><option value="txt">TXT</option><option value="html">HTML</option><option value="doc">DOC</option></select><button class="btn ghost" id="btnExport" type="button">Exporter</button></div></div>

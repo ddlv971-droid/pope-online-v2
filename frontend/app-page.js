@@ -27,14 +27,188 @@ const PUBLIC_USECASES = [
   ['cadrage_projet', 'Cadrage projet / pilotage']
 ];
 
-const PRIVATE_USECASES = [
-  ['reponse_marche', 'Aide à la réponse aux marchés'],
-  ['courrier_organisme', 'Courrier administratif / organismes'],
-  ['courrier_relation', 'Courrier relation clients, fournisseurs ou banque'],
-  ['formalites_entreprise', 'Formalités d’entreprise'],
-  ['creation_entreprise', 'Création d’entreprise / lancement d’activité'],
-  ['synthese_reunion', 'Synthèse / cadrage de dossier']
+const PRIVATE_USECASE_GROUPS = [
+  {
+    label: 'Marchés publics',
+    options: [
+      ['reponse_marche_public', 'Réponse à un marché public (DCE / RC / offre)']
+    ]
+  },
+  {
+    label: 'Courriers administratifs',
+    options: [
+      ['courrier_urssaf', 'Courrier URSSAF / cotisations / délai / contestation'],
+      ['courrier_fiscal', 'Courrier impôts / TVA / SIE / réclamation'],
+      ['courrier_banque', 'Courrier banque / trésorerie / justificatifs'],
+      ['courrier_client_fournisseur', 'Courrier client / fournisseur / relance / mise au point'],
+      ['courrier_formalites', 'Courrier formalités / greffe / CCI / INPI']
+    ]
+  },
+  {
+    label: 'Formalités d’entreprise',
+    options: [
+      ['formalites_creation', 'Création d’entreprise / lancement d’activité'],
+      ['formalites_modification', 'Modification d’entreprise / siège / activité / dirigeants'],
+      ['formalites_sociales', 'Formalités sociales / embauche / documents / affiliation'],
+      ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier']
+    ]
+  }
 ];
+
+const PRIVATE_USECASE_HELP = {
+  reponse_marche_public: {
+    title: 'Aide à la réponse à un marché public',
+    intro: 'Préparez une réponse à partir du DCE, du règlement de consultation et de vos pièces internes déposées 48h. La génération peut produire une trame de réponse, une note de cadrage ou une check-list de remise.',
+    bullets: [
+      'Pièces recommandées : DCE, RC, BPU, DPGF, acte d’engagement, trame de mémoire technique.',
+      'Résultats utiles : synthèse du besoin, points différenciants, questions à l’acheteur, structure de réponse et points de vigilance.',
+      'Repère benchmark : les ressources commande publique mettent l’accent sur la candidature, les pièces du dossier et la lisibilité de l’offre.'
+    ],
+    source: 'Repères : commande publique / économie.gouv.fr',
+    contextPlaceholder: 'Votre activité, la consultation visée, le besoin exprimé par l’acheteur, vos atouts et vos contraintes de réponse…',
+    objectivePlaceholder: 'Ex : obtenir une trame de réponse, une synthèse du RC, une liste des pièces manquantes ou une note pour préparer l’offre.',
+    factsPlaceholder: 'Références du marché, échéance, allotissement, exigences du RC, points techniques, références client, pièces déjà prêtes…',
+    vaultTitle: 'Pièces temporaires 48h — marché public',
+    vaultCopy: 'Sélectionnez par exemple le DCE, le règlement de consultation, une trame d’offre ou vos justificatifs utiles à la préparation de la réponse.'
+  },
+  courrier_urssaf: {
+    title: 'Courrier URSSAF / cotisations / délai / contestation',
+    intro: 'Préparez un courrier administratif clair et contextualisé à destination de l’URSSAF : demande de délai, réponse à une relance, demande d’explication, transmission de justificatifs ou contestation argumentée.',
+    bullets: [
+      'Cas représentatifs : demande d’échéancier, réponse à mise en demeure, demande de régularisation, transmission de pièces.',
+      'Le courrier est structuré pour reprendre les références dossier, le contexte, la demande et les suites attendues.',
+      'Repère benchmark : l’Urssaf publie des démarches et modèles de documents utiles pour les créateurs, indépendants et employeurs.'
+    ],
+    source: 'Repères : Urssaf / formulaires et démarches',
+    contextPlaceholder: 'Votre situation, le courrier reçu, le compte concerné, le délai, la relation avec l’URSSAF et les éléments déjà transmis…',
+    objectivePlaceholder: 'Ex : demander un délai, contester une régularisation, répondre à une relance ou transmettre des justificatifs.',
+    factsPlaceholder: 'Numéro de dossier anonymisé, périodes concernées, montants, échéances, échanges précédents, pièces disponibles…',
+    vaultTitle: 'Pièces temporaires 48h — courrier URSSAF',
+    vaultCopy: 'Ajoutez si besoin un courrier reçu, une relance, une mise en demeure ou vos justificatifs pour nourrir la rédaction.'
+  },
+  courrier_fiscal: {
+    title: 'Courrier impôts / TVA / SIE / réclamation',
+    intro: 'Préparez un courrier à destination des impôts ou du SIE pour une demande de délai, une réclamation, une précision sur la TVA ou une réponse à une sollicitation administrative.',
+    bullets: [
+      'Cas représentatifs : demande d’échéancier, réponse à proposition, clarification TVA, réclamation ou transmission de justificatifs.',
+      'Le draft reprend le contexte, la demande précise, les références utiles et un ton administratif maîtrisé.',
+      'Repère benchmark : les besoins TPE sur la relation administrative portent souvent sur les délais, les justificatifs et la sécurisation des échanges.'
+    ],
+    source: 'Repères : impôts / gestion administrative TPE',
+    contextPlaceholder: 'Votre situation, le service concerné, la nature de la demande fiscale, l’échéance et les contraintes de trésorerie…',
+    objectivePlaceholder: 'Ex : demander un délai de paiement, rédiger une réclamation, répondre à un courrier du SIE ou préparer un mail structuré.',
+    factsPlaceholder: 'Périodes, montants, références anonymisées, échanges déjà reçus, justificatifs, situation de TVA ou de trésorerie…',
+    vaultTitle: 'Pièces temporaires 48h — fiscal / impôts',
+    vaultCopy: 'Ajoutez un avis, un courrier reçu, un récapitulatif de TVA ou des justificatifs pour nourrir la réponse.'
+  },
+  courrier_banque: {
+    title: 'Courrier banque / trésorerie / justificatifs',
+    intro: 'Préparez un courrier ou un mail pour votre banque : demande de rendez-vous, transmission de justificatifs, explication de situation, point de trésorerie ou sollicitation sur un financement.',
+    bullets: [
+      'Cas représentatifs : demande de rendez-vous, justificatifs pour dossier, point sur la trésorerie, demande d’appui bancaire.',
+      'Le résultat met en avant la clarté, le ton professionnel et la hiérarchie des informations utiles.',
+      'Repère benchmark : les petites entreprises ont souvent besoin de formaliser rapidement des échanges structurés avec leur banque.'
+    ],
+    source: 'Repères : besoins courants TPE / relation bancaire',
+    contextPlaceholder: 'Votre relation bancaire, le motif du courrier, la situation de trésorerie, le rendez-vous souhaité ou le dossier à justifier…',
+    objectivePlaceholder: 'Ex : demander un rendez-vous, présenter un besoin de trésorerie ou transmettre un dossier synthétique.',
+    factsPlaceholder: 'Montants, échéances, documents disponibles, interlocuteurs, contexte commercial ou financier…',
+    vaultTitle: 'Pièces temporaires 48h — banque',
+    vaultCopy: 'Ajoutez si besoin un mail reçu, des justificatifs de situation, un prévisionnel ou une synthèse de trésorerie.'
+  },
+  courrier_client_fournisseur: {
+    title: 'Courrier client / fournisseur / relance / mise au point',
+    intro: 'Rédigez un courrier ou un mail professionnel pour clarifier une situation avec un client ou un fournisseur : relance, demande de régularisation, réponse à un litige ou cadrage d’un échange sensible.',
+    bullets: [
+      'Cas représentatifs : relance de paiement, mise au point contractuelle, réponse à une réclamation, demande de justificatifs.',
+      'Le brouillon vise un ton ferme mais mesuré, avec des demandes explicites et une traçabilité des échanges.',
+      'Repère benchmark : ce besoin revient fréquemment dans les TPE quand la gestion administrative doit rester rapide et cadrée.'
+    ],
+    source: 'Repères : gestion quotidienne artisans / TPE',
+    contextPlaceholder: 'La relation concernée, le problème rencontré, les échanges déjà passés, le ton à adopter et l’enjeu commercial…',
+    objectivePlaceholder: 'Ex : relancer un règlement, demander une régularisation, répondre à un client ou formaliser une position.',
+    factsPlaceholder: 'Dates, montants, prestations, commande, incidents, références et pièces utiles…',
+    vaultTitle: 'Pièces temporaires 48h — client / fournisseur',
+    vaultCopy: 'Ajoutez un échange, une facture, un devis ou un document de référence pour produire un courrier mieux ancré dans votre situation.'
+  },
+  courrier_formalites: {
+    title: 'Courrier formalités / greffe / CCI / INPI',
+    intro: 'Préparez un courrier ou un message lié à une formalité d’entreprise : précision à demander, pièce à transmettre, relance sur un dossier ou réponse à un organisme de formalité.',
+    bullets: [
+      'Cas représentatifs : demande de précision, envoi de pièces, relance de formalité, réponse à une demande de complément.',
+      'Le brouillon met en avant les références du dossier, les documents joints et l’action attendue.',
+      'Repère benchmark : les CCI et les formalités en ligne structurent de nombreuses démarches de création et de modification.'
+    ],
+    source: 'Repères : CCI / formalités entreprises',
+    contextPlaceholder: 'Le dossier concerné, l’organisme, la formalité en cours, la pièce attendue ou le blocage rencontré…',
+    objectivePlaceholder: 'Ex : demander une précision, répondre à une demande de complément ou relancer un dossier.',
+    factsPlaceholder: 'Références de dossier, date de dépôt, pièces manquantes, interlocuteurs, échéances…',
+    vaultTitle: 'Pièces temporaires 48h — formalités',
+    vaultCopy: 'Ajoutez la demande reçue, votre dossier ou la pièce concernée pour mieux cadrer la réponse.'
+  },
+  formalites_creation: {
+    title: 'Création d’entreprise / lancement d’activité',
+    intro: 'Préparez un cadrage opérationnel de création : étapes, pièces, choix structurants, questions à traiter et documents à préparer avant immatriculation.',
+    bullets: [
+      'Cas représentatifs : choisir un statut, préparer l’immatriculation, rassembler les pièces, planifier les démarches de lancement.',
+      'Résultats utiles : check-list, plan d’action, synthèse des pièces, note d’arbitrage ou message à adresser à un organisme.',
+      'Repère benchmark : Bpifrance Création, l’Urssaf et les CCI structurent fortement les parcours de création et de formalités.'
+    ],
+    source: 'Repères : Bpifrance Création / Urssaf / CCI',
+    contextPlaceholder: 'Votre projet, l’activité visée, le calendrier de lancement, vos contraintes et les démarches déjà réalisées…',
+    objectivePlaceholder: 'Ex : obtenir une check-list de création, un plan d’action, un courrier à un organisme ou une synthèse des étapes.',
+    factsPlaceholder: 'Forme juridique envisagée, associés, siège, activité, calendrier, besoins documentaires, interlocuteurs…',
+    vaultTitle: 'Pièces temporaires 48h — création d’entreprise',
+    vaultCopy: 'Déposez un projet de statuts, une trame de business, des pièces d’identité ou tout document préparatoire utile.'
+  },
+  formalites_modification: {
+    title: 'Modification d’entreprise / siège / activité / dirigeants',
+    intro: 'Préparez une formalité de modification : changement d’adresse, d’activité, de dirigeant, mise à jour de statuts ou cadrage des pièces à déposer.',
+    bullets: [
+      'Cas représentatifs : transfert de siège, modification d’activité, changement de dirigeant, actualisation de pièces.',
+      'Résultats utiles : check-list de formalité, chronologie des actions, courrier d’accompagnement ou synthèse du dossier.',
+      'Repère benchmark : les formalités de société et les démarches en ligne nécessitent une préparation documentaire rigoureuse.'
+    ],
+    source: 'Repères : CCI / formalités entreprises / guichet unique',
+    contextPlaceholder: 'La modification envisagée, le calendrier, l’état des pièces et les organismes concernés…',
+    objectivePlaceholder: 'Ex : obtenir la liste des étapes, un courrier d’accompagnement ou une check-list des pièces à produire.',
+    factsPlaceholder: 'Forme sociale, siège, activité, personnes concernées, date souhaitée, documents déjà disponibles…',
+    vaultTitle: 'Pièces temporaires 48h — modification d’entreprise',
+    vaultCopy: 'Ajoutez vos statuts, un PV, une pièce de justificatif ou tout document utile à la préparation du dossier.'
+  },
+  formalites_sociales: {
+    title: 'Formalités sociales / embauche / documents / affiliation',
+    intro: 'Préparez un dossier ou un courrier lié à une formalité sociale : embauche, affiliation, régularisation, réponse documentaire ou organisation des pièces à fournir.',
+    bullets: [
+      'Cas représentatifs : préparation d’embauche, régularisation sociale, justificatifs, organisation documentaire.',
+      'Le résultat peut prendre la forme d’une check-list, d’un courrier ou d’un cadrage de démarche.',
+      'Repère benchmark : les parcours Urssaf distinguent fortement les besoins des indépendants et des employeurs.'
+    ],
+    source: 'Repères : Urssaf / indépendants / employeurs',
+    contextPlaceholder: 'Le dossier social concerné, le salarié ou l’activité visée, l’échéance et les documents à réunir…',
+    objectivePlaceholder: 'Ex : obtenir une check-list, préparer un courrier ou structurer les étapes de la formalité.',
+    factsPlaceholder: 'Dates, statuts, pièces disponibles, références anonymisées, obligations connues…',
+    vaultTitle: 'Pièces temporaires 48h — formalités sociales',
+    vaultCopy: 'Ajoutez vos documents préparatoires ou la demande reçue pour structurer la réponse et la check-list.'
+  },
+  synthese_dossier_prive: {
+    title: 'Synthèse / cadrage / check-list de dossier',
+    intro: 'Structurez rapidement un dossier privé ou administratif pour clarifier les pièces, les actions à mener et l’ordre de traitement avant relecture experte ou accompagnement.',
+    bullets: [
+      'Cas représentatifs : synthèse de dossier, check-list de pièces, chronologie d’actions, répartition des tâches.',
+      'Pratique quand plusieurs documents ont été déposés 48h et qu’il faut les exploiter dans un ordre cohérent.',
+      'Repère benchmark : utile pour passer d’un besoin flou à un plan d’action opérationnel.'
+    ],
+    source: 'Repères : besoins transverses artisans / TPE',
+    contextPlaceholder: 'Le dossier à structurer, les parties prenantes, l’urgence, les pièces disponibles et les points à arbitrer…',
+    objectivePlaceholder: 'Ex : obtenir une synthèse, une check-list, une chronologie ou un cadrage de dossier.',
+    factsPlaceholder: 'Documents disponibles, contraintes, échéances, interlocuteurs et points de vigilance…',
+    vaultTitle: 'Pièces temporaires 48h — cadrage de dossier',
+    vaultCopy: 'Sélectionnez les pièces utiles pour produire une synthèse ou une check-list opérationnelle.'
+  }
+};
+
+let currentSpace = 'public';
 
 function status(text) {
   const node = el('status');
@@ -154,6 +328,7 @@ function buildPayload() {
     objective: el('objective').value.trim(),
     facts: el('facts').value.trim(),
     locale: 'fr-FR',
+    accountSpace: currentSpace,
     uploaded_file_ids: getSelectedVaultIds()
   };
 }
@@ -299,23 +474,67 @@ function archiveCurrentGeneration(notifyEmpty = true) {
   return saved;
 }
 
+function firstPrivateUsecase() {
+  return PRIVATE_USECASE_GROUPS[0]?.options?.[0]?.[0] || 'reponse_marche_public';
+}
+
+function setFieldPlaceholders(config = {}) {
+  el('context').placeholder = config.contextPlaceholder || 'Votre activité, votre situation, l’organisme ou l’interlocuteur concerné, les contraintes et l’échéance…';
+  el('objective').placeholder = config.objectivePlaceholder || 'Ce que vous voulez obtenir : courrier, trame de réponse, message à adresser, formalité à préparer…';
+  el('facts').placeholder = config.factsPlaceholder || 'Dates, chiffres, clauses du marché, références client, éléments URSSAF ou fiscaux, banque, RC, DCE, etc.';
+}
+
+function renderUsecaseInsight(space = currentSpace) {
+  const host = el('usecaseInsight');
+  if (!host) return;
+  if (space !== 'private') {
+    host.innerHTML = `<div class="usecase-insight-card-v15"><strong>Cadre public</strong><p>Choisissez un format de livrable pour cadrer un besoin de collectivité, préparer un arbitrage ou produire un draft sécurisé avant relecture humaine si nécessaire.</p></div>`;
+    el('vaultInlineTitle').textContent = 'Pièces temporaires 48h';
+    el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats texte alimentent l’IA directement ; les autres formats restent disponibles en dépôt sécurisé.';
+    el('safeNote').textContent = '🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.';
+    el('context').placeholder = 'Collectivité, enjeu, contraintes, échéance, destinataires…';
+    el('objective').placeholder = 'Décision attendue, arbitrage, message clé, finalité…';
+    el('facts').placeholder = 'Dates, chiffres, options, risques, contraintes, éléments de contexte…';
+    return;
+  }
+  const choice = PRIVATE_USECASE_HELP[el('usecase').value] || PRIVATE_USECASE_HELP[firstPrivateUsecase()];
+  setFieldPlaceholders(choice);
+  el('vaultInlineTitle').textContent = choice.vaultTitle || 'Pièces temporaires 48h';
+  el('vaultInlineCopy').textContent = choice.vaultCopy || 'Ajoutez des pièces utiles à la génération privée.';
+  el('safeNote').textContent = '🔒 Déposez uniquement des pièces utiles et anonymisées quand nécessaire. Les documents du dépôt sécurisé 48h sont automatiquement purgés après expiration.';
+  host.innerHTML = `
+    <div class="usecase-insight-card-v15">
+      <div class="usecase-insight-topline-v15">Assistant privé ciblé</div>
+      <h3>${escapeHtml(choice.title)}</h3>
+      <p>${escapeHtml(choice.intro)}</p>
+      <ul>${choice.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+      <div class="usecase-insight-source-v15">${escapeHtml(choice.source)}</div>
+    </div>`;
+}
+
 function applySpaceConfig(space) {
   const isPrivate = space === 'private';
+  currentSpace = isPrivate ? 'private' : 'public';
   document.getElementById('appHomeLink').href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
-  el('appSubTitle').textContent = isPrivate ? 'Mon espace privé' : 'Mon espace public';
+  el('appSubTitle').textContent = isPrivate ? 'Génération IA privée' : 'Mon espace public';
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
   el('heroTitle').textContent = 'Produire un livrable sécurisé';
   el('heroCopy').textContent = isPrivate
-    ? 'Préparez une réponse, un courrier ou une formalité, joignez si besoin vos pièces 48h et conservez les résultats utiles dans un archivage local simple.'
+    ? 'Préparez une réponse à un marché public, un courrier administratif ou une formalité d’entreprise. Appuyez-vous si besoin sur vos pièces déposées 48h et conservez les résultats utiles.'
     : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
   el('formCopy').textContent = isPrivate
-    ? 'Cadrez votre besoin, précisez l’objectif attendu et joignez si nécessaire des pièces utiles à l’exploitation IA ou à la transmission experte.'
+    ? 'Choisissez un assistant métier, précisez l’objectif attendu et ajoutez si nécessaire vos pièces 48h pour produire un premier draft exploitable.'
     : 'Cadrez votre besoin, précisez l’objectif attendu et rassemblez les éléments utiles avant la génération.';
-  const options = (isPrivate ? PRIVATE_USECASES : PUBLIC_USECASES).map(([v,l]) => `<option value="${v}">${l}</option>`).join('');
-  el('usecase').innerHTML = options;
-  el('context').placeholder = isPrivate ? 'Votre activité, votre situation, l’organisme ou l’interlocuteur concerné, les contraintes et l’échéance…' : 'Collectivité, enjeu, contraintes, échéance, destinataires…';
-  el('objective').placeholder = isPrivate ? 'Ce que vous voulez obtenir : courrier, trame de réponse, message à adresser, formalité à préparer…' : 'Décision attendue, arbitrage, message clé, finalité…';
-  el('facts').placeholder = isPrivate ? 'Dates, chiffres, clauses du marché, références client, éléments URSSAF ou fiscaux, banque, RC, DCE, etc.' : 'Dates, chiffres, options, risques, contraintes, éléments de contexte…';
+  if (isPrivate) {
+    el('usecase').innerHTML = PRIVATE_USECASE_GROUPS.map((group) => `
+      <optgroup label="${group.label}">
+        ${group.options.map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}
+      </optgroup>`).join('');
+    el('usecase').value = firstPrivateUsecase();
+  } else {
+    el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+  }
+  renderUsecaseInsight(currentSpace);
 }
 
 function formatFileSize(size = 0) {
@@ -408,6 +627,7 @@ async function callAI() {
   }
 }
 
+el('usecase').addEventListener('change', () => renderUsecaseInsight(currentSpace));
 el('btnGenerate').addEventListener('click', callAI);
 el('btnCopy').addEventListener('click', async () => {
   const content = getCurrentResultText();

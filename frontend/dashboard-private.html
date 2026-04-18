@@ -8,7 +8,7 @@
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg po-v14-dashboard po-v14-private-dash">
+<body class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="private.html">
@@ -23,42 +23,67 @@
 </div>
 </div>
 </header>
-<main class="container dash14-shell">
-  <section class="card dash14-hero">
+<main class="container dash14-shell dash15-shell">
+  <section class="card dash14-hero dash15-hero">
     <div>
-      <span class="badge">Espace privé</span>
+      <span class="badge">Espace privé — 10 tickets IA inclus</span>
       <h1>Mon espace</h1>
-      <p class="muted">Un espace premium pour produire plus vite, sécuriser vos démarches administratives et accéder à un appui expert adapté aux réalités des artisans, indépendants et TPE.</p>
+      <p class="muted">Un espace de production conçu pour les artisans, indépendants et TPE qui doivent répondre vite, fiabiliser leurs courriers et préparer des formalités sans perdre du temps opérationnel.</p>
     </div>
-    <div class="dash14-toplinks">
+    <div class="dash14-toplinks dash15-toplinks">
       <a class="btn ghost" href="parcours.html">Voir les parcours</a>
       <a class="btn ghost" href="private-onboarding.html">Actualiser mon besoin</a>
     </div>
   </section>
-  <section class="dash14-grid dash14-grid-private">
-    <article class="card dash14-card dash14-card-main dash14-card-main-private">
+
+  <section class="dash14-grid dash15-grid dash14-grid-private">
+    <article class="card dash14-card dash14-card-main dash14-card-main-private dash15-main-card">
       <div class="dash14-pill">Génération IA privée</div>
       <h2>Produire un livrable sécurisé</h2>
-      <p>Accédez à une génération guidée adaptée au quotidien des entreprises pour gagner du temps sur les réponses, courriers et formalités à faible ou moyen enjeu.</p>
+      <p>Choisissez un assistant adapté à votre activité : réponse à un marché public à partir de vos pièces, courrier administratif contextualisé ou préparation de formalités d’entreprise.</p>
       <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta" href="app.html">Produire un livrable sécurisé</a></div>
-      <div class="dash14-chipgrid">
-        <div><strong>Usages clés</strong><span>Réponse à des marchés, courriers administratifs, relation clients, banque, impôts, Urssaf, formalités et création d'entreprise.</span></div>
-        <div><strong>Offre privée</strong><span>10 tickets IA gratuits au démarrage, génération guidée, dépôt sécurisé 48h et montée en gamme experte si nécessaire.</span></div>
+      <div class="dash15-usecase-grid">
+        <div class="dash15-usecase-box">
+          <strong>Marchés publics</strong>
+          <span>DCE, RC, pièces déposées 48h, trame de réponse, points de vigilance et check-list de remise.</span>
+        </div>
+        <div class="dash15-usecase-box">
+          <strong>Courriers administratifs</strong>
+          <span>URSSAF, impôts, banque, client, fournisseur, relance, demande de délai ou courrier de formalité.</span>
+        </div>
+        <div class="dash15-usecase-box">
+          <strong>Formalités d’entreprise</strong>
+          <span>Création, modification, immatriculation, obligations sociales et cadrage documentaire.</span>
+        </div>
+      </div>
+      <div class="dash15-evidence">
+        <strong>Repères métier injectés dans l’interface</strong>
+        <span>Parcours construits à partir des ressources officielles Urssaf, Bpifrance Création, commande publique et CCI pour couvrir les besoins fréquents des artisans et TPE.</span>
       </div>
     </article>
-    <article class="card dash14-card dash14-card-side dash14-card-expert dash14-card-private-expert">
+
+    <article class="card dash14-card dash14-card-side dash14-card-expert dash14-card-private-expert dash15-side-card">
       <div class="dash14-pill">Service expert</div>
       <h2>Relecture experte</h2>
-      <p>Faites consolider une réponse sensible, un courrier important ou une formulation engageante avant envoi à un organisme ou un partenaire.</p>
-      <ul class="dash14-list"><li>Réponses à marchés publics</li><li>Courriers URSSAF, impôts, banque, clients, fournisseurs</li><li>Vérification du ton, de la structure et du niveau d'engagement</li></ul>
+      <p>Faites relire une réponse sensible, un courrier engageant ou un document déjà généré avant envoi à un acheteur public, à un organisme ou à un partenaire.</p>
+      <ul class="dash14-list dash15-list-tight">
+        <li>Choix de la génération archivée à joindre</li>
+        <li>Ajout possible de pièces du dépôt sécurisé 48h</li>
+        <li>Relecture du fond, du ton et du niveau d’engagement</li>
+      </ul>
       <a class="btn secondary dash14-sidebtn" href="expert.html">Accéder à la relecture experte</a>
     </article>
-    <article class="card dash14-card dash14-card-side dash14-card-premium dash14-card-private-premium">
+
+    <article class="card dash14-card dash14-card-side dash14-card-premium dash14-card-private-premium dash15-side-card dash15-premium-card">
       <div class="dash14-pill">Service premium</div>
       <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
-      <p>Prolongez la génération par un accompagnement opérationnel pour les formalités d'entreprise, la création d'activité ou un besoin administratif plus structurant.</p>
-      <ul class="dash14-list"><li>Formalités de société et obligations courantes</li><li>Création ou lancement d'entreprise</li><li>Cadrage de dossier et préparation des pièces</li></ul>
-      <a class="btn secondary dash14-sidebtn" href="mission.html">Accéder à l'accompagnement</a>
+      <p>Prolongez la génération par un appui humain pour un dossier plus structurant : création d’activité, formalités complexes, lancement d’entreprise ou séquencement des pièces.</p>
+      <ul class="dash14-list dash15-list-tight">
+        <li>Création ou reprise d’entreprise</li>
+        <li>Formalités de modification et obligations courantes</li>
+        <li>Préparation d’un dossier administratif complexe</li>
+      </ul>
+      <a class="btn secondary dash14-sidebtn" href="mission.html">Accéder à l’accompagnement</a>
     </article>
   </section>
 </main>
