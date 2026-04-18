@@ -162,6 +162,7 @@
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 let createArchiveStore = () => null;
+let isArchiveAvailable = () => false;
 let buildArchiveFilename = () => 'pope-online-archive.json';
 let formatArchiveAsText = (item) => item?.result || '';
 let formatArchiveAsHtml = (item) => `<pre>${String(item?.result || '')}</pre>`;
@@ -169,6 +170,7 @@ let formatArchiveAsHtml = (item) => `<pre>${String(item?.result || '')}</pre>`;
 try {
   const archiveModule = await import('./archive.js');
   createArchiveStore = archiveModule.createArchiveStore || createArchiveStore;
+  isArchiveAvailable = archiveModule.isArchiveAvailable || isArchiveAvailable;
   buildArchiveFilename = archiveModule.buildArchiveFilename || buildArchiveFilename;
   formatArchiveAsText = archiveModule.formatArchiveAsText || formatArchiveAsText;
   formatArchiveAsHtml = archiveModule.formatArchiveAsHtml || formatArchiveAsHtml;
@@ -184,6 +186,27 @@ const status = (txt) => el('status').textContent = txt;
 let archiveStore = null;
 let currentUser = null;
 let selectedArchiveIds = new Set();
+
+function archivePreferenceKey() {
+  const rawId = currentUser?.id || currentUser?.email || 'anonymous';
+  return `popeOnlineArchiveAutoSave:${String(rawId)}`;
+}
+
+function loadArchivePreferences() {
+  try {
+    const checkbox = el('archiveAutoSave');
+    if (!checkbox) return;
+    checkbox.checked = localStorage.getItem(archivePreferenceKey()) === 'true';
+  } catch {}
+}
+
+function saveArchivePreferences() {
+  try {
+    const checkbox = el('archiveAutoSave');
+    if (!checkbox) return;
+    localStorage.setItem(archivePreferenceKey(), String(Boolean(checkbox.checked)));
+  } catch {}
+}
 
 function buildPayload(){
   return {
@@ -413,10 +436,17 @@ function archiveCurrentGeneration({ notifyEmpty = true } = {}) {
     if (notifyEmpty) showToast('Aucune génération à archiver', 'warn');
     return null;
   }
-  const saved = archiveStore.save(record);
-  renderArchive();
-  showToast('Génération archivée sur cet appareil', 'ok');
-  return saved;
+  try {
+    const saved = archiveStore.save(record);
+    renderArchive();
+    showToast('Génération archivée sur cet appareil', 'ok');
+    return saved;
+  } catch (error) {
+    console.error('Échec archivage', error);
+    setArchiveUiAvailability(false);
+    showToast('Archivage local indisponible sur cet appareil', 'err');
+    return null;
+  }
 }
 
 async function refreshWallet(){
@@ -426,6 +456,7 @@ async function refreshWallet(){
     setTicketsBadge(me.wallet);
     try {
       archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
+      loadArchivePreferences();
       renderArchive();
     } catch (archiveError) {
       console.error('Archivage indisponible', archiveError);
@@ -524,6 +555,7 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
 });
 
 document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
+document.getElementById('archiveAutoSave')?.addEventListener('change', saveArchivePreferences);
 document.getElementById('archiveSearch')?.addEventListener('input', () => renderArchive());
 document.getElementById('archiveFilterUsecase')?.addEventListener('change', () => renderArchive());
 document.getElementById('archiveFilterFolder')?.addEventListener('change', () => renderArchive());
@@ -721,7 +753,7 @@ function setArchiveUiAvailability(enabled) {
   const archiveSection = document.getElementById('archives');
   if (!archiveSection) return;
   archiveSection.classList.toggle('archive-disabled', !enabled);
-  ['btnArchiveCurrent','btnExportArchive','btnClearArchive','btnBulkExport','btnBulkDelete','archiveImportInput','archiveSearch','archiveFilterUsecase','archiveFilterFolder','archiveFilterFavorites','archiveDateFrom','archiveDateTo','archiveSort','btnResetArchiveFilters','archiveSelectAll'].forEach((id) => {
+  ['btnArchiveCurrent','btnExportArchive','btnClearArchive','btnBulkExport','btnBulkDelete','archiveImportInput','archiveSearch','archiveFilterUsecase','archiveFilterFolder','archiveFilterFavorites','archiveDateFrom','archiveDateTo','archiveSort','btnResetArchiveFilters','archiveSelectAll','archiveAutoSave'].forEach((id) => {
     const node = document.getElementById(id);
     if (node) node.disabled = !enabled;
   });
@@ -731,7 +763,7 @@ function setArchiveUiAvailability(enabled) {
   }
 }
 
-setArchiveUiAvailability(true);
+setArchiveUiAvailability(isArchiveAvailable());
 refreshWallet();
 </script>
 </body>

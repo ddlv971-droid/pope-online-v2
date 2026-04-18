@@ -1,8 +1,20 @@
-const VERSION = 3;
+const VERSION = 4;
 const MAX_ITEMS = 300;
 
 function safeJsonParse(value, fallback) {
   try { return JSON.parse(value); } catch { return fallback; }
+}
+
+function getSafeStorage() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    const probe = '__pope_archive_probe__';
+    window.localStorage.setItem(probe, '1');
+    window.localStorage.removeItem(probe);
+    return window.localStorage;
+  } catch {
+    return null;
+  }
 }
 
 function slugify(value = '') {
@@ -64,6 +76,10 @@ function normalizeRecord(input = {}) {
   };
 }
 
+export function isArchiveAvailable() {
+  return Boolean(getSafeStorage());
+}
+
 export function buildArchiveFilename(item, format = 'json') {
   const datePart = new Date(item.updatedAt || item.createdAt || Date.now()).toISOString().slice(0, 10);
   const base = `pope-online-${slugify(item.title || item.usecaseLabel || 'generation')}-${datePart}`;
@@ -92,7 +108,8 @@ export function formatArchiveAsText(item) {
     item.notes ? `
 NOTES
 ${item.notes}` : ''
-  ].filter(Boolean).join('\n');
+  ].filter(Boolean).join('
+');
 }
 
 export function formatArchiveAsHtml(item) {
@@ -101,16 +118,21 @@ export function formatArchiveAsHtml(item) {
 }
 
 export function createArchiveStore({ userId } = {}) {
+  const storage = getSafeStorage();
+  if (!storage) {
+    throw new Error('archive_storage_unavailable');
+  }
+
   const key = `popeOnlineArchive:${String(userId || 'anonymous')}`;
 
   function read() {
-    return safeJsonParse(localStorage.getItem(key), [])
+    return safeJsonParse(storage.getItem(key), [])
       .map(normalizeRecord)
       .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
   }
 
   function write(rows) {
-    localStorage.setItem(key, JSON.stringify(rows.slice(0, MAX_ITEMS)));
+    storage.setItem(key, JSON.stringify(rows.slice(0, MAX_ITEMS)));
   }
 
   return {
@@ -160,7 +182,7 @@ export function createArchiveStore({ userId } = {}) {
       const set = new Set(ids);
       write(read().filter((item) => !set.has(item.id)));
     },
-    clear() { localStorage.removeItem(key); },
+    clear() { storage.removeItem(key); },
     exportAll() { return read(); },
     exportMany(ids = []) {
       const set = new Set(ids);
