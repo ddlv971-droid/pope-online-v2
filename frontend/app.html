@@ -46,11 +46,11 @@
     </div>
   </section>
 
-  <section class="public-layout-v10">
-    <section class="card public-form-v10">
+  <section class="public-layout-v11">
+    <section class="card public-form-v10 public-form-v11">
       <div class="section-heading-v10">
         <h2>Préparer votre demande</h2>
-        <p class="muted">Renseignez le contexte, l’objectif et les éléments utiles. La production reste l’action centrale de la page.</p>
+        <p class="muted">Cadrez votre besoin, précisez l’objectif attendu et rassemblez les éléments utiles avant la génération.</p>
       </div>
 
       <label class="label">Type de livrable</label>
@@ -91,60 +91,61 @@
       <div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
     </section>
 
-    <section class="card public-result-v10">
-      <div class="result-head-v10">
+    <section class="card archive-v10 archive-v11" id="archivePanel">
+      <div class="archive-v10-head">
         <div>
-          <h2>Résultat</h2>
-          <p class="muted">Votre draft s’affiche ici. Vous pourrez ensuite le copier, l’exporter, l’archiver ou demander une relecture experte.</p>
+          <h2>Archivage local</h2>
+          <p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p>
         </div>
-        <div class="row gap wrap">
-          <button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button>
-          <select class="input export-select" id="exportFormat" aria-label="Format d’export">
-            <option value="">Exporter…</option>
-            <option value="txt">TXT</option>
-            <option value="html">HTML</option>
-            <option value="doc">DOC</option>
-          </select>
-          <button class="btn ghost" id="btnExport" type="button">Exporter</button>
-        </div>
+        <label class="archive-auto-v10">
+          <input type="checkbox" id="archiveAutoSave" />
+          <span>Archiver automatiquement les prochaines générations</span>
+        </label>
       </div>
 
-      <div class="output-shell output-shell-v10">
-        <div class="output" id="output"><div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div></div>
+      <div class="archive-v10-toolbar archive-v11-toolbar">
+        <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button>
+        <button class="btn ghost" id="btnExportArchive" type="button">Exporter</button>
+        <label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label>
+        <input id="archiveImportInput" type="file" accept="application/json" hidden />
+        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button>
       </div>
 
-      <div class="result-actions-v10">
-        <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
-        <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
-      </div>
+      <input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" />
+      <div class="archive-v10-summary" id="archiveSummary"></div>
+      <div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div>
     </section>
   </section>
 
-  <section class="card archive-v10" id="archivePanel">
-    <div class="archive-v10-head">
+  <section class="card public-result-v10 public-result-v11">
+    <div class="result-head-v10 result-head-v11">
       <div>
-        <h2>Archives locales</h2>
-        <p class="muted">Retrouvez rapidement vos générations utiles sur cet appareil, sans complexité et sans stockage supplémentaire côté plateforme.</p>
+        <h2>Résultat généré</h2>
+        <p class="muted">Le livrable s’affiche ici avec une mise en forme plus lisible pour la lecture, la copie, l’export et la relecture experte.</p>
       </div>
-      <label class="archive-auto-v10">
-        <input type="checkbox" id="archiveAutoSave" />
-        <span>Archiver automatiquement les prochaines générations</span>
-      </label>
+      <div class="row gap wrap">
+        <button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button>
+        <select class="input export-select" id="exportFormat" aria-label="Format d’export">
+          <option value="">Exporter…</option>
+          <option value="txt">TXT</option>
+          <option value="html">HTML</option>
+          <option value="doc">DOC</option>
+        </select>
+        <button class="btn ghost" id="btnExport" type="button">Exporter</button>
+      </div>
     </div>
 
-    <div class="archive-v10-toolbar">
-      <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button>
-      <button class="btn ghost" id="btnExportArchive" type="button">Exporter</button>
-      <label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label>
-      <input id="archiveImportInput" type="file" accept="application/json" hidden />
-      <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button>
-      <input class="input archive-search-input-v10" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" />
+    <div class="output-shell output-shell-v10 output-shell-v11">
+      <div class="output output-rich-v11" id="output" data-raw=""><div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div></div>
     </div>
 
-    <div class="archive-v10-summary" id="archiveSummary"></div>
-    <div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div>
+    <div class="result-actions-v10">
+      <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
+      <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
+    </div>
   </section>
 </main>
+
 
 <script src="./auth-guard.js"></script>
 <script type="module">
@@ -177,8 +178,86 @@ function getUserKey() {
   return currentUser?.id || currentUser?.email || 'anonymous';
 }
 
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+}
+
+function renderInlineMarkup(value = '') {
+  return escapeHtml(value)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function isTableSeparator(line) {
+  return /^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?\s*$/.test(line);
+}
+
+function splitTableRow(line) {
+  return line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim());
+}
+
+function renderMarkdownish(source = '') {
+  const lines = String(source || '').replace(/\r/g, '').split('\n');
+  const parts = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) { i += 1; continue; }
+    if (/^-{3,}$/.test(trimmed)) { parts.push('<hr>'); i += 1; continue; }
+    const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      parts.push(`<h${level}>${renderInlineMarkup(heading[2])}</h${level}>`);
+      i += 1;
+      continue;
+    }
+    if (line.includes('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
+      const headers = splitTableRow(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
+        rows.push(splitTableRow(lines[i]));
+        i += 1;
+      }
+      const thead = `<thead><tr>${headers.map((cell) => `<th>${renderInlineMarkup(cell)}</th>`).join('')}</tr></thead>`;
+      const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${renderInlineMarkup(cell)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+      parts.push(`<div class="rich-table-wrap"><table>${thead}${tbody}</table></div>`);
+      continue;
+    }
+    if (/^[-*]\s+/.test(trimmed)) {
+      const items = [];
+      while (i < lines.length && /^[-*]\s+/.test(lines[i].trim())) {
+        items.push(`<li>${renderInlineMarkup(lines[i].trim().replace(/^[-*]\s+/, ''))}</li>`);
+        i += 1;
+      }
+      parts.push(`<ul>${items.join('')}</ul>`);
+      continue;
+    }
+    const paragraph = [];
+    while (i < lines.length) {
+      const look = lines[i].trim();
+      if (!look || /^#{1,6}\s+/.test(look) || /^[-*]\s+/.test(look) || /^-{3,}$/.test(look) || (lines[i].includes('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1]))) break;
+      paragraph.push(renderInlineMarkup(lines[i]));
+      i += 1;
+    }
+    parts.push(`<p>${paragraph.join('<br>')}</p>`);
+  }
+  return parts.join('') || '<div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div>';
+}
+
+function getCurrentResultText() {
+  const node = el('output');
+  return node?.dataset?.raw || node?.textContent || '';
+}
+
 function setOutput(text) {
-  el('output').textContent = text;
+  const node = el('output');
+  if (!node) return;
+  const raw = String(text || '');
+  node.dataset.raw = raw;
+  node.innerHTML = renderMarkdownish(raw);
 }
 
 function setGenerationLoading(loading) {
@@ -220,7 +299,7 @@ function inferArchiveTitle() {
 }
 
 function buildArchiveRecord() {
-  const result = (el('output').textContent || '').trim();
+  const result = getCurrentResultText().trim();
   if (!result || result.startsWith('Cliquez sur') || result.startsWith('Erreur')) return null;
   const payload = buildPayload();
   return {
@@ -263,7 +342,7 @@ function downloadFile(filename, content, mimeType) {
 
 function buildExportContent(format) {
   const payload = buildPayload();
-  const result = el('output').textContent || '';
+  const result = getCurrentResultText();
   const stamp = new Date().toLocaleString('fr-FR');
   if (format === 'html' || format === 'doc') {
     const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${payload.context || '-'}</pre></section><section><h2>Objectif</h2><pre>${payload.objective || '-'}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${payload.facts || '-'}</pre></section><section><h2>Génération IA</h2><pre>${result}</pre></section></body></html>`;
@@ -413,7 +492,7 @@ async function callAI() {
 
 el('btnGenerate').addEventListener('click', callAI);
 el('btnCopy').addEventListener('click', async () => {
-  const content = el('output').textContent || '';
+  const content = getCurrentResultText();
   if (!content.trim() || content.startsWith('Cliquez sur')) {
     showToast('Aucun résultat à copier', 'warn');
     return;
@@ -428,7 +507,7 @@ el('btnCopy').addEventListener('click', async () => {
 
 el('btnExport').addEventListener('click', () => {
   const format = el('exportFormat').value || 'txt';
-  const resultText = (el('output').textContent || '').trim();
+  const resultText = getCurrentResultText().trim();
   if (!resultText || resultText.startsWith('Cliquez sur') || resultText.startsWith('Erreur')) {
     showToast('Aucun résultat à exporter', 'warn');
     return;

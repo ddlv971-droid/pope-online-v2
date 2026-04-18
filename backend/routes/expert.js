@@ -14,11 +14,14 @@ const limiter = rateLimit({
   legacyHeaders: false
 });
 
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+}
+
 function buildAttachmentContent(name, payload) {
   const data = payload || {};
-  return Buffer.from(
-`POPE Online — ${name}\n\nType : ${data.usecaseLabel || 'Génération IA'}\nDate : ${data.createdAt || new Date().toISOString()}\n\nCONTEXTE\n${data?.prompt?.context || '-'}\n\nOBJECTIF\n${data?.prompt?.objective || '-'}\n\nÉLÉMENTS FACTUELS\n${data?.prompt?.facts || '-'}\n\nRÉSULTAT\n${data?.result || '-'}`
-  ).toString('base64');
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${escapeHtml(name)}</title><style>body{font-family:Arial,sans-serif;margin:28px;color:#07162A;line-height:1.6}h1,h2{color:#0c5ea8;margin:0 0 10px}section{margin:0 0 24px}pre{white-space:pre-wrap;font-family:Arial,sans-serif;background:#f7fbff;border:1px solid #dce9f6;border-radius:14px;padding:14px;margin:10px 0 0}table{border-collapse:collapse;width:100%;margin-top:12px}th,td{padding:10px 12px;border:1px solid #dce9f6;vertical-align:top;text-align:left}th{background:#eef7fd}</style></head><body><h1>POPE Online — ${escapeHtml(name)}</h1><table><tr><th>Type</th><td>${escapeHtml(data.usecaseLabel || 'Génération IA')}</td></tr><tr><th>Date</th><td>${escapeHtml(data.createdAt || new Date().toISOString())}</td></tr></table><section><h2>Contexte</h2><pre>${escapeHtml(data?.prompt?.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(data?.prompt?.objective || '-')}</pre></section><section><h2>Éléments factuels</h2><pre>${escapeHtml(data?.prompt?.facts || '-')}</pre></section><section><h2>Résultat généré</h2><pre>${escapeHtml(data?.result || '-')}</pre></section></body></html>`;
+  return Buffer.from(html, 'utf8').toString('base64');
 }
 
 router.post('/request', optionalAuth, limiter, async (req, res) => {
@@ -91,9 +94,9 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const attachments = [];
     if (generationAttachment?.result) {
       attachments.push({
-        filename: 'pope-online-generation-attachee.txt',
+        filename: 'pope-online-generation-attachee.html',
         content: buildAttachmentContent('Pièce jointe de génération', generationAttachment),
-        type: 'text/plain'
+        type: 'text/html'
       });
     }
 
