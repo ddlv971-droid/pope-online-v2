@@ -4881,3 +4881,10 @@ body.bg > footer{position:relative;z-index:3;}
 @media (max-width: 1040px){
   .archive-onboarding-grid{grid-template-columns:1fr;}
 }
+
+
+.archive-disabled{opacity:.72}
+.archive-disabled .btn[disabled],
+.archive-disabled .input:disabled,
+.archive-disabled input:disabled,
+.archive-disabled select:disabled{cursor:not-allowed;opacity:.7}

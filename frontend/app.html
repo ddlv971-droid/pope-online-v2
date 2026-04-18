@@ -161,7 +161,20 @@
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
-import { createArchiveStore, buildArchiveFilename, formatArchiveAsText, formatArchiveAsHtml } from './archive.js';
+let createArchiveStore = () => null;
+let buildArchiveFilename = () => 'pope-online-archive.json';
+let formatArchiveAsText = (item) => item?.result || '';
+let formatArchiveAsHtml = (item) => `<pre>${String(item?.result || '')}</pre>`;
+
+try {
+  const archiveModule = await import('./archive.js');
+  createArchiveStore = archiveModule.createArchiveStore || createArchiveStore;
+  buildArchiveFilename = archiveModule.buildArchiveFilename || buildArchiveFilename;
+  formatArchiveAsText = archiveModule.formatArchiveAsText || formatArchiveAsText;
+  formatArchiveAsHtml = archiveModule.formatArchiveAsHtml || formatArchiveAsHtml;
+} catch (err) {
+  console.error('Module archivage indisponible', err);
+}
 
 if (!requireLogin('app.html')) {}
 wireLogout();
@@ -320,7 +333,9 @@ function renderArchiveSummary(items) {
     { label: 'Types présents', value: types },
     { label: 'Dernière archive', value: newestLabel }
   ];
-  el('archiveSummary').innerHTML = summary.map((card) => `
+  const summaryHost = el('archiveSummary');
+  if (!summaryHost) return;
+  summaryHost.innerHTML = summary.map((card) => `
     <div class="archive-stat-card">
       <div class="archive-stat-value">${escapeHtml(String(card.value))}</div>
       <div class="archive-stat-label">${escapeHtml(card.label)}</div>
@@ -409,8 +424,14 @@ async function refreshWallet(){
     const me = await apiFetch('/auth/me');
     currentUser = me.user || null;
     setTicketsBadge(me.wallet);
-    archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
-    renderArchive();
+    try {
+      archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
+      renderArchive();
+    } catch (archiveError) {
+      console.error('Archivage indisponible', archiveError);
+      archiveStore = null;
+      setArchiveUiAvailability(false);
+    }
   } catch {}
 }
 
@@ -521,6 +542,17 @@ document.getElementById('btnResetArchiveFilters')?.addEventListener('click', () 
   renderArchive();
 });
 
+document.getElementById('archiveList')?.addEventListener('change', (event) => {
+  const input = event.target;
+  if (!archiveStore || !(input instanceof HTMLInputElement) || input.dataset.action !== 'select') return;
+  const wrapper = input.closest('[data-archive-id]');
+  const item = archiveStore.get(wrapper?.dataset?.archiveId);
+  if (!item) return;
+  if (input.checked) selectedArchiveIds.add(item.id);
+  else selectedArchiveIds.delete(item.id);
+  updateSelectionCount();
+});
+
 document.getElementById('archiveList')?.addEventListener('click', async (event) => {
   const btn = event.target.closest('[data-action]');
   if (!btn || !archiveStore) return;
@@ -528,12 +560,7 @@ document.getElementById('archiveList')?.addEventListener('click', async (event) 
   const item = archiveStore.get(wrapper?.dataset?.archiveId);
   if (!item) return;
   const action = btn.dataset.action;
-  if (action === 'select') {
-    if (btn.checked) selectedArchiveIds.add(item.id);
-    else selectedArchiveIds.delete(item.id);
-    updateSelectionCount();
-    return;
-  }
+  if (action === 'select') return;
   if (action === 'load') {
     archiveStore.touch(item.id);
     fillFormFromArchive(item);
@@ -690,6 +717,21 @@ document.getElementById('btnExport')?.addEventListener('click', () => {
   downloadFile(file.filename, file.content, file.mime);
   showToast(`Export ${format.toUpperCase()} prêt`, 'ok');
 });
+function setArchiveUiAvailability(enabled) {
+  const archiveSection = document.getElementById('archives');
+  if (!archiveSection) return;
+  archiveSection.classList.toggle('archive-disabled', !enabled);
+  ['btnArchiveCurrent','btnExportArchive','btnClearArchive','btnBulkExport','btnBulkDelete','archiveImportInput','archiveSearch','archiveFilterUsecase','archiveFilterFolder','archiveFilterFavorites','archiveDateFrom','archiveDateTo','archiveSort','btnResetArchiveFilters','archiveSelectAll'].forEach((id) => {
+    const node = document.getElementById(id);
+    if (node) node.disabled = !enabled;
+  });
+  if (!enabled) {
+    const host = document.getElementById('archiveList');
+    if (host) host.innerHTML = '<div class="muted">L’archivage local est temporairement indisponible, mais la génération et la déconnexion restent opérationnelles.</div>';
+  }
+}
+
+setArchiveUiAvailability(true);
 refreshWallet();
 </script>
 </body>

@@ -50,7 +50,7 @@ function normalizeRecord(input = {}) {
     usecaseLabel,
     title,
     favorite: Boolean(input.favorite),
-    folder: normalizeFolder(input.folder || 'Mes archives'),
+    folder: normalizeFolder(input.folder || 'Mes archives') || 'Mes archives',
     notes: String(input.notes || '').trim(),
     tags: Array.isArray(input.tags) ? [...new Set(input.tags.map((v) => String(v).trim()).filter(Boolean))] : inferTags(input),
     prompt: {
@@ -92,8 +92,7 @@ export function formatArchiveAsText(item) {
     item.notes ? `
 NOTES
 ${item.notes}` : ''
-  ].filter(Boolean).join('
-');
+  ].filter(Boolean).join('\n');
 }
 
 export function formatArchiveAsHtml(item) {
@@ -101,7 +100,7 @@ export function formatArchiveAsHtml(item) {
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(item.title || item.usecaseLabel || 'Archive POPE Online')}</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.55;background:#f7fbff;border:1px solid #dce9f6;border-radius:12px;padding:14px}section{margin:0 0 24px}</style></head><body><h1>${esc(item.title || item.usecaseLabel || 'Archive POPE Online')}</h1><p><strong>Type :</strong> ${esc(item.usecaseLabel || 'Génération IA')}<br><strong>Dossier :</strong> ${esc(item.folder || 'Mes archives')}<br><strong>Créée le :</strong> ${esc(item.createdAt ? new Date(item.createdAt).toLocaleString('fr-FR') : '—')}<br><strong>Mise à jour :</strong> ${esc(item.updatedAt ? new Date(item.updatedAt).toLocaleString('fr-FR') : '—')}</p><section><h2>Contexte</h2><pre>${esc(item?.prompt?.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${esc(item?.prompt?.objective || '-')}</pre></section><section><h2>Éléments factuels</h2><pre>${esc(item?.prompt?.facts || '-')}</pre></section><section><h2>Génération</h2><pre>${esc(item?.result || '-')}</pre></section>${item.notes ? `<section><h2>Notes</h2><pre>${esc(item.notes)}</pre></section>` : ''}</body></html>`;
 }
 
-export function createArchiveStore({ userId }) {
+export function createArchiveStore({ userId } = {}) {
   const key = `popeOnlineArchive:${String(userId || 'anonymous')}`;
 
   function read() {
@@ -132,9 +131,7 @@ export function createArchiveStore({ userId }) {
       write(rows);
       return rows[idx];
     },
-    touch(id) {
-      return this.update(id, { lastOpenedAt: new Date().toISOString() });
-    },
+    touch(id) { return this.update(id, { lastOpenedAt: new Date().toISOString() }); },
     toggleFavorite(id) {
       const item = this.get(id);
       if (!item) return null;
@@ -158,19 +155,13 @@ export function createArchiveStore({ userId }) {
       write(rows);
       return copy;
     },
-    remove(id) {
-      write(read().filter((item) => item.id !== id));
-    },
+    remove(id) { write(read().filter((item) => item.id !== id)); },
     removeMany(ids = []) {
       const set = new Set(ids);
       write(read().filter((item) => !set.has(item.id)));
     },
-    clear() {
-      localStorage.removeItem(key);
-    },
-    exportAll() {
-      return read();
-    },
+    clear() { localStorage.removeItem(key); },
+    exportAll() { return read(); },
     exportMany(ids = []) {
       const set = new Set(ids);
       return read().filter((item) => set.has(item.id));
@@ -196,8 +187,8 @@ export function createArchiveStore({ userId }) {
         return acc;
       }, {});
       const byFolder = rows.reduce((acc, item) => {
-        const key = item.folder || 'Mes archives';
-        acc[key] = (acc[key] || 0) + 1;
+        const folderKey = item.folder || 'Mes archives';
+        acc[folderKey] = (acc[folderKey] || 0) + 1;
         return acc;
       }, {});
       return {
