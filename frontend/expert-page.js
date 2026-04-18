@@ -4,14 +4,16 @@ import { createArchiveStore, isArchiveStorageAvailable } from './archive.js';
 if (!requireLogin('expert.html')) {}
 wireLogout();
 const el=(id)=>document.getElementById(id);
+const forcedSpace = (document.body?.dataset?.forcedSpace || '').trim();
 let currentUser=null, archiveStore=null, selectedArchive=null, vaultFiles=[];
 
 function getUserKey(){ return currentUser?.id || currentUser?.email || 'anonymous'; }
 function archiveLabel(item){ const date=new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR'); return `${item.title || item.usecaseLabel || 'Génération IA'} — ${date}`; }
-function isPrivate(){ return currentUser?.accountSpace === 'private'; }
+function isPrivate(){ return (forcedSpace || currentUser?.accountSpace || 'public') === 'private'; }
 function applySpaceLabels(){
   if (!isPrivate()) return;
   el('expertSubTitle').textContent = 'Relecture experte privée';
+  const gen = document.getElementById('spaceGenerateLink'); if (gen) gen.textContent = 'Génération IA privée';
   el('expertTitle').textContent = 'Demande de relecture experte — espace privé';
   el('expertLead').textContent = 'Décrivez votre besoin : réponse à un marché public, courrier administratif sensible, formalité ou document d’entreprise à relire avant envoi.';
   el('expertContentLabel').textContent = 'Document, projet de courrier ou éléments à relire';
@@ -26,6 +28,19 @@ function updateAttachmentPreview(){ const status=el('attachmentStatus'), preview
 function initArchiveChoices(){ if(!isArchiveStorageAvailable()){ archiveStore=null; renderAttachmentCard(); return; } try{ archiveStore=createArchiveStore({ userId:getUserKey() }); }catch{ archiveStore=null; } renderAttachmentCard(); }
 function renderVault(){ const host=el('vaultExpertList'); if(!vaultFiles.length){ host.innerHTML='<div class="muted">Aucune pièce temporaire disponible pour le moment.</div>'; return; } host.innerHTML=vaultFiles.map((item)=>`<label class="vault-inline-item"><input type="checkbox" data-vault-file value="${item.id}"><div><strong>${item.name}</strong><span>${item.canFeedAI ? 'peut aussi servir à la génération' : 'pièce transmise en attachement'} · expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')}</span></div></label>`).join(''); }
 function selectedVaultIds(){ return Array.from(document.querySelectorAll('[data-vault-file]:checked')).map((n)=>n.value); }
-async function refreshWallet(){ try{ const me=await apiFetch('/auth/me'); currentUser=me.user||null; setTicketsBadge(me.wallet); document.getElementById('expertHomeLink').href = currentUser?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; applySpaceLabels(); }catch{} initArchiveChoices(); try{ const data=await apiFetch('/vault'); vaultFiles=data.items||[]; }catch{ vaultFiles=[]; } renderVault(); }
+async function refreshWallet(){
+  try{
+    const me=await apiFetch('/auth/me');
+    currentUser=me.user||null;
+    setTicketsBadge(me.wallet);
+  }catch{}
+  document.getElementById('expertHomeLink').href = isPrivate() ? 'dashboard-private.html' : 'dashboard.html';
+  const gen = document.getElementById('spaceGenerateLink'); if (gen) gen.href = isPrivate() ? 'app-private.html' : 'app.html';
+  const crossMission = document.getElementById('crossMissionLink'); if (crossMission) crossMission.href = isPrivate() ? 'mission-private.html' : 'mission.html';
+  applySpaceLabels();
+  initArchiveChoices();
+  try{ const data=await apiFetch('/vault'); vaultFiles=data.items||[]; }catch{ vaultFiles=[]; }
+  renderVault();
+}
 el('btnSend').addEventListener('click', async ()=>{ try { const attachment=selectedArchive; const data=await apiFetch('/expert/request',{ method:'POST', body:{ subject:el('subject').value.trim(), context:el('context').value.trim(), content:el('content').value.trim(), vault_file_ids:selectedVaultIds(), generation_attachment: attachment ? { createdAt: attachment.createdAt || new Date().toISOString(), usecaseLabel: attachment.usecaseLabel || 'Génération IA', prompt: attachment.prompt || {}, result: attachment.result || '' } : null } }); setTicketsBadge(data.wallet); el('msg').textContent = '✅ Votre demande a été transmise.'; showToast('Demande transmise', 'ok'); } catch(e){ console.error(e); if(e.status===402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)){ el('msg').textContent='⚠️ Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.'; showToast('Accès temporairement limité', 'warn'); return; } el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Envoi impossible', 'err'); } });
 el('archiveAttachmentSelect').addEventListener('change', updateAttachmentPreview); refreshWallet();

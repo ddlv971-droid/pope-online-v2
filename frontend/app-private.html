@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Génération guidée</title>
+<title>POPE Online — Génération IA privée</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg po-v8-public" data-forced-space="public">
+<body class="bg po-v8-public po-private-app" data-forced-space="private">
 <header class="topbar">
   <div class="container row between">
-    <a class="brand link" href="dashboard.html" id="appHomeLink">
+    <a class="brand link" href="dashboard-private.html" id="appHomeLink">
       <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="appSubTitle">Génération guidée</div></div>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="appSubTitle">Génération IA privée</div></div>
     </a>
     <div class="row gap wrap">
       <a class="btn ghost" href="vault.html" id="appVaultLink">Dépôt sécurisé 48h</a>
       <span class="badge" data-tickets>Accès sécurisé</span>
-      <a class="btn ghost" href="expert.html" id="appExpertLink">Relecture experte</a>
+      <a class="btn ghost" href="expert-private.html" id="appExpertLink">Relecture experte</a>
       <button class="btn" data-logout>Déconnexion</button>
     </div>
   </div>
@@ -26,8 +26,8 @@
 <main class="container public-space-v10">
   <section class="card public-hero-v10">
     <div class="public-hero-v10-copy">
-      <span class="badge" id="spaceBadge">Génération guidée</span>
-      <h1 id="heroTitle">Produire un livrable sécurisé</h1>
+      <span class="badge" id="spaceBadge">Génération IA privée</span>
+      <h1 id="heroTitle">Produire un livrable privé sécurisé</h1>
       <p class="muted" id="heroCopy">Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.</p>
     </div>
     <div class="public-hero-v10-status">
@@ -57,7 +57,7 @@
     <section class="card public-result-v10 public-result-v11 public-result-v12">
       <div class="result-head-v10 result-head-v11"><div><h2>Résultat généré</h2><p class="muted">Le livrable s'affiche ici avec une mise en forme lisible pour la lecture, la copie, l'export et la relecture experte.</p></div><div class="row gap wrap"><button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button><select class="input export-select" id="exportFormat" aria-label="Format d’export"><option value="">Exporter…</option><option value="txt">TXT</option><option value="html">HTML</option><option value="doc">DOC</option></select><button class="btn ghost" id="btnExport" type="button">Exporter</button></div></div>
       <div class="output-shell output-shell-v10 output-shell-v11"><div class="output output-rich-v11" id="output" data-raw=""><div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div></div></div>
-      <div class="result-actions-v10"><a class="btn ghost" href="expert.html" id="resultExpertLink">Demander une relecture experte</a><a class="btn ghost" href="mission.html" id="resultMissionLink">Accompagnement sur mesure</a></div>
+      <div class="result-actions-v10"><a class="btn ghost" href="expert-private.html" id="resultExpertLink">Demander une relecture experte</a><a class="btn ghost" href="mission-private.html" id="resultMissionLink">Accompagnement sur mesure</a></div>
     </section>
     <section class="card archive-v10 archive-v11 archive-v12" id="archivePanel"><div class="archive-v10-head"><div><h2>Archivage local</h2><p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p></div><label class="archive-auto-v10"><input type="checkbox" id="archiveAutoSave" /><span>Archiver automatiquement les prochaines générations</span></label></div><div class="archive-v10-toolbar archive-v11-toolbar"><button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button><button class="btn ghost" id="btnExportArchive" type="button">Exporter</button><label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label><input id="archiveImportInput" type="file" accept="application/json" hidden /><button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button></div><input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" /><div class="archive-v10-summary" id="archiveSummary"></div><div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div></section>
   </section>

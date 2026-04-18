@@ -209,6 +209,7 @@ const PRIVATE_USECASE_HELP = {
 };
 
 let currentSpace = 'public';
+const forcedSpace = (document.body?.dataset?.forcedSpace || '').trim();
 
 function status(text) {
   const node = el('status');
@@ -219,13 +220,28 @@ function getUserKey() {
   return currentUser?.id || currentUser?.email || 'anonymous';
 }
 
+
+function isPrivateSpace() {
+  return currentSpace === 'private';
+}
+
+function updateCrossLinks(space = currentSpace) {
+  const isPrivate = space === 'private';
+  const appExpert = el('appExpertLink');
+  const resultExpert = el('resultExpertLink');
+  const resultMission = el('resultMissionLink');
+  if (appExpert) appExpert.href = isPrivate ? 'expert-private.html' : 'expert.html';
+  if (resultExpert) resultExpert.href = isPrivate ? 'expert-private.html' : 'expert.html';
+  if (resultMission) resultMission.href = isPrivate ? 'mission-private.html' : 'mission.html';
+}
+
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
 }
 
 function renderInlineMarkup(value = '') {
   return escapeHtml(value)
-    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
@@ -312,7 +328,7 @@ function setGenerationLoading(loading) {
   if (button) {
     button.disabled = loading;
     button.classList.toggle('is-loading', loading);
-    button.textContent = loading ? 'Génération en cours…' : 'Produire un livrable sécurisé';
+    button.textContent = loading ? 'Génération en cours…' : (isPrivateSpace() ? 'Générer un draft privé sécurisé' : 'Produire un livrable sécurisé');
   }
 }
 
@@ -504,7 +520,7 @@ function renderUsecaseInsight(space = currentSpace) {
   el('safeNote').textContent = '🔒 Déposez uniquement des pièces utiles et anonymisées quand nécessaire. Les documents du dépôt sécurisé 48h sont automatiquement purgés après expiration.';
   host.innerHTML = `
     <div class="usecase-insight-card-v15">
-      <div class="usecase-insight-topline-v15">Assistant privé ciblé</div>
+      <div class="usecase-insight-topline-v15">Assistant privé calibré</div>
       <h3>${escapeHtml(choice.title)}</h3>
       <p>${escapeHtml(choice.intro)}</p>
       <ul>${choice.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
@@ -516,15 +532,24 @@ function applySpaceConfig(space) {
   const isPrivate = space === 'private';
   currentSpace = isPrivate ? 'private' : 'public';
   document.getElementById('appHomeLink').href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
+  updateCrossLinks(space);
   el('appSubTitle').textContent = isPrivate ? 'Génération IA privée' : 'Mon espace public';
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
-  el('heroTitle').textContent = 'Produire un livrable sécurisé';
+  el('heroTitle').textContent = isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';
   el('heroCopy').textContent = isPrivate
-    ? 'Préparez une réponse à un marché public, un courrier administratif ou une formalité d’entreprise. Appuyez-vous si besoin sur vos pièces déposées 48h et conservez les résultats utiles.'
+    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : réponse à un marché public, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
     : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
   el('formCopy').textContent = isPrivate
-    ? 'Choisissez un assistant métier, précisez l’objectif attendu et ajoutez si nécessaire vos pièces 48h pour produire un premier draft exploitable.'
+    ? 'Sélectionnez un assistant métier privé, décrivez votre situation et ajoutez vos pièces temporaires si besoin pour produire un draft immédiatement exploitable.'
     : 'Cadrez votre besoin, précisez l’objectif attendu et rassemblez les éléments utiles avant la génération.';
+  if (el('usecaseLabel')) el('usecaseLabel').textContent = isPrivate ? 'Assistant privé' : 'Type de livrable';
+  if (el('contextLabel')) el('contextLabel').textContent = isPrivate ? 'Votre situation' : 'Contexte';
+  if (el('objectiveLabel')) el('objectiveLabel').textContent = isPrivate ? 'Ce que vous voulez obtenir' : 'Objectif du livrable';
+  if (el('factsLabel')) el('factsLabel').textContent = isPrivate ? 'Pièces, références et éléments utiles' : 'Éléments factuels utiles';
+  const generateBtn = el('btnGenerate');
+  if (generateBtn && !generationInFlight) generateBtn.textContent = isPrivate ? 'Générer un draft privé sécurisé' : 'Produire un livrable sécurisé';
+  const exportBtn = el('btnExport');
+  if (exportBtn) exportBtn.textContent = isPrivate ? 'Exporter le draft' : 'Exporter';
   if (isPrivate) {
     el('usecase').innerHTML = PRIVATE_USECASE_GROUPS.map((group) => `
       <optgroup label="${group.label}">
@@ -577,10 +602,10 @@ async function refreshWallet() {
     const me = await apiFetch('/auth/me');
     currentUser = me.user || null;
     setTicketsBadge(me.wallet);
-    applySpaceConfig(currentUser?.accountSpace || 'public');
+    applySpaceConfig(forcedSpace || currentUser?.accountSpace || 'public');
   } catch (error) {
     console.warn(error);
-    applySpaceConfig('public');
+    applySpaceConfig(forcedSpace || 'public');
   } finally {
     initArchive();
     refreshVaultInline();
