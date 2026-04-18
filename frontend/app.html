@@ -46,8 +46,8 @@
     </div>
   </section>
 
-  <section class="public-layout-v11">
-    <section class="card public-form-v10 public-form-v11">
+  <section class="public-layout-v12">
+    <section class="card public-form-v10 public-form-v11 public-form-v12">
       <div class="section-heading-v10">
         <h2>Préparer votre demande</h2>
         <p class="muted">Cadrez votre besoin, précisez l’objectif attendu et rassemblez les éléments utiles avant la génération.</p>
@@ -91,33 +91,7 @@
       <div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
     </section>
 
-    <section class="card archive-v10 archive-v11" id="archivePanel">
-      <div class="archive-v10-head">
-        <div>
-          <h2>Archivage local</h2>
-          <p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p>
-        </div>
-        <label class="archive-auto-v10">
-          <input type="checkbox" id="archiveAutoSave" />
-          <span>Archiver automatiquement les prochaines générations</span>
-        </label>
-      </div>
-
-      <div class="archive-v10-toolbar archive-v11-toolbar">
-        <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button>
-        <button class="btn ghost" id="btnExportArchive" type="button">Exporter</button>
-        <label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label>
-        <input id="archiveImportInput" type="file" accept="application/json" hidden />
-        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button>
-      </div>
-
-      <input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" />
-      <div class="archive-v10-summary" id="archiveSummary"></div>
-      <div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div>
-    </section>
-  </section>
-
-  <section class="card public-result-v10 public-result-v11">
+    <section class="card public-result-v10 public-result-v11 public-result-v12">
     <div class="result-head-v10 result-head-v11">
       <div>
         <h2>Résultat généré</h2>
@@ -143,6 +117,32 @@
       <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
       <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
     </div>
+  </section>
+
+    <section class="card archive-v10 archive-v11 archive-v12" id="archivePanel">
+      <div class="archive-v10-head">
+        <div>
+          <h2>Archivage local</h2>
+          <p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p>
+        </div>
+        <label class="archive-auto-v10">
+          <input type="checkbox" id="archiveAutoSave" />
+          <span>Archiver automatiquement les prochaines générations</span>
+        </label>
+      </div>
+
+      <div class="archive-v10-toolbar archive-v11-toolbar">
+        <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button>
+        <button class="btn ghost" id="btnExportArchive" type="button">Exporter</button>
+        <label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label>
+        <input id="archiveImportInput" type="file" accept="application/json" hidden />
+        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button>
+      </div>
+
+      <input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" />
+      <div class="archive-v10-summary" id="archiveSummary"></div>
+      <div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div>
+    </section>
   </section>
 </main>
 
