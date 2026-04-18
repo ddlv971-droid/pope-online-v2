@@ -145,7 +145,11 @@
 </main>
 
 <script type="module">
+<<<<<<< HEAD
 import { apiFetch, getToken, getApiMessage } from './api.js';
+=======
+import { apiFetch, setToken, getToken, getApiMessage } from './api.js';
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 import { clearToken, wireLogout, showToast } from './app.js';
 
 wireLogout();
@@ -467,6 +471,10 @@ async function adminLogin() {
       body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard' }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
+<<<<<<< HEAD
+=======
+    setToken(data.token);
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';

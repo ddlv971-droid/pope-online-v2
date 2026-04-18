@@ -55,6 +55,7 @@
   from = "/parcours"
   to = "/parcours.html"
   status = 200
+<<<<<<< HEAD
 
 
 [[headers]]
@@ -65,3 +66,5 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1

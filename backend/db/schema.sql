@@ -135,6 +135,7 @@ alter table users add column if not exists satisfaction_mail_sent_by uuid refere
 
 alter table users add column if not exists satisfaction_response_received_at timestamptz;
 alter table users add column if not exists satisfaction_last_response jsonb;
+<<<<<<< HEAD
 
 
 create table if not exists satisfaction_tokens (
@@ -161,3 +162,5 @@ create table if not exists admin_audit_logs (
 );
 
 create index if not exists idx_admin_audit_logs_created on admin_audit_logs(created_at desc);
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1

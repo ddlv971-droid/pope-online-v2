@@ -6,6 +6,10 @@
 <title>POPE Online — Génération guidée</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<<<<<<< HEAD
+=======
+<link rel="stylesheet" href="popy.css"/>
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 </head>
 <body class="bg po-v5-harmony po-public-v24">
 <header class="topbar">
@@ -61,11 +65,17 @@
 
 <div class="row gap wrap">
   <button class="btn" id="btnGenerate">Produire un livrable sécurisé</button>
+<<<<<<< HEAD
   <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver cette génération</button>
   <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
 </div>
 <div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
 <label class="archive-auto-option"><input type="checkbox" id="archiveAutoSave" /> Archiver automatiquement chaque génération sur cet appareil</label>
+=======
+  <a class="btn ghost" href="expert.html">Demander une relecture experte</a>
+</div>
+<div class="fineprint">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 
 <div class="divider"></div>
 <div class="panel">
@@ -94,6 +104,7 @@
 </div>
 </div>
 <div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
+<<<<<<< HEAD
 <div class="divider"></div>
 <div class="panel archive-panel" id="archives">
   <div class="row between wrap archive-head">
@@ -135,6 +146,8 @@
     <div class="muted">Aucune génération archivée pour le moment.</div>
   </div>
 </div>
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 </section>
 </main>
 
@@ -142,15 +155,21 @@
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
+<<<<<<< HEAD
 import { createArchiveStore, buildArchiveFilename } from './archive.js';
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 
 if (!requireLogin('app.html')) {}
 wireLogout();
 
 const el = (id) => document.getElementById(id);
 const status = (txt) => el('status').textContent = txt;
+<<<<<<< HEAD
 let archiveStore = null;
 let currentUser = null;
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 
 function buildPayload(){
   return {
@@ -167,6 +186,7 @@ function setOutput(text){
   el('output').textContent = text;
 }
 
+<<<<<<< HEAD
 function escapeHtml(value='') {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
 }
@@ -338,6 +358,12 @@ async function refreshWallet(){
     setTicketsBadge(me.wallet);
     archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
     renderArchive();
+=======
+async function refreshWallet(){
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   } catch {}
 }
 
@@ -356,7 +382,10 @@ async function callAI(){
     status('Terminé');
     setOutput(data.text || '(vide)');
     setTicketsBadge(data.wallet);
+<<<<<<< HEAD
     if (el('archiveAutoSave')?.checked) archiveCurrentGeneration({ notifyEmpty: false });
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   } catch (e) {
     console.error(e);
     status('Erreur');
@@ -386,7 +415,11 @@ function downloadFile(filename, content, mimeType) {
 }
 
 function buildExportContent(format) {
+<<<<<<< HEAD
   const usecaseLabel = currentUsecaseLabel();
+=======
+  const usecaseLabel = el('usecase').selectedOptions?.[0]?.textContent?.trim() || '';
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
   const payload = buildPayload();
   const result = el('output').textContent || '';
   const stamp = new Date().toLocaleString('fr-FR');
@@ -429,6 +462,7 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
   }
 });
 
+<<<<<<< HEAD
 document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
 document.getElementById('archiveSearch')?.addEventListener('input', () => renderArchive());
 document.getElementById('archiveFilterUsecase')?.addEventListener('change', () => renderArchive());
@@ -522,6 +556,8 @@ document.getElementById('btnClearArchive')?.addEventListener('click', () => {
   showToast('Archive locale vidée', 'ok');
 });
 
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 document.getElementById('btnExport')?.addEventListener('click', () => {
   const format = el('exportFormat').value || 'txt';
   const resultText = (el('output').textContent || '').trim();

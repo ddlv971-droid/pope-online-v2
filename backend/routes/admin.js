@@ -1,9 +1,16 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
+<<<<<<< HEAD
 import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { randomToken, sha256Hex, nowPlusHours, ipToHash } from '../services/security.js';
+=======
+import jwt from 'jsonwebtoken';
+import { withClient } from '../db/index.js';
+import { requireAdmin } from '../middleware/auth.js';
+import { sendMail } from '../services/mailer.js';
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 
 const router = express.Router();
 router.use(requireAdmin);
@@ -16,6 +23,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
   return { ticketsAi: 10, publicDossiersLimit: 1, privateDossiersLimit: 0, privateUsersLimit: 1 };
 }
 
+<<<<<<< HEAD
 function resolveFrontendBase() {
   const frontendBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '') || 'https://pope-online.com';
   return frontendBase;
@@ -32,6 +40,24 @@ async function buildSatisfactionLink(client, user, adminId) {
 
 async function insertAuditLog(client, { adminId, action, targetUserId=null, req, oldState=null, newState=null }) {
   await client.query(`insert into admin_audit_logs(admin_id, action, target_user_id, ip_hash, old_state, new_state) values($1,$2,$3,$4,$5,$6)`, [adminId || null, action, targetUserId, ipToHash(req), oldState ? JSON.stringify(oldState) : null, newState ? JSON.stringify(newState) : null]);
+=======
+function buildSatisfactionLink(user) {
+  const frontendBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '')
+    .replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
+    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com') || 'https://pope-online.com';
+  const token = jwt.sign(
+    {
+      scope: 'satisfaction',
+      sub: user.id,
+      email: user.email,
+      fullName: user.full_name || '',
+      organization: user.organization || ''
+    },
+    process.env.JWT_SECRET || 'dev-secret',
+    { expiresIn: '30d' }
+  );
+  return `${frontendBase}/satisfaction.html?token=${encodeURIComponent(token)}`;
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
 }
 
 function satisfactionMailHtml(user, formUrl) {
@@ -82,7 +108,11 @@ router.get('/users', async (_req, res) => {
                w.trial_expires_at, u.created_at
           from users u
           left join wallets w on w.user_id = u.id
+<<<<<<< HEAD
          order by case when round( coalesce(( select avg((elem->>'score')::numeric) from jsonb_array_elements(coalesce(u.satisfaction_last_response->'criteria', '[]'::jsonb)) elem ), 0) * 10.0 / 7.0 , 1) < 5 then 0 else 1 end, u.created_at desc
+=======
+         order by u.created_at desc
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       `);
       return q.rows;
     });
@@ -117,7 +147,10 @@ router.post('/users', async (req, res) => {
       );
       await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit)
                           values($1,'CUSTOM','trial_active',$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+<<<<<<< HEAD
       await insertAuditLog(client, { adminId: req.user.sub, action: 'admin_create_user', targetUserId: ins.rows[0].id, req, newState: { email, fullName, organization, accountSpace, phoneFull } });
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -134,7 +167,10 @@ router.put('/users/:id', async (req, res) => {
   try {
     await withClient(async (client) => {
       await client.query('begin');
+<<<<<<< HEAD
       const before = await client.query(`select u.id, u.full_name, u.organization, u.email, u.phone_full, u.account_space, w.plan_code, w.status, w.tickets_ai, w.trial_expires_at from users u left join wallets w on w.user_id=u.id where u.id=$1 limit 1`, [id]);
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       if (req.body.user) {
         const u = req.body.user;
         await client.query(
@@ -168,7 +204,10 @@ router.put('/users/:id', async (req, res) => {
           ]
         );
       }
+<<<<<<< HEAD
       await insertAuditLog(client, { adminId: req.user.sub, action: 'admin_update_user', targetUserId: id, req, oldState: before.rows[0] || null, newState: req.body });
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       await client.query('commit');
       return res.json({ ok: true });
     });
@@ -194,7 +233,11 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
         return { status: 409, body: { error: 'satisfaction_mail_already_sent', sentAt: user.satisfaction_mail_sent_at } };
       }
 
+<<<<<<< HEAD
       const formUrl = await buildSatisfactionLink(client, user, req.user.sub);
+=======
+      const formUrl = buildSatisfactionLink(user);
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       await sendMail({
         to: user.email,
         from: process.env.MAIL_FROM || 'contact@pope-online.com',
@@ -204,8 +247,19 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
         html: satisfactionMailHtml(user, formUrl)
       });
 
+<<<<<<< HEAD
       await client.query(`update users set satisfaction_mail_sent_at=now(), satisfaction_mail_sent_by=$2 where id=$1`, [req.params.id, req.user.sub]);
       await insertAuditLog(client, { adminId: req.user.sub, action: 'admin_send_satisfaction', targetUserId: req.params.id, req, newState: { satisfaction_mail_sent_at: new Date().toISOString() } });
+=======
+      await client.query(
+        `update users
+            set satisfaction_mail_sent_at=now(),
+                satisfaction_mail_sent_by=$2
+          where id=$1`,
+        [req.params.id, req.user.sub]
+      );
+
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       return { status: 200, body: { ok: true, message: 'satisfaction_mail_sent' } };
     });
 
@@ -219,8 +273,11 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
 router.delete('/users/:id', async (req, res) => {
   try {
     await withClient(async (client) => {
+<<<<<<< HEAD
       const before = await client.query(`select id, email, full_name, role from users where id=$1 limit 1`, [req.params.id]);
       await insertAuditLog(client, { adminId: req.user.sub, action: 'admin_delete_user', targetUserId: req.params.id, req, oldState: before.rows[0] || null });
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
       await client.query("delete from users where id=$1 and role<>'admin'", [req.params.id]);
     });
     return res.json({ ok: true });

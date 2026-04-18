@@ -4809,6 +4809,7 @@ body.bg > footer{position:relative;z-index:3;}
   .po-admin-user-card{padding:18px}
   .po-admin-user-identity h4{font-size:22px}
 }
+<<<<<<< HEAD
 
 
 .divider{height:1px;background:var(--line);margin:18px 0;}
@@ -4860,3 +4861,5 @@ body.bg > footer{position:relative;z-index:3;}
   .premium-toolbar{grid-template-columns:1fr;}
   .archive-actions-grid{justify-content:flex-start;}
 }
+=======
+>>>>>>> 7bbf5523fa98ca38a268f527416bf281554fe2d1
