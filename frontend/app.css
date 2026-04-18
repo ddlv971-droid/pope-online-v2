@@ -4888,3 +4888,12 @@ body.bg > footer{position:relative;z-index:3;}
 .archive-disabled .input:disabled,
 .archive-disabled input:disabled,
 .archive-disabled select:disabled{cursor:not-allowed;opacity:.7}
+
+/* V6 — feedback de génération */
+.output-shell{display:flex;flex-direction:column;gap:12px;}
+.generation-indicator{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(3,160,215,.10),rgba(0,121,193,.08));border:1px solid rgba(3,160,215,.18);box-shadow:0 10px 24px rgba(7,22,42,.06);}
+.generation-indicator strong{display:block;font-size:14px;}
+.generation-spinner{width:18px;height:18px;border-radius:50%;border:3px solid rgba(0,121,193,.18);border-top-color:var(--pope-blue);animation:popeSpin .8s linear infinite;flex:0 0 auto;}
+@keyframes popeSpin{to{transform:rotate(360deg);}}
+#btnGenerate.is-loading{opacity:.85;cursor:progress;}
+#btnGenerate:disabled{opacity:.78;cursor:not-allowed;}

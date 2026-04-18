@@ -1,11 +1,12 @@
-const VERSION = 4;
+const VERSION = 6;
+const AUTO_ARCHIVE_PREFIX = 'popeOnlineArchiveAuto:';
 const MAX_ITEMS = 300;
 
 function safeJsonParse(value, fallback) {
   try { return JSON.parse(value); } catch { return fallback; }
 }
 
-function getSafeStorage() {
+function getStorage() {
   try {
     if (typeof window === 'undefined' || !window.localStorage) return null;
     const probe = '__pope_archive_probe__';
@@ -15,6 +16,23 @@ function getSafeStorage() {
   } catch {
     return null;
   }
+}
+
+export function isArchiveStorageAvailable() {
+  return Boolean(getStorage());
+}
+
+export function getAutoArchivePreference(userId = 'anonymous') {
+  const storage = getStorage();
+  if (!storage) return false;
+  return storage.getItem(`${AUTO_ARCHIVE_PREFIX}${String(userId || 'anonymous')}`) === 'true';
+}
+
+export function setAutoArchivePreference(userId = 'anonymous', enabled = false) {
+  const storage = getStorage();
+  if (!storage) return false;
+  storage.setItem(`${AUTO_ARCHIVE_PREFIX}${String(userId || 'anonymous')}`, enabled ? 'true' : 'false');
+  return true;
 }
 
 function slugify(value = '') {
@@ -76,10 +94,6 @@ function normalizeRecord(input = {}) {
   };
 }
 
-export function isArchiveAvailable() {
-  return Boolean(getSafeStorage());
-}
-
 export function buildArchiveFilename(item, format = 'json') {
   const datePart = new Date(item.updatedAt || item.createdAt || Date.now()).toISOString().slice(0, 10);
   const base = `pope-online-${slugify(item.title || item.usecaseLabel || 'generation')}-${datePart}`;
@@ -108,8 +122,7 @@ export function formatArchiveAsText(item) {
     item.notes ? `
 NOTES
 ${item.notes}` : ''
-  ].filter(Boolean).join('
-');
+  ].filter(Boolean).join('\n');
 }
 
 export function formatArchiveAsHtml(item) {
@@ -118,10 +131,8 @@ export function formatArchiveAsHtml(item) {
 }
 
 export function createArchiveStore({ userId } = {}) {
-  const storage = getSafeStorage();
-  if (!storage) {
-    throw new Error('archive_storage_unavailable');
-  }
+  const storage = getStorage();
+  if (!storage) throw new Error('local_storage_unavailable');
 
   const key = `popeOnlineArchive:${String(userId || 'anonymous')}`;
 

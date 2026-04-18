@@ -94,7 +94,7 @@
 <button class="btn ghost" id="btnExport">Exporter</button>
 </div>
 </div>
-<div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div>
+<div class="output-shell"><div class="generation-indicator" id="generationIndicator" aria-live="polite" hidden><span class="generation-spinner" aria-hidden="true"></span><div><strong>Génération en cours…</strong><div class="muted">Merci de patienter, votre premier draft structuré est en préparation.</div></div></div><div class="output" id="output"><div class="muted">Cliquez sur “Produire un livrable sécurisé” pour générer un premier draft structuré.</div></div></div>
 <div class="divider"></div>
 <div class="panel archive-panel" id="archives">
   <div class="row between wrap archive-head">
@@ -162,18 +162,22 @@
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 let createArchiveStore = () => null;
-let isArchiveAvailable = () => false;
 let buildArchiveFilename = () => 'pope-online-archive.json';
 let formatArchiveAsText = (item) => item?.result || '';
 let formatArchiveAsHtml = (item) => `<pre>${String(item?.result || '')}</pre>`;
+let isArchiveStorageAvailable = () => false;
+let getAutoArchivePreference = () => false;
+let setAutoArchivePreference = () => false;
 
 try {
   const archiveModule = await import('./archive.js');
   createArchiveStore = archiveModule.createArchiveStore || createArchiveStore;
-  isArchiveAvailable = archiveModule.isArchiveAvailable || isArchiveAvailable;
   buildArchiveFilename = archiveModule.buildArchiveFilename || buildArchiveFilename;
   formatArchiveAsText = archiveModule.formatArchiveAsText || formatArchiveAsText;
   formatArchiveAsHtml = archiveModule.formatArchiveAsHtml || formatArchiveAsHtml;
+  isArchiveStorageAvailable = archiveModule.isArchiveStorageAvailable || isArchiveStorageAvailable;
+  getAutoArchivePreference = archiveModule.getAutoArchivePreference || getAutoArchivePreference;
+  setAutoArchivePreference = archiveModule.setAutoArchivePreference || setAutoArchivePreference;
 } catch (err) {
   console.error('Module archivage indisponible', err);
 }
@@ -186,27 +190,7 @@ const status = (txt) => el('status').textContent = txt;
 let archiveStore = null;
 let currentUser = null;
 let selectedArchiveIds = new Set();
-
-function archivePreferenceKey() {
-  const rawId = currentUser?.id || currentUser?.email || 'anonymous';
-  return `popeOnlineArchiveAutoSave:${String(rawId)}`;
-}
-
-function loadArchivePreferences() {
-  try {
-    const checkbox = el('archiveAutoSave');
-    if (!checkbox) return;
-    checkbox.checked = localStorage.getItem(archivePreferenceKey()) === 'true';
-  } catch {}
-}
-
-function saveArchivePreferences() {
-  try {
-    const checkbox = el('archiveAutoSave');
-    if (!checkbox) return;
-    localStorage.setItem(archivePreferenceKey(), String(Boolean(checkbox.checked)));
-  } catch {}
-}
+let generationInFlight = false;
 
 function buildPayload(){
   return {
@@ -221,6 +205,18 @@ function buildPayload(){
 
 function setOutput(text){
   el('output').textContent = text;
+}
+
+function setGenerationLoading(loading) {
+  generationInFlight = Boolean(loading);
+  const indicator = el('generationIndicator');
+  const button = el('btnGenerate');
+  if (indicator) indicator.hidden = !loading;
+  if (button) {
+    button.disabled = loading;
+    button.classList.toggle('is-loading', loading);
+    button.textContent = loading ? 'Génération en cours…' : 'Produire un livrable sécurisé';
+  }
 }
 
 function escapeHtml(value='') {
@@ -427,7 +423,7 @@ function renderArchive(items = null) {
 }
 
 function archiveCurrentGeneration({ notifyEmpty = true } = {}) {
-  if (!archiveStore) {
+  if (!archiveStore || !isArchiveStorageAvailable()) {
     showToast('Archivage local indisponible', 'err');
     return null;
   }
@@ -436,17 +432,10 @@ function archiveCurrentGeneration({ notifyEmpty = true } = {}) {
     if (notifyEmpty) showToast('Aucune génération à archiver', 'warn');
     return null;
   }
-  try {
-    const saved = archiveStore.save(record);
-    renderArchive();
-    showToast('Génération archivée sur cet appareil', 'ok');
-    return saved;
-  } catch (error) {
-    console.error('Échec archivage', error);
-    setArchiveUiAvailability(false);
-    showToast('Archivage local indisponible sur cet appareil', 'err');
-    return null;
-  }
+  const saved = archiveStore.save(record);
+  renderArchive();
+  showToast('Génération archivée sur cet appareil', 'ok');
+  return saved;
 }
 
 async function refreshWallet(){
@@ -456,7 +445,9 @@ async function refreshWallet(){
     setTicketsBadge(me.wallet);
     try {
       archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
-      loadArchivePreferences();
+      const autoArchiveToggle = el('archiveAutoSave');
+      if (autoArchiveToggle) autoArchiveToggle.checked = getAutoArchivePreference(currentUser?.id || currentUser?.email || 'anonymous');
+      setArchiveUiAvailability(true);
       renderArchive();
     } catch (archiveError) {
       console.error('Archivage indisponible', archiveError);
@@ -475,7 +466,9 @@ async function callAI(){
     return;
   }
 
+  if (generationInFlight) return;
   status('En cours…');
+  setGenerationLoading(true);
   try {
     const data = await apiFetch('/ai/generate', { method:'POST', body: payload });
     status('Terminé');
@@ -497,6 +490,8 @@ async function callAI(){
     }
     setOutput('Erreur : ' + getApiMessage(e));
     showToast('Erreur de génération', 'err');
+  } finally {
+    setGenerationLoading(false);
   }
 }
 
@@ -555,7 +550,21 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
 });
 
 document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
-document.getElementById('archiveAutoSave')?.addEventListener('change', saveArchivePreferences);
+document.getElementById('archiveAutoSave')?.addEventListener('change', (event) => {
+  const userKey = currentUser?.id || currentUser?.email || 'anonymous';
+  if (!isArchiveStorageAvailable()) {
+    event.target.checked = false;
+    showToast('Archivage local indisponible sur cet appareil', 'err');
+    return;
+  }
+  const saved = setAutoArchivePreference(userKey, event.target.checked);
+  if (!saved) {
+    event.target.checked = false;
+    showToast('Préférence d’archivage impossible à enregistrer', 'err');
+    return;
+  }
+  showToast(event.target.checked ? 'Archivage automatique activé' : 'Archivage automatique désactivé', 'ok');
+});
 document.getElementById('archiveSearch')?.addEventListener('input', () => renderArchive());
 document.getElementById('archiveFilterUsecase')?.addEventListener('change', () => renderArchive());
 document.getElementById('archiveFilterFolder')?.addEventListener('change', () => renderArchive());
@@ -763,7 +772,8 @@ function setArchiveUiAvailability(enabled) {
   }
 }
 
-setArchiveUiAvailability(isArchiveAvailable());
+setArchiveUiAvailability(isArchiveStorageAvailable());
+setGenerationLoading(false);
 refreshWallet();
 </script>
 </body>
