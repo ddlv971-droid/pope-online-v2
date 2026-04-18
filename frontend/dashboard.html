@@ -27,39 +27,42 @@
 </div>
 </header>
 
-<main class="container app" style="grid-template-columns:1fr">
-<section class="card left" style="max-width:1040px;margin:0 auto">
-  <div class="row between">
-    <h2>Mon espace</h2>
-    <div class="row gap wrap"><a class="btn ghost" href="pricing.html">Voir les parcours</a><a class="btn ghost" href="profile.html">Mon compte</a></div>
+<main class="container dashboard-public-v9-shell">
+<section class="card dashboard-public-v9">
+  <div class="dashboard-public-v9-head">
+    <div>
+      <h2>Mon espace</h2>
+      <p class="muted">Un tableau de bord plus direct, organisé autour de la génération guidée.</p>
+    </div>
+    <div class="dashboard-public-v9-links"><a class="btn ghost" href="pricing.html">Voir les parcours</a><a class="btn ghost" href="profile.html">Mon compte</a></div>
   </div>
 
-  <div class="grid2" style="margin-top:12px">
-    <div class="panel">
+  <div class="dashboard-public-v9-core">
+    <aside class="dashboard-public-v9-panel dashboard-public-v9-status">
       <h3>Accès</h3>
       <div class="kpi" id="kpi">—</div>
-      <div class="muted">Votre espace public est prêt pour la génération guidée, la relecture experte et l’accompagnement sur mesure.</div>
-    </div>
-    <div class="panel">
-      <h3>Actions rapides</h3>
-      <div class="row gap wrap">
-        <a class="btn" href="app.html">Produire un livrable sécurisé</a>
+      <p class="muted">Votre espace public est prêt pour la génération guidée, la relecture experte et l’accompagnement sur mesure.</p>
+      <div class="dashboard-public-v9-mini-actions">
         <a class="btn ghost" href="expert.html">Relecture experte</a>
         <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
       </div>
-    </div>
-  </div>
+    </aside>
 
-  <div class="divider"></div>
-  <div class="grid2">
-    <div class="panel">
-      <h3>Besoin public</h3>
-      <p class="muted">Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission ou chefs de service.</p>
-    </div>
-    <div class="panel">
+    <section class="dashboard-public-v9-cta-wrap">
+      <div class="dashboard-public-v9-cta-card">
+        <span class="badge">Action principale</span>
+        <h3>Produire un livrable sécurisé</h3>
+        <p class="muted">Accédez directement à la génération guidée pour préparer, produire puis exploiter votre résultat dans un espace fluide.</p>
+        <a class="btn dashboard-public-v9-maincta" href="app.html">Produire un livrable sécurisé</a>
+      </div>
+    </section>
+
+    <aside class="dashboard-public-v9-panel dashboard-public-v9-context">
       <h3>Parcours</h3>
       <p class="muted">Analyse du besoin, prise de contact, proposition adaptée, cadrage puis accompagnement.</p>
-    </div>
+      <h3>Besoin public</h3>
+      <p class="muted">Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission ou chefs de service.</p>
+    </aside>
   </div>
 </section>
 </main>

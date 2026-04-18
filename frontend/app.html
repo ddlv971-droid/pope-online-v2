@@ -27,12 +27,12 @@
   </div>
 </header>
 
-<main class="container public-space-v8">
-  <section class="card public-hero-v8">
+<main class="container public-space-v9">
+  <section class="card public-hero-v9">
     <div class="public-hero-copy">
       <span class="badge">Espace public</span>
-      <h1>Produire un livrable sécurisé, dans un espace plus clair et plus fluide.</h1>
-      <p class="muted">Un parcours recentré sur l’essentiel : cadrer votre demande, lancer la génération, archiver facilement les résultats utiles et les réutiliser en un clic.</p>
+      <h1>Produire un livrable sécurisé dans un espace recentré sur l’action.</h1>
+      <p class="muted">Préparez votre demande, lancez la génération, puis conservez seulement les résultats utiles dans un archivage simple et fiable.</p>
     </div>
     <div class="public-hero-status">
       <div class="status-card-v8">
@@ -46,11 +46,11 @@
     </div>
   </section>
 
-  <section class="public-workspace-v8">
-    <section class="card public-form-v8">
+  <section class="public-workspace-v9">
+    <section class="card public-form-v9">
       <div class="section-heading-v8">
         <h2>Préparer votre demande</h2>
-        <p class="muted">Renseignez les éléments utiles puis lancez la génération. Le bouton principal est recentré pour un usage plus intuitif.</p>
+        <p class="muted">Renseignez les éléments utiles puis lancez la génération. Le bouton principal reste au centre du parcours pour guider naturellement la suite.</p>
       </div>
 
       <label class="label">Type de livrable</label>
@@ -76,11 +76,11 @@
       <label class="label">Éléments factuels utiles</label>
       <textarea class="input" id="facts" placeholder="Dates, chiffres, options, risques, contraintes, éléments de contexte..." rows="7"></textarea>
 
-      <div class="public-cta-v8">
-        <button class="btn primary public-generate-v8" id="btnGenerate" type="button">Produire un livrable sécurisé</button>
+      <div class="public-cta-v9">
+        <button class="btn primary public-generate-v9" id="btnGenerate" type="button">Produire un livrable sécurisé</button>
       </div>
 
-      <div class="generation-indicator generation-indicator-v8" id="generationIndicator" aria-live="polite" hidden>
+      <div class="generation-indicator generation-indicator-v8" id="generationIndicator" aria-live="polite" hidden style="display:none">
         <span class="generation-spinner" aria-hidden="true"></span>
         <div>
           <strong>Génération en cours…</strong>
@@ -100,7 +100,7 @@
       </div>
     </section>
 
-    <section class="card public-result-v8">
+    <section class="card public-result-v9">
       <div class="result-head-v8">
         <div>
           <h2>Résultat</h2>
@@ -122,33 +122,33 @@
         <div class="output" id="output"><div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div></div>
       </div>
 
-      <div class="archive-panel-v8">
-        <div class="archive-panel-top-v8">
+      <div class="archive-panel-v9" id="archivePanel">
+        <div class="archive-head-v9">
           <div>
-            <h3>Archivage local simplifié</h3>
-            <p class="muted">Historique conservé uniquement dans ce navigateur et sur cet appareil. Simple, rapide et sans stockage supplémentaire côté SaaS.</p>
+            <h3>Mes archives locales</h3>
+            <p class="muted">Conservez vos générations utiles sur cet appareil, sans complexité et sans stockage supplémentaire côté plateforme.</p>
           </div>
-          <label class="archive-auto-v8">
+          <label class="archive-auto-v9">
             <input type="checkbox" id="archiveAutoSave" />
-            <span>Archiver automatiquement mes générations sur cet appareil</span>
+            <span>Archiver automatiquement les prochaines générations</span>
           </label>
         </div>
 
-        <div class="archive-actions-v8">
-          <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver cette génération</button>
-          <button class="btn ghost" id="btnExportArchive" type="button">Exporter mes archives</button>
-          <label class="btn ghost archive-import-v8" for="archiveImportInput">Importer</label>
+        <div class="archive-toolbar-v9">
+          <button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button>
+          <button class="btn ghost" id="btnExportArchive" type="button">Exporter</button>
+          <label class="btn ghost archive-import-v9" for="archiveImportInput">Importer</label>
           <input id="archiveImportInput" type="file" accept="application/json" hidden />
-          <button class="btn ghost" id="btnClearArchive" type="button">Vider</button>
+          <button class="btn ghost archive-clear-v9" id="btnClearArchive" type="button">Vider</button>
         </div>
 
-        <div class="archive-summary-simple-v8" id="archiveSummary"></div>
+        <div class="archive-summary-v9" id="archiveSummary"></div>
 
-        <div class="archive-search-row-v8">
-          <input class="input" id="archiveSearch" type="search" placeholder="Rechercher dans mes archives" />
+        <div class="archive-search-v9">
+          <input class="input" id="archiveSearch" type="search" placeholder="Rechercher un résultat archivé" />
         </div>
 
-        <div class="archive-list-simple-v8" id="archiveList">
+        <div class="archive-list-v9" id="archiveList">
           <div class="muted">Aucune génération archivée pour le moment.</div>
         </div>
       </div>
@@ -324,9 +324,9 @@ function renderArchiveSummary() {
   const stats = archiveStore.stats();
   const newestLabel = stats.newestAt ? new Date(stats.newestAt).toLocaleDateString('fr-FR') : '—';
   host.innerHTML = `
-    <div class="archive-summary-pill-v8"><strong>${stats.total}</strong><span>archive${stats.total > 1 ? 's' : ''}</span></div>
-    <div class="archive-summary-pill-v8"><strong>${stats.favorites}</strong><span>favori${stats.favorites > 1 ? 's' : ''}</span></div>
-    <div class="archive-summary-pill-v8"><strong>${newestLabel}</strong><span>dernière archive</span></div>
+    <div class="archive-summary-pill-v9"><strong>${stats.total}</strong><span>archive${stats.total > 1 ? 's' : ''}</span></div>
+    <div class="archive-summary-pill-v9"><strong>${stats.favorites}</strong><span>favori${stats.favorites > 1 ? 's' : ''}</span></div>
+    <div class="archive-summary-pill-v9"><strong>${newestLabel}</strong><span>dernière archive</span></div>
   `;
 }
 
@@ -345,20 +345,20 @@ function renderArchive() {
   });
   renderArchiveSummary();
   if (!items.length) {
-    host.innerHTML = '<div class="archive-empty-v8"><strong>Aucune archive enregistrée.</strong><span>Archivez votre prochaine génération pour la retrouver rapidement ici.</span></div>';
+    host.innerHTML = '<div class="archive-empty-v9"><strong>Aucune archive enregistrée.</strong><span>Archivez un résultat utile pour le retrouver, le recharger ou le copier rapidement.</span></div>';
     return;
   }
   host.innerHTML = items.map((item) => `
-    <article class="archive-card-v8" data-archive-id="${escapeHtml(item.id)}">
-      <div class="archive-card-head-v8">
+    <article class="archive-card-v9" data-archive-id="${escapeHtml(item.id)}">
+      <div class="archive-card-head-v9">
         <div>
-          <div class="archive-card-title-v8">${escapeHtml(item.title || item.usecaseLabel || 'Génération IA')}</div>
-          <div class="archive-card-meta-v8">${escapeHtml(item.usecaseLabel || 'Génération IA')} • ${escapeHtml(formatDate(item.updatedAt || item.createdAt))}</div>
+          <div class="archive-card-title-v9">${escapeHtml(item.title || item.usecaseLabel || 'Génération IA')}</div>
+          <div class="archive-card-meta-v9">${escapeHtml(item.usecaseLabel || 'Génération IA')} • ${escapeHtml(formatDate(item.updatedAt || item.createdAt))}</div>
         </div>
-        <button class="btn ghost archive-star-v8" type="button" data-action="favorite">${item.favorite ? '★' : '☆'}</button>
+        <button class="btn ghost archive-star-v9" type="button" data-action="favorite">${item.favorite ? '★' : '☆'}</button>
       </div>
-      <div class="archive-card-preview-v8">${escapeHtml(truncate(item.result || '', 220))}</div>
-      <div class="archive-card-actions-v8">
+      <div class="archive-card-preview-v9">${escapeHtml(truncate(item.result || '', 220))}</div>
+      <div class="archive-card-actions-v9">
         <button class="btn ghost" type="button" data-action="load">Réouvrir</button>
         <button class="btn ghost" type="button" data-action="copy">Copier</button>
         <button class="btn ghost" type="button" data-action="download">Télécharger</button>

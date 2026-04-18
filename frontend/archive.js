@@ -1,7 +1,8 @@
-const VERSION = 8;
+
+const VERSION = 9;
 const ARCHIVE_PREFIX = 'popeOnlineArchive:';
 const AUTO_ARCHIVE_PREFIX = 'popeOnlineArchiveAuto:';
-const MAX_ITEMS = 120;
+const MAX_ITEMS = 150;
 
 function getStorage() {
   try {
@@ -20,13 +21,13 @@ function safeJsonParse(value, fallback) {
 }
 
 function text(value='') {
-  return String(value || '').trim();
+  return String(value ?? '').trim();
 }
 
 function slugify(value = '') {
   return text(value)
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '') || 'generation';
@@ -91,32 +92,6 @@ export function buildArchiveFilename(item, format = 'json') {
   return `${base}.${format}`;
 }
 
-export function formatArchiveAsText(item) {
-  return [
-    `POPE Online — ${item.title || item.usecaseLabel || 'Génération IA'}`,
-    `Type : ${item.usecaseLabel || 'Génération IA'}`,
-    `Créée le : ${item.createdAt ? new Date(item.createdAt).toLocaleString('fr-FR') : '—'}`,
-    '',
-    'CONTEXTE',
-    item?.prompt?.context || '-',
-    '',
-    'OBJECTIF',
-    item?.prompt?.objective || '-',
-    '',
-    'ÉLÉMENTS FACTUELS',
-    item?.prompt?.facts || '-',
-    '',
-    'GÉNÉRATION',
-    item?.result || '-'
-  ].join('
-');
-}
-
-export function formatArchiveAsHtml(item) {
-  const esc = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(item.title || item.usecaseLabel || 'Archive POPE Online')}</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.55;background:#f7fbff;border:1px solid #dce9f6;border-radius:12px;padding:14px}section{margin:0 0 24px}</style></head><body><h1>${esc(item.title || item.usecaseLabel || 'Archive POPE Online')}</h1><p><strong>Type :</strong> ${esc(item.usecaseLabel || 'Génération IA')}<br><strong>Créée le :</strong> ${esc(item.createdAt ? new Date(item.createdAt).toLocaleString('fr-FR') : '—')}</p><section><h2>Contexte</h2><pre>${esc(item?.prompt?.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${esc(item?.prompt?.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${esc(item?.prompt?.facts || '-')}</pre></section><section><h2>Génération</h2><pre>${esc(item?.result || '-')}</pre></section></body></html>`;
-}
-
 export function createArchiveStore({ userId } = {}) {
   const storage = getStorage();
   if (!storage) throw new Error('local_storage_unavailable');
@@ -124,6 +99,7 @@ export function createArchiveStore({ userId } = {}) {
 
   function read() {
     return safeJsonParse(storage.getItem(key), [])
+      .filter(Boolean)
       .map(normalizeRecord)
       .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
   }
@@ -136,27 +112,21 @@ export function createArchiveStore({ userId } = {}) {
     list() { return read(); },
     get(id) { return read().find((item) => item.id === id) || null; },
     save(record) {
-      const rows = read();
+      const rows = read().filter((item) => item.id !== record?.id);
       const normalized = normalizeRecord(record);
       rows.unshift(normalized);
       write(rows);
       return normalized;
     },
     touch(id) {
-      const rows = read();
-      const idx = rows.findIndex((item) => item.id === id);
-      if (idx < 0) return null;
-      rows[idx] = normalizeRecord({ ...rows[idx], updatedAt: new Date().toISOString() });
-      write(rows);
-      return rows[idx];
+      const item = this.get(id);
+      if (!item) return null;
+      return this.save({ ...item, updatedAt: new Date().toISOString() });
     },
     toggleFavorite(id) {
-      const rows = read();
-      const idx = rows.findIndex((item) => item.id === id);
-      if (idx < 0) return null;
-      rows[idx] = normalizeRecord({ ...rows[idx], favorite: !rows[idx].favorite, updatedAt: new Date().toISOString() });
-      write(rows);
-      return rows[idx];
+      const item = this.get(id);
+      if (!item) return null;
+      return this.save({ ...item, favorite: !item.favorite, updatedAt: new Date().toISOString() });
     },
     remove(id) {
       write(read().filter((item) => item.id !== id));
@@ -166,13 +136,16 @@ export function createArchiveStore({ userId } = {}) {
     },
     exportAll() { return read(); },
     importMany(payload) {
-      const incoming = Array.isArray(payload) ? payload : [payload];
-      const current = read();
-      const merged = [...incoming.map(normalizeRecord), ...current].reduce((acc, item) => {
-        if (!acc.some((existing) => existing.id === item.id)) acc.push(item);
-        return acc;
-      }, []);
-      write(merged.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)));
+      const incoming = (Array.isArray(payload) ? payload : [payload]).filter(Boolean).map(normalizeRecord);
+      const existing = read();
+      const ids = new Set();
+      const merged = [];
+      for (const item of [...incoming, ...existing]) {
+        if (ids.has(item.id)) continue;
+        ids.add(item.id);
+        merged.push(item);
+      }
+      write(merged);
       return incoming.length;
     },
     stats() {
