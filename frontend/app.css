@@ -4897,3 +4897,5 @@ body.bg > footer{position:relative;z-index:3;}
 @keyframes popeSpin{to{transform:rotate(360deg);}}
 #btnGenerate.is-loading{opacity:.85;cursor:progress;}
 #btnGenerate:disabled{opacity:.78;cursor:not-allowed;}
+
+.generation-indicator[hidden]{display:none !important;}

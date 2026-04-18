@@ -192,6 +192,31 @@ let currentUser = null;
 let selectedArchiveIds = new Set();
 let generationInFlight = false;
 
+function getArchiveUserKey() {
+  return currentUser?.id || currentUser?.email || 'anonymous';
+}
+
+function initArchiveStore() {
+  if (!isArchiveStorageAvailable()) {
+    archiveStore = null;
+    setArchiveUiAvailability(false);
+    return false;
+  }
+  try {
+    archiveStore = createArchiveStore({ userId: getArchiveUserKey() });
+    const autoArchiveToggle = el('archiveAutoSave');
+    if (autoArchiveToggle) autoArchiveToggle.checked = getAutoArchivePreference(getArchiveUserKey());
+    setArchiveUiAvailability(true);
+    renderArchive();
+    return true;
+  } catch (archiveError) {
+    console.error('Archivage indisponible', archiveError);
+    archiveStore = null;
+    setArchiveUiAvailability(false);
+    return false;
+  }
+}
+
 function buildPayload(){
   return {
     mode: 'generate',
@@ -211,7 +236,11 @@ function setGenerationLoading(loading) {
   generationInFlight = Boolean(loading);
   const indicator = el('generationIndicator');
   const button = el('btnGenerate');
-  if (indicator) indicator.hidden = !loading;
+  if (indicator) {
+    indicator.hidden = !loading;
+    indicator.setAttribute('aria-hidden', loading ? 'false' : 'true');
+    indicator.style.display = loading ? 'flex' : 'none';
+  }
   if (button) {
     button.disabled = loading;
     button.classList.toggle('is-loading', loading);
@@ -443,18 +472,11 @@ async function refreshWallet(){
     const me = await apiFetch('/auth/me');
     currentUser = me.user || null;
     setTicketsBadge(me.wallet);
-    try {
-      archiveStore = createArchiveStore({ userId: currentUser?.id || currentUser?.email || 'anonymous' });
-      const autoArchiveToggle = el('archiveAutoSave');
-      if (autoArchiveToggle) autoArchiveToggle.checked = getAutoArchivePreference(currentUser?.id || currentUser?.email || 'anonymous');
-      setArchiveUiAvailability(true);
-      renderArchive();
-    } catch (archiveError) {
-      console.error('Archivage indisponible', archiveError);
-      archiveStore = null;
-      setArchiveUiAvailability(false);
-    }
-  } catch {}
+    initArchiveStore();
+  } catch (err) {
+    console.warn('Impossible de rafraîchir le portefeuille utilisateur', err);
+    initArchiveStore();
+  }
 }
 
 async function callAI(){
@@ -551,7 +573,7 @@ document.getElementById('btnCopy')?.addEventListener('click', async () => {
 
 document.getElementById('btnArchiveCurrent')?.addEventListener('click', () => archiveCurrentGeneration());
 document.getElementById('archiveAutoSave')?.addEventListener('change', (event) => {
-  const userKey = currentUser?.id || currentUser?.email || 'anonymous';
+  const userKey = getArchiveUserKey();
   if (!isArchiveStorageAvailable()) {
     event.target.checked = false;
     showToast('Archivage local indisponible sur cet appareil', 'err');
@@ -772,8 +794,8 @@ function setArchiveUiAvailability(enabled) {
   }
 }
 
-setArchiveUiAvailability(isArchiveStorageAvailable());
 setGenerationLoading(false);
+initArchiveStore();
 refreshWallet();
 </script>
 </body>
