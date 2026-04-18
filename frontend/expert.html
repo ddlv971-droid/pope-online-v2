@@ -20,10 +20,10 @@
 </a>
 <div class="row gap wrap">
 <a class="btn ghost" href="about.html">Qui sommes-nous</a>
-<span class="badge" data-tickets="">Accès sécurisé</span>
+<span class="badge" data-tickets>Accès sécurisé</span>
 <a class="btn ghost" href="app.html">Génération guidée</a>
 <a class="btn ghost" href="pricing.html">Parcours</a>
-<button class="btn" data-logout="">Déconnexion</button>
+<button class="btn" data-logout>Déconnexion</button>
 </div>
 </div>
 </header>
@@ -45,6 +45,17 @@
 <label class="label">Document ou éléments à relire</label>
 <textarea class="input" id="content" rows="10" placeholder="Collez votre texte ou décrivez les éléments à expertiser."></textarea>
 
+<div class="card soft" id="generationAttachmentCard" style="margin-top:16px;display:none">
+  <div class="row between wrap" style="align-items:flex-start">
+    <div>
+      <h3 style="margin:0 0 6px">Pièces jointes transmises automatiquement</h3>
+      <p class="muted" style="margin:0">Le prompt et la dernière génération issue de l’espace public seront joints à la demande si un résultat récent est disponible sur cet appareil.</p>
+    </div>
+    <span class="badge" id="attachmentStatus">Aucune pièce jointe</span>
+  </div>
+  <div id="attachmentPreview" class="fineprint" style="margin-top:10px"></div>
+</div>
+
 <div class="row gap wrap" style="margin-top:14px">
 <button class="btn" id="btnSend">Envoyer ma demande</button>
 <a class="btn ghost" href="mission.html">Besoin plus large</a>
@@ -62,6 +73,37 @@ if (!requireLogin('expert.html')) {}
 wireLogout();
 
 const el = (id) => document.getElementById(id);
+const LAST_GENERATION_KEY = 'pope_last_generation_public';
+
+function getLastGeneration() {
+  try {
+    const raw = localStorage.getItem(LAST_GENERATION_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function renderAttachmentCard() {
+  const data = getLastGeneration();
+  const card = el('generationAttachmentCard');
+  const status = el('attachmentStatus');
+  const preview = el('attachmentPreview');
+  if (!card || !status || !preview) return;
+  if (!data?.result) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  status.textContent = 'Prompt + génération joints';
+  const objective = data?.prompt?.objective || '—';
+  const result = String(data.result || '').replace(/\s+/g, ' ').slice(0, 260);
+  preview.innerHTML = `<strong>Objet suggéré :</strong> ${objective}<br><strong>Aperçu du résultat joint :</strong> ${result}${String(data.result || '').length > 260 ? '…' : ''}`;
+  if (!el('subject').value.trim()) {
+    el('subject').value = `Relecture experte — ${objective.slice(0, 90) || 'livrable généré'}`;
+  }
+}
 
 async function refreshWallet(){
   try {
@@ -71,17 +113,24 @@ async function refreshWallet(){
 }
 
 el('btnSend').addEventListener('click', async () => {
+  const attachment = getLastGeneration();
   try {
     const data = await apiFetch('/expert/request', {
       method:'POST',
       body:{
         subject: el('subject').value.trim(),
         context: el('context').value.trim(),
-        content: el('content').value.trim()
+        content: el('content').value.trim(),
+        generation_attachment: attachment ? {
+          createdAt: attachment.createdAt || new Date().toISOString(),
+          usecaseLabel: attachment.usecaseLabel || 'Génération IA',
+          prompt: attachment.prompt || {},
+          result: attachment.result || ''
+        } : null
       }
     });
     setTicketsBadge(data.wallet);
-    el('msg').textContent = '✅ Votre demande a été transmise. Un retour humain vous sera adressé après qualification.';
+    el('msg').textContent = '✅ Votre demande a été transmise. Le prompt et la génération ont été joints lorsqu’un résultat local était disponible.';
     showToast('Demande transmise', 'ok');
   } catch (e) {
     console.error(e);
@@ -95,6 +144,7 @@ el('btnSend').addEventListener('click', async () => {
   }
 });
 refreshWallet();
+renderAttachmentCard();
 </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg po-v5-harmony po-public-v24">
+<body class="bg po-v10-dashboard">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="public.html">
@@ -19,70 +19,84 @@
 </div>
 </a>
 <div class="row gap wrap">
-<span class="badge" data-tickets="">Accès sécurisé</span>
+<span class="badge" data-tickets>Accès sécurisé</span>
 <a class="btn ghost" href="app.html">Génération guidée</a>
 <a class="btn ghost" href="expert.html">Relecture experte</a>
-<button class="btn" data-logout="">Déconnexion</button>
+<button class="btn" data-logout>Déconnexion</button>
 </div>
 </div>
 </header>
 
-<main class="container dashboard-public-v9-shell">
-<section class="card dashboard-public-v9">
-  <div class="dashboard-public-v9-head">
-    <div>
-      <h2>Mon espace</h2>
-      <p class="muted">Un tableau de bord plus direct, organisé autour de la génération guidée.</p>
+<main class="container dashboard-v10-shell">
+  <section class="card dashboard-v10-hero">
+    <div class="dashboard-v10-headline">
+      <span class="badge">Espace public</span>
+      <h1>Mon espace</h1>
+      <p class="muted">Un environnement clair pour produire un livrable sécurisé, solliciter une relecture experte et engager un accompagnement sur mesure.</p>
     </div>
-    <div class="dashboard-public-v9-links"><a class="btn ghost" href="pricing.html">Voir les parcours</a><a class="btn ghost" href="profile.html">Mon compte</a></div>
-  </div>
+    <div class="dashboard-v10-links">
+      <a class="btn ghost" href="pricing.html">Voir les parcours</a>
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+    </div>
+  </section>
 
-  <div class="dashboard-public-v9-core">
-    <aside class="dashboard-public-v9-panel dashboard-public-v9-status">
-      <h3>Accès</h3>
-      <div class="kpi" id="kpi">—</div>
-      <p class="muted">Votre espace public est prêt pour la génération guidée, la relecture experte et l’accompagnement sur mesure.</p>
-      <div class="dashboard-public-v9-mini-actions">
+  <section class="dashboard-v10-grid">
+    <aside class="card dashboard-v10-sidecard">
+      <div class="dashboard-v10-sidecard-kpi" id="kpi">Compte créé</div>
+      <h3>Accès activé</h3>
+      <p class="muted">Votre espace est prêt pour lancer une première production et l’exploiter ensuite avec les bons niveaux de service.</p>
+      <div class="dashboard-v10-stack">
         <a class="btn ghost" href="expert.html">Relecture experte</a>
         <a class="btn ghost" href="mission.html">Accompagnement sur mesure</a>
       </div>
     </aside>
 
-    <section class="dashboard-public-v9-cta-wrap">
-      <div class="dashboard-public-v9-cta-card">
-        <span class="badge">Action principale</span>
-        <h3>Produire un livrable sécurisé</h3>
-        <p class="muted">Accédez directement à la génération guidée pour préparer, produire puis exploiter votre résultat dans un espace fluide.</p>
-        <a class="btn dashboard-public-v9-maincta" href="app.html">Produire un livrable sécurisé</a>
+    <section class="card dashboard-v10-maincard">
+      <div class="dashboard-v10-mainbadge">Accès central</div>
+      <h2>Produire un livrable sécurisé</h2>
+      <p class="muted">Accédez directement à la génération guidée pour préparer votre demande, produire un premier draft structuré et l’exploiter dans un cadre simple.</p>
+      <div class="dashboard-v10-maincta-wrap">
+        <a class="btn primary dashboard-v10-maincta" href="app.html">Produire un livrable sécurisé</a>
+      </div>
+      <div class="dashboard-v10-service-row">
+        <a class="dashboard-v10-service" href="expert.html">
+          <strong>Relecture experte</strong>
+          <span>Faire relire, sécuriser et consolider le livrable produit.</span>
+        </a>
+        <a class="dashboard-v10-service" href="mission.html">
+          <strong>Accompagnement sur mesure</strong>
+          <span>Prolonger la production par un appui adapté au besoin.</span>
+        </a>
       </div>
     </section>
 
-    <aside class="dashboard-public-v9-panel dashboard-public-v9-context">
+    <aside class="card dashboard-v10-sidecard">
       <h3>Parcours</h3>
-      <p class="muted">Analyse du besoin, prise de contact, proposition adaptée, cadrage puis accompagnement.</p>
-      <h3>Besoin public</h3>
-      <p class="muted">Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission ou chefs de service.</p>
+      <p class="muted">Analyse du besoin, génération guidée, relecture, puis accompagnement selon le niveau d’enjeu.</p>
+      <h3>Public concerné</h3>
+      <p class="muted">Collectivités, établissements, DGS, directions, cabinets, cadres support, chargés de mission et chefs de service.</p>
     </aside>
-  </div>
-</section>
+  </section>
 </main>
 
 <script src="./auth-guard.js"></script>
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
-
 if (!requireLogin('dashboard.html')) {}
 wireLogout();
-
 const kpi = document.getElementById('kpi');
-
 async function refresh() {
   try {
     const me = await apiFetch('/auth/me');
     setTicketsBadge(me.wallet);
-    const exp = me.wallet?.trial_expires_at ? new Date(me.wallet.trial_expires_at) : null; if (exp && exp.getTime() < Date.now()) { kpi.textContent = 'Offre gratuite expirée — nous vous contacterons pour définir l’offre idéale pour votre besoin.'; } else { kpi.textContent = me.user?.isEmailVerified ? 'Compte vérifié' : 'Compte créé'; }
-  } catch (e) {
+    const exp = me.wallet?.trial_expires_at ? new Date(me.wallet.trial_expires_at) : null;
+    if (exp && exp.getTime() < Date.now()) {
+      kpi.textContent = 'Offre gratuite expirée';
+    } else {
+      kpi.textContent = me.user?.isEmailVerified ? 'Compte vérifié' : 'Compte créé';
+    }
+  } catch {
     kpi.textContent = 'Session active';
   }
 }

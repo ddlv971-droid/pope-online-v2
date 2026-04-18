@@ -1,4 +1,3 @@
-
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { optionalAuth } from '../middleware/auth.js';
@@ -15,18 +14,26 @@ const limiter = rateLimit({
   legacyHeaders: false
 });
 
+function buildAttachmentContent(name, payload) {
+  const data = payload || {};
+  return Buffer.from(
+`POPE Online — ${name}\n\nType : ${data.usecaseLabel || 'Génération IA'}\nDate : ${data.createdAt || new Date().toISOString()}\n\nCONTEXTE\n${data?.prompt?.context || '-'}\n\nOBJECTIF\n${data?.prompt?.objective || '-'}\n\nÉLÉMENTS FACTUELS\n${data?.prompt?.facts || '-'}\n\nRÉSULTAT\n${data?.result || '-'}`
+  ).toString('base64');
+}
+
 router.post('/request', optionalAuth, limiter, async (req, res) => {
   try {
     const email = String(req.body?.email || req.user?.email || '').trim();
     const objective = clamp(String(req.body?.subject || req.body?.objective || '').trim(), 1200);
     const expectations = clamp(String(req.body?.content || req.body?.expectations || '').trim(), 4000);
     const context = clamp(String(req.body?.context || '').trim(), 6000);
+    const generationAttachment = req.body?.generation_attachment || null;
 
     if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
     if (!objective) return res.status(400).json({ error: 'missing_objective' });
     if (!expectations) return res.status(400).json({ error: 'missing_expectations' });
 
-    const combined = `${objective}\n${expectations}\n${context}`;
+    const combined = `${objective}\n${expectations}\n${context}\n${generationAttachment?.result || ''}`;
     if (rejectIfSensitive(combined)) return res.status(400).json({ error: 'sensitive_data' });
 
     const userId = req.user?.sub || null;
@@ -34,7 +41,6 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
 
     const result = await withClient(async (client) => {
       await client.query('begin');
-
       if (userId) {
         const walletRes = await client.query('select * from wallets where user_id=$1 for update', [userId]);
         const wallet = walletRes.rows[0];
@@ -52,7 +58,6 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         [userId, email, objective, expectations, context]
       );
       const requestId = ins.rows[0].id;
-
       let usedTicket = false;
       let wallet = null;
 
@@ -72,11 +77,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
           }
           await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, updated_at=now() where user_id=$1', [userId]);
         }
-
-        await client.query(
-          'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
-          [userId, 'expert_request', JSON.stringify({ requestId, usedTicket })]
-        );
+        await client.query('insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)', [userId, 'expert_request', JSON.stringify({ requestId, usedTicket, hasGenerationAttachment: Boolean(generationAttachment?.result) })]);
         const refresh = await client.query('select * from wallets where user_id=$1', [userId]);
         wallet = refresh.rows[0];
       }
@@ -87,11 +88,21 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
 
     if (!result.ok) return res.status(result.status).json(result.body);
 
+    const attachments = [];
+    if (generationAttachment?.result) {
+      attachments.push({
+        filename: 'pope-online-generation-attachee.txt',
+        content: buildAttachmentContent('Pièce jointe de génération', generationAttachment),
+        type: 'text/plain'
+      });
+    }
+
     await sendMail({
       to: mailTo,
       subject: `POPE Online — Demande EXPERT (${email})`,
       text:
-`Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\n\nObjectif:\n${objective}\n\nAttentes:\n${expectations}\n\nContexte:\n${context || '(non précisé)'}\n\nCouverture ticket expert: ${result.usedTicket ? 'OUI (décrémenté)' : 'NON (qualifié au titre du dossier)'}\n\n— POPE Online`,
+`Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context || '(non précisé)'}\n\nPièce jointe génération : ${generationAttachment?.result ? 'OUI' : 'NON'}\nCouverture ticket expert: ${result.usedTicket ? 'OUI (décrémenté)' : 'NON (qualifié au titre du dossier)'}\n\n— POPE Online`,
+      attachments
     });
 
     return res.json({ ok: true, requestId: result.requestId, usedTicket: result.usedTicket, wallet: result.wallet });
