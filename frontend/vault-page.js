@@ -24,9 +24,8 @@ const RETURN_MAP = {
 };
 
 function resolveSpace() {
-  const userSpace = currentUser?.accountSpace === 'private' ? 'private' : 'public';
-  if (requestedSpace && requestedSpace === userSpace) return requestedSpace;
-  return userSpace;
+  if (requestedSpace === 'private' || requestedSpace === 'public') return requestedSpace;
+  return currentUser?.accountSpace === 'private' ? 'private' : 'public';
 }
 
 function safeReturnTarget(space) {
@@ -100,9 +99,11 @@ el('vaultUploadBtn').addEventListener('click', async ()=>{
     el('vaultMsg').textContent = 'Pièce déposée. Elle restera disponible 48 heures.';
     el('vaultInput').value = '';
     showToast('Pièce déposée', 'ok');
-    load();
+    applySpaceLabels();
+load();
   } catch (e) {
     console.error(e); el('vaultMsg').textContent = 'Dépôt impossible.'; showToast('Dépôt impossible', 'err');
   }
 });
+applySpaceLabels();
 load();

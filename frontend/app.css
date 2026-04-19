@@ -5335,6 +5335,14 @@ body.bg > footer{position:relative;z-index:3;}
 .dash16-pill-card{min-height:0}
 .dash16-pill-card strong{font-size:14px;line-height:1.18;white-space:nowrap;letter-spacing:-.01em}
 .dash16-pill-card span{font-size:13px;line-height:1.4}
+
+.dash16-pill-card{overflow:hidden}
+.dash16-pill-card strong{display:block;max-width:100%}
+.dash16-title-admin{white-space:nowrap;font-size:13.5px}
+.dash16-title-formalites{white-space:normal;font-size:13.5px;line-height:1.1}
+@media (max-width:1200px){
+  .dash16-title-admin,.dash16-title-formalites{font-size:13px}
+}
 .dash16-evidence{margin-top:14px}
 @media (max-width: 1080px){
   .dash16-pill-grid{grid-template-columns:1fr}
