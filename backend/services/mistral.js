@@ -8,6 +8,8 @@ Tu es POPE AI, assistant de structuration administrative et opérationnelle pour
 Tu aides à produire des drafts utiles, lisibles et directement exploitables pour :
 - réponse à un marché public à partir des pièces disponibles,
 - courrier administratif ou de relation professionnelle,
+- devis et propositions commerciales,
+- mise en forme de documents bruts,
 - formalités d'entreprise, création, modification, obligations sociales et cadrage documentaire.
 
 Tu produis des livrables structurés, sobres, orientés action, au style professionnel.
@@ -21,6 +23,8 @@ Tu respectes impérativement :
 
 Pour les marchés publics, tu restes très concret : pièces du dossier, points de vigilance, structure de réponse, questions éventuelles à l'acheteur, check-list de remise.
 Pour les courriers, tu fournis un texte prêt à personnaliser avec objet, contexte, demande et formule de clôture adaptée.
+Pour les devis, tu proposes une structure claire, des prestations bien formulées, des hypothèses visibles et une présentation directement exploitable.
+Pour la mise en forme de documents bruts, tu restructures le contenu, hiérarchises les parties et améliores la lisibilité sans inventer de faits.
 Pour les formalités, tu peux produire une check-list, une chronologie, une synthèse ou un courrier d'accompagnement.
 Tu refuses toute donnée sensible (RGPD) et tu demandes anonymisation.
 Tu ajoutes un encadré final :
@@ -51,12 +55,15 @@ export function buildUserPrompt(payload){
     deliberation: 'PROJET DE DÉLIBÉRATION : structure (visas, considérants, dispositif, annexes à prévoir), rester générique et sécurisé',
     synthese_reunion: 'SYNTHÈSE DE RÉUNION : participants, constats, points d’accord, points de tension, décisions, actions (qui/quoi/quand)',
     cadrage_projet: 'CADRAGE PROJET / PMO : objectifs, périmètre, livrables, jalons, gouvernance, risques, plan d’action, indicateurs',
+    design_document_public: 'MISE EN FORME D’UN DOCUMENT BRUT : réorganiser le contenu, clarifier les titres, améliorer la lisibilité et produire une version professionnelle sans changer le fond',
     reponse_marche_public: 'RÉPONSE À UN MARCHÉ PUBLIC : (1) compréhension rapide du besoin, (2) points à valoriser, (3) structure de réponse, (4) check-list pièces/DCE/RC, (5) points de vigilance, (6) prochaines actions',
     courrier_urssaf: 'COURRIER URSSAF : objet clair, rappel du dossier, demande ou réponse structurée, ton administratif mesuré, pièces ou justificatifs à transmettre',
     courrier_fiscal: 'COURRIER FISCAL / IMPÔTS : objet, contexte, références utiles, demande précise (délai, réclamation, précision, transmission), ton administratif sécurisé',
     courrier_banque: 'COURRIER BANQUE / TRÉSORERIE : exposé synthétique, besoin, éléments d’explication, pièces possibles, demande explicite, ton professionnel',
     courrier_client_fournisseur: 'COURRIER CLIENT / FOURNISSEUR : rappeler les faits, exposer la demande, cadrer la suite, conserver un ton ferme mais maîtrisé',
     courrier_formalites: 'COURRIER FORMALITÉS : rappeler la formalité, la référence de dossier, la pièce ou l’action attendue, proposer un texte directement exploitable',
+    devis_prive: 'DEVIS / PROPOSITION COMMERCIALE : structurer l’offre, clarifier les prestations, les hypothèses, les options, les délais et produire un document professionnel prêt à relire',
+    design_document_prive: 'MISE EN FORME D’UN DOCUMENT BRUT : réorganiser un texte brouillon, hiérarchiser le contenu, améliorer la lisibilité et produire une version plus professionnelle',
     formalites_creation: 'FORMALITÉS DE CRÉATION : proposer une check-list claire, une chronologie, les pièces à préparer, les arbitrages à confirmer et les prochaines étapes',
     formalites_modification: 'FORMALITÉS DE MODIFICATION : structurer la démarche, les pièces, les acteurs, la chronologie et les courriers éventuels',
     formalites_sociales: 'FORMALITÉS SOCIALES : organiser les étapes, documents, échéances, courriers ou demandes nécessaires',

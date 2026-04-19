@@ -14,6 +14,7 @@ wireLogout();
 
 const el = (id) => document.getElementById(id);
 const LAST_GENERATION_KEY = 'pope_last_generation_public';
+const FORM_STATE_KEYS = { public: 'pope_generation_form_public', private: 'pope_generation_form_private' };
 let currentUser = null;
 let archiveStore = null;
 let generationInFlight = false;
@@ -24,7 +25,8 @@ const PUBLIC_USECASES = [
   ['courrier', 'Courrier administratif'],
   ['deliberation', 'Projet de délibération'],
   ['synthese_reunion', 'Synthèse de réunion'],
-  ['cadrage_projet', 'Cadrage projet / pilotage']
+  ['cadrage_projet', 'Cadrage projet / pilotage'],
+  ['design_document_public', 'Mise en forme d’un document brut']
 ];
 
 const PRIVATE_USECASE_GROUPS = [
@@ -41,7 +43,9 @@ const PRIVATE_USECASE_GROUPS = [
       ['courrier_fiscal', 'Courrier impôts / TVA / SIE / réclamation'],
       ['courrier_banque', 'Courrier banque / trésorerie / justificatifs'],
       ['courrier_client_fournisseur', 'Courrier client / fournisseur / relance / mise au point'],
-      ['courrier_formalites', 'Courrier formalités / greffe / CCI / INPI']
+      ['courrier_formalites', 'Courrier formalités / greffe / CCI / INPI'],
+      ['devis_prive', 'Devis / proposition commerciale'],
+      ['design_document_prive', 'Mise en forme d’un document brut']
     ]
   },
   {
@@ -208,12 +212,104 @@ const PRIVATE_USECASE_HELP = {
   }
 };
 
+
+  ,
+  devis_prive: {
+    title: 'Réalisation d’un devis ou d’une proposition commerciale',
+    intro: 'Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. L’assistant peut structurer l’offre, reformuler les prestations et clarifier les conditions commerciales.',
+    bullets: [
+      'Utile pour partir de notes brutes, d’un message client, d’un relevé de besoin ou d’un ancien devis.',
+      'Résultats possibles : devis structuré, proposition d’accompagnement, mail d’envoi du devis, check-list des pièces ou informations manquantes.',
+      'Repère métier : aide particulièrement utile quand il faut répondre vite tout en gardant une présentation professionnelle et cohérente.'
+    ],
+    source: 'Repères : usages fréquents artisans / TPE',
+    contextPlaceholder: 'Activité concernée, client, besoin exprimé, contexte de la demande et niveau d’urgence…',
+    objectivePlaceholder: 'Ex : obtenir un devis prêt à relire, une proposition commerciale ou un mail d’accompagnement du devis.',
+    factsPlaceholder: 'Prestations, quantités, prix, délais, options, conditions d’intervention, hypothèses et éléments à confirmer…',
+    vaultTitle: 'Pièces temporaires 48h — devis / proposition',
+    vaultCopy: 'Ajoutez vos notes, ancien devis, cahier des charges ou échange client pour produire un document plus propre et plus complet.'
+  },
+  design_document_prive: {
+    title: 'Mise en forme d’un document brut',
+    intro: 'Transformez un contenu brut en document propre, lisible et professionnel : courrier, note, devis, procédure, fiche pratique ou document à remettre à un client ou à un organisme.',
+    bullets: [
+      'Utile quand vous avez du texte mal présenté, des notes copiées-collées ou un document à clarifier rapidement.',
+      'Résultats possibles : version réécrite, structurée, hiérarchisée et prête à être intégrée dans votre mise en page finale.',
+      'Repère métier : particulièrement adapté aux utilisateurs peu familiers avec les outils bureautiques ou la présentation documentaire.'
+    ],
+    source: 'Repères : usages fréquents artisans / TPE',
+    contextPlaceholder: 'Nature du document, destinataire, ton attendu et niveau de formalité souhaité…',
+    objectivePlaceholder: 'Ex : obtenir un document plus professionnel, mieux structuré et plus facile à transmettre.',
+    factsPlaceholder: 'Texte brut, notes, éléments indispensables à garder, titres souhaités, ordre des parties et contraintes de forme…',
+    vaultTitle: 'Pièces temporaires 48h — document brut',
+    vaultCopy: 'Déposez le document brut, vos notes ou une trame existante pour générer une version mieux présentée et mieux structurée.'
+  },
+  design_document_public: {
+    title: 'Mise en forme d’un document brut',
+    intro: 'Transformez des notes, un relevé ou un texte non finalisé en document plus lisible, plus hiérarchisé et plus présentable pour un usage public ou interne.',
+    bullets: [
+      'Utile pour remettre en forme une note, une synthèse, un compte rendu ou un document interne avant validation.',
+      'Résultats possibles : structuration des titres, remise en ordre des idées, amélioration des transitions et version plus propre à relire.',
+      'Repère : adapté quand le fond existe déjà mais que la forme doit être professionalisée.'
+    ],
+    source: 'Repères : usages fréquents collectivités',
+    contextPlaceholder: 'Nature du document, destinataire, niveau de formalité, contexte administratif et tonalité attendue…',
+    objectivePlaceholder: 'Ex : obtenir une version plus claire, plus lisible et plus présentable d’un document déjà rédigé.',
+    factsPlaceholder: 'Texte brut, notes, décisions, titres souhaités, ordre logique des parties et points à conserver…',
+    vaultTitle: 'Pièces temporaires 48h — document brut',
+    vaultCopy: 'Ajoutez un document brut, un relevé ou des notes à remettre en forme avant validation ou diffusion.'
+  }
+
 let currentSpace = 'public';
 const forcedSpace = (document.body?.dataset?.forcedSpace || '').trim();
 
 function status(text) {
   const node = el('status');
   if (node) node.textContent = text;
+}
+
+
+function getEffectiveSpace() {
+  return forcedSpace || currentSpace || 'public';
+}
+
+function getFormStateKey(space = getEffectiveSpace()) {
+  return FORM_STATE_KEYS[space === 'private' ? 'private' : 'public'];
+}
+
+function persistFormState(space = getEffectiveSpace()) {
+  try {
+    const usecaseNode = el('usecase');
+    if (!usecaseNode) return;
+    const payload = {
+      space,
+      usecase: usecaseNode.value || '',
+      context: el('context')?.value || '',
+      objective: el('objective')?.value || '',
+      facts: el('facts')?.value || '',
+      savedAt: new Date().toISOString()
+    };
+    sessionStorage.setItem(getFormStateKey(space), JSON.stringify(payload));
+  } catch (error) {
+    console.warn('Impossible de mémoriser le brouillon de génération', error);
+  }
+}
+
+function restoreFormState(space = getEffectiveSpace()) {
+  try {
+    const raw = sessionStorage.getItem(getFormStateKey(space));
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    const usecaseNode = el('usecase');
+    if (usecaseNode && saved.usecase && Array.from(usecaseNode.options).some((option) => option.value === saved.usecase)) {
+      usecaseNode.value = saved.usecase;
+    }
+    if (typeof saved.context === 'string') el('context').value = saved.context;
+    if (typeof saved.objective === 'string') el('objective').value = saved.objective;
+    if (typeof saved.facts === 'string') el('facts').value = saved.facts;
+  } catch (error) {
+    console.warn('Impossible de restaurer le brouillon de génération', error);
+  }
 }
 
 function getUserKey() {
@@ -354,6 +450,7 @@ function currentUsecaseLabel() {
 }
 
 function inferArchiveTitle() {
+  persistFormState();
   const payload = buildPayload();
   const line = payload.objective || payload.context || currentUsecaseLabel();
   const clean = String(line).replace(/\s+/g, ' ').trim();
@@ -390,6 +487,7 @@ function fillFormFromArchive(item) {
   el('facts').value = item?.prompt?.facts || '';
   setOutput(item?.result || '');
   status('Archive chargée');
+  persistFormState();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -559,6 +657,7 @@ function applySpaceConfig(space) {
   } else {
     el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
   }
+  restoreFormState(currentSpace);
   renderUsecaseInsight(currentSpace);
 }
 
@@ -631,6 +730,7 @@ async function callAI() {
     status('Terminé');
     setTicketsBadge(data.wallet);
     rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText });
+    persistFormState();
     if (el('archiveAutoSave').checked) archiveCurrentGeneration(false);
   } catch (e) {
     console.error(e);
@@ -652,7 +752,6 @@ async function callAI() {
   }
 }
 
-el('usecase').addEventListener('change', () => renderUsecaseInsight(currentSpace));
 el('btnGenerate').addEventListener('click', callAI);
 el('btnCopy').addEventListener('click', async () => {
   const content = getCurrentResultText();
@@ -759,4 +858,22 @@ el('archiveList').addEventListener('click', async (event) => {
 });
 
 setGenerationLoading(false);
+
+['context','objective','facts','usecase'].forEach((id) => {
+  const node = el(id);
+  if (!node) return;
+  const handler = () => {
+    persistFormState();
+    if (id === 'usecase') renderUsecaseInsight(currentSpace);
+  };
+  node.addEventListener(id === 'usecase' ? 'change' : 'input', handler);
+  if (id !== 'usecase') node.addEventListener('change', handler);
+});
+
+document.querySelectorAll('a[href*="vault.html"]').forEach((link) => {
+  link.addEventListener('click', () => persistFormState());
+});
+
+window.addEventListener('beforeunload', () => persistFormState());
+
 refreshWallet();
