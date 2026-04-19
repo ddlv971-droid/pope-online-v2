@@ -29,25 +29,6 @@ export function clearToken(){
   localStorage.removeItem('pope_token');
 }
 
-export function clearGenerationDrafts(){
-  const keys = [
-    'pope_generation_form_public',
-    'pope_generation_form_private',
-    'pope_last_generation_public',
-    'pope_last_generation_private',
-    'pope_last_generation',
-    'pope_generation_space',
-    'pope_generation_selected_vault_ids_public',
-    'pope_generation_selected_vault_ids_private'
-  ];
-  for (const key of keys) {
-    try {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
-    } catch {}
-  }
-}
-
 export async function getFingerprint(){
   const raw = [navigator.userAgent, navigator.language, screen.width, screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
   const enc = new TextEncoder().encode(raw);
@@ -64,20 +45,14 @@ export function requireLogin(next='dashboard.html'){
   return true;
 }
 
-let logoutWired = false;
 export function wireLogout(){
-  if (logoutWired) return;
-  logoutWired = true;
-  document.addEventListener('click', (event) => {
-    const btn = event.target.closest('[data-logout]');
-    if (!btn) return;
-    event.preventDefault();
-    event.stopPropagation();
-    clearGenerationDrafts();
-    clearToken();
-    showToast('Déconnecté', 'ok');
-    setTimeout(() => window.location.href = 'index.html', 150);
-  }, true);
+  document.querySelectorAll('[data-logout]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      clearToken();
+      showToast('Déconnecté', 'ok');
+      setTimeout(() => window.location.href = 'index.html', 400);
+    });
+  });
 }
 
 export function setTicketsBadge(wallet) {

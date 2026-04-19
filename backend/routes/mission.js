@@ -1,10 +1,10 @@
+
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { optionalAuth } from '../middleware/auth.js';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
-import { getUserVaultFiles, buildMailAttachments } from './vault.js';
 
 const router = express.Router();
 
@@ -20,7 +20,6 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const email = String(req.body?.email || req.user?.email || '').trim();
     const subject = clamp(String(req.body?.subject || '').trim(), 180);
     const description = clamp(String(req.body?.content || req.body?.description || req.body?.context || '').trim(), 6000);
-    const vaultFileIds = Array.isArray(req.body?.vault_file_ids) ? req.body.vault_file_ids.slice(0, 8) : [];
 
     if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
     if (!subject) return res.status(400).json({ error: 'missing_subject' });
@@ -62,7 +61,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         await client.query('update wallets set private_dossiers_used=private_dossiers_used+1, updated_at=now() where user_id=$1', [userId]);
         await client.query(
           'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
-          [userId, 'mission_request', JSON.stringify({ requestId: ins.rows[0].id, vaultFiles: vaultFileIds.length })]
+          [userId, 'mission_request', JSON.stringify({ requestId: ins.rows[0].id })]
         );
         const refresh = await client.query('select * from wallets where user_id=$1', [userId]);
         wallet = refresh.rows[0];
@@ -74,16 +73,11 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
 
     if (!result.ok) return res.status(result.status).json(result.body);
 
-    const attachments = userId && vaultFileIds.length
-      ? await withClient(async (client) => buildMailAttachments(await getUserVaultFiles(client, userId, vaultFileIds)))
-      : [];
-
     await sendMail({
       to: mailTo,
       subject: `POPE Online — Demande MISSION (${email})`,
       text:
-`Nouvelle demande POPE MISSION\n\nID: ${result.requestId}\nClient: ${email}\n\nSujet:\n${subject}\n\nDescription:\n${description}\n\nPièces dépôt sécurisé 48h : ${vaultFileIds.length ? vaultFileIds.length : 0}\n\n— POPE Online`,
-      attachments
+`Nouvelle demande POPE MISSION\n\nID: ${result.requestId}\nClient: ${email}\n\nSujet:\n${subject}\n\nDescription:\n${description}\n\n— POPE Online`,
     });
 
     return res.json({ ok: true, requestId: result.requestId, wallet: result.wallet });

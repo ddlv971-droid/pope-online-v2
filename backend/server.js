@@ -12,7 +12,6 @@ import billingRoutes from './routes/billing.js';
 import usageRoutes from './routes/usage.js';
 import adminRoutes from './routes/admin.js';
 import clientRoutes from './routes/client.js';
-import vaultRoutes from './routes/vault.js';
 import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
@@ -27,7 +26,7 @@ app.use((req, res, next) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   next();
 });
-app.use(express.json({ limit: '15mb' }));
+app.use(express.json({ limit: '250kb' }));
 app.use((req, res, next) => {
   const originalJson = res.json.bind(res);
   res.json = (body) => originalJson(localizeApiBody(body));
@@ -57,7 +56,6 @@ app.use('/billing', billingRoutes);
 app.use('/usage', usageRoutes);
 app.use('/admin', adminRoutes);
 app.use('/client', clientRoutes);
-app.use('/vault', vaultRoutes);
 
 app.use((err, _req, res, _next) => {
   if (String(err?.message || '').includes('CORS')) return res.status(403).json({ error: 'cors_blocked' });

@@ -55,7 +55,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
   const space = String(accountSpace || 'public').trim().toLowerCase();
   if (space === 'private') {
     return {
-      ticketsAi: 10,
+      ticketsAi: 0,
       publicDossiersLimit: 0,
       privateDossiersLimit: 1,
       privateUsersLimit: 1
