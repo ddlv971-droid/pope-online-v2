@@ -1,117 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>POPE Online — Espace client privé</title>
-  <link href="app.css" rel="stylesheet"/>
-  <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Tableau de bord privé</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
 </head>
-<body class="bg po-v5-harmony">
-  <header class="topbar">
-    <div class="container row between">
-      <a class="brand link" href="private.html">
-        <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-        <div>
-          <div class="brand-title">POPE Online</div>
-          <div class="brand-sub">Espace client privé</div>
-        </div>
-      </a>
-      <div class="row gap wrap">
-        <span class="badge" data-tickets>Accès sécurisé</span>
-        <a class="btn ghost" href="profile.html">Mon compte</a>
-        <button class="btn" data-logout>Déconnexion</button>
-      </div>
+<body class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="private.html">
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+<div><div class="brand-title">POPE Online</div><div class="brand-sub">Tableau de bord privé</div></div>
+</a>
+<div class="row gap wrap">
+<span class="badge" data-tickets>Accès sécurisé</span>
+<a class="btn ghost" href="vault.html?space=private&amp;return=dashboard-private.html">Dépôt sécurisé 48h</a>
+<a class="btn ghost" href="profile.html">Mon compte</a>
+<button class="btn" data-logout>Déconnexion</button>
+</div>
+</div>
+</header>
+<main class="container dash14-shell dash15-shell">
+  <section class="card dash14-hero dash15-hero">
+    <div>
+      <span class="badge">Espace privé — 10 tickets IA inclus</span>
+      <h1>Mon espace</h1>
+      <p class="muted">Un espace de production conçu pour les artisans, indépendants et TPE qui doivent répondre vite, fiabiliser leurs courriers et préparer des formalités sans perdre du temps opérationnel.</p>
     </div>
-  </header>
+    <div class="dash14-toplinks dash15-toplinks">
+      <a class="btn ghost" href="parcours.html">Voir les parcours</a>
+      <a class="btn ghost" href="private-onboarding.html">Actualiser mon besoin</a>
+    </div>
+  </section>
 
-  <main class="container app" style="grid-template-columns:1fr">
-    <section class="card left" style="max-width:1040px;margin:0 auto">
-      <div class="row between wrap" style="align-items:flex-start;gap:12px">
-        <div>
-          <h2>Soumettre un besoin</h2>
-          <p class="muted" style="margin:8px 0 0">Votre espace reste accessible même après l’échéance de l’offre gratuite afin de nous transmettre vos doléances.</p>
-        </div>
-        <a class="btn ghost" href="parcours.html">Parcours privé</a>
+  <section class="dash14-grid dash15-grid dash14-grid-private dash16-private-grid">
+    <article class="card dash14-card dash14-card-main dash14-card-main-private dash15-main-card dash16-main-card">
+      <div class="dash14-pill">Génération IA privée</div>
+      <h2>Produire un livrable sécurisé</h2>
+      <p>Choisissez un assistant métier calibré pour votre activité : réponse à un marché public à partir de vos pièces 48h, courrier administratif contextualisé ou formalité d’entreprise à préparer rapidement.</p>
+      <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta dash16-maincta" href="app-private.html">Produire un livrable sécurisé</a></div>
+      <div class="dash16-pill-grid">
+        <div class="dash16-pill-card"><strong>Marchés publics</strong><span>DCE, RC, pièces 48h et trame de réponse pour préparer votre offre.</span></div>
+        <div class="dash16-pill-card"><strong class="dash16-title-admin">Courrier<br>administratifs</strong><span>URSSAF, impôts, banque, client, fournisseur et relances prêtes à adapter.</span></div>
+        <div class="dash16-pill-card"><strong class="dash16-title-formalites">Formalités<br>d’entreprise</strong><span>Création, modification et obligations courantes avec cadrage documentaire.</span></div>
       </div>
+      <div class="dash16-evidence"><strong>Repères intégrés</strong><span>Parcours construits à partir de ressources officielles Urssaf, Bpifrance Création, commande publique et CCI.</span></div>
+    </article>
 
-      <div class="grid2" style="margin-top:18px">
-        <div class="panel">
-          <label class="label" for="companyName">Nom de la société</label>
-          <input class="input" id="companyName"/>
+    <article class="card dash14-card dash14-card-side dash14-card-expert dash14-card-private-expert dash15-side-card dash16-side-card">
+      <div class="dash14-pill">Service expert</div>
+      <h2>Relecture experte</h2>
+      <p>Faites relire une réponse sensible, un courrier engageant ou un document généré avant envoi à un organisme, un acheteur public ou un partenaire.</p>
+      <ul class="dash14-list dash15-list-tight dash16-list">
+        <li>Choix d’une génération archivée à joindre</li>
+        <li>Ajout de pièces du dépôt sécurisé 48h</li>
+        <li>Validation du fond, du ton et du niveau d’engagement</li>
+      </ul>
+      <a class="btn secondary dash14-sidebtn dash16-sidebtn" href="expert-private.html">Accéder à la relecture experte</a>
+    </article>
 
-          <label class="label" for="requesterName">Nom prénom du demandeur</label>
-          <input class="input" id="requesterName"/>
-
-          <label class="label" for="requesterEmail">Email</label>
-          <input class="input" id="requesterEmail"/>
-
-          <label class="label" for="requesterPhone">Téléphone</label>
-          <input class="input" id="requesterPhone"/>
-        </div>
-
-        <div class="panel">
-          <label class="label" for="needText">Besoin</label>
-          <textarea id="needText" rows="11" class="input" placeholder="Décrivez votre besoin..."></textarea>
-          <div class="row gap wrap" style="margin-top:14px">
-            <button class="btn" id="sendNeed" type="button">Envoyer à POPE Online</button>
-          </div>
-          <div class="fineprint" id="needMsg"></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script src="./auth-guard.js"></script>
-  <script type="module">
-    import { apiFetch, getApiMessage } from './api.js';
-    import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
-
-    requireLogin('dashboard-private.html');
-    wireLogout();
-
-    const el = (id) => document.getElementById(id);
-
-    async function init() {
-      try {
-        const me = await apiFetch('/auth/me');
-        setTicketsBadge(me.wallet || {});
-        el('companyName').value = me?.user?.organization || '';
-        el('requesterName').value = me?.user?.full_name || me?.user?.fullName || '';
-        el('requesterEmail').value = me?.user?.email || '';
-        el('requesterPhone').value = me?.user?.phone_full || me?.user?.phoneFull || '';
-
-        if (me?.wallet?.trial_expires_at && new Date(me.wallet.trial_expires_at).getTime() < Date.now()) {
-          el('needMsg').textContent = 'Votre offre gratuite est arrivée à échéance. Votre espace reste accessible. Vous pouvez continuer à nous transmettre vos besoins.';
-        }
-      } catch (error) {
-        console.error(error);
-        el('needMsg').textContent = 'Impossible de charger automatiquement vos informations. Vous pouvez toutefois compléter le formulaire.';
-      }
-    }
-
-    init();
-
-    el('sendNeed').addEventListener('click', async () => {
-      try {
-        await apiFetch('/client/message', {
-          method: 'POST',
-          body: {
-            companyName: el('companyName').value.trim(),
-            requesterName: el('requesterName').value.trim(),
-            requesterEmail: el('requesterEmail').value.trim(),
-            requesterPhone: el('requesterPhone').value.trim(),
-            needText: el('needText').value.trim()
-          }
-        });
-        el('needMsg').textContent = 'Message transmis. Un conseiller POPE Online vous contactera rapidement.';
-        showToast('Demande envoyée', 'ok');
-      } catch (error) {
-        console.error(error);
-        el('needMsg').textContent = 'Erreur : ' + getApiMessage(error);
-        showToast('Envoi impossible', 'err');
-      }
-    });
-  </script>
+    <article class="card dash14-card dash14-card-side dash14-card-premium dash14-card-private-premium dash15-side-card dash15-premium-card dash16-side-card">
+      <div class="dash14-pill">Service premium</div>
+      <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
+      <p>Prolongez la génération par un appui humain pour un dossier plus structurant : lancement d’activité, formalité complexe ou organisation d’un dossier administratif.</p>
+      <ul class="dash14-list dash15-list-tight dash16-list">
+        <li>Création ou reprise d’entreprise</li>
+        <li>Formalités de modification et obligations courantes</li>
+        <li>Préparation d’un dossier administratif complexe</li>
+      </ul>
+      <a class="btn secondary dash14-sidebtn dash16-sidebtn" href="mission-private.html">Accéder à l’accompagnement</a>
+    </article>
+  </section>
+</main>
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
+if (!requireLogin('dashboard-private.html')) {}
+wireLogout();
+(async()=>{ try { const me = await apiFetch('/auth/me'); setTicketsBadge(me.wallet); } catch {} })();
+</script>
 </body>
 </html>

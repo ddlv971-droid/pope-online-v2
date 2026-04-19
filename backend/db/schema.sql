@@ -135,3 +135,20 @@ alter table users add column if not exists satisfaction_mail_sent_by uuid refere
 
 alter table users add column if not exists satisfaction_response_received_at timestamptz;
 alter table users add column if not exists satisfaction_last_response jsonb;
+
+
+create table if not exists ephemeral_files (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  direction text not null default 'client_to_pope',
+  purpose text,
+  original_name text not null,
+  stored_name text not null,
+  mime_type text,
+  size_bytes integer not null default 0,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null default (now() + interval '48 hours')
+);
+
+create index if not exists idx_ephemeral_files_user on ephemeral_files(user_id, created_at desc);
+create index if not exists idx_ephemeral_files_expires on ephemeral_files(expires_at);

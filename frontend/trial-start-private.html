@@ -24,26 +24,26 @@
   <section class="auth-card" style="max-width:760px;margin:0 auto">
     <span class="badge">15 jours offerts</span>
     <h2>Bienvenue dans votre espace privé</h2>
-    <p class="auth-note-premium"><strong>Votre période gratuite démarre maintenant.</strong><br/>Vous pouvez lancer votre parcours privé et qualifier votre besoin dans un cadre simple, rapide et structuré.</p>
+    <p class="auth-note-premium"><strong>Votre période gratuite démarre maintenant.</strong><br/>Vous pouvez accéder à votre espace privé, générer vos premiers livrables pour les marchés publics, courriers administratifs et formalités d’entreprise, déposer des pièces 48h et solliciter une relecture experte si nécessaire.</p>
     <div class="po-grid-cards" style="margin-top:18px">
-      <article class="po-surface-card"><h3 id="dossiersTitle">1 dossier</h3><p>Pour ouvrir votre premier besoin et démarrer votre qualification.</p></article>
+      <article class="po-surface-card"><h3 id="ticketsTitle">10 tickets IA</h3><p>Pour tester la génération privée sur vos premiers besoins marchés publics, courriers administratifs et formalités d’entreprise.</p></article>
       <article class="po-surface-card"><h3 id="usersTitle">1 utilisateur</h3><p>Pour tester le parcours privé dans un cadre clair et maîtrisé.</p></article>
       <article class="po-surface-card"><h3 id="dateTitle">Activation immédiate</h3><p id="expiryText">Votre essai gratuit est activé pour 15 jours.</p></article>
     </div>
     <div class="row gap wrap" style="margin-top:18px">
-      <a class="btn" href="parcours.html">Commencer mon parcours</a>
+      <a class="btn" href="dashboard-private.html">Accéder à mon espace privé</a>
       <a class="btn ghost" href="private.html">Retour à l’espace privé</a>
     </div>
-    <div class="fineprint" id="msg" style="margin-top:14px">Redirection automatique vers le parcours dans quelques secondes…</div>
+    <div class="fineprint" id="msg" style="margin-top:14px">Redirection automatique vers votre espace privé dans quelques secondes…</div>
   </section>
 </main>
 <script>
 (function(){
   const u = new URL(window.location.href);
-  const dossiers = u.searchParams.get('privateDossiersLimit') || '1';
+  const ticketsAi = u.searchParams.get('ticketsAi') || '10';
   const users = u.searchParams.get('privateUsersLimit') || '1';
   const trialEnds = u.searchParams.get('trialEnds');
-  document.getElementById('dossiersTitle').textContent = `${dossiers} dossier${dossiers === '1' ? '' : 's'}`;
+  document.getElementById('ticketsTitle').textContent = `${ticketsAi} ticket${ticketsAi === '1' ? '' : 's'} IA`;
   document.getElementById('usersTitle').textContent = `${users} utilisateur${users === '1' ? '' : 's'}`;
   if (trialEnds) {
     const d = new Date(trialEnds);
@@ -57,7 +57,7 @@
     localStorage.removeItem('pope_post_signup_next');
     localStorage.removeItem('pope_public_login_next');
   } catch {}
-  setTimeout(function(){ window.location.href = 'parcours.html'; }, 2600);
+  setTimeout(function(){ window.location.href = 'dashboard-private.html'; }, 2600);
 })();
 </script>
 <script src="popy.js"></script>
