@@ -209,11 +209,7 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Documents disponibles, contraintes, échéances, interlocuteurs et points de vigilance…',
     vaultTitle: 'Pièces temporaires 48h — cadrage de dossier',
     vaultCopy: 'Sélectionnez les pièces utiles pour produire une synthèse ou une check-list opérationnelle.'
-  }
-};
-
-
-  ,
+  },
   devis_prive: {
     title: 'Réalisation d’un devis ou d’une proposition commerciale',
     intro: 'Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. L’assistant peut structurer l’offre, reformuler les prestations et clarifier les conditions commerciales.',
@@ -259,6 +255,7 @@ const PRIVATE_USECASE_HELP = {
     vaultTitle: 'Pièces temporaires 48h — document brut',
     vaultCopy: 'Ajoutez un document brut, un relevé ou des notes à remettre en forme avant validation ou diffusion.'
   }
+};
 
 let currentSpace = 'public';
 const forcedSpace = (document.body?.dataset?.forcedSpace || '').trim();
@@ -296,19 +293,32 @@ function persistFormState(space = getEffectiveSpace()) {
 }
 
 function restoreFormState(space = getEffectiveSpace()) {
+  const usecaseNode = el('usecase');
   try {
     const raw = sessionStorage.getItem(getFormStateKey(space));
-    if (!raw) return;
+    if (!raw) {
+      if (usecaseNode && !usecaseNode.value && usecaseNode.options.length) {
+        usecaseNode.value = usecaseNode.options[0].value;
+      }
+      return;
+    }
     const saved = JSON.parse(raw);
-    const usecaseNode = el('usecase');
-    if (usecaseNode && saved.usecase && Array.from(usecaseNode.options).some((option) => option.value === saved.usecase)) {
-      usecaseNode.value = saved.usecase;
+    if (usecaseNode) {
+      const values = Array.from(usecaseNode.options).map((option) => option.value);
+      if (saved.usecase && values.includes(saved.usecase)) {
+        usecaseNode.value = saved.usecase;
+      } else if (!usecaseNode.value && usecaseNode.options.length) {
+        usecaseNode.value = usecaseNode.options[0].value;
+      }
     }
     if (typeof saved.context === 'string') el('context').value = saved.context;
     if (typeof saved.objective === 'string') el('objective').value = saved.objective;
     if (typeof saved.facts === 'string') el('facts').value = saved.facts;
   } catch (error) {
     console.warn('Impossible de restaurer le brouillon de génération', error);
+    if (usecaseNode && !usecaseNode.value && usecaseNode.options.length) {
+      usecaseNode.value = usecaseNode.options[0].value;
+    }
   }
 }
 
@@ -656,6 +666,7 @@ function applySpaceConfig(space) {
     el('usecase').value = firstPrivateUsecase();
   } else {
     el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+    if (el('usecase').options.length) el('usecase').value = el('usecase').options[0].value;
   }
   restoreFormState(currentSpace);
   renderUsecaseInsight(currentSpace);
@@ -858,7 +869,6 @@ el('archiveList').addEventListener('click', async (event) => {
 });
 
 setGenerationLoading(false);
-
 ['context','objective','facts','usecase'].forEach((id) => {
   const node = el(id);
   if (!node) return;

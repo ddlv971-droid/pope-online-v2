@@ -45,14 +45,19 @@ export function requireLogin(next='dashboard.html'){
   return true;
 }
 
+let logoutWired = false;
 export function wireLogout(){
-  document.querySelectorAll('[data-logout]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      clearToken();
-      showToast('Déconnecté', 'ok');
-      setTimeout(() => window.location.href = 'index.html', 400);
-    });
-  });
+  if (logoutWired) return;
+  logoutWired = true;
+  document.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-logout]');
+    if (!btn) return;
+    event.preventDefault();
+    event.stopPropagation();
+    clearToken();
+    showToast('Déconnecté', 'ok');
+    setTimeout(() => window.location.href = 'index.html', 150);
+  }, true);
 }
 
 export function setTicketsBadge(wallet) {
