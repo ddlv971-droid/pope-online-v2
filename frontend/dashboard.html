@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Tableau de bord public</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
+</head>
+<body class="bg po-v14-dashboard">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="public.html">
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+<div><div class="brand-title">POPE Online</div><div class="brand-sub">Tableau de bord public</div></div>
+</a>
+<div class="row gap wrap">
+<span class="badge" data-tickets>Accès sécurisé</span>
+<a class="btn ghost" href="expert.html">Relecture experte</a>
+<a class="btn ghost" href="vault.html?space=public&amp;return=dashboard.html">Dépôt sécurisé 48h</a>
+<button class="btn" data-logout>Déconnexion</button>
+</div>
+</div>
+</header>
+<main class="container dash14-shell">
+  <section class="card dash14-hero">
+    <div>
+      <span class="badge">Espace public</span>
+      <h1>Mon espace</h1>
+      <p class="muted">Un espace premium centré sur la production, la sécurisation des livrables et l'appui expert selon le niveau d'enjeu.</p>
+    </div>
+    <div class="dash14-toplinks">
+      <a class="btn ghost" href="pricing.html">Voir les parcours</a>
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+    </div>
+  </section>
+  <section class="dash14-grid dash14-grid-public">
+    <article class="card dash14-card dash14-card-main">
+      <div class="dash14-pill">Génération guidée</div>
+      <h2>Produire un livrable sécurisé</h2>
+      <p>Cadrez votre besoin, produisez un premier draft structuré, exploitez le résultat puis montez en gamme si le dossier l'exige.</p>
+      <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta" href="app.html">Produire un livrable sécurisé</a></div>
+      <div class="dash14-chipgrid">
+        <div><strong>Parcours</strong><span>Préparation du besoin, génération, archivage local, relecture experte éventuelle.</span></div>
+        <div><strong>Public concerné</strong><span>Collectivités, établissements, DGS, directions, cabinets, cadres support et chargés de mission.</span></div>
+      </div>
+    </article>
+    <article class="card dash14-card dash14-card-side dash14-card-expert">
+      <div class="dash14-pill">Service expert</div>
+      <h2>Relecture experte</h2>
+      <p>Faites sécuriser un livrable, un courrier sensible ou une production à fort enjeu avant diffusion ou arbitrage.</p>
+      <ul class="dash14-list"><li>Validation du fond et de la structure</li><li>Sécurisation des formulations</li><li>Pièce jointe possible depuis les générations archivées</li></ul>
+      <a class="btn secondary dash14-sidebtn" href="expert.html">Accéder à la relecture experte</a>
+    </article>
+    <article class="card dash14-card dash14-card-side dash14-card-premium">
+      <div class="dash14-pill">Service premium</div>
+      <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
+      <p>Prolongez la génération par un appui ciblé sur le calendrier, la sensibilité du dossier et le niveau d'exigence attendu.</p>
+      <ul class="dash14-list"><li>Cadrage et priorisation des options</li><li>Appui rédactionnel ciblé</li><li>Montée en gamme selon le niveau d'enjeu</li></ul>
+      <a class="btn secondary dash14-sidebtn" href="mission.html">Accéder à l'accompagnement</a>
+    </article>
+  </section>
+</main>
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
+if (!requireLogin('dashboard.html')) {}
+wireLogout();
+(async()=>{ try { const me = await apiFetch('/auth/me'); setTicketsBadge(me.wallet); } catch {} })();
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Vérification email</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+<div class="container row between">
+<a class="brand link" href="index.html">
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+<div>
+<div class="brand-title">POPE Online</div>
+<div class="brand-sub">Vérification email</div>
+</div>
+</a>
+</div>
+</header>
+<main class="auth-wrap">
+<section class="auth-card" style="max-width:720px;margin:0 auto">
+<h2>Vérification de votre email</h2>
+<div class="fineprint" id="out">Vérification en cours…</div>
+<div class="row gap wrap" style="margin-top:14px">
+<a class="btn" href="login.html">Se connecter</a>
+<a class="btn ghost" href="public.html">Retour à l’espace public</a>
+</div>
+</section>
+</main>
+<script type="module">
+import { apiFetch, setToken, getApiMessage } from './api.js';
+import { showToast, getFingerprint } from './app.js';
+
+const out = document.getElementById('out');
+const actions = document.querySelector('.row.gap.wrap');
+const u = new URL(window.location.href);
+const token = u.searchParams.get('token') || '';
+
+function buildTrialRoute(accountSpace, wallet){
+  const page = accountSpace === 'private' ? 'trial-start-private.html' : 'trial-start-public.html';
+  const params = new URLSearchParams();
+  if (wallet?.trial_expires_at || wallet?.trialExpiresAt) params.set('trialEnds', wallet.trial_expires_at || wallet.trialExpiresAt);
+  if (typeof wallet?.tickets_ai !== 'undefined' || typeof wallet?.ticketsAi !== 'undefined') params.set('ticketsAi', String(wallet.tickets_ai ?? wallet.ticketsAi));
+  if (typeof wallet?.public_dossiers_limit !== 'undefined' || typeof wallet?.publicDossiersLimit !== 'undefined') params.set('publicDossiersLimit', String(wallet.public_dossiers_limit ?? wallet.publicDossiersLimit));
+  if (typeof wallet?.private_dossiers_limit !== 'undefined' || typeof wallet?.privateDossiersLimit !== 'undefined') params.set('privateDossiersLimit', String(wallet.private_dossiers_limit ?? wallet.privateDossiersLimit));
+  if (typeof wallet?.private_users_limit !== 'undefined' || typeof wallet?.privateUsersLimit !== 'undefined') params.set('privateUsersLimit', String(wallet.private_users_limit ?? wallet.privateUsersLimit));
+  return `${page}${params.toString() ? `?${params.toString()}` : ''}`;
+}
+
+async function run(){
+  if (!token) {
+    out.textContent = 'Token manquant.';
+    return;
+  }
+  try {
+    const fp = await getFingerprint();
+    const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
+    if (data?.token) setToken(data.token);
+    const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
+    const next = buildTrialRoute(accountSpace, data?.wallet || {});
+    try {
+      localStorage.setItem('pope_account_space', accountSpace);
+      localStorage.removeItem('pope_post_signup_next');
+      if (accountSpace === 'public') {
+        localStorage.setItem('pope_public_login_next', 'dashboard.html');
+      }
+    } catch {}
+    showToast('Email vérifié ✓', 'ok');
+    out.textContent = accountSpace === 'private'
+      ? '✅ Email vérifié. Votre offre gratuite privée de 15 jours démarre maintenant. Redirection en cours…'
+      : '✅ Email vérifié. Votre offre gratuite publique de 15 jours démarre maintenant. Redirection en cours…';
+    if (actions) {
+      actions.innerHTML = accountSpace === 'private'
+        ? '<a class="btn" href="trial-start-private.html">Voir mon espace privé</a><a class="btn ghost" href="private.html">Retour à l’espace privé</a>'
+        : '<a class="btn" href="trial-start-public.html">Voir mon offre publique</a><a class="btn ghost" href="public.html">Retour à l’espace public</a>';
+    }
+    window.location.replace(next);
+  } catch (e) {
+    console.error(e);
+    showToast('Vérification impossible', 'err');
+    out.textContent = 'Erreur : ' + getApiMessage(e);
+  }
+}
+run();
+</script>
+<script src="popy.js"></script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Administration</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="index.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub">Dashboard administrateur</div>
+      </div>
+    </a>
+    <div class="row gap wrap">
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+      <button class="btn" data-logout>Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<main class="container app" style="grid-template-columns:1fr">
+  <section class="card left" style="max-width:1380px;margin:0 auto;width:100%">
+    <div id="adminLoginBox">
+      <h2>Connexion administrateur</h2>
+      <p class="muted">Identifiant par défaut : <strong>POPADMIN</strong> — mot de passe initial : <strong>admin</strong>.</p>
+      <div class="grid2">
+        <div>
+          <label class="label">Identifiant</label>
+          <input id="adminIdentifier" class="input" value="POPADMIN"/>
+          <label class="label">Mot de passe</label>
+          <input id="adminPassword" class="input" type="password" value="admin"/>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Sécurisation</h3>
+            <p class="muted">Le changement de mot de passe est imposé à la première connexion puis reste possible à tout moment depuis “Mon compte”.</p>
+            <button class="btn" id="adminLoginBtn">Se connecter</button>
+            <div class="fineprint" id="adminLoginMsg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminApp" hidden>
+      <section class="po-admin-hero po-admin-hero-analytics">
+        <div>
+          <div class="po-admin-eyebrow">Pilotage commercial et relation client</div>
+          <h1>Gestion des comptes clients</h1>
+          <p>Créez des comptes, ajustez les accès, suivez les enquêtes de satisfaction et identifiez immédiatement les clients à risque pour agir sans délai.</p>
+        </div>
+        <div class="po-admin-hero-actions po-admin-hero-actions-analytics">
+          <div class="po-admin-kpi"><span>Clients total</span><strong id="userCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Enquêtes envoyées</span><strong id="sentCount">0</strong></div>
+          <div class="po-admin-kpi"><span>Taux de réponse</span><strong id="responseRate">0 %</strong></div>
+          <div class="po-admin-kpi"><span>Note moyenne globale</span><strong id="avgScore">—</strong></div>
+          <button class="po-admin-kpi po-admin-kpi-alert po-admin-kpi-button" id="riskKpi" type="button">
+            <span>Clients à risque</span>
+            <strong id="riskCount">0</strong>
+            <small>Cliquer pour afficher la liste</small>
+          </button>
+          <button class="btn ghost" id="refreshUsers">Actualiser</button>
+        </div>
+      </section>
+
+      <div class="po-admin-layout">
+        <aside class="panel po-admin-create-card">
+          <div class="po-admin-panel-head">
+            <div>
+              <h3>Créer un client</h3>
+              <p class="muted">Création rapide d'un compte opérationnel avec mot de passe provisoire.</p>
+            </div>
+          </div>
+          <label class="label">Nom / Prénom</label>
+          <input id="newFullName" class="input" placeholder="Nom du client"/>
+          <label class="label">Organisation</label>
+          <input id="newOrg" class="input" placeholder="Structure ou société"/>
+          <label class="label">Email</label>
+          <input id="newEmail" class="input" placeholder="client@exemple.com"/>
+          <label class="label">Téléphone</label>
+          <input id="newPhone" class="input" placeholder="+590 ..."/>
+          <div class="grid2 po-admin-mini-grid">
+            <div>
+              <label class="label">Type</label>
+              <select id="newSpace" class="input">
+                <option value="public">Public</option>
+                <option value="private">Privé</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Mot de passe initial</label>
+              <input id="newPwd" class="input" value="Temporaire123!"/>
+            </div>
+          </div>
+          <button class="btn" id="createUserBtn" style="margin-top:16px">Créer le compte</button>
+          <div class="fineprint" id="createUserMsg"></div>
+        </aside>
+
+        <section class="po-admin-main">
+          <div class="panel">
+            <div class="po-admin-panel-head">
+              <div>
+                <h3>Comptes créés</h3>
+                <p class="muted">Les clients à risque remontent automatiquement en tête. Le KPI rouge est cliquable pour afficher directement la liste prioritaire.</p>
+              </div>
+            </div>
+
+            <div class="po-admin-filters">
+              <input id="userSearch" class="input" placeholder="Rechercher un client, un e-mail ou une organisation"/>
+              <select id="offerFilter" class="input">
+                <option value="all">Toutes les offres</option>
+                <option value="FREE">Free trial</option>
+                <option value="STANDARD">Offre standard</option>
+              </select>
+              <select id="satisfactionFilter" class="input">
+                <option value="all">Toutes satisfactions</option>
+                <option value="pending">Mail non envoyé</option>
+                <option value="sent">Mail envoyé</option>
+                <option value="answered">Réponse reçue</option>
+                <option value="risk">Clients à risque</option>
+                <option value="follow">À suivre</option>
+                <option value="good">Satisfaits</option>
+              </select>
+            </div>
+
+            <div class="po-admin-filter-banner" id="filterBanner" hidden>
+              <div>
+                <strong id="filterBannerTitle">Filtre actif</strong>
+                <p id="filterBannerText">Liste filtrée.</p>
+              </div>
+              <button type="button" class="btn ghost" id="clearRiskFilter">Voir tous les clients</button>
+            </div>
+
+            <div class="po-admin-list" id="usersList"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { apiFetch, setToken, getToken, getApiMessage } from './api.js';
+import { clearToken, wireLogout, showToast } from './app.js';
+
+wireLogout();
+const el = (id) => document.getElementById(id);
+let usersCache = [];
+let lastFilteredUsers = [];
+
+function escapeHtml(value='') {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function formatDate(value) {
+  if (!value) return '—';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('fr-FR');
+}
+
+function getOfferValue(user) {
+  return (user.plan_code || '').toUpperCase() === 'STANDARD' || user.status === 'active' ? 'STANDARD' : 'FREE';
+}
+
+function getStatusLabel(status) {
+  return {
+    trial_active: 'Essai actif',
+    active: 'Compte débloqué',
+    trial_expired: 'Essai expiré',
+    verified_no_trial: 'Vérifié sans essai'
+  }[status] || 'À vérifier';
+}
+
+function getSatisfactionFlowStatus(user) {
+  if (user.satisfaction_response_received_at) return 'answered';
+  if (user.satisfaction_mail_sent_at) return 'sent';
+  return 'pending';
+}
+
+function getSatisfactionScore(user) {
+  const n = Number(user.satisfaction_score_10 || 0);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.round(n * 10) / 10;
+}
+
+function getRiskProfile(user) {
+  const score = getSatisfactionScore(user);
+  if (score === null) return { key: 'na', label: 'Sans note', className: 'neutral', priority: 3 };
+  if (score < 5) return { key: 'risk', label: 'À risque', className: 'risk', priority: 0 };
+  if (score < 8) return { key: 'follow', label: 'À suivre', className: 'follow', priority: 1 };
+  return { key: 'good', label: 'Satisfait', className: 'good', priority: 2 };
+}
+
+function getSatisfactionBadge(user) {
+  const flow = getSatisfactionFlowStatus(user);
+  if (flow === 'answered') return '<span class="po-admin-pill answered">Réponse reçue</span>';
+  if (flow === 'sent') return `<span class="po-admin-pill sent">Envoyé le ${formatDate(user.satisfaction_mail_sent_at)}</span>`;
+  return '<span class="po-admin-pill pending">À envoyer</span>';
+}
+
+function getSatisfactionScoreBadge(user) {
+  const score = getSatisfactionScore(user);
+  if (score === null) return '<span class="po-admin-score score-na">— <small>En attente</small></span>';
+  const cls = score >= 8 ? 'score-good' : score >= 5 ? 'score-mid' : 'score-low';
+  return `<span class="po-admin-score ${cls}">${String(score).replace('.', ',')}/10</span>`;
+}
+
+function getRiskBadge(user) {
+  const profile = getRiskProfile(user);
+  return `<span class="po-admin-risk ${profile.className}">${profile.label}</span>`;
+}
+
+function getScoreCell(user) {
+  const score = getSatisfactionScore(user);
+  const profile = getRiskProfile(user);
+  if (score === null) {
+    return `<div class="po-admin-score-panel na"><div class="value">—</div><div class="meta">Aucune réponse</div></div>`;
+  }
+  return `<div class="po-admin-score-panel ${profile.className}"><div class="value">${String(score).replace('.', ',')}/10</div><div class="meta">${profile.label}</div></div>`;
+}
+
+function buildUserCard(u) {
+  const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
+  const offerValue = getOfferValue(u);
+  const statusValue = u.status || 'trial_active';
+  const flow = getSatisfactionFlowStatus(u);
+  const risk = getRiskProfile(u);
+  return `
+    <article class="po-admin-user-card ${risk.className === 'risk' ? 'is-risk' : risk.className === 'follow' ? 'is-follow' : ''}" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${flow}" data-risk="${risk.key}" data-score="${getSatisfactionScore(u) ?? -1}">
+      <div class="po-admin-user-top">
+        <div class="po-admin-user-identity">
+          <h4>${escapeHtml(u.full_name || 'Client sans nom')}</h4>
+          <div class="po-admin-user-meta">
+            <div>${escapeHtml(u.organization || 'Organisation non renseignée')}</div>
+            <div>${escapeHtml(u.email || '—')}${u.phone_full ? ` <span class="po-admin-meta-sep">•</span> ${escapeHtml(u.phone_full)}` : ''}</div>
+          </div>
+        </div>
+        <div class="po-admin-user-badges">
+          <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
+          <span class="po-admin-pill neutral">${escapeHtml(getStatusLabel(statusValue))}</span>
+          ${getSatisfactionBadge(u)}
+          ${getRiskBadge(u)}
+        </div>
+      </div>
+
+      <div class="po-admin-user-body po-admin-user-body-flat">
+        <div class="po-admin-user-fields po-admin-user-fields-flat">
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Offre</span>
+            <select data-field="planCode" class="input">
+              <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
+              <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
+            </select>
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Statut</span>
+            <select data-field="status" class="input">
+              <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
+              <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
+              <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
+              <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
+            </select>
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Tickets IA</span>
+            <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Échéance</span>
+            <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
+          </label>
+
+          <div class="po-admin-field po-admin-field-score po-admin-field-score-flat">
+            <div class="po-admin-field-label">Note satisfaction globale</div>
+            ${getScoreCell(u)}
+            <div class="po-admin-score-inline">${getSatisfactionScoreBadge(u)}</div>
+          </div>
+        </div>
+
+        <div class="po-admin-actions-col po-admin-actions-row">
+          <button class="btn ghost save">Enregistrer</button>
+          <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
+          <button class="btn ghost promote">Passer en offre standard</button>
+          <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
+          <button class="btn ghost delete danger">Supprimer</button>
+        </div>
+      </div>
+
+      <input type="hidden" data-field="publicLimit" value="${Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0))}">
+      <input type="hidden" data-field="privateLimit" value="${Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0))}">
+      <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
+    </article>`;
+}
+
+function round1(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function updateStats(users) {
+  const sent = users.filter((u) => !!u.satisfaction_mail_sent_at).length;
+  const answered = users.filter((u) => !!u.satisfaction_response_received_at).length;
+  const scored = users.map(getSatisfactionScore).filter((v) => v !== null);
+  const avg = scored.length ? round1(scored.reduce((a, b) => a + b, 0) / scored.length) : null;
+  const risk = users.filter((u) => getRiskProfile(u).key === 'risk').length;
+  const responseRate = sent ? Math.round((answered / sent) * 100) : 0;
+
+  el('userCount').textContent = String(users.length);
+  el('sentCount').textContent = String(sent);
+  el('responseRate').textContent = `${responseRate} %`;
+  el('avgScore').textContent = avg === null ? '—' : `${String(avg).replace('.', ',')}/10`;
+  el('riskCount').textContent = String(risk);
+  el('riskKpi').disabled = risk === 0;
+  el('riskKpi').classList.toggle('is-empty', risk === 0);
+}
+
+function sortUsers(users) {
+  return [...users].sort((a, b) => {
+    const pa = getRiskProfile(a).priority;
+    const pb = getRiskProfile(b).priority;
+    if (pa !== pb) return pa - pb;
+    const sa = getSatisfactionScore(a);
+    const sb = getSatisfactionScore(b);
+    if (sa !== null && sb !== null && sa !== sb) return sa - sb;
+    if (sa === null && sb !== null) return 1;
+    if (sa !== null && sb === null) return -1;
+    const da = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    if (da !== 0) return da;
+    return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'fr');
+  });
+}
+
+function attachCardActions(card, user) {
+  const saveBtn = card.querySelector('.save');
+  const deleteBtn = card.querySelector('.delete');
+  const satisfactionBtn = card.querySelector('.satisfaction');
+  const promoteBtn = card.querySelector('.promote');
+
+  card.querySelector('[data-field="planCode"]').addEventListener('change', (event) => {
+    const status = card.querySelector('[data-field="status"]');
+    if (event.target.value === 'STANDARD' && status.value !== 'active') status.value = 'active';
+  });
+
+  promoteBtn.addEventListener('click', () => {
+    card.querySelector('[data-field="planCode"]').value = 'STANDARD';
+    card.querySelector('[data-field="status"]').value = 'active';
+    showToast('Le compte est prêt à être enregistré en offre standard.', 'ok');
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    try {
+      const payload = {
+        wallet: {
+          planCode: card.querySelector('[data-field="planCode"]').value,
+          status: card.querySelector('[data-field="status"]').value,
+          ticketsAi: Number(card.querySelector('[data-field="ticketsAi"]').value || 0),
+          trialExpiresAt: card.querySelector('[data-field="expiry"]').value || null,
+          publicDossiersLimit: Number(card.querySelector('[data-field="publicLimit"]').value || 0),
+          privateDossiersLimit: Number(card.querySelector('[data-field="privateLimit"]').value || 0),
+          privateUsersLimit: Number(card.querySelector('[data-field="privateUsersLimit"]').value || 1)
+        }
+      };
+      await apiFetch('/admin/users/' + user.id, { method:'PUT', body: payload });
+      showToast('Compte mis à jour', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'err');
+    }
+  });
+
+  satisfactionBtn?.addEventListener('click', async () => {
+    try {
+      await apiFetch('/admin/users/' + user.id + '/send-satisfaction', { method:'POST', body:{} });
+      showToast('Mail de satisfaction envoyé', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'warn');
+    }
+  });
+
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('Supprimer ce compte ?')) return;
+    try {
+      await apiFetch('/admin/users/' + user.id, { method:'DELETE' });
+      showToast('Compte supprimé', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'err');
+    }
+  });
+}
+
+function renderUsers(users) {
+  lastFilteredUsers = users;
+  const list = el('usersList');
+  list.innerHTML = '';
+  if (!users.length) {
+    list.innerHTML = '<div class="po-admin-empty">Aucun compte ne correspond aux filtres actuels.</div>';
+    return;
+  }
+  sortUsers(users).forEach((user) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = buildUserCard(user);
+    const card = wrapper.firstElementChild;
+    list.appendChild(card);
+    attachCardActions(card, user);
+  });
+}
+
+function updateFilterBanner(filtered) {
+  const filter = el('satisfactionFilter').value;
+  const banner = el('filterBanner');
+  if (filter === 'risk') {
+    banner.hidden = false;
+    el('filterBannerTitle').textContent = 'Filtre actif : clients à risque';
+    el('filterBannerText').textContent = `${filtered.length} client${filtered.length > 1 ? 's' : ''} à risque affiché${filtered.length > 1 ? 's' : ''}.`;
+    return;
+  }
+  banner.hidden = true;
+}
+
+function applyFilters() {
+  const q = el('userSearch').value.trim().toLowerCase();
+  const offer = el('offerFilter').value;
+  const satisfaction = el('satisfactionFilter').value;
+  const filtered = usersCache.filter((user) => {
+    const matchesQ = !q || `${user.full_name||''} ${user.organization||''} ${user.email||''}`.toLowerCase().includes(q);
+    const matchesOffer = offer === 'all' || getOfferValue(user) === offer;
+    const flow = getSatisfactionFlowStatus(user);
+    const risk = getRiskProfile(user).key;
+    const matchesSat = satisfaction === 'all' || flow === satisfaction || risk === satisfaction;
+    return matchesQ && matchesOffer && matchesSat;
+  });
+  updateFilterBanner(filtered);
+  renderUsers(filtered);
+}
+
+async function loadUsers() {
+  try {
+    const data = await apiFetch('/admin/users');
+    usersCache = data.users || [];
+    updateStats(usersCache);
+    applyFilters();
+  } catch (e) {
+    if (getToken()) showToast(getApiMessage(e), 'err');
+  }
+}
+
+async function adminLogin() {
+  try {
+    const data = await apiFetch('/auth/admin-login', {
+      method:'POST',
+      auth:false,
+      body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard' }
+    });
+    if (data?.user?.role !== 'admin') throw new Error('forbidden');
+    setToken(data.token);
+    el('adminLoginBox').hidden = true;
+    el('adminApp').hidden = false;
+    el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';
+    await loadUsers();
+    showToast('Administration ouverte', 'ok');
+  } catch (e) {
+    el('adminLoginMsg').textContent = 'Erreur : ' + getApiMessage(e);
+    showToast('Connexion admin impossible', 'err');
+  }
+}
+
+el('adminLoginBtn').addEventListener('click', adminLogin);
+el('refreshUsers').addEventListener('click', loadUsers);
+el('userSearch').addEventListener('input', applyFilters);
+el('offerFilter').addEventListener('change', applyFilters);
+el('satisfactionFilter').addEventListener('change', applyFilters);
+el('riskKpi').addEventListener('click', () => {
+  if (el('riskKpi').disabled) return;
+  el('satisfactionFilter').value = 'risk';
+  applyFilters();
+  el('usersList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+el('clearRiskFilter').addEventListener('click', () => {
+  el('satisfactionFilter').value = 'all';
+  applyFilters();
+});
+
+el('createUserBtn').addEventListener('click', async () => {
+  try {
+    await apiFetch('/admin/users', {
+      method:'POST',
+      body:{
+        fullName: el('newFullName').value.trim(),
+        organization: el('newOrg').value.trim(),
+        email: el('newEmail').value.trim(),
+        phoneFull: el('newPhone').value.trim(),
+        accountSpace: el('newSpace').value,
+        password: el('newPwd').value
+      }
+    });
+    el('createUserMsg').textContent = 'Compte créé.';
+    ['newFullName','newOrg','newEmail','newPhone'].forEach((id) => el(id).value = '');
+    showToast('Client créé', 'ok');
+    await loadUsers();
+  } catch (e) {
+    el('createUserMsg').textContent = 'Erreur : ' + getApiMessage(e);
+    showToast('Création impossible', 'err');
+  }
+});
+
+if (getToken()) {
+  loadUsers().then(() => {
+    el('adminLoginBox').hidden = true;
+    el('adminApp').hidden = false;
+  }).catch(() => clearToken());
+}
+</script>
+</body>
+</html>

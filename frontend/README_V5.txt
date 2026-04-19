@@ -1,0 +1,1 @@
+POPE Online V5\n- Header conservé\n- Fond général blanc\n- Logo arbre conservé en filigrane\n- Bandeau d’animation intégré sur la homepage\n- Zones privé/public compactées\n- Harmonisation chromatique des autres pages\n

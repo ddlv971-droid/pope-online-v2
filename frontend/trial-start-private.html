@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POPE Online — Offre gratuite privée</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="stylesheet" href="popy.css"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="private.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub">Offre gratuite — Espace privé</div>
+      </div>
+    </a>
+  </div>
+</header>
+<main class="auth-wrap">
+  <section class="auth-card" style="max-width:760px;margin:0 auto">
+    <span class="badge">15 jours offerts</span>
+    <h2>Bienvenue dans votre espace privé</h2>
+    <p class="auth-note-premium"><strong>Votre période gratuite démarre maintenant.</strong><br/>Vous pouvez accéder à votre espace privé, générer vos premiers livrables pour les marchés publics, courriers administratifs et formalités d’entreprise, déposer des pièces 48h et solliciter une relecture experte si nécessaire.</p>
+    <div class="po-grid-cards" style="margin-top:18px">
+      <article class="po-surface-card"><h3 id="ticketsTitle">10 tickets IA</h3><p>Pour tester la génération privée sur vos premiers besoins marchés publics, courriers administratifs et formalités d’entreprise.</p></article>
+      <article class="po-surface-card"><h3 id="usersTitle">1 utilisateur</h3><p>Pour tester le parcours privé dans un cadre clair et maîtrisé.</p></article>
+      <article class="po-surface-card"><h3 id="dateTitle">Activation immédiate</h3><p id="expiryText">Votre essai gratuit est activé pour 15 jours.</p></article>
+    </div>
+    <div class="row gap wrap" style="margin-top:18px">
+      <a class="btn" href="dashboard-private.html">Accéder à mon espace privé</a>
+      <a class="btn ghost" href="private.html">Retour à l’espace privé</a>
+    </div>
+    <div class="fineprint" id="msg" style="margin-top:14px">Redirection automatique vers votre espace privé dans quelques secondes…</div>
+  </section>
+</main>
+<script>
+(function(){
+  const u = new URL(window.location.href);
+  const ticketsAi = u.searchParams.get('ticketsAi') || '10';
+  const users = u.searchParams.get('privateUsersLimit') || '1';
+  const trialEnds = u.searchParams.get('trialEnds');
+  document.getElementById('ticketsTitle').textContent = `${ticketsAi} ticket${ticketsAi === '1' ? '' : 's'} IA`;
+  document.getElementById('usersTitle').textContent = `${users} utilisateur${users === '1' ? '' : 's'}`;
+  if (trialEnds) {
+    const d = new Date(trialEnds);
+    if (!Number.isNaN(d.getTime())) {
+      document.getElementById('dateTitle').textContent = 'Échéance de l’essai';
+      document.getElementById('expiryText').textContent = `Votre période gratuite reste active jusqu’au ${d.toLocaleDateString('fr-FR')}.`;
+    }
+  }
+  try {
+    localStorage.setItem('pope_account_space', 'private');
+    localStorage.removeItem('pope_post_signup_next');
+    localStorage.removeItem('pope_public_login_next');
+  } catch {}
+  setTimeout(function(){ window.location.href = 'dashboard-private.html'; }, 2600);
+})();
+</script>
+<script src="popy.js"></script>
+</body>
+</html>
