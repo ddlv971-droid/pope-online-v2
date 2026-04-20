@@ -6,12 +6,16 @@
 <title>POPE Online — Connexion client</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<<<<<<< HEAD
 <link rel="stylesheet" href="popy.css"/>
+=======
+>>>>>>> staging
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div></a><div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div></div></header>
 <main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
 <h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
+<<<<<<< HEAD
 <label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..."/ autocomplete="off">
 <label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password"/ autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
 <div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
@@ -24,6 +28,22 @@ function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.htm
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
 el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', auth:false, body:{ email:identifier, identifier, password:el('password').value, fp } }); setToken(data.token); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
 </script><script src="popy.js"></script>
+=======
+<label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..." autocomplete="off">
+<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
+<div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
+<div class="fineprint" id="msg"></div></section></main>
+<script type="module">
+import { apiFetch, getApiMessage, setSession } from './api.js';
+import { showToast, getFingerprint } from './app.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
+const el = (id) => document.getElementById(id);
+mountTurnstile('turnstileBox').catch(() => {});
+function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
+el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
+</script>
+>>>>>>> staging
 <script>
 window.addEventListener("load",function(){
   document.querySelectorAll("input").forEach(i=>{

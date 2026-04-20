@@ -12,9 +12,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function seedAdmin() {
+<<<<<<< HEAD
   const username = process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN';
   const password = process.env.DEFAULT_ADMIN_PASSWORD || 'admin';
   const email = process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local';
+=======
+  const username = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim();
+  const password = String(process.env.DEFAULT_ADMIN_PASSWORD || '').trim();
+  const email = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim();
+
+  if (!username || !password || !email) {
+    console.log('Admin seed skipped: DEFAULT_ADMIN_USERNAME / DEFAULT_ADMIN_PASSWORD / DEFAULT_ADMIN_EMAIL must be set explicitly.');
+    return;
+  }
+>>>>>>> staging
   const existing = await pool.query('select id from users where email=$1 or upper(full_name)=upper($2) limit 1', [email, username]);
   if (existing.rowCount) return;
   const hash = await bcrypt.hash(password, 12);

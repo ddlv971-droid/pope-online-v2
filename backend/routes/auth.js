@@ -7,7 +7,11 @@ import { withClient } from '../db/index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
+<<<<<<< HEAD
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours } from '../services/security.js';
+=======
+import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
+>>>>>>> staging
 
 const router = express.Router();
 
@@ -16,6 +20,10 @@ const loginLimiter = rateLimit({
   max: 12,
   standardHeaders: true,
   legacyHeaders: false,
+<<<<<<< HEAD
+=======
+  skip: (req) => req.method === 'OPTIONS',
+>>>>>>> staging
   message: { error: 'too_many_attempts' }
 });
 
@@ -71,13 +79,29 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 
 function resolveFrontendBaseUrl() {
   const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
+<<<<<<< HEAD
   if (!raw) return 'https://pope-online.com';
   return raw.replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
             .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com');
+=======
+  return raw;
+}
+
+async function requireTurnstile(req, res) {
+  const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
+  if (outcome.success) return true;
+  res.status(403).json({ error: 'bot_protection_failed' });
+  return false;
+>>>>>>> staging
 }
 
 
 router.post('/signup', async (req, res) => {
+<<<<<<< HEAD
+=======
+  if (!(await requireTurnstile(req, res))) return;
+>>>>>>> staging
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   const fullName = String(req.body?.fullName || '').trim() || null;
@@ -173,9 +197,16 @@ Ce lien expire dans 24h.
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
+<<<<<<< HEAD
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+=======
+  if (!(await requireTurnstile(req, res))) return;
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
+>>>>>>> staging
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim();
@@ -212,9 +243,15 @@ router.post('/login', loginLimiter, async (req, res) => {
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
+<<<<<<< HEAD
 
       return res.json({
         token,
+=======
+      setSessionCookie(res, token);
+
+      return res.json({
+>>>>>>> staging
         user: {
           id: user.id,
           email: user.email,
@@ -244,10 +281,18 @@ const forgotPasswordLimiter = rateLimit({
   max: 6,
   standardHeaders: true,
   legacyHeaders: false,
+<<<<<<< HEAD
+=======
+  skip: (req) => req.method === 'OPTIONS',
+>>>>>>> staging
   message: { error: 'too_many_attempts' }
 });
 
 router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
+<<<<<<< HEAD
+=======
+  if (!(await requireTurnstile(req, res))) return;
+>>>>>>> staging
   const email = normalizeEmail(req.body?.email);
   const genericResponse = { ok: true, message: 'reset_email_sent_if_account_exists' };
 
@@ -370,9 +415,16 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
 });
 
 router.post('/admin-login', loginLimiter, async (req, res) => {
+<<<<<<< HEAD
   const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+=======
+  if (!(await requireTurnstile(req, res))) return;
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || '').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
+>>>>>>> staging
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim() || 'admin-dashboard';
@@ -402,7 +454,12 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
+<<<<<<< HEAD
       return res.json({ token, user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+=======
+      setSessionCookie(res, token);
+      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+>>>>>>> staging
     });
   } catch (e) {
     console.error(e);
@@ -477,9 +534,16 @@ async function handleVerify(req, res) {
       const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [row.user_id]);
       await client.query('commit');
       const user = tokenRes.rows[0];
+<<<<<<< HEAD
       return res.json({
         ok: true,
         token: signJwt(user),
+=======
+      const token = signJwt(user);
+      setSessionCookie(res, token);
+      return res.json({
+        ok: true,
+>>>>>>> staging
         awardedFreeTickets,
         suspicious,
         user: {
@@ -530,8 +594,13 @@ router.put('/me', requireAuth, async (req, res) => {
   const fullName = String(req.body?.fullName || '').trim() || null;
   const organization = String(req.body?.organization || '').trim() || null;
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
+<<<<<<< HEAD
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+=======
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
+>>>>>>> staging
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const phoneCountry = cleanPhone(req.body?.phoneCountry);
   const phoneNumber = cleanPhone(req.body?.phoneNumber);
@@ -579,4 +648,12 @@ router.put('/change-password', requireAuth, async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+router.post('/logout', (_req, res) => {
+  clearSessionCookie(res);
+  return res.json({ ok: true });
+});
+
+>>>>>>> staging
 export default router;

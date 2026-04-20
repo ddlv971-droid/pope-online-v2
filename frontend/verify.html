@@ -6,7 +6,10 @@
 <title>POPE Online — Vérification email</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<<<<<<< HEAD
 <link rel="stylesheet" href="popy.css"/>
+=======
+>>>>>>> staging
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar">
@@ -31,7 +34,11 @@
 </section>
 </main>
 <script type="module">
+<<<<<<< HEAD
 import { apiFetch, setToken, getApiMessage } from './api.js';
+=======
+import { apiFetch, setSession, getApiMessage } from './api.js';
+>>>>>>> staging
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
@@ -57,8 +64,13 @@ async function run(){
   }
   try {
     const fp = await getFingerprint();
+<<<<<<< HEAD
     const data = await apiFetch('/auth/verify-email', { method:'POST', auth:false, body:{ token, fp }});
     if (data?.token) setToken(data.token);
+=======
+    const data = await apiFetch('/auth/verify-email', { method:'POST', body:{ token, fp }});
+    setSession(data?.user || {});
+>>>>>>> staging
     const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
     const next = buildTrialRoute(accountSpace, data?.wallet || {});
     try {
@@ -73,9 +85,22 @@ async function run(){
       ? '✅ Email vérifié. Votre offre gratuite privée de 15 jours démarre maintenant. Redirection en cours…'
       : '✅ Email vérifié. Votre offre gratuite publique de 15 jours démarre maintenant. Redirection en cours…';
     if (actions) {
+<<<<<<< HEAD
       actions.innerHTML = accountSpace === 'private'
         ? '<a class="btn" href="trial-start-private.html">Voir mon espace privé</a><a class="btn ghost" href="private.html">Retour à l’espace privé</a>'
         : '<a class="btn" href="trial-start-public.html">Voir mon offre publique</a><a class="btn ghost" href="public.html">Retour à l’espace public</a>';
+=======
+      actions.replaceChildren();
+      const mainLink = document.createElement('a');
+      mainLink.className = 'btn';
+      mainLink.href = accountSpace === 'private' ? 'trial-start-private.html' : 'trial-start-public.html';
+      mainLink.textContent = accountSpace === 'private' ? 'Voir mon espace privé' : 'Voir mon offre publique';
+      const backLink = document.createElement('a');
+      backLink.className = 'btn ghost';
+      backLink.href = accountSpace === 'private' ? 'private.html' : 'public.html';
+      backLink.textContent = accountSpace === 'private' ? 'Retour à l’espace privé' : 'Retour à l’espace public';
+      actions.append(mainLink, backLink);
+>>>>>>> staging
     }
     window.location.replace(next);
   } catch (e) {
@@ -86,6 +111,9 @@ async function run(){
 }
 run();
 </script>
+<<<<<<< HEAD
 <script src="popy.js"></script>
+=======
+>>>>>>> staging
 </body>
 </html>

@@ -1,5 +1,15 @@
 [build]
+<<<<<<< HEAD
   publish = "."
+=======
+  base = "frontend"
+  command = "npm config set registry https://registry.npmjs.org/ && npm cache clean --force && npm install --registry=https://registry.npmjs.org/ && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
+>>>>>>> staging
 
 [[redirects]]
   from = "/app"
@@ -55,3 +65,12 @@
   from = "/parcours"
   to = "/parcours.html"
   status = 200
+<<<<<<< HEAD
+=======
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+>>>>>>> staging

@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+=======
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+>>>>>>> staging
 import { apiFetch, API_BASE } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 if (!requireLogin('vault.html')) {}
@@ -82,7 +94,11 @@ async function load(){
   try {
     const data = await apiFetch('/vault');
     const items = data.items || [];
+<<<<<<< HEAD
     el('vaultList').innerHTML = items.length ? items.map((item)=>`<article class="vault-item ${item.direction === 'pope_to_client' ? 'is-inbound' : ''}"><div><div class="vault-item-title">${item.name}</div><div class="vault-item-meta">${formatSize(item.size)} · expire dans ${hoursLeft(item.expiresAt)} h · ${item.canFeedAI ? 'utilisable dans la génération' : 'transmission sécurisée'}</div></div><div class="row gap wrap"><a class="btn ghost" href="${API_BASE}/vault/${item.id}/download" target="_blank" rel="noopener">Télécharger</a><button class="btn ghost" type="button" data-delete="${item.id}">Supprimer</button></div></article>`).join('') : '<div class="muted">Aucune pièce disponible pour le moment.</div>';
+=======
+    el('vaultList').innerHTML = items.length ? items.map((item)=>`<article class="vault-item ${item.direction === 'pope_to_client' ? 'is-inbound' : ''}"><div><div class="vault-item-title">${escapeHtml(item.name)}</div><div class="vault-item-meta">${escapeHtml(formatSize(item.size))} · expire dans ${escapeHtml(hoursLeft(item.expiresAt))} h · ${item.canFeedAI ? 'utilisable dans la génération' : 'transmission sécurisée'}</div></div><div class="row gap wrap"><a class="btn ghost" href="${API_BASE}/vault/${encodeURIComponent(item.id)}/download" target="_blank" rel="noopener">Télécharger</a><button class="btn ghost" type="button" data-delete="${encodeURIComponent(item.id)}">Supprimer</button></div></article>`).join('') : '<div class="muted">Aucune pièce disponible pour le moment.</div>';
+>>>>>>> staging
     document.querySelectorAll('[data-delete]').forEach((btn)=>btn.addEventListener('click', async ()=>{ await apiFetch(`/vault/${btn.dataset.delete}`, { method:'DELETE' }); showToast('Pièce supprimée', 'ok'); load(); }));
   } catch (e) {
     console.error(e);
