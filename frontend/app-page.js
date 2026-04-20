@@ -19,6 +19,7 @@ let currentUser = null;
 let archiveStore = null;
 let generationInFlight = false;
 let vaultFiles = [];
+let lastDossierAnalysis = null;
 
 const PUBLIC_USECASES = [
   ['note_strategique', 'Note stratégique / arbitrage'],
@@ -455,6 +456,42 @@ function setOutput(text) {
   node.innerHTML = renderMarkdownish(raw);
 }
 
+function renderList(values = []) {
+  if (!Array.isArray(values) || !values.length) return '<p class="muted">Aucun élément détecté automatiquement.</p>';
+  return `<ul>${values.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+}
+
+function setDossierIntel(analysis) {
+  lastDossierAnalysis = analysis || null;
+  const node = el('dossierIntel');
+  if (!node) return;
+  if (!analysis || !analysis.documentCount) {
+    node.hidden = true;
+    node.innerHTML = '';
+    return;
+  }
+  const quality = analysis.quality || {};
+  node.hidden = false;
+  node.innerHTML = `
+    <h3>Analyse automatique du dossier</h3>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-card"><span class="muted">Score qualité</span><strong>${escapeHtml(String(quality.score ?? '—'))}/100</strong><span>${escapeHtml(quality.label || '')}</span></div>
+      <div class="dossier-intel-card"><span class="muted">Documents analysés</span><strong>${escapeHtml(String(analysis.readableCount || 0))}/${escapeHtml(String(analysis.documentCount || 0))}</strong><span>pièces exploitables</span></div>
+      <div class="dossier-intel-card"><span class="muted">OCR PDF scan</span><strong>${escapeHtml(String(analysis.ocrUsedCount || 0))}</strong><span>document(s) OCR</span></div>
+      <div class="dossier-intel-card"><span class="muted">Volume lu</span><strong>${escapeHtml(String(Math.round((analysis.totalTextLength || 0) / 100) / 10))}k</strong><span>caractères utiles</span></div>
+    </div>
+    <div class="dossier-intel-block"><strong>Résumé automatique multi-documents</strong><p>${escapeHtml(analysis.multiDocumentSummary || 'Aucun résumé disponible.')}</p></div>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-block dossier-intel-card"><strong>Dates détectées</strong>${renderList(analysis.dates)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Montants détectés</strong>${renderList(analysis.amounts)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Acteurs détectés</strong>${renderList(analysis.actors)}</div>
+    </div>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-block dossier-intel-card"><strong>Points forts</strong>${renderList(quality.strengths)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Points à compléter</strong>${renderList(quality.gaps)}</div>
+    </div>`;
+}
+
 function setGenerationLoading(loading) {
   generationInFlight = Boolean(loading);
   const indicator = el('generationIndicator');
@@ -508,7 +545,8 @@ function buildArchiveRecord() {
     title: inferArchiveTitle(),
     usecaseLabel: currentUsecaseLabel(),
     prompt: { context: payload.context, objective: payload.objective, facts: payload.facts },
-    result
+    result,
+    dossierAnalysis: lastDossierAnalysis || null
   };
 }
 
@@ -518,7 +556,8 @@ function rememberLastGeneration(record) {
       createdAt: new Date().toISOString(),
       usecaseLabel: record.usecaseLabel,
       prompt: record.prompt,
-      result: record.result
+      result: record.result,
+      dossierAnalysis: record.dossierAnalysis || null
     }));
   } catch {}
 }
@@ -528,6 +567,7 @@ function fillFormFromArchive(item) {
   el('objective').value = item?.prompt?.objective || '';
   el('facts').value = item?.prompt?.facts || '';
   setOutput(item?.result || '');
+  setDossierIntel(item?.dossierAnalysis || null);
   status('Archive chargée');
   persistFormState();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -893,14 +933,16 @@ async function callAI() {
   }
   if (generationInFlight) return;
   status('En cours…');
+  setDossierIntel(null);
   setGenerationLoading(true);
   try {
     const data = await apiFetch('/ai/generate', { method: 'POST', body: payload });
     const resultText = data.text || '(vide)';
     setOutput(resultText);
+    setDossierIntel(data.dossierAnalysis || null);
     status('Terminé');
     setTicketsBadge(data.wallet);
-    rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText });
+    rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText, dossierAnalysis: data.dossierAnalysis || null });
     persistFormState();
     if (el('archiveAutoSave').checked) archiveCurrentGeneration(false);
   } catch (e) {
@@ -908,15 +950,18 @@ async function callAI() {
     status('Erreur');
     if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
       setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
+      setDossierIntel(null);
       showToast('Accès temporairement limité', 'warn');
       return;
     }
     if (e.status === 400 && e.data?.error === 'sensitive_data') {
       setOutput('⚠️ Le contenu semble contenir des données sensibles. Merci de les retirer puis réessayez.');
+      setDossierIntel(null);
       showToast('Données sensibles détectées', 'warn');
       return;
     }
     setOutput('Erreur : ' + getApiMessage(e));
+    setDossierIntel(null);
     showToast('Erreur de génération', 'err');
   } finally {
     setGenerationLoading(false);

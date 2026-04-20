@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 import { requireAuth } from '../middleware/auth.js';
 import { withClient } from '../db/index.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
-import { getUserVaultFiles, buildAiFileContext } from './vault.js';
+import { getUserVaultFiles, buildAiFileContext, buildDossierAnalysis } from './vault.js';
 import { buildSystemPrompt, buildUserPrompt, callMistral } from '../services/mistral.js';
 
 const router = express.Router();
@@ -25,6 +25,7 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
     const userId = req.user.sub;
     const uploadedFileIds = Array.isArray(payload.uploaded_file_ids) ? payload.uploaded_file_ids.slice(0, 8) : [];
     const fileBundle = await withClient(async (client) => getUserVaultFiles(client, userId, uploadedFileIds));
+    const dossierAnalysis = buildDossierAnalysis(fileBundle);
     const fileContext = buildAiFileContext(fileBundle);
     payload.facts = [payload.facts, fileContext].filter(Boolean).join('\n\n');
 
@@ -91,11 +92,11 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
       );
 
       const w2 = await client.query('select * from wallets where user_id=$1', [userId]);
-      return { ok: true, text, wallet: w2.rows[0] };
+      return { ok: true, text, wallet: w2.rows[0], dossierAnalysis };
     });
 
     if (!result.ok) return res.status(result.status).json(result.body);
-    return res.json({ text: result.text, wallet: result.wallet });
+    return res.json({ text: result.text, wallet: result.wallet, dossierAnalysis: result.dossierAnalysis || null });
   } catch (e) {
     console.error(e);
     const status = e?.status === 401 ? 502 : 500;

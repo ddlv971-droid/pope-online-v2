@@ -5378,3 +5378,12 @@ body.bg > footer{position:relative;z-index:3;}
 .dash16-title-formalites{display:flex;flex-direction:column;gap:2px;white-space:normal;font-size:13.2px;line-height:1.06;max-width:100%;}
 .dash16-title-formalites span{display:block;}
 @media (max-width:1280px){.dash16-title-admin{font-size:13px}.dash16-title-formalites{font-size:12.8px}}
+
+.dossier-intel-panel{margin:0 0 16px 0;padding:16px 18px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(8,18,41,.5)}
+.dossier-intel-panel h3{margin:0 0 10px 0;font-size:1rem}
+.dossier-intel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:0 0 12px 0}
+.dossier-intel-card{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.dossier-intel-card strong{display:block;font-size:1.1rem}
+.dossier-intel-block{margin-top:10px}
+.dossier-intel-block ul{margin:6px 0 0 18px}
+.dossier-intel-block p{margin:6px 0 0 0;white-space:pre-line}
