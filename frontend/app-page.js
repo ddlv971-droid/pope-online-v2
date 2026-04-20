@@ -774,7 +774,7 @@ function renderUsecaseInsight(space = currentSpace) {
   if (space !== 'private') {
     host.innerHTML = `<div class="usecase-insight-card-v15"><strong>Cadre public</strong><p>Choisissez un format de livrable pour cadrer un besoin de collectivité, préparer un arbitrage ou produire un draft sécurisé avant relecture humaine si nécessaire.</p></div>`;
     el('vaultInlineTitle').textContent = 'Pièces temporaires 48h';
-    el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats texte alimentent l’IA directement ; les autres formats restent disponibles en dépôt sécurisé.';
+    el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats TXT, DOC, CSV et PDF sélectionnés depuis le dépôt sécurisé 48h peuvent être analysés pour nourrir la génération.';
     el('safeNote').textContent = '🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.';
     el('context').placeholder = 'Collectivité, enjeu, contraintes, échéance, destinataires…';
     el('objective').placeholder = 'Décision attendue, arbitrage, message clé, finalité…';
@@ -850,7 +850,7 @@ function renderVaultInline() {
       <input type="checkbox" data-vault-select value="${item.id}">
       <div>
         <strong>${escapeHtml(item.name)}</strong>
-        <span>${formatFileSize(item.size)} · expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')} · ${item.canFeedAI ? 'exploitable dans la génération' : 'transmis comme pièce jointe'}</span>
+        <span>${formatFileSize(item.size)} · expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')} · ${item.canFeedAI ? 'analysable dans la génération' : 'transmis comme pièce jointe'}</span>
       </div>
     </label>`).join('');
 }

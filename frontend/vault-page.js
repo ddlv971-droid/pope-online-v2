@@ -78,7 +78,7 @@ function applySpaceLabels(){
   const note = document.querySelector('.vault-hero-note span');
   if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
   const intro = document.querySelector('.vault-upload-card .muted');
-  if (intro) intro.textContent = 'Formats autorisés : TXT, DOC, CSV et PDF. Les fichiers TXT et CSV peuvent alimenter la génération ; les DOC et PDF restent disponibles en transmission sécurisée pendant 48h.';
+  if (intro) intro.textContent = 'Formats autorisés : TXT, DOC, CSV et PDF. Les fichiers TXT, DOC, CSV et PDF peuvent désormais être analysés pour la génération quand vous les sélectionnez.';
   const purpose = el('vaultPurpose');
   if (purpose) {
     purpose.replaceChildren();

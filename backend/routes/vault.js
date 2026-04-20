@@ -14,7 +14,7 @@ const storageDir = path.resolve(__dirname, '../storage/ephemeral');
 fs.mkdirSync(storageDir, { recursive: true });
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const AI_TEXT_TYPES = ['text/plain', 'text/csv'];
+const AI_ANALYZABLE_TYPES = ['text/plain', 'text/csv', 'application/msword', 'application/pdf'];
 const ALLOWED_UPLOAD_TYPES = ['text/plain', 'text/csv', 'application/msword', 'application/pdf'];
 const ALLOWED_EXTENSIONS = ['.txt', '.csv', '.doc', '.pdf'];
 
@@ -46,6 +46,94 @@ function normalizeUploadType(name='', type='') {
   return { ok: true, ext, type: normalizedType };
 }
 
+
+function cleanExtractedText(raw = '') {
+  return String(raw || '')
+    .replace(/\u0000/g, ' ')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ' ')
+    .replace(/\r/g, '\n')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+    .slice(0, 20000);
+}
+
+function decodePdfString(value = '') {
+  return String(value || '')
+    .replace(/\\([nrtbf()\\])/g, (_, ch) => ({ n: '\n', r: '\r', t: '\t', b: '\b', f: '\f', '(': '(', ')': ')', '\\': '\\' }[ch] || ch))
+    .replace(/\\([0-7]{1,3})/g, (_, oct) => String.fromCharCode(parseInt(oct, 8)));
+}
+
+function extractTextFromPdf(buffer) {
+  const source = buffer.toString('latin1');
+  const parts = [];
+
+  const directStrings = source.match(/\((?:\\.|[^\\)]){1,1200}\)\s*Tj/g) || [];
+  for (const match of directStrings) {
+    const body = match.replace(/\)\s*Tj$/, '').replace(/^\(/, '');
+    const decoded = cleanExtractedText(decodePdfString(body));
+    if (decoded) parts.push(decoded);
+  }
+
+  const arrayMatches = source.match(/\[(?:.|\n|\r){1,4000}?\]\s*TJ/g) || [];
+  for (const match of arrayMatches) {
+    const strMatches = match.match(/\((?:\\.|[^\\)]){1,1200}\)/g) || [];
+    const joined = cleanExtractedText(strMatches.map((s) => decodePdfString(s.slice(1, -1))).join(' '));
+    if (joined) parts.push(joined);
+  }
+
+  const hexMatches = source.match(/<([0-9A-Fa-f]{8,})>\s*Tj/g) || [];
+  for (const match of hexMatches) {
+    const hex = (match.match(/<([0-9A-Fa-f]{8,})>/) || [null, ''])[1];
+    try {
+      const decoded = cleanExtractedText(Buffer.from(hex, 'hex').toString('utf8'));
+      if (decoded) parts.push(decoded);
+    } catch {}
+  }
+
+  if (!parts.length) {
+    const fallback = source
+      .replace(/[^\x20-\x7E\n\r\tÀ-ÿ]/g, ' ')
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 20);
+    if (fallback.length) parts.push(fallback.join('\n'));
+  }
+
+  return cleanExtractedText(parts.join('\n\n'));
+}
+
+function extractTextFromDoc(buffer) {
+  const source = buffer.toString('latin1');
+  const lines = source
+    .replace(/\u0000/g, ' ')
+    .replace(/[^\x20-\x7E\n\r\tÀ-ÿ]/g, ' ')
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 20);
+  return cleanExtractedText(lines.join('\n'));
+}
+
+function extractTextForAi(file) {
+  try {
+    const buffer = fs.readFileSync(file.path);
+    const mime = String(file.type || '').toLowerCase();
+    if (mime === 'text/plain' || mime === 'text/csv') {
+      return cleanExtractedText(buffer.toString('utf8'));
+    }
+    if (mime === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf')) {
+      return extractTextFromPdf(buffer);
+    }
+    if (mime === 'application/msword' || file.name?.toLowerCase().endsWith('.doc')) {
+      return extractTextFromDoc(buffer);
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
 function cleanupStoredFile(storedName) {
   if (!storedName) return;
   const target = path.join(storageDir, storedName);
@@ -75,7 +163,7 @@ async function listFiles(client, userId) {
     size: Number(row.size_bytes || 0),
     createdAt: row.created_at,
     expiresAt: row.expires_at,
-    canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+    canFeedAI: AI_ANALYZABLE_TYPES.includes(String(row.mime_type || '').toLowerCase())
   }));
 }
 
@@ -98,7 +186,7 @@ export async function getUserVaultFiles(client, userId, ids = []) {
     createdAt: row.created_at,
     expiresAt: row.expires_at,
     path: path.join(storageDir, row.stored_name),
-    canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+    canFeedAI: AI_ANALYZABLE_TYPES.includes(String(row.mime_type || '').toLowerCase())
   }));
 }
 
@@ -120,22 +208,21 @@ export function buildMailAttachments(files = []) {
 
 export function buildAiFileContext(files = []) {
   const parts = [];
-  const nonText = [];
+  const unreadable = [];
   for (const file of files) {
     if (!file.canFeedAI) {
-      nonText.push(file.name);
+      unreadable.push(file.name);
       continue;
     }
-    try {
-      const raw = fs.readFileSync(file.path, 'utf8');
-      const cleaned = String(raw || '').replace(/\u0000/g, '').slice(0, 12000);
-      if (cleaned.trim()) {
-        parts.push(`PIÈCE JOINTE: ${file.name}\n${cleaned}`);
-      }
-    } catch {}
+    const extracted = extractTextForAi(file);
+    if (extracted) {
+      parts.push(`PIÈCE JOINTE ANALYSÉE: ${file.name}\n${extracted}`);
+    } else {
+      unreadable.push(file.name);
+    }
   }
-  if (nonText.length) {
-    parts.push(`PIÈCES JOINTES NON ANALYSÉES AUTOMATIQUEMENT (formats non textuels) : ${nonText.join(', ')}`);
+  if (unreadable.length) {
+    parts.push(`PIÈCES JOINTES NON ANALYSÉES AUTOMATIQUEMENT : ${unreadable.join(', ')}`);
   }
   return parts.join('\n\n');
 }
@@ -184,7 +271,7 @@ router.post('/upload', requireAuth, async (req, res) => {
         size: Number(row.size_bytes || 0),
         createdAt: row.created_at,
         expiresAt: row.expires_at,
-        canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+        canFeedAI: AI_ANALYZABLE_TYPES.includes(String(row.mime_type || '').toLowerCase())
       };
     });
     return res.json({ ok: true, item });
