@@ -30,7 +30,7 @@
 </section>
 </main>
 <script type="module">
-import { apiFetch, setToken, getApiMessage } from './api.js';
+import { apiFetch, setSession, getApiMessage } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 
 const out = document.getElementById('out');
@@ -57,7 +57,7 @@ async function run(){
   try {
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', body:{ token, fp }});
-    setToken(data?.token, data?.user || {});
+    setSession(data?.user || {});
     const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
     const next = buildTrialRoute(accountSpace, data?.wallet || {});
     try {

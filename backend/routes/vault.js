@@ -14,10 +14,36 @@ const storageDir = path.resolve(__dirname, '../storage/ephemeral');
 fs.mkdirSync(storageDir, { recursive: true });
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const SAFE_TEXT_TYPES = ['text/plain','text/markdown','application/json','text/csv','text/html','application/xml','text/xml'];
+const AI_TEXT_TYPES = ['text/plain', 'text/csv'];
+const ALLOWED_UPLOAD_TYPES = ['text/plain', 'text/csv', 'application/msword', 'application/pdf'];
+const ALLOWED_EXTENSIONS = ['.txt', '.csv', '.doc', '.pdf'];
+
 
 function safeName(name='document') {
   return String(name || 'document').replace(/[^a-zA-Z0-9._-]+/g, '_').slice(-120) || 'document';
+}
+
+function extensionOf(name='') {
+  return path.extname(String(name || '')).toLowerCase();
+}
+
+function inferTypeFromName(name='') {
+  const ext = extensionOf(name);
+  if (ext === '.txt') return 'text/plain';
+  if (ext === '.csv') return 'text/csv';
+  if (ext === '.doc') return 'application/msword';
+  if (ext === '.pdf') return 'application/pdf';
+  return 'application/octet-stream';
+}
+
+function normalizeUploadType(name='', type='') {
+  const normalizedType = String(type || '').trim().toLowerCase();
+  const ext = extensionOf(name);
+  const inferred = inferTypeFromName(name);
+  if (!ALLOWED_EXTENSIONS.includes(ext)) return { ok: false, ext, type: normalizedType || inferred };
+  if (!normalizedType || normalizedType === 'application/octet-stream') return { ok: true, ext, type: inferred };
+  if (!ALLOWED_UPLOAD_TYPES.includes(normalizedType)) return { ok: false, ext, type: normalizedType };
+  return { ok: true, ext, type: normalizedType };
 }
 
 function cleanupStoredFile(storedName) {
@@ -49,7 +75,7 @@ async function listFiles(client, userId) {
     size: Number(row.size_bytes || 0),
     createdAt: row.created_at,
     expiresAt: row.expires_at,
-    canFeedAI: SAFE_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+    canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
   }));
 }
 
@@ -72,7 +98,7 @@ export async function getUserVaultFiles(client, userId, ids = []) {
     createdAt: row.created_at,
     expiresAt: row.expires_at,
     path: path.join(storageDir, row.stored_name),
-    canFeedAI: SAFE_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+    canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
   }));
 }
 
@@ -127,10 +153,13 @@ router.get('/', requireAuth, async (req, res) => {
 router.post('/upload', requireAuth, async (req, res) => {
   try {
     const name = safeName(req.body?.name || 'document');
-    const type = String(req.body?.type || 'application/octet-stream').slice(0, 120);
+    const requestedType = String(req.body?.type || 'application/octet-stream').slice(0, 120);
     const purpose = String(req.body?.purpose || 'general').slice(0, 120);
     const direction = String(req.body?.direction || 'client_to_pope').slice(0, 40);
     const contentBase64 = String(req.body?.contentBase64 || '');
+    const normalized = normalizeUploadType(name, requestedType);
+    if (!normalized.ok) return res.status(400).json({ error: 'invalid_file_type' });
+    const type = normalized.type;
     if (!contentBase64) return res.status(400).json({ error: 'missing_file' });
     const buffer = Buffer.from(contentBase64, 'base64');
     if (!buffer.length) return res.status(400).json({ error: 'missing_file' });
@@ -155,7 +184,7 @@ router.post('/upload', requireAuth, async (req, res) => {
         size: Number(row.size_bytes || 0),
         createdAt: row.created_at,
         expiresAt: row.expires_at,
-        canFeedAI: SAFE_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
+        canFeedAI: AI_TEXT_TYPES.includes(String(row.mime_type || '').toLowerCase())
       };
     });
     return res.json({ ok: true, item });
@@ -210,10 +239,13 @@ router.post('/admin/share', requireAdmin, async (req, res) => {
   try {
     const userId = String(req.body?.userId || '').trim();
     const name = safeName(req.body?.name || 'document');
-    const type = String(req.body?.type || 'application/octet-stream').slice(0, 120);
+    const requestedType = String(req.body?.type || 'application/octet-stream').slice(0, 120);
     const purpose = String(req.body?.purpose || 'pope_share').slice(0, 120);
     const contentBase64 = String(req.body?.contentBase64 || '');
     if (!userId || !contentBase64) return res.status(400).json({ error: 'missing_file' });
+    const normalized = normalizeUploadType(name, requestedType);
+    if (!normalized.ok) return res.status(400).json({ error: 'invalid_file_type' });
+    const type = normalized.type;
     const buffer = Buffer.from(contentBase64, 'base64');
     if (!buffer.length) return res.status(400).json({ error: 'missing_file' });
     if (buffer.length > MAX_FILE_BYTES) return res.status(400).json({ error: 'file_too_large' });

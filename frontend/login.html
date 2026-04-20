@@ -16,14 +16,14 @@
 <div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script type="module">
-import { apiFetch, getApiMessage, setToken } from './api.js';
+import { apiFetch, getApiMessage, setSession } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 const el = (id) => document.getElementById(id);
 mountTurnstile('turnstileBox').catch(() => {});
 function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setToken(data.token, data.user || {}); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
 </script>
 <script>
 window.addEventListener("load",function(){

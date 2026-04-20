@@ -145,7 +145,7 @@
 </main>
 
 <script type="module">
-import { apiFetch, getToken, getApiMessage, setToken, clearSession } from './api.js';
+import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
@@ -468,7 +468,7 @@ async function adminLogin() {
       body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard', turnstileToken:getTurnstileToken() }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
-    setToken(data.token, data.user || {});
+    setSession(data.user || {});
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';

@@ -46,6 +46,8 @@ const FR_MESSAGES = {
   missing_expectations: "Les attentes sont manquantes.",
   missing_subject: "L'objet est manquant.",
   missing_description: "La description est manquante.",
+  invalid_file_type: "Format de fichier non autorisé. Utilisez uniquement TXT, DOC, CSV ou PDF.",
+  account_deleted: "Votre compte a été supprimé.",
   missing_need: "Le besoin est manquant.",
   satisfaction_mail_sent: "L'e-mail de satisfaction a bien été envoyé.",
   satisfaction_mail_already_sent: "L'e-mail de satisfaction a déjà été envoyé.",
@@ -57,7 +59,6 @@ const FR_MESSAGES = {
 
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
-const ACCESS_TOKEN_KEY = 'pope_access_token';
 
 export function translateApiMessage(code, fallback = '') {
   if (!code) return fallback || '';
@@ -91,29 +92,19 @@ export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
-  try { sessionStorage.removeItem(ACCESS_TOKEN_KEY); } catch {}
 }
 
 export function getToken() {
-  try {
-    const token = sessionStorage.getItem(ACCESS_TOKEN_KEY) || '';
-    if (token) return token;
-  } catch {}
   return hasSessionMarker() ? 'cookie-session' : '';
 }
 
 export function setToken(token, user = null) {
-  if (token) {
-    try { sessionStorage.setItem(ACCESS_TOKEN_KEY, token); } catch {}
-  }
   if (token || user) setSession(user || getSessionUser() || {});
   else clearSession();
 }
 
 export async function apiFetch(path, { method='GET', body=null } = {}) {
   const headers = { 'Content-Type': 'application/json' };
-  const bearer = getToken();
-  if (bearer && bearer !== 'cookie-session') headers.Authorization = `Bearer ${bearer}`;
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,

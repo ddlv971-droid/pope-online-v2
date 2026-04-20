@@ -224,7 +224,6 @@ router.post('/login', loginLimiter, async (req, res) => {
       setSessionCookie(res, token);
 
       return res.json({
-        token,
         user: {
           id: user.id,
           email: user.email,
@@ -416,7 +415,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
       setSessionCookie(res, token);
-      return res.json({ token, user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
     });
   } catch (e) {
     console.error(e);
@@ -495,7 +494,6 @@ async function handleVerify(req, res) {
       setSessionCookie(res, token);
       return res.json({
         ok: true,
-        token,
         awardedFreeTickets,
         suspicious,
         user: {
@@ -589,6 +587,52 @@ router.put('/change-password', requireAuth, async (req, res) => {
       await client.query('update users set password_hash=$2, must_change_password=false where id=$1', [req.user.sub, password_hash]);
       return res.json({ ok: true });
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+
+router.get('/me/export', requireAuth, async (req, res) => {
+  try {
+    await withClient(async (client) => {
+      const userRes = await client.query(
+        `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at, last_login_at, role,
+                phone_country, phone_number, phone_full, satisfaction_mail_sent_at, satisfaction_response_received_at, satisfaction_last_response
+           from users
+          where id=$1`,
+        [req.user.sub]
+      );
+      if (!userRes.rowCount) return res.status(404).json({ error: 'user_not_found' });
+      const walletRes = await client.query('select * from wallets where user_id=$1', [req.user.sub]);
+      const usageRes = await client.query(
+        `select kind, meta, created_at from usage_logs where user_id=$1 order by created_at desc limit 200`,
+        [req.user.sub]
+      );
+      return res.json({
+        ok: true,
+        exportedAt: new Date().toISOString(),
+        user: userRes.rows[0],
+        wallet: walletRes.rows[0] || null,
+        usage: usageRes.rows
+      });
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+router.delete('/me', requireAuth, async (req, res) => {
+  try {
+    await withClient(async (client) => {
+      await client.query('begin');
+      await client.query('delete from users where id=$1', [req.user.sub]);
+      await client.query('commit');
+    });
+    clearSessionCookie(res);
+    return res.json({ ok: true, message: 'account_deleted' });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });

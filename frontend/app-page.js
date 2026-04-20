@@ -511,15 +511,143 @@ function downloadFile(filename, content, mimeType) {
   setTimeout(() => URL.revokeObjectURL(url), 800);
 }
 
+function openPrintableDocument(html) {
+  const win = window.open('', '_blank', 'noopener,noreferrer');
+  if (!win) return false;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => {
+    try { win.focus(); win.print(); } catch {}
+  }, 250);
+  return true;
+}
+
+function csvEscape(value = '') {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
+
+function buildArchiveCsv(items = []) {
+  const rows = [['id','title','usecaseLabel','favorite','createdAt','updatedAt','context','objective','facts','result']];
+  for (const item of items) {
+    rows.push([
+      item.id,
+      item.title,
+      item.usecaseLabel,
+      item.favorite ? '1' : '0',
+      item.createdAt,
+      item.updatedAt,
+      item.prompt?.context || '',
+      item.prompt?.objective || '',
+      item.prompt?.facts || '',
+      item.result || ''
+    ]);
+  }
+  return rows.map((row) => row.map(csvEscape).join(',')).join('\n');
+}
+
+function parseCsvLine(line = '') {
+  const out = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (ch === ',' && !inQuotes) {
+      out.push(current);
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  out.push(current);
+  return out;
+}
+
+function parseArchiveImport(fileName = '', raw = '') {
+  const ext = (fileName.split('.').pop() || '').toLowerCase();
+  const content = String(raw || '').trim();
+  if (!content) return [];
+  if (ext === 'csv') {
+    const lines = content.split(/\r?\n/).filter(Boolean);
+    if (lines.length <= 1) return [];
+    const header = parseCsvLine(lines[0]);
+    const byName = Object.fromEntries(header.map((name, index) => [String(name || '').trim(), index]));
+    return lines.slice(1).map((line) => {
+      const cols = parseCsvLine(line);
+      const value = (key) => cols[byName[key]] || '';
+      return {
+        id: value('id') || undefined,
+        title: value('title') || 'Archive importée',
+        usecaseLabel: value('usecaseLabel') || 'Archive importée',
+        favorite: value('favorite') === '1',
+        createdAt: value('createdAt') || new Date().toISOString(),
+        updatedAt: value('updatedAt') || new Date().toISOString(),
+        prompt: {
+          context: value('context') || '',
+          objective: value('objective') || '',
+          facts: value('facts') || ''
+        },
+        result: value('result') || ''
+      };
+    }).filter((item) => item.result || item.prompt?.context || item.prompt?.objective || item.prompt?.facts);
+  }
+  return [{
+    title: fileName.replace(/\.[^.]+$/, '') || 'Archive importée',
+    usecaseLabel: ['doc', 'pdf'].includes(ext) ? 'Document importé' : 'Texte importé',
+    prompt: { context: '', objective: '', facts: '' },
+    result: content
+  }];
+}
+
 function buildExportContent(format) {
   const payload = buildPayload();
   const result = getCurrentResultText();
   const stamp = new Date().toLocaleString('fr-FR');
-  if (format === 'html' || format === 'doc') {
-    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${payload.context || '-'}</pre></section><section><h2>Objectif</h2><pre>${payload.objective || '-'}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${payload.facts || '-'}</pre></section><section><h2>Génération IA</h2><pre>${result}</pre></section></body></html>`;
-    return { filename: format === 'doc' ? 'pope-online-livrable.doc' : 'pope-online-livrable.html', mime: 'text/html;charset=utf-8', content: html };
+  if (format === 'doc') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section></body></html>`;
+    return { filename: 'pope-online-livrable.doc', mime: 'application/msword', content: html };
   }
-  return { filename: 'pope-online-livrable.txt', mime: 'text/plain;charset=utf-8', content: `Livrable POPE Online\nDate : ${stamp}\nType : ${currentUsecaseLabel()}\n\nContexte\n${payload.context || '-'}\n\nObjectif\n${payload.objective || '-'}\n\nÉléments factuels utiles\n${payload.facts || '-'}\n\nGénération IA\n${result}\n` };
+  if (format === 'pdf') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A;line-height:1.5}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}small{color:#51606f}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section><small>Utilisez la fonction d’impression du navigateur puis « Enregistrer au format PDF » pour finaliser le document.</small></body></html>`;
+    return { filename: 'pope-online-livrable.pdf', mime: 'text/html;charset=utf-8', content: html, printable: true };
+  }
+  if (format === 'csv') {
+    const csv = [
+      ['Section', 'Contenu'],
+      ['Date', stamp],
+      ['Type', currentUsecaseLabel()],
+      ['Contexte', payload.context || '-'],
+      ['Objectif', payload.objective || '-'],
+      ['Éléments factuels utiles', payload.facts || '-'],
+      ['Génération IA', result || '-']
+    ].map((row) => row.map((cell) => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    return { filename: 'pope-online-livrable.csv', mime: 'text/csv;charset=utf-8', content: csv };
+  }
+  return { filename: 'pope-online-livrable.txt', mime: 'text/plain;charset=utf-8', content: `Livrable POPE Online
+Date : ${stamp}
+Type : ${currentUsecaseLabel()}
+
+Contexte
+${payload.context || '-'}
+
+Objectif
+${payload.objective || '-'}
+
+Éléments factuels utiles
+${payload.facts || '-'}
+
+Génération IA
+${result}
+` };
 }
 
 function setArchiveAvailability(enabled) {
@@ -786,6 +914,11 @@ el('btnExport').addEventListener('click', () => {
     return;
   }
   const file = buildExportContent(format);
+  if (file.printable) {
+    const opened = openPrintableDocument(file.content);
+    showToast(opened ? 'Fenêtre PDF prête' : 'Veuillez autoriser l’ouverture de la fenêtre PDF', opened ? 'ok' : 'warn');
+    return;
+  }
   downloadFile(file.filename, file.content, file.mime);
   showToast(`Export ${format.toUpperCase()} prêt`, 'ok');
 });
@@ -806,8 +939,8 @@ el('btnExportArchive').addEventListener('click', () => {
   if (!archiveStore) return;
   const items = archiveStore.exportAll();
   if (!items.length) { showToast('Aucune archive à exporter', 'warn'); return; }
-  downloadFile('pope-online-archives.json', JSON.stringify(items, null, 2), 'application/json;charset=utf-8');
-  showToast('Archives exportées', 'ok');
+  downloadFile('pope-online-archives.csv', buildArchiveCsv(items), 'text/csv;charset=utf-8');
+  showToast('Archives exportées en CSV', 'ok');
 });
 
 el('archiveImportInput').addEventListener('change', async (event) => {
@@ -816,7 +949,8 @@ el('archiveImportInput').addEventListener('change', async (event) => {
   if (!file) return;
   try {
     const raw = await file.text();
-    const parsed = JSON.parse(raw);
+    const parsed = parseArchiveImport(file.name, raw);
+    if (!parsed.length) throw new Error('empty_import');
     const count = archiveStore.importMany(parsed);
     renderArchive();
     showToast(`${count} archive(s) importée(s)`, 'ok');
@@ -857,7 +991,8 @@ el('archiveList').addEventListener('click', async (event) => {
     return;
   }
   if (action === 'download') {
-    downloadFile(buildArchiveFilename(item, 'json'), JSON.stringify(item, null, 2), 'application/json;charset=utf-8');
+    const content = `Archive POPE Online\nTitre : ${item.title}\nType : ${item.usecaseLabel}\nDate : ${new Date(item.updatedAt || item.createdAt).toLocaleString('fr-FR')}\n\nContexte\n${item.prompt?.context || '-'}\n\nObjectif\n${item.prompt?.objective || '-'}\n\nÉléments factuels utiles\n${item.prompt?.facts || '-'}\n\nRésultat\n${item.result || '-'}\n`;
+    downloadFile(buildArchiveFilename(item, 'txt'), content, 'text/plain;charset=utf-8');
     showToast('Archive téléchargée', 'ok');
     return;
   }

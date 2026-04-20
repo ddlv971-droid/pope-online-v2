@@ -57,7 +57,7 @@ export function setAutoArchivePreference(userKey = 'anonymous', enabled = false)
   return true;
 }
 
-export function buildArchiveFilename(item, format = 'json') {
+export function buildArchiveFilename(item, format = 'txt') {
   const safe = text(item?.title || 'generation').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'generation';
   const datePart = new Date(item?.updatedAt || item?.createdAt || Date.now()).toISOString().slice(0, 10);
   return `pope-online-${safe}-${datePart}.${format}`;

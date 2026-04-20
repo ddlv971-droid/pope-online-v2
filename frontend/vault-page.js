@@ -78,8 +78,17 @@ function applySpaceLabels(){
   const note = document.querySelector('.vault-hero-note span');
   if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
   const intro = document.querySelector('.vault-upload-card .muted');
-  if (intro) intro.textContent = 'Formats conseillés pour alimentation IA : TXT, MD, CSV, JSON, HTML. Déposez aussi vos DCE, RC, projets de courrier et pièces de formalité pour exploitation 48h.';
-  el('vaultPurpose').innerHTML = '<option value="generation">Génération IA privée</option><option value="expert">Relecture experte</option><option value="mission">Accompagnement sur mesure</option><option value="general">Usage général</option>';
+  if (intro) intro.textContent = 'Formats autorisés : TXT, DOC, CSV et PDF. Les fichiers TXT et CSV peuvent alimenter la génération ; les DOC et PDF restent disponibles en transmission sécurisée pendant 48h.';
+  const purpose = el('vaultPurpose');
+  if (purpose) {
+    purpose.replaceChildren();
+    [['generation','Génération IA privée'],['expert','Relecture experte'],['mission','Accompagnement sur mesure'],['general','Usage général']].forEach(([value, label]) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      purpose.appendChild(option);
+    });
+  }
 }
 async function load(){
   try {

@@ -5,8 +5,25 @@ import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 
+
 const router = express.Router();
 router.use(requireAdmin);
+
+function requestIp(req) {
+  return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+}
+
+function logAdminEvent(req, action, details = {}) {
+  const payload = {
+    scope: 'admin',
+    action,
+    actor: req.user?.email || req.user?.sub || 'unknown',
+    ip: requestIp(req),
+    at: new Date().toISOString(),
+    details
+  };
+  console.log(JSON.stringify(payload));
+}
 
 function resolveFreeTrialEntitlements(accountSpace = 'public') {
   const space = String(accountSpace || 'public').trim().toLowerCase();
@@ -99,9 +116,10 @@ router.post('/users', async (req, res) => {
   const organization = String(req.body?.organization || '').trim() || null;
   const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
   const phoneFull = String(req.body?.phoneFull || '').trim() || null;
-  const password = String(req.body?.password || 'admin12345');
+  const password = String(req.body?.password || '');
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
+  if (password.length < 12) return res.status(400).json({ error: 'password_too_short' });
   try {
     const passwordHash = await bcrypt.hash(password, 12);
     const entitlements = resolveFreeTrialEntitlements(accountSpace);
@@ -224,6 +242,7 @@ router.delete('/users/:id', async (req, res) => {
     await withClient(async (client) => {
       await client.query("delete from users where id=$1 and role<>'admin'", [req.params.id]);
     });
+    logAdminEvent(req, 'delete_user', { userId: req.params.id });
     return res.json({ ok: true });
   } catch (e) {
     console.error(e);
