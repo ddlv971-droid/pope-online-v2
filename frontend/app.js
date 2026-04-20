@@ -2,9 +2,13 @@ import { API_BASE } from './api.js';
 
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
+const TOKEN_KEY = 'pope_session_token';
+const DRAFT_KEYS = ['pope_generation_form_public','pope_generation_form_private','pope_expert_form_public','pope_expert_form_private','pope_mission_form_public','pope_mission_form_private'];
 
 export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
   const headers = { 'Content-Type':'application/json' };
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
@@ -22,21 +26,24 @@ export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
   return data;
 }
 
-export function setSession(user = null) {
+export function setSession(user = null, token = '') {
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (token) sessionStorage.setItem(TOKEN_KEY, String(token));
 }
 
-export function setToken(_token, user = null){
-  setSession(user || {});
+export function setToken(token, user = null){
+  setSession(user || {}, token || sessionStorage.getItem(TOKEN_KEY) || '');
 }
 export function getToken(){
-  return localStorage.getItem(SESSION_KEY) === '1' ? 'cookie-session' : '';
+  return sessionStorage.getItem(TOKEN_KEY) || (localStorage.getItem(SESSION_KEY) === '1' ? 'cookie-session' : '');
 }
 export function clearToken(){
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
+  sessionStorage.removeItem(TOKEN_KEY);
+  DRAFT_KEYS.forEach((key)=>sessionStorage.removeItem(key));
 }
 
 export async function getFingerprint(){

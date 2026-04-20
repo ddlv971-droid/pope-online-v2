@@ -38,15 +38,8 @@ const actions = document.querySelector('.row.gap.wrap');
 const u = new URL(window.location.href);
 const token = u.searchParams.get('token') || '';
 
-function buildTrialRoute(accountSpace, wallet){
-  const page = accountSpace === 'private' ? 'trial-start-private.html' : 'trial-start-public.html';
-  const params = new URLSearchParams();
-  if (wallet?.trial_expires_at || wallet?.trialExpiresAt) params.set('trialEnds', wallet.trial_expires_at || wallet.trialExpiresAt);
-  if (typeof wallet?.tickets_ai !== 'undefined' || typeof wallet?.ticketsAi !== 'undefined') params.set('ticketsAi', String(wallet.tickets_ai ?? wallet.ticketsAi));
-  if (typeof wallet?.public_dossiers_limit !== 'undefined' || typeof wallet?.publicDossiersLimit !== 'undefined') params.set('publicDossiersLimit', String(wallet.public_dossiers_limit ?? wallet.publicDossiersLimit));
-  if (typeof wallet?.private_dossiers_limit !== 'undefined' || typeof wallet?.privateDossiersLimit !== 'undefined') params.set('privateDossiersLimit', String(wallet.private_dossiers_limit ?? wallet.privateDossiersLimit));
-  if (typeof wallet?.private_users_limit !== 'undefined' || typeof wallet?.privateUsersLimit !== 'undefined') params.set('privateUsersLimit', String(wallet.private_users_limit ?? wallet.privateUsersLimit));
-  return `${page}${params.toString() ? `?${params.toString()}` : ''}`;
+function buildNextRoute(accountSpace){
+  return accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
 }
 
 async function run(){
@@ -57,9 +50,9 @@ async function run(){
   try {
     const fp = await getFingerprint();
     const data = await apiFetch('/auth/verify-email', { method:'POST', body:{ token, fp }});
-    setSession(data?.user || {});
+    setSession(data?.user || {}, data?.token || '');
     const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
-    const next = buildTrialRoute(accountSpace, data?.wallet || {});
+    const next = buildNextRoute(accountSpace);
     try {
       localStorage.setItem('pope_account_space', accountSpace);
       localStorage.removeItem('pope_post_signup_next');
@@ -69,14 +62,14 @@ async function run(){
     } catch {}
     showToast('Email vérifié ✓', 'ok');
     out.textContent = accountSpace === 'private'
-      ? '✅ Email vérifié. Votre offre gratuite privée de 15 jours démarre maintenant. Redirection en cours…'
-      : '✅ Email vérifié. Votre offre gratuite publique de 15 jours démarre maintenant. Redirection en cours…';
+      ? '✅ Email vérifié. Redirection directe vers votre tableau de bord privé…'
+      : '✅ Email vérifié. Redirection directe vers votre tableau de bord public…';
     if (actions) {
       actions.replaceChildren();
       const mainLink = document.createElement('a');
       mainLink.className = 'btn';
-      mainLink.href = accountSpace === 'private' ? 'trial-start-private.html' : 'trial-start-public.html';
-      mainLink.textContent = accountSpace === 'private' ? 'Voir mon espace privé' : 'Voir mon offre publique';
+      mainLink.href = accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+      mainLink.textContent = accountSpace === 'private' ? 'Voir mon tableau de bord privé' : 'Voir mon tableau de bord public';
       const backLink = document.createElement('a');
       backLink.className = 'btn ghost';
       backLink.href = accountSpace === 'private' ? 'private.html' : 'public.html';

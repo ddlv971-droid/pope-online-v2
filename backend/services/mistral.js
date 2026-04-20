@@ -67,7 +67,8 @@ export function buildUserPrompt(payload){
     formalites_creation: 'FORMALITÉS DE CRÉATION : proposer une check-list claire, une chronologie, les pièces à préparer, les arbitrages à confirmer et les prochaines étapes',
     formalites_modification: 'FORMALITÉS DE MODIFICATION : structurer la démarche, les pièces, les acteurs, la chronologie et les courriers éventuels',
     formalites_sociales: 'FORMALITÉS SOCIALES : organiser les étapes, documents, échéances, courriers ou demandes nécessaires',
-    synthese_dossier_prive: 'SYNTHÈSE / CADRAGE DE DOSSIER : clarifier les pièces, les actions à mener, l’ordre de traitement, les points de vigilance et les suites'
+    synthese_dossier_prive: 'SYNTHÈSE / CADRAGE DE DOSSIER : clarifier les pièces, les actions à mener, l’ordre de traitement, les points de vigilance et les suites',
+    note_synthese_dossier_prive: 'NOTE DE SYNTHÈSE À PARTIR D’UN DOSSIER JOINT : produire une note claire, structurée et directement exploitable à partir des pièces déposées, avec points clés, risques, arbitrages et prochaines actions'
   };
 
   const instructionByMode = {

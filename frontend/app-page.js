@@ -26,6 +26,7 @@ const PUBLIC_USECASES = [
   ['deliberation', 'Projet de délibération'],
   ['synthese_reunion', 'Synthèse de réunion'],
   ['cadrage_projet', 'Cadrage projet / pilotage'],
+  ['note_synthese_dossier', 'Note de synthèse à partir d’un dossier joint'],
   ['design_document_public', 'Mise en forme d’un document brut']
 ];
 
@@ -54,7 +55,8 @@ const PRIVATE_USECASE_GROUPS = [
       ['formalites_creation', 'Création d’entreprise / lancement d’activité'],
       ['formalites_modification', 'Modification d’entreprise / siège / activité / dirigeants'],
       ['formalites_sociales', 'Formalités sociales / embauche / documents / affiliation'],
-      ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier']
+      ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier'],
+      ['note_synthese_dossier_prive', 'Note de synthèse à partir d’un dossier joint']
     ]
   }
 ];
@@ -194,6 +196,36 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Dates, statuts, pièces disponibles, références anonymisées, obligations connues…',
     vaultTitle: 'Pièces temporaires 48h — formalités sociales',
     vaultCopy: 'Ajoutez vos documents préparatoires ou la demande reçue pour structurer la réponse et la check-list.'
+  },
+  note_synthese_dossier: {
+    title: 'Note de synthèse à partir d’un dossier joint',
+    intro: 'Produisez une note de synthèse claire et structurée à partir d’un dossier joint pour présenter les faits, les enjeux, les risques et les suites à donner.',
+    bullets: [
+      'Cas représentatifs : dossier administratif, dossier de projet, série de pièces jointes, dossier à résumer pour arbitrage.',
+      'Le résultat vise un format court, lisible, décisionnel et immédiatement exploitable.',
+      'Ajoutez vos pièces temporaires 48h pour aider la génération à repérer les éléments essentiels du dossier.'
+    ],
+    source: 'Repères : synthèse décisionnelle / cadrage de dossier',
+    contextPlaceholder: 'Le dossier concerné, son objet, les parties prenantes, le niveau d’urgence et le destinataire de la note…',
+    objectivePlaceholder: 'Ex : produire une note de synthèse à partir des pièces jointes pour arbitrage ou présentation.',
+    factsPlaceholder: 'Pièces disponibles, dates, montants, contraintes, risques ou questions à trancher…',
+    vaultTitle: 'Pièces temporaires 48h — note de synthèse',
+    vaultCopy: 'Ajoutez le dossier, les courriers, les justificatifs ou les éléments de contexte à résumer dans la note.'
+  },
+  note_synthese_dossier_prive: {
+    title: 'Note de synthèse à partir d’un dossier joint',
+    intro: 'Préparez une note de synthèse privée à partir d’un dossier joint pour clarifier rapidement une situation, hiérarchiser les enjeux et ordonner les prochaines actions.',
+    bullets: [
+      'Cas représentatifs : dossier client, formalité, pièces de marché, dossier bancaire, dossier administratif à condenser.',
+      'Le résultat privilégie une synthèse claire, hiérarchisée et directement exploitable.',
+      'Les pièces déposées 48h servent à structurer la note et à faire ressortir les éléments déterminants.'
+    ],
+    source: 'Repères : synthèse opérationnelle / dossier privé',
+    contextPlaceholder: 'Le dossier concerné, l’entreprise, les interlocuteurs, l’échéance et le destinataire final de la note…',
+    objectivePlaceholder: 'Ex : produire une note de synthèse à partir des pièces jointes pour cadrer un dossier ou préparer une décision.',
+    factsPlaceholder: 'Pièces disponibles, dates clés, montants, échanges, contraintes, risques, décisions attendues…',
+    vaultTitle: 'Pièces temporaires 48h — note de synthèse',
+    vaultCopy: 'Ajoutez les pièces du dossier à résumer pour guider la production de la note.'
   },
   synthese_dossier_prive: {
     title: 'Synthèse / cadrage / check-list de dossier',

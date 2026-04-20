@@ -468,7 +468,7 @@ async function adminLogin() {
       body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard', turnstileToken:getTurnstileToken() }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
-    setSession(data.user || {});
+    setSession(data.user || {}, data?.token || '');
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';
