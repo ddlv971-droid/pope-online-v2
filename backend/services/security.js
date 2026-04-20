@@ -34,9 +34,17 @@ export function parseCookies(req) {
   }, {});
 }
 
+function resolveCookiePolicy() {
+  const env = String(process.env.NODE_ENV || '').trim().toLowerCase();
+  const secure = env === 'production';
+  const explicitSameSite = String(process.env.SESSION_COOKIE_SAMESITE || '').trim();
+  let sameSite = explicitSameSite || (secure ? 'None' : 'Lax');
+  if (sameSite.toLowerCase() === 'none' && !secure) sameSite = 'Lax';
+  return { secure, sameSite };
+}
+
 export function setSessionCookie(res, token) {
-  const secure = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
-  const sameSite = secure ? 'Lax' : 'Lax';
+  const { secure, sameSite } = resolveCookiePolicy();
   const parts = [
     `pope_session=${encodeURIComponent(String(token || ''))}`,
     'Path=/',
@@ -49,12 +57,12 @@ export function setSessionCookie(res, token) {
 }
 
 export function clearSessionCookie(res) {
-  const secure = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
+  const { secure, sameSite } = resolveCookiePolicy();
   const parts = [
     'pope_session=',
     'Path=/',
     'HttpOnly',
-    'SameSite=Lax',
+    `SameSite=${sameSite}`,
     'Max-Age=0'
   ];
   if (secure) parts.push('Secure');
