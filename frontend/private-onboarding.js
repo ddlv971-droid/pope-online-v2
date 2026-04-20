@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -9,7 +7,6 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
->>>>>>> staging
 
 import { apiFetch } from './api.js';
 import { showToast, requireLogin } from './app.js';

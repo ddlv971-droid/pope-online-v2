@@ -10,10 +10,6 @@ export function randomToken(size = 32) {
 
 export function ipToHash(req) {
   const raw = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
-<<<<<<< HEAD
-  // Don't store raw IP; hash it
-=======
->>>>>>> staging
   return sha256Hex(raw);
 }
 
@@ -24,8 +20,6 @@ export function uaToHash(req) {
 export function nowPlusHours(h) {
   return new Date(Date.now() + h * 3600 * 1000);
 }
-<<<<<<< HEAD
-=======
 
 export function parseCookies(req) {
   const raw = String(req.headers.cookie || '');
@@ -103,4 +97,3 @@ export async function verifyTurnstileToken({ token, ip } = {}) {
     code: Array.isArray(data['error-codes']) && data['error-codes'][0] ? data['error-codes'][0] : (data.success ? '' : 'turnstile_verification_failed')
   };
 }
->>>>>>> staging

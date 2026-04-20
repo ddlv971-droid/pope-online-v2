@@ -28,11 +28,7 @@ function buildSatisfactionLink(user) {
       fullName: user.full_name || '',
       organization: user.organization || ''
     },
-<<<<<<< HEAD
-    process.env.JWT_SECRET || 'dev-secret',
-=======
     process.env.JWT_SECRET,
->>>>>>> staging
     { expiresIn: '30d' }
   );
   return `${frontendBase}/satisfaction.html?token=${encodeURIComponent(token)}`;

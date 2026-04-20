@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-
-import jwt from 'jsonwebtoken';
-
-function extract(req) {
-  const h = req.headers.authorization || '';
-  return h.startsWith('Bearer ') ? h.slice(7) : null;
-=======
 import jwt from 'jsonwebtoken';
 import { parseCookies } from '../services/security.js';
 
@@ -14,7 +6,6 @@ function extract(req) {
   if (h.startsWith('Bearer ')) return h.slice(7);
   const cookies = parseCookies(req);
   return cookies.pope_session || null;
->>>>>>> staging
 }
 
 export function requireAuth(req, res, next) {

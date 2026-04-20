@@ -1,12 +1,69 @@
 [build]
   base = "frontend"
+  command = "npm config set registry https://registry.npmjs.org/ && npm cache clean --force && npm install --registry=https://registry.npmjs.org/ && npm run build"
   publish = "dist"
-  command = "npm install --registry=https://registry.npmjs.org/ && npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
+  NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
+
+[[redirects]]
+  from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/expert"
+  to = "/expert.html"
+  status = 200
+
+[[redirects]]
+  from = "/mission"
+  to = "/mission.html"
+  status = 200
+
+[[redirects]]
+  from = "/pricing"
+  to = "/pricing.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup"
+  to = "/signup.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup-public"
+  to = "/signup-public.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup-private"
+  to = "/signup-private.html"
+  status = 200
+
+[[redirects]]
+  from = "/parcours"
+  to = "/parcours.html"
+  status = 200
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
