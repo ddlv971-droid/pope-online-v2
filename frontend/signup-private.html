@@ -34,14 +34,16 @@
 <label class="label">Mot de passe (8 caractères min.)</label>
 <div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
 <label class="row gap" style="align-items:flex-start;margin-top:10px"><input id="cgu" style="margin-top:4px" type="checkbox" autocomplete="off"><span class="muted"><span class="consent-text">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles</span>.</span></label>
-<div class="row gap wrap" style="margin-top:16px"><button class="btn" id="btn">Créer mon compte privé</button><a class="btn ghost" href="signup.html">Changer d’espace</a></div>
+<div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:16px"><button class="btn" id="btn">Créer mon compte privé</button><a class="btn ghost" href="signup.html">Changer d’espace</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 import { attachIntlPhone } from './phone.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 const el = (id) => document.getElementById(id);
+mountTurnstile('turnstileBox').catch(() => {});
 attachIntlPhone({ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' });
 try { localStorage.setItem('pope_post_signup_next', 'login.html'); localStorage.setItem('pope_account_space', 'private'); } catch {}
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
@@ -49,10 +51,10 @@ el('btn').addEventListener('click', async () => {
   if (!el('cgu').checked) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
   try {
     const fp = await getFingerprint();
-    await apiFetch('/auth/signup', { method:'POST', auth:false, body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private' } });
+    await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken() } });
     showToast('Compte créé. Vérifiez votre email.', 'ok');
     el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
-  } catch (e) { el('msg').textContent = 'Erreur : ' + getApiMessage(e); showToast('Erreur de création', 'err'); }
+  } catch (e) { resetTurnstile(); el('msg').textContent = 'Erreur : ' + getApiMessage(e); showToast('Erreur de création', 'err'); }
 });
 </script>
 <script>

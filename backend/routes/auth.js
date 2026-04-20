@@ -7,7 +7,7 @@ import { withClient } from '../db/index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
-import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours } from '../services/security.js';
+import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
 
 const router = express.Router();
 
@@ -16,6 +16,7 @@ const loginLimiter = rateLimit({
   max: 12,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS',
   message: { error: 'too_many_attempts' }
 });
 
@@ -74,8 +75,17 @@ function resolveFrontendBaseUrl() {
   return raw;
 }
 
+async function requireTurnstile(req, res) {
+  const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
+  if (outcome.success) return true;
+  res.status(403).json({ error: 'bot_protection_failed' });
+  return false;
+}
+
 
 router.post('/signup', async (req, res) => {
+  if (!(await requireTurnstile(req, res))) return;
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   const fullName = String(req.body?.fullName || '').trim() || null;
@@ -171,6 +181,7 @@ Ce lien expire dans 24h.
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
+  if (!(await requireTurnstile(req, res))) return;
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
@@ -210,9 +221,9 @@ router.post('/login', loginLimiter, async (req, res) => {
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
+      setSessionCookie(res, token);
 
       return res.json({
-        token,
         user: {
           id: user.id,
           email: user.email,
@@ -242,10 +253,12 @@ const forgotPasswordLimiter = rateLimit({
   max: 6,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS',
   message: { error: 'too_many_attempts' }
 });
 
 router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
+  if (!(await requireTurnstile(req, res))) return;
   const email = normalizeEmail(req.body?.email);
   const genericResponse = { ok: true, message: 'reset_email_sent_if_account_exists' };
 
@@ -368,6 +381,7 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
 });
 
 router.post('/admin-login', loginLimiter, async (req, res) => {
+  if (!(await requireTurnstile(req, res))) return;
   const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || '').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
@@ -400,7 +414,8 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       await client.query('update users set last_login_at=now() where id=$1', [user.id]);
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
-      return res.json({ token, user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+      setSessionCookie(res, token);
+      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
     });
   } catch (e) {
     console.error(e);
@@ -475,9 +490,10 @@ async function handleVerify(req, res) {
       const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [row.user_id]);
       await client.query('commit');
       const user = tokenRes.rows[0];
+      const token = signJwt(user);
+      setSessionCookie(res, token);
       return res.json({
         ok: true,
-        token: signJwt(user),
         awardedFreeTickets,
         suspicious,
         user: {
@@ -575,6 +591,11 @@ router.put('/change-password', requireAuth, async (req, res) => {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });
   }
+});
+
+router.post('/logout', (_req, res) => {
+  clearSessionCookie(res);
+  return res.json({ ok: true });
 });
 
 export default router;

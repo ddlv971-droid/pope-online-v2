@@ -41,7 +41,7 @@
             <h3>Sécurisation</h3>
             <p class="muted">Le changement de mot de passe est imposé à la première connexion puis reste possible à tout moment depuis “Mon compte”.</p>
             <button class="btn" id="adminLoginBtn">Se connecter</button>
-            <div class="fineprint" id="adminLoginMsg"></div>
+            <div id="turnstileBox" style="margin-top:14px" hidden></div><div class="fineprint" id="adminLoginMsg"></div>
           </div>
         </div>
       </div>
@@ -145,11 +145,13 @@
 </main>
 
 <script type="module">
-import { apiFetch, setToken, getToken, getApiMessage } from './api.js';
-import { clearToken, wireLogout, showToast } from './app.js';
+import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
+import { wireLogout, showToast } from './app.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
 wireLogout();
 const el = (id) => document.getElementById(id);
+mountTurnstile('turnstileBox').catch(() => {});
 let usersCache = [];
 let lastFilteredUsers = [];
 
@@ -463,17 +465,17 @@ async function adminLogin() {
   try {
     const data = await apiFetch('/auth/admin-login', {
       method:'POST',
-      auth:false,
-      body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard' }
+      body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard', turnstileToken:getTurnstileToken() }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
-    setToken(data.token);
+    setSession(data.user || {});
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';
     await loadUsers();
     showToast('Administration ouverte', 'ok');
   } catch (e) {
+    resetTurnstile();
     el('adminLoginMsg').textContent = 'Erreur : ' + getApiMessage(e);
     showToast('Connexion admin impossible', 'err');
   }
@@ -522,7 +524,7 @@ if (getToken()) {
   loadUsers().then(() => {
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
-  }).catch(() => clearToken());
+  }).catch(() => clearSession());
 }
 </script>
 </body>
