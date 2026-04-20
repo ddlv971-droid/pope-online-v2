@@ -57,6 +57,7 @@ const FR_MESSAGES = {
 
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
+const ACCESS_TOKEN_KEY = 'pope_access_token';
 
 export function translateApiMessage(code, fallback = '') {
   if (!code) return fallback || '';
@@ -90,19 +91,29 @@ export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
+  try { sessionStorage.removeItem(ACCESS_TOKEN_KEY); } catch {}
 }
 
 export function getToken() {
+  try {
+    const token = sessionStorage.getItem(ACCESS_TOKEN_KEY) || '';
+    if (token) return token;
+  } catch {}
   return hasSessionMarker() ? 'cookie-session' : '';
 }
 
 export function setToken(token, user = null) {
+  if (token) {
+    try { sessionStorage.setItem(ACCESS_TOKEN_KEY, token); } catch {}
+  }
   if (token || user) setSession(user || getSessionUser() || {});
   else clearSession();
 }
 
 export async function apiFetch(path, { method='GET', body=null } = {}) {
   const headers = { 'Content-Type': 'application/json' };
+  const bearer = getToken();
+  if (bearer && bearer !== 'cookie-session') headers.Authorization = `Bearer ${bearer}`;
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,

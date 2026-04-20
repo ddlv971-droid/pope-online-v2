@@ -1,5 +1,8 @@
 (function () {
   function hasSession() {
+    try {
+      if (sessionStorage.getItem('pope_access_token')) return true;
+    } catch {}
     return localStorage.getItem('pope_session_active') === '1';
   }
 

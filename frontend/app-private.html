@@ -61,7 +61,7 @@
     <section class="card archive-v10 archive-v11 archive-v12" id="archivePanel"><div class="archive-v10-head"><div><h2>Archivage local</h2><p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p></div><label class="archive-auto-v10"><input type="checkbox" id="archiveAutoSave" /><span>Archiver automatiquement les prochaines générations</span></label></div><div class="archive-v10-toolbar archive-v11-toolbar"><button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button><button class="btn ghost" id="btnExportArchive" type="button">Exporter</button><label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label><input id="archiveImportInput" type="file" accept="application/json" hidden /><button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button></div><input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" /><div class="archive-v10-summary" id="archiveSummary"></div><div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div></section>
   </section>
 </main>
-<script src="./auth-guard.js"></script>
+<script type="module" src="./auth-guard.js"></script>
 <script type="module" src="./app-page.js"></script>
 </body>
 </html>

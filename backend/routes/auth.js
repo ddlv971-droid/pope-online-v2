@@ -224,6 +224,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       setSessionCookie(res, token);
 
       return res.json({
+        token,
         user: {
           id: user.id,
           email: user.email,
@@ -415,7 +416,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
       setSessionCookie(res, token);
-      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
+      return res.json({ token, user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
     });
   } catch (e) {
     console.error(e);
@@ -494,6 +495,7 @@ async function handleVerify(req, res) {
       setSessionCookie(res, token);
       return res.json({
         ok: true,
+        token,
         awardedFreeTickets,
         suspicious,
         user: {

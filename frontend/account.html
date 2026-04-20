@@ -72,7 +72,7 @@
 </section>
 </main>
 
-<script src="./auth-guard.js"></script>
+<script type="module" src="./auth-guard.js"></script>
 <script type="module">
 import { requireLogin, wireLogout } from './app.js';
 if (!requireLogin('account.html')) {}
