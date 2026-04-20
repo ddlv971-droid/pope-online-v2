@@ -61,7 +61,7 @@ router.post('/satisfaction-submit', limiter, async (req, res) => {
   if (!criteria.length) return res.status(400).json({ error: 'missing_satisfaction_answers' });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded?.scope !== 'satisfaction' || !decoded?.sub) {
       return res.status(400).json({ error: 'invalid_or_expired_token' });
     }

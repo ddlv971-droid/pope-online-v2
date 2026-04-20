@@ -7,7 +7,6 @@
 <link href="app.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<link rel="stylesheet" href="popy.css"/>
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar"><div class="container row between"><a class="brand link" href="public.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Créer un compte public</div></div></a></div></header>
@@ -55,7 +54,7 @@ el('btn').addEventListener('click', async () => {
     el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
   } catch (e) { el('msg').textContent = 'Erreur : ' + getApiMessage(e); showToast('Erreur de création', 'err'); }
 });
-</script><script src="popy.js"></script>
+</script>
 <script>
 window.addEventListener("load",function(){
   document.querySelectorAll("input").forEach(i=>{

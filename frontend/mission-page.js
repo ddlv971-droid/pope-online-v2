@@ -1,3 +1,12 @@
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 import { apiFetch, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 if (!requireLogin('mission.html')) {}
@@ -18,7 +27,7 @@ function applySpaceLabels(){
   el('content').placeholder = 'Décrivez l’objectif, les étapes à clarifier, les points de vigilance et le niveau d’appui attendu.';
   el('missionVaultLead').textContent = 'Joignez les pièces utiles à l’analyse : documents de formalité, statuts, DCE, courriers reçus ou justificatifs.';
 }
-function renderVault(){ const host=el('vaultMissionList'); host.innerHTML = vaultFiles.length ? vaultFiles.map((item)=>`<label class="vault-inline-item"><input type="checkbox" data-vault-file value="${item.id}"><div><strong>${item.name}</strong><span>expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')}</span></div></label>`).join('') : '<div class="muted">Aucune pièce temporaire disponible pour le moment.</div>'; }
+function renderVault(){ const host=el('vaultMissionList'); host.innerHTML = vaultFiles.length ? vaultFiles.map((item)=>`<label class="vault-inline-item"><input type="checkbox" data-vault-file value="${encodeURIComponent(item.id)}"><div><strong>${escapeHtml(item.name)}</strong><span>expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')}</span></div></label>`).join('') : '<div class="muted">Aucune pièce temporaire disponible pour le moment.</div>'; }
 async function refreshWallet(){
   try{
     const me=await apiFetch('/auth/me');

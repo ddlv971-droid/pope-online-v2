@@ -71,9 +71,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 
 function resolveFrontendBaseUrl() {
   const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
-  if (!raw) return 'https://pope-online.com';
-  return raw.replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
-            .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com');
+  return raw;
 }
 
 
@@ -174,8 +172,8 @@ Ce lien expire dans 24h.
 
 router.post('/login', loginLimiter, async (req, res) => {
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
-  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
-  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim();
@@ -370,9 +368,9 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
 });
 
 router.post('/admin-login', loginLimiter, async (req, res) => {
-  const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim();
-  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
-  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const rawIdentifier = String(req.body?.identifier || req.body?.email || process.env.DEFAULT_ADMIN_USERNAME || '').trim();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const password = String(req.body?.password || '');
   const fp = String(req.body?.fp || '').trim() || 'admin-dashboard';
@@ -530,8 +528,8 @@ router.put('/me', requireAuth, async (req, res) => {
   const fullName = String(req.body?.fullName || '').trim() || null;
   const organization = String(req.body?.organization || '').trim() || null;
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
-  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || 'POPADMIN').trim().toLowerCase();
-  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || 'admin@pope-online.local').trim().toLowerCase();
+  const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
+  const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
   const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const phoneCountry = cleanPhone(req.body?.phoneCountry);
   const phoneNumber = cleanPhone(req.body?.phoneNumber);

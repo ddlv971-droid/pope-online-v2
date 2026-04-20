@@ -1,6 +1,6 @@
 [build]
   base = "frontend"
-  command = "npm install --registry=https://registry.npmjs.org/ && npm run build"
+  command = "npm config set registry https://registry.npmjs.org/ && npm cache clean --force && npm install --registry=https://registry.npmjs.org/ && npm run build"
   publish = "dist"
 
 [build.environment]

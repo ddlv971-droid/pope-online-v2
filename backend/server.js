@@ -16,6 +16,13 @@ import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
 
+const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL'];
+const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
+if (missingEnv.length) {
+  console.error(`Missing required environment variables: ${missingEnv.join(', ')}`);
+  process.exit(1);
+}
+
 const app = express();
 app.set('trust proxy', 1);
 
@@ -68,7 +75,8 @@ app.use(rateLimit({
   windowMs: 60 * 1000,
   max: 120,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS'
 }));
 
 // ❤️ Health check

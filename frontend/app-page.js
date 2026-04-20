@@ -665,7 +665,7 @@ function applySpaceConfig(space) {
       </optgroup>`).join('');
     el('usecase').value = firstPrivateUsecase();
   } else {
-    el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+    el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`).join('');
     if (el('usecase').options.length) el('usecase').value = el('usecase').options[0].value;
   }
   restoreFormState(currentSpace);

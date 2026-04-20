@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp auth-guard.js dist/auth-guard.js && cp popy.js dist/popy.js",
+    "build": "vite build && cp auth-guard.js dist/auth-guard.js",
     "preview": "vite preview"
   },
   "devDependencies": {
