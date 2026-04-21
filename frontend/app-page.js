@@ -583,14 +583,46 @@ function downloadFile(filename, content, mimeType) {
 }
 
 function openPrintableDocument(html) {
-  const win = window.open('', '_blank', 'noopener,noreferrer');
-  if (!win) return false;
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
+  const printableHtml = String(html || '').replace('</body>', `<script>window.addEventListener('load',()=>{setTimeout(()=>{try{window.focus();window.print();}catch(e){}},250);});</script></body>`);
+  const blob = new Blob([printableHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  let opened = false;
+  try {
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    opened = !!win;
+  } catch {}
+  if (!opened) {
+    try {
+      const frame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.right = '0';
+      frame.style.bottom = '0';
+      frame.style.width = '1px';
+      frame.style.height = '1px';
+      frame.style.opacity = '0';
+      frame.style.pointerEvents = 'none';
+      frame.setAttribute('aria-hidden', 'true');
+      frame.src = url;
+      frame.onload = () => {
+        try {
+          frame.contentWindow?.focus();
+          frame.contentWindow?.print();
+        } catch {}
+        setTimeout(() => {
+          try { frame.remove(); } catch {}
+          try { URL.revokeObjectURL(url); } catch {}
+        }, 30000);
+      };
+      document.body.appendChild(frame);
+      return true;
+    } catch {
+      try { URL.revokeObjectURL(url); } catch {}
+      return false;
+    }
+  }
   setTimeout(() => {
-    try { win.focus(); win.print(); } catch {}
-  }, 250);
+    try { URL.revokeObjectURL(url); } catch {}
+  }, 30000);
   return true;
 }
 
@@ -992,7 +1024,7 @@ el('btnExport').addEventListener('click', () => {
   const file = buildExportContent(format);
   if (file.printable) {
     const opened = openPrintableDocument(file.content);
-    showToast(opened ? 'Fenêtre PDF prête' : 'Veuillez autoriser l’ouverture de la fenêtre PDF', opened ? 'ok' : 'warn');
+    showToast(opened ? 'Préparation du PDF lancée' : 'Veuillez autoriser l’ouverture ou l’impression du PDF', opened ? 'ok' : 'warn');
     return;
   }
   downloadFile(file.filename, file.content, file.mime);
