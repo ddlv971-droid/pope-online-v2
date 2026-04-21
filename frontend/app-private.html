@@ -7,7 +7,7 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body class="bg po-v8-public po-private-app" data-forced-space="private">
+<body data-logout-target="private.html" class="bg po-v8-public po-private-app" data-forced-space="private">
 <header class="topbar">
   <div class="container row between">
     <a class="brand link" href="dashboard-private.html" id="appHomeLink">
@@ -62,6 +62,7 @@
   </section>
 </main>
 <script src="./auth-guard.js"></script>
+<script type="module" src="./protected-topbar.js"></script>
 <script type="module" src="./app-page.js"></script>
 </body>
 </html>

@@ -57,6 +57,15 @@ export function requireLogin(next='dashboard.html'){
   return true;
 }
 
+function inferLogoutTarget(){
+  const forcedSpace = document.body?.dataset?.forcedSpace || localStorage.getItem('pope_account_space') || '';
+  const path = (window.location.pathname || '').toLowerCase();
+  if (forcedSpace === 'private' || path.includes('private')) return 'private.html';
+  if (path.endsWith('dashboard-admin.html')) return 'index.html';
+  if (path.endsWith('dashboard.html') || path.endsWith('app.html') || path.endsWith('expert.html') || path.endsWith('mission.html') || path.endsWith('vault.html')) return 'public.html';
+  return 'index.html';
+}
+
 let logoutWired = false;
 export function wireLogout(){
   if (logoutWired) return;
@@ -70,8 +79,9 @@ export function wireLogout(){
       await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
     } catch {}
     clearToken();
+    const logoutTarget = document.body?.dataset?.logoutTarget || inferLogoutTarget();
     showToast('Déconnecté', 'ok');
-    setTimeout(() => window.location.href = 'index.html', 150);
+    setTimeout(() => window.location.href = logoutTarget, 150);
   }, true);
 }
 
