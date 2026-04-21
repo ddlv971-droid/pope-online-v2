@@ -205,6 +205,31 @@ function normalizeUploadType(name='', type='') {
   return { ok: true, ext, type: normalizedType };
 }
 
+function isProbablyText(buffer) {
+  const sample = buffer.slice(0, Math.min(buffer.length, 4096)).toString('utf8');
+  const cleaned = sample.replace(/[\r\n\t]/g, '');
+  if (!cleaned.length) return true;
+  const weird = [...cleaned].filter((ch) => {
+    const code = ch.charCodeAt(0);
+    return code < 32 || code === 65533;
+  }).length;
+  return weird / Math.max(cleaned.length, 1) < 0.02;
+}
+
+function validateUploadBuffer(name = '', type = '', buffer = Buffer.alloc(0)) {
+  const ext = extensionOf(name);
+  if (ext === '.pdf') {
+    return buffer.slice(0, 5).toString('ascii') === '%PDF-' ? { ok: true } : { ok: false, error: 'invalid_file_content' };
+  }
+  if (ext === '.doc') {
+    return buffer.slice(0, 8).equals(Buffer.from([0xd0,0xcf,0x11,0xe0,0xa1,0xb1,0x1a,0xe1])) ? { ok: true } : { ok: false, error: 'invalid_file_content' };
+  }
+  if (ext === '.txt' || ext === '.csv') {
+    return isProbablyText(buffer) ? { ok: true } : { ok: false, error: 'invalid_file_content' };
+  }
+  return { ok: false, error: 'invalid_file_type' };
+}
+
 
 function cleanExtractedText(raw = '') {
   return String(raw || '')
@@ -421,6 +446,8 @@ router.post('/upload', requireAuth, async (req, res) => {
     const buffer = Buffer.from(contentBase64, 'base64');
     if (!buffer.length) return res.status(400).json({ error: 'missing_file' });
     if (buffer.length > MAX_FILE_BYTES) return res.status(400).json({ error: 'file_too_large' });
+    const contentCheck = validateUploadBuffer(name, type, buffer);
+    if (!contentCheck.ok) return res.status(400).json({ error: contentCheck.error });
     const storedName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${name}`;
     fs.writeFileSync(path.join(storageDir, storedName), buffer);
     const item = await withClient(async (client) => {
@@ -506,6 +533,8 @@ router.post('/admin/share', requireAdmin, async (req, res) => {
     const buffer = Buffer.from(contentBase64, 'base64');
     if (!buffer.length) return res.status(400).json({ error: 'missing_file' });
     if (buffer.length > MAX_FILE_BYTES) return res.status(400).json({ error: 'file_too_large' });
+    const contentCheck = validateUploadBuffer(name, type, buffer);
+    if (!contentCheck.ok) return res.status(400).json({ error: contentCheck.error });
     const storedName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${name}`;
     fs.writeFileSync(path.join(storageDir, storedName), buffer);
     await withClient(async (client) => {

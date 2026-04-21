@@ -20,10 +20,25 @@ import { apiFetch, getApiMessage, setSession } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 const el = (id) => document.getElementById(id);
+const params = new URLSearchParams(window.location.search || '');
+const requestedNext = (params.get('next') || '').trim();
 mountTurnstile('turnstileBox').catch(() => {});
-function getNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
+function getDefaultNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
+function normalizeNext(target, user) {
+  if (!target) return getDefaultNext(user);
+  const cleaned = target.replace(/^https?:\/\/[^/]+/i, '');
+  if (!cleaned || cleaned.startsWith('//')) return getDefaultNext(user);
+  if (!/^[\w./?=&%-]+$/.test(cleaned)) return getDefaultNext(user);
+  const route = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
+  const isPrivateUser = user?.accountSpace === 'private';
+  const forbiddenPrivate = ['app-private.html','expert-private.html','mission-private.html','dashboard-private.html'];
+  const forbiddenPublic = ['app.html','expert.html','mission.html','dashboard.html'];
+  if (!isPrivateUser && forbiddenPrivate.some((value) => route.startsWith(value))) return getDefaultNext(user);
+  if (isPrivateUser && forbiddenPublic.some((value) => route.startsWith(value))) return getDefaultNext(user);
+  return route || getDefaultNext(user);
+}
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}, data?.token || ''); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); setTimeout(() => window.location.href=getNext(data.user), 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}, data?.token || ''); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); const nextTarget = normalizeNext(requestedNext, data.user); setTimeout(() => window.location.href=nextTarget, 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
 </script>
 <script>
 window.addEventListener("load",function(){

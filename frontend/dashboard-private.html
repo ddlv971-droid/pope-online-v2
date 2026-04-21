@@ -7,7 +7,7 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
+<body data-logout-target="private.html" class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="private.html">
@@ -75,6 +75,7 @@
   </section>
 </main>
 <script src="./auth-guard.js"></script>
+<script type="module" src="./protected-topbar.js"></script>
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
