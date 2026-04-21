@@ -34,9 +34,14 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 function buildSatisfactionLink(user) {
-  const frontendBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '')
+  const explicit = String(process.env.FRONTEND_CANONICAL_URL || process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
+  const rawBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
+  const corsOrigins = String(process.env.CORS_ORIGIN || '').split(',').map((v) => v.trim()).filter(Boolean);
+  const productionDomain = corsOrigins.find((origin) => /^https:\/\/(www\.)?pope-online\.com$/i.test(origin));
+  const fallbackBase = rawBase
     .replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
-    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com') || 'https://pope-online.com';
+    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com');
+  const frontendBase = explicit || (/netlify\.app$/i.test(fallbackBase) && productionDomain ? productionDomain.replace(/\/$/, '') : fallbackBase) || 'https://pope-online.com';
   const token = jwt.sign(
     {
       scope: 'satisfaction',
