@@ -1,5 +1,7 @@
 import { API_BASE } from './api.js';
 
+window.__POPE_API_BASE__ = API_BASE;
+
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
 const DRAFT_KEYS = ['pope_generation_form_public','pope_generation_form_private','pope_expert_form_public','pope_expert_form_private','pope_mission_form_public','pope_mission_form_private'];
@@ -49,6 +51,8 @@ export async function getFingerprint(){
 }
 
 export function requireLogin(next='dashboard.html'){
+  if (window.__popeAuthValidated) return true;
+  if (window.__popeAuthPending) return true;
   const token = getToken();
   if (!token) {
     window.location.href = `login.html?next=${encodeURIComponent(next)}`;
