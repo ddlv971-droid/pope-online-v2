@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
+import { resolveFrontendBaseUrl } from '../services/urls.js';
 
 
 const router = express.Router();
@@ -34,14 +35,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 function buildSatisfactionLink(user) {
-  const explicit = String(process.env.FRONTEND_CANONICAL_URL || process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
-  const rawBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
-  const corsOrigins = String(process.env.CORS_ORIGIN || '').split(',').map((v) => v.trim()).filter(Boolean);
-  const productionDomain = corsOrigins.find((origin) => /^https:\/\/(www\.)?pope-online\.com$/i.test(origin));
-  const fallbackBase = rawBase
-    .replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
-    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com');
-  const frontendBase = explicit || (/netlify\.app$/i.test(fallbackBase) && productionDomain ? productionDomain.replace(/\/$/, '') : fallbackBase) || 'https://pope-online.com';
+  const frontendBase = resolveFrontendBaseUrl(process.env);
   const token = jwt.sign(
     {
       scope: 'satisfaction',

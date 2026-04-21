@@ -8,6 +8,7 @@ import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
+import { resolveFrontendBaseUrl } from '../services/urls.js';
 
 const router = express.Router();
 
@@ -68,21 +69,6 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
     privateDossiersLimit: 0,
     privateUsersLimit: 1
   };
-}
-
-function resolveFrontendBaseUrl() {
-  const explicit = String(process.env.FRONTEND_CANONICAL_URL || process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
-  if (explicit) return explicit;
-
-  const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
-  const corsOrigins = String(process.env.CORS_ORIGIN || '').split(',').map((v) => v.trim()).filter(Boolean);
-  const productionDomain = corsOrigins.find((origin) => /^https:\/\/(www\.)?pope-online\.com$/i.test(origin));
-
-  if (/netlify\.app$/i.test(raw) && productionDomain) {
-    return productionDomain.replace(/\/$/, '');
-  }
-
-  return raw;
 }
 
 async function requireTurnstile(req, res) {
