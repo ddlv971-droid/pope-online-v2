@@ -1,0 +1,1 @@
+V11 corrige le bug de navigation depuis Mon compte dans l'espace privé : le logo du header et le bouton Tableau de bord redirigent désormais dynamiquement vers dashboard-private.html pour les comptes privés et vers dashboard.html pour les comptes publics.
