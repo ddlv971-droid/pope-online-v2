@@ -5411,3 +5411,41 @@ body.bg > footer{position:relative;z-index:3;}
   body.po-auth-menu-open::before{content:'';position:fixed;inset:0;background:rgba(5,16,30,.46);z-index:5400}
   .topbar{position:sticky;top:0;z-index:5300}
 }
+
+
+/* V19 protected pages burger fix */
+@media (max-width:980px){
+  body.po-protected-page .topbar .container.row.between,
+  .topbar.po-protected-topbar .container.row.between,
+  .topbar .container.row.between.po-protected-topbar-row{
+    flex-direction:row !important;
+    flex-wrap:nowrap;
+    align-items:center !important;
+    justify-content:space-between;
+    gap:12px;
+  }
+  body.po-protected-page .topbar .brand,
+  .topbar.po-protected-topbar .brand,
+  .topbar .po-protected-brand{
+    width:auto !important;
+    flex:1 1 auto;
+    min-width:0;
+  }
+  body.po-protected-page .po-auth-burger{
+    display:inline-flex;
+    margin-left:auto;
+    align-self:center;
+  }
+  body.po-protected-page .po-auth-actions{
+    width:auto !important;
+    justify-content:flex-start;
+    left:18px;
+    right:18px;
+    top:calc(100% + 10px);
+    margin:0;
+  }
+  body.po-protected-page .po-auth-actions > *{
+    flex:0 0 auto;
+    width:100%;
+  }
+}

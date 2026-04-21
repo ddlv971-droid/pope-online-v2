@@ -24,6 +24,10 @@ function initProtectedTopbar() {
   const brand = container.querySelector(':scope > .brand');
   if (!actions || !brand || container.querySelector('.po-auth-burger')) return;
 
+  document.body.classList.add('po-protected-page');
+  header.classList.add('po-protected-topbar');
+  container.classList.add('po-protected-topbar-row');
+  brand.classList.add('po-protected-brand');
   actions.classList.add('po-auth-actions');
   actions.id = actions.id || 'poAuthActionsMenu';
 
@@ -50,6 +54,10 @@ function initProtectedTopbar() {
     if (!actions.classList.contains('is-open')) return;
     if (actions.contains(event.target) || burger.contains(event.target)) return;
     closeMenu(actions, burger);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMenu(actions, burger);
   });
 
   window.addEventListener('resize', () => {
