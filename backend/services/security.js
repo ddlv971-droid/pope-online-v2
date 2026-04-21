@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 export function sha256Hex(s) {
   return crypto.createHash('sha256').update(String(s || '')).digest('hex');
@@ -40,17 +40,18 @@ function resolveCookiePolicy() {
   const explicitSameSite = String(process.env.SESSION_COOKIE_SAMESITE || '').trim();
   let sameSite = explicitSameSite || (secure ? 'None' : 'Lax');
   if (sameSite.toLowerCase() === 'none' && !secure) sameSite = 'Lax';
-  return { secure, sameSite };
+  const maxAgeSeconds = Number(process.env.SESSION_COOKIE_MAX_AGE_SECONDS || 60 * 60 * 12);
+  return { secure, sameSite, maxAgeSeconds: Number.isFinite(maxAgeSeconds) && maxAgeSeconds > 0 ? maxAgeSeconds : 60 * 60 * 12 };
 }
 
 export function setSessionCookie(res, token) {
-  const { secure, sameSite } = resolveCookiePolicy();
+  const { secure, sameSite, maxAgeSeconds } = resolveCookiePolicy();
   const parts = [
     `pope_session=${encodeURIComponent(String(token || ''))}`,
     'Path=/',
     'HttpOnly',
     `SameSite=${sameSite}`,
-    'Max-Age=604800'
+    `Max-Age=${maxAgeSeconds}`
   ];
   if (secure) parts.push('Secure');
   res.setHeader('Set-Cookie', parts.join('; '));
@@ -72,8 +73,7 @@ export function clearSessionCookie(res) {
 export async function verifyTurnstileToken({ token, ip } = {}) {
   const secret = String(process.env.TURNSTILE_SECRET_KEY || process.env.TURNSTILE_SECRET || '').trim();
   if (!secret) {
-    console.warn('TURNSTILE secret missing: validation bypassed');
-    return { success: true, bypassed: true };
+    return { success: false, code: 'turnstile_not_configured' };
   }
   if (!String(token || '').trim()) {
     return { success: false, code: 'missing_turnstile_token' };

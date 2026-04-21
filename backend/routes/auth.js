@@ -23,9 +23,9 @@ const loginLimiter = rateLimit({
 
 function signJwt(user) {
   return jwt.sign(
-    { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public' },
+    { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public', sv: Number(user.session_version || 1) },
     process.env.JWT_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: process.env.JWT_EXPIRES_IN || '12h' }
   );
 }
 
@@ -197,7 +197,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     await withClient(async (client) => {
       const u = await client.query(
         `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
-                phone_country, phone_number, phone_full
+                phone_country, phone_number, phone_full, session_version
            from users
           where email=$1`,
         [email]
@@ -234,8 +234,7 @@ router.post('/login', loginLimiter, async (req, res) => {
           phoneNumber: user.phone_number,
           phoneFull: user.phone_full
         },
-        wallet: walletPayload(w.rows[0]),
-        token
+        wallet: walletPayload(w.rows[0])
       });
     });
   } catch (e) {
@@ -351,7 +350,8 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
       await client.query(
         `update users
             set password_hash=$1,
-                must_change_password=false
+                must_change_password=false,
+                session_version = session_version + 1
           where id=$2`,
         [password_hash, reset.user_id]
       );
@@ -396,7 +396,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
   try {
     await withClient(async (client) => {
       const u = await client.query(`select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
-                phone_country, phone_number, phone_full
+                phone_country, phone_number, phone_full, session_version
            from users
           where email=$1`, [email]);
       if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
@@ -484,7 +484,7 @@ async function handleVerify(req, res) {
         await client.query('update users set is_suspicious=true where id=$1', [row.user_id]);
       }
       const walletRes = await client.query('select * from wallets where user_id=$1', [row.user_id]);
-      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [row.user_id]);
+      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [row.user_id]);
       await client.query('commit');
       const user = tokenRes.rows[0];
       const token = signJwt(user);
@@ -506,8 +506,7 @@ async function handleVerify(req, res) {
           phoneNumber: user.phone_number,
           phoneFull: user.phone_full
         },
-        wallet: walletPayload(walletRes.rows[0]),
-        token
+        wallet: walletPayload(walletRes.rows[0])
       });
     });
   } catch (e) {
@@ -524,7 +523,7 @@ router.get('/me', requireAuth, async (req, res) => {
     await withClient(async (client) => {
       const u = await client.query(
         `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at, role, must_change_password,
-                phone_country, phone_number, phone_full
+                phone_country, phone_number, phone_full, session_version
            from users
           where id=$1`,
         [req.user.sub]
@@ -559,7 +558,7 @@ router.put('/me', requireAuth, async (req, res) => {
           where id=$1`,
         [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
       );
-      const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [req.user.sub]);
+      const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [req.user.sub]);
       return res.json({ ok: true, user: u.rows[0] });
     });
   } catch (e) {
@@ -582,7 +581,10 @@ router.put('/change-password', requireAuth, async (req, res) => {
         if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
       }
       const password_hash = await bcrypt.hash(newPassword, 12);
-      await client.query('update users set password_hash=$2, must_change_password=false where id=$1', [req.user.sub, password_hash]);
+      await client.query('update users set password_hash=$2, must_change_password=false, session_version = session_version + 1 where id=$1', [req.user.sub, password_hash]);
+      const fresh = await client.query('select id, email, account_space, role, session_version from users where id=$1', [req.user.sub]);
+      const token = signJwt(fresh.rows[0]);
+      setSessionCookie(res, token);
       return res.json({ ok: true });
     });
   } catch (e) {
@@ -637,7 +639,14 @@ router.delete('/me', requireAuth, async (req, res) => {
   }
 });
 
-router.post('/logout', (_req, res) => {
+router.post('/logout', requireAuth, async (req, res) => {
+  try {
+    await withClient(async (client) => {
+      await client.query('update users set session_version = session_version + 1 where id=$1', [req.user.sub]);
+    });
+  } catch (e) {
+    console.error(e);
+  }
   clearSessionCookie(res);
   return res.json({ ok: true });
 });
