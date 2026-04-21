@@ -71,7 +71,17 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 function resolveFrontendBaseUrl() {
+  const explicit = String(process.env.FRONTEND_CANONICAL_URL || process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
+  if (explicit) return explicit;
+
   const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
+  const corsOrigins = String(process.env.CORS_ORIGIN || '').split(',').map((v) => v.trim()).filter(Boolean);
+  const productionDomain = corsOrigins.find((origin) => /^https:\/\/(www\.)?pope-online\.com$/i.test(origin));
+
+  if (/netlify\.app$/i.test(raw) && productionDomain) {
+    return productionDomain.replace(/\/$/, '');
+  }
+
   return raw;
 }
 
