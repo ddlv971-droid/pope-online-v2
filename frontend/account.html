@@ -14,7 +14,7 @@
 <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
 <div>
 <div class="brand-title">POPE Online</div>
-<div class="brand-sub">Sécurité du compte</div>
+<div class="brand-sub" id="accountBrandSub">Mon compte</div>
 </div>
 </a>
 <div class="row gap wrap">
@@ -81,14 +81,22 @@ wireLogout();
 
 const homeLink = document.getElementById('accountHomeLink');
 const dashboardLink = document.getElementById('accountDashboardLink');
+const brandSub = document.getElementById('accountBrandSub');
+
+function resolveAccountSpace(payload){
+  const apiSpace = payload?.user?.accountSpace || payload?.user?.account_space;
+  const storedSpace = localStorage.getItem('pope_account_space');
+  return apiSpace === 'private' || storedSpace === 'private' ? 'private' : 'public';
+}
 
 async function initAccountLinks(){
   try {
     const me = await apiFetch('/auth/me');
-    const accountSpace = me?.user?.accountSpace === 'private' ? 'private' : 'public';
+    const accountSpace = resolveAccountSpace(me);
     const target = accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
     if (homeLink) homeLink.setAttribute('href', target);
     if (dashboardLink) dashboardLink.setAttribute('href', target);
+    if (brandSub) brandSub.textContent = accountSpace === 'private' ? 'Mon compte privé' : 'Mon compte public';
   } catch (_) {}
 }
 
