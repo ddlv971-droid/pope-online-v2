@@ -233,7 +233,7 @@
     let i = 0;
 
     function rotate(){
-      slogan.innerHTML = '<h1 class="slogan">' + slogans[i] + '</h1>';
+      slogan.replaceChildren(); const title = document.createElement('h1'); title.className = 'slogan'; title.textContent = slogans[i]; slogan.appendChild(title);
       slogan.classList.add('is-visible');
       i = (i + 1) % slogans.length;
     }

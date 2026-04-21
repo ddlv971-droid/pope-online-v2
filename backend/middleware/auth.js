@@ -19,12 +19,24 @@ export function requireAuth(req, res, next) {
   }
 }
 
+
+function requestIp(req) {
+  return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+}
+
+function isAdminIpAllowed(req) {
+  const allowlist = String(process.env.ADMIN_ALLOWED_IPS || '').split(',').map((v) => v.trim()).filter(Boolean);
+  if (!allowlist.length) return true;
+  return allowlist.includes(requestIp(req));
+}
+
 export function requireAdmin(req, res, next) {
   const token = extract(req);
   if (!token) return res.status(401).json({ error: 'unauthorized' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
+    if (!isAdminIpAllowed(req)) return res.status(403).json({ error: 'forbidden' });
     req.user = decoded;
     return next();
   } catch {
