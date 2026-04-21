@@ -42,6 +42,17 @@ function buildNextRoute(accountSpace){
   return accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
 }
 
+function resolveCanonicalOrigin(){
+  const { origin, hostname } = window.location;
+  const isLocal = /localhost|127\.0\.0\.1/i.test(hostname);
+  const isStaging = /staging/i.test(hostname);
+  const isLegacyNetlify = /popeonlinev1\.netlify\.app$/i.test(hostname);
+  if (isLocal || isStaging) return origin;
+  if (hostname === 'pope-online.com' || hostname === 'www.pope-online.com') return 'https://pope-online.com';
+  if (isLegacyNetlify || /\.netlify\.app$/i.test(hostname)) return 'https://pope-online.com';
+  return origin;
+}
+
 async function run(){
   if (!token) {
     out.textContent = 'Token manquant.';
@@ -53,6 +64,7 @@ async function run(){
     setSession(data?.user || {}, data?.token || '');
     const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
     const next = buildNextRoute(accountSpace);
+    const nextUrl = `${resolveCanonicalOrigin()}/${next}`;
     try {
       localStorage.setItem('pope_account_space', accountSpace);
       localStorage.removeItem('pope_post_signup_next');
@@ -68,15 +80,15 @@ async function run(){
       actions.replaceChildren();
       const mainLink = document.createElement('a');
       mainLink.className = 'btn';
-      mainLink.href = accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+      mainLink.href = nextUrl;
       mainLink.textContent = accountSpace === 'private' ? 'Voir mon tableau de bord privé' : 'Voir mon tableau de bord public';
       const backLink = document.createElement('a');
       backLink.className = 'btn ghost';
-      backLink.href = accountSpace === 'private' ? 'private.html' : 'public.html';
+      backLink.href = `${resolveCanonicalOrigin()}/${accountSpace === 'private' ? 'private.html' : 'public.html'}`;
       backLink.textContent = accountSpace === 'private' ? 'Retour à l’espace privé' : 'Retour à l’espace public';
       actions.append(mainLink, backLink);
     }
-    window.location.replace(next);
+    window.location.replace(nextUrl);
   } catch (e) {
     console.error(e);
     showToast('Vérification impossible', 'err');
