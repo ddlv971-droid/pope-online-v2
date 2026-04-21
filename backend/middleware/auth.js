@@ -3,6 +3,8 @@ import { withClient } from '../db/index.js';
 import { parseCookies } from '../services/security.js';
 
 function extract(req) {
+  const h = String(req.headers.authorization || '');
+  if (h.startsWith('Bearer ')) return h.slice(7).trim();
   const cookies = parseCookies(req);
   return cookies.pope_session || null;
 }

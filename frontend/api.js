@@ -61,6 +61,7 @@ const FR_MESSAGES = {
 
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
+const TOKEN_KEY = 'pope_session_token';
 
 export function translateApiMessage(code, fallback = '') {
   if (!code) return fallback || '';
@@ -73,12 +74,13 @@ export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenu
 }
 
 export function hasSessionMarker() {
-  return localStorage.getItem(SESSION_KEY) === '1';
+  return localStorage.getItem(SESSION_KEY) === '1' || !!sessionStorage.getItem(TOKEN_KEY);
 }
 
-export function setSession(user = null) {
+export function setSession(user = null, token = '') {
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (token) sessionStorage.setItem(TOKEN_KEY, String(token));
 }
 
 export function getSessionUser() {
@@ -94,19 +96,22 @@ export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
+  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 export function getToken() {
-  return '';
+  return sessionStorage.getItem(TOKEN_KEY) || '';
 }
 
-export function setToken(_token, user = null) {
-  if (user) setSession(user);
+export function setToken(token, user = null) {
+  if (token || user) setSession(user || getSessionUser() || {}, token || getToken());
   else clearSession();
 }
 
 export async function apiFetch(path, { method='GET', body=null } = {}) {
   const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,

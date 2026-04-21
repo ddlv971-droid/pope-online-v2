@@ -1,6 +1,6 @@
 (function () {
   function hasSessionMarker() {
-    return localStorage.getItem('pope_session_active') === '1';
+    return localStorage.getItem('pope_session_active') === '1' || !!sessionStorage.getItem('pope_session_token');
   }
 
   function currentNextTarget() {
@@ -33,10 +33,14 @@
   }
 
   window.__popeAuthPending = true;
+  const headers = { 'Content-Type': 'application/json' };
+  const token = sessionStorage.getItem('pope_session_token');
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   fetch(`${getApiBase()}/auth/me`, {
     method: 'GET',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' }
+    headers
   })
     .then(async (res) => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

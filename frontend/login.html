@@ -38,7 +38,7 @@ function normalizeNext(target, user) {
   return route || getDefaultNext(user);
 }
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); const nextTarget = normalizeNext(requestedNext, data.user); setTimeout(() => window.location.href=nextTarget, 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
+el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}, data?.token || ''); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); const nextTarget = normalizeNext(requestedNext, data.user); setTimeout(() => window.location.href=nextTarget, 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
 </script>
 <script>
 window.addEventListener("load",function(){

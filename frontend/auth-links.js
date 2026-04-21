@@ -5,7 +5,7 @@
     'vault.html'
   ]);
   function hasSession(){
-    return localStorage.getItem('pope_session_active') === '1';
+    return localStorage.getItem('pope_session_active') === '1' || !!sessionStorage.getItem('pope_session_token');
   }
   document.addEventListener('click', function(event){
     const link = event.target.closest('a[href]');

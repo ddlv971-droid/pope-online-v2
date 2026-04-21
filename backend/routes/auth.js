@@ -234,7 +234,8 @@ router.post('/login', loginLimiter, async (req, res) => {
           phoneNumber: user.phone_number,
           phoneFull: user.phone_full
         },
-        wallet: walletPayload(w.rows[0])
+        wallet: walletPayload(w.rows[0]),
+        token
       });
     });
   } catch (e) {
