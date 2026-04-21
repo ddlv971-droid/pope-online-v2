@@ -27,8 +27,7 @@ const PUBLIC_USECASES = [
   ['deliberation', 'Projet de délibération'],
   ['synthese_reunion', 'Synthèse de réunion'],
   ['cadrage_projet', 'Cadrage projet / pilotage'],
-  ['note_synthese_dossier', 'Note de synthèse à partir d’un dossier joint'],
-  ['design_document_public', 'Mise en forme d’un document brut']
+  ['rapport_synthese_argumente_public', 'Rapport de synthèse argumenté (pièces jointes + benchmarking)']
 ];
 
 const PRIVATE_USECASE_GROUPS = [
@@ -46,8 +45,7 @@ const PRIVATE_USECASE_GROUPS = [
       ['courrier_banque', 'Courrier banque / trésorerie / justificatifs'],
       ['courrier_client_fournisseur', 'Courrier client / fournisseur / relance / mise au point'],
       ['courrier_formalites', 'Courrier formalités / greffe / CCI / INPI'],
-      ['devis_prive', 'Devis / proposition commerciale'],
-      ['design_document_prive', 'Mise en forme d’un document brut']
+      ['devis_prive', 'Devis / proposition commerciale']
     ]
   },
   {
@@ -57,7 +55,8 @@ const PRIVATE_USECASE_GROUPS = [
       ['formalites_modification', 'Modification d’entreprise / siège / activité / dirigeants'],
       ['formalites_sociales', 'Formalités sociales / embauche / documents / affiliation'],
       ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier'],
-      ['note_synthese_dossier_prive', 'Note de synthèse à partir d’un dossier joint']
+      ['trame_reponse_marche_public', 'Trame de réponse à un marché public (DCE / RC / BPU / pièces jointes)'],
+      ['rapport_synthese_argumente_prive', 'Rapport de synthèse argumenté (pièces jointes + benchmarking)']
     ]
   }
 ];
@@ -77,6 +76,51 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Références du marché, échéance, allotissement, exigences du RC, points techniques, références client, pièces déjà prêtes…',
     vaultTitle: 'Pièces temporaires 48h — marché public',
     vaultCopy: 'Sélectionnez par exemple le DCE, le règlement de consultation, une trame d’offre ou vos justificatifs utiles à la préparation de la réponse.'
+  },
+  trame_reponse_marche_public: {
+    title: 'Trame de réponse à un marché public',
+    intro: 'Produisez une trame de réponse structurée à partir du DCE, du RC, du BPU et de vos pièces jointes pour sécuriser votre compréhension du marché et organiser votre offre.',
+    bullets: [
+      'Pièces recommandées : DCE, règlement de consultation, BPU, DPGF, acte d’engagement, mémoire technique, pièces administratives.',
+      'Résultats utiles : architecture de réponse, trame du mémoire, check-list des pièces, angles de différenciation, points de vigilance et questions éventuelles.',
+      'Repère benchmark : les meilleures réponses mettent en avant la compréhension du besoin, la méthode, les moyens, les engagements et la lisibilité de l’offre.'
+    ],
+    source: 'Repères : commande publique / benchmark mémoire technique',
+    contextPlaceholder: 'Votre activité, le marché visé, les attentes perçues de l’acheteur, vos atouts, vos références et vos contraintes de remise…',
+    objectivePlaceholder: 'Ex : obtenir une trame de mémoire technique, une structure de réponse, une check-list des pièces et des points de vigilance.',
+    factsPlaceholder: 'Références du marché, échéance, allotissement, critères, exigences du RC, pièces disponibles, références internes, organisation de réponse…',
+    vaultTitle: 'Pièces temporaires 48h — trame réponse marché public',
+    vaultCopy: 'Ajoutez le DCE, le RC, le BPU, vos notes internes et vos pièces utiles pour construire une trame de réponse exploitable.'
+  },
+  rapport_synthese_argumente_public: {
+    title: 'Rapport de synthèse argumenté',
+    intro: 'Produisez un rapport de synthèse argumenté à partir des pièces jointes et d’un benchmarking utile pour éclairer une décision, une orientation ou un arbitrage.',
+    bullets: [
+      'Le rapport vise une lecture cabinet : contexte, constats, analyse, benchmark, options, recommandation et suites.',
+      'Les pièces jointes servent à asseoir les faits et à faire ressortir les enjeux opérationnels, financiers et organisationnels.',
+      'Le benchmarking aide à situer le dossier, comparer des approches et renforcer l’argumentation.'
+    ],
+    source: 'Repères : rapport décisionnel / benchmark sectoriel',
+    contextPlaceholder: 'Objet du dossier, environnement institutionnel, destinataire du rapport, niveau de décision attendu, points de comparaison utiles…',
+    objectivePlaceholder: 'Ex : produire un rapport de synthèse argumenté à partir des pièces jointes avec éléments de benchmark et recommandations.',
+    factsPlaceholder: 'Pièces disponibles, dates, montants, acteurs, difficultés, comparaisons, hypothèses, contraintes et décisions attendues…',
+    vaultTitle: 'Pièces temporaires 48h — rapport de synthèse argumenté',
+    vaultCopy: 'Ajoutez les pièces du dossier à analyser pour produire un rapport structuré, argumenté et enrichi de repères comparatifs.'
+  },
+  rapport_synthese_argumente_prive: {
+    title: 'Rapport de synthèse argumenté',
+    intro: 'Préparez un rapport de synthèse argumenté à partir de vos pièces jointes et d’un benchmarking utile pour cadrer un dossier, défendre une position ou préparer une décision.',
+    bullets: [
+      'Le rapport met en évidence les faits, les enjeux, les constats, les comparaisons utiles, les options et la recommandation.',
+      'Il est particulièrement adapté à un dossier complexe, à une préparation de rendez-vous, à une décision de dirigeant ou à une restitution client.',
+      'Le benchmarking sert à comparer des pratiques, des structures de réponse ou des positionnements observés.'
+    ],
+    source: 'Repères : dossier privé / benchmark opérationnel',
+    contextPlaceholder: 'Nature du dossier, entreprise concernée, destinataire du rapport, objectif de décision, repères ou comparaisons utiles…',
+    objectivePlaceholder: 'Ex : produire un rapport de synthèse argumenté à partir des pièces du dossier avec benchmark et recommandation.',
+    factsPlaceholder: 'Pièces disponibles, dates, montants, interlocuteurs, risques, options, éléments de comparaison et suites attendues…',
+    vaultTitle: 'Pièces temporaires 48h — rapport de synthèse argumenté',
+    vaultCopy: 'Ajoutez les pièces du dossier pour produire une synthèse argumentée enrichie de repères comparatifs et de recommandations.'
   },
   courrier_urssaf: {
     title: 'Courrier URSSAF / cotisations / délai / contestation',
@@ -198,36 +242,6 @@ const PRIVATE_USECASE_HELP = {
     vaultTitle: 'Pièces temporaires 48h — formalités sociales',
     vaultCopy: 'Ajoutez vos documents préparatoires ou la demande reçue pour structurer la réponse et la check-list.'
   },
-  note_synthese_dossier: {
-    title: 'Note de synthèse à partir d’un dossier joint',
-    intro: 'Produisez une note de synthèse claire et structurée à partir d’un dossier joint pour présenter les faits, les enjeux, les risques et les suites à donner.',
-    bullets: [
-      'Cas représentatifs : dossier administratif, dossier de projet, série de pièces jointes, dossier à résumer pour arbitrage.',
-      'Le résultat vise un format court, lisible, décisionnel et immédiatement exploitable.',
-      'Ajoutez vos pièces temporaires 48h pour aider la génération à repérer les éléments essentiels du dossier.'
-    ],
-    source: 'Repères : synthèse décisionnelle / cadrage de dossier',
-    contextPlaceholder: 'Le dossier concerné, son objet, les parties prenantes, le niveau d’urgence et le destinataire de la note…',
-    objectivePlaceholder: 'Ex : produire une note de synthèse à partir des pièces jointes pour arbitrage ou présentation.',
-    factsPlaceholder: 'Pièces disponibles, dates, montants, contraintes, risques ou questions à trancher…',
-    vaultTitle: 'Pièces temporaires 48h — note de synthèse',
-    vaultCopy: 'Ajoutez le dossier, les courriers, les justificatifs ou les éléments de contexte à résumer dans la note.'
-  },
-  note_synthese_dossier_prive: {
-    title: 'Note de synthèse à partir d’un dossier joint',
-    intro: 'Préparez une note de synthèse privée à partir d’un dossier joint pour clarifier rapidement une situation, hiérarchiser les enjeux et ordonner les prochaines actions.',
-    bullets: [
-      'Cas représentatifs : dossier client, formalité, pièces de marché, dossier bancaire, dossier administratif à condenser.',
-      'Le résultat privilégie une synthèse claire, hiérarchisée et directement exploitable.',
-      'Les pièces déposées 48h servent à structurer la note et à faire ressortir les éléments déterminants.'
-    ],
-    source: 'Repères : synthèse opérationnelle / dossier privé',
-    contextPlaceholder: 'Le dossier concerné, l’entreprise, les interlocuteurs, l’échéance et le destinataire final de la note…',
-    objectivePlaceholder: 'Ex : produire une note de synthèse à partir des pièces jointes pour cadrer un dossier ou préparer une décision.',
-    factsPlaceholder: 'Pièces disponibles, dates clés, montants, échanges, contraintes, risques, décisions attendues…',
-    vaultTitle: 'Pièces temporaires 48h — note de synthèse',
-    vaultCopy: 'Ajoutez les pièces du dossier à résumer pour guider la production de la note.'
-  },
   synthese_dossier_prive: {
     title: 'Synthèse / cadrage / check-list de dossier',
     intro: 'Structurez rapidement un dossier privé ou administratif pour clarifier les pièces, les actions à mener et l’ordre de traitement avant relecture experte ou accompagnement.',
@@ -257,21 +271,6 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Prestations, quantités, prix, délais, options, conditions d’intervention, hypothèses et éléments à confirmer…',
     vaultTitle: 'Pièces temporaires 48h — devis / proposition',
     vaultCopy: 'Ajoutez vos notes, ancien devis, cahier des charges ou échange client pour produire un document plus propre et plus complet.'
-  },
-  design_document_prive: {
-    title: 'Mise en forme d’un document brut',
-    intro: 'Transformez un contenu brut en document propre, lisible et professionnel : courrier, note, devis, procédure, fiche pratique ou document à remettre à un client ou à un organisme.',
-    bullets: [
-      'Utile quand vous avez du texte mal présenté, des notes copiées-collées ou un document à clarifier rapidement.',
-      'Résultats possibles : version réécrite, structurée, hiérarchisée et prête à être intégrée dans votre mise en page finale.',
-      'Repère métier : particulièrement adapté aux utilisateurs peu familiers avec les outils bureautiques ou la présentation documentaire.'
-    ],
-    source: 'Repères : usages fréquents artisans / TPE',
-    contextPlaceholder: 'Nature du document, destinataire, ton attendu et niveau de formalité souhaité…',
-    objectivePlaceholder: 'Ex : obtenir un document plus professionnel, mieux structuré et plus facile à transmettre.',
-    factsPlaceholder: 'Texte brut, notes, éléments indispensables à garder, titres souhaités, ordre des parties et contraintes de forme…',
-    vaultTitle: 'Pièces temporaires 48h — document brut',
-    vaultCopy: 'Déposez le document brut, vos notes ou une trame existante pour générer une version mieux présentée et mieux structurée.'
   },
   design_document_public: {
     title: 'Mise en forme d’un document brut',
@@ -845,7 +844,7 @@ function applySpaceConfig(space) {
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
   el('heroTitle').textContent = isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';
   el('heroCopy').textContent = isPrivate
-    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : réponse à un marché public, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
+    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
     : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
   el('formCopy').textContent = isPrivate
     ? 'Sélectionnez un assistant métier privé, décrivez votre situation et ajoutez vos pièces temporaires si besoin pour produire un draft immédiatement exploitable.'

@@ -29,9 +29,9 @@ function applySpaceLabels(){
   el('expertSubTitle').textContent = 'Relecture experte privée';
   const gen = document.getElementById('spaceGenerateLink'); if (gen) gen.textContent = 'Génération IA privée';
   el('expertTitle').textContent = 'Demande de relecture experte — espace privé';
-  el('expertLead').textContent = 'Décrivez votre besoin : réponse à un marché public, courrier administratif sensible, formalité ou document d’entreprise à relire avant envoi.';
+  el('expertLead').textContent = 'Décrivez votre besoin : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif sensible, formalité ou document d’entreprise à relire avant envoi.';
   el('expertContentLabel').textContent = 'Document, projet de courrier ou éléments à relire';
-  el('subject').placeholder = "Ex : Relecture d'une réponse à un marché public";
+  el('subject').placeholder = "Ex : Relecture d'une trame de réponse à un marché public";
   el('context').placeholder = 'Précisez l’organisme, l’échéance, le niveau d’enjeu et le contexte de votre entreprise.';
   el('content').placeholder = 'Collez votre projet de réponse, votre courrier ou décrivez les éléments à sécuriser.';
   el('attachmentLead').textContent = 'Choisissez la génération archivée à joindre. Le prompt et le résultat correspondants seront transmis à l’équipe.';

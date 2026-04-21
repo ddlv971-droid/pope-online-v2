@@ -6,10 +6,10 @@ export function buildSystemPrompt(accountSpace = 'public'){
     return `
 Tu es POPE AI, assistant de structuration administrative et opérationnelle pour les artisans, indépendants, TPE et petites entreprises françaises.
 Tu aides à produire des drafts utiles, lisibles et directement exploitables pour :
-- réponse à un marché public à partir des pièces disponibles,
+- trame de réponse à un marché public à partir des pièces disponibles,
+- rapport de synthèse argumenté à partir de pièces jointes et de benchmarking,
 - courrier administratif ou de relation professionnelle,
 - devis et propositions commerciales,
-- mise en forme de documents bruts,
 - formalités d'entreprise, création, modification, obligations sociales et cadrage documentaire.
 
 Tu produis des livrables structurés, sobres, orientés action, au style professionnel.
@@ -55,7 +55,6 @@ export function buildUserPrompt(payload){
     deliberation: 'PROJET DE DÉLIBÉRATION : structure (visas, considérants, dispositif, annexes à prévoir), rester générique et sécurisé',
     synthese_reunion: 'SYNTHÈSE DE RÉUNION : participants, constats, points d’accord, points de tension, décisions, actions (qui/quoi/quand)',
     cadrage_projet: 'CADRAGE PROJET / PMO : objectifs, périmètre, livrables, jalons, gouvernance, risques, plan d’action, indicateurs',
-    design_document_public: 'MISE EN FORME D’UN DOCUMENT BRUT : réorganiser le contenu, clarifier les titres, améliorer la lisibilité et produire une version professionnelle sans changer le fond',
     reponse_marche_public: 'RÉPONSE À UN MARCHÉ PUBLIC : (1) compréhension rapide du besoin, (2) points à valoriser, (3) structure de réponse, (4) check-list pièces/DCE/RC, (5) points de vigilance, (6) prochaines actions',
     courrier_urssaf: 'COURRIER URSSAF : objet clair, rappel du dossier, demande ou réponse structurée, ton administratif mesuré, pièces ou justificatifs à transmettre',
     courrier_fiscal: 'COURRIER FISCAL / IMPÔTS : objet, contexte, références utiles, demande précise (délai, réclamation, précision, transmission), ton administratif sécurisé',
@@ -63,12 +62,13 @@ export function buildUserPrompt(payload){
     courrier_client_fournisseur: 'COURRIER CLIENT / FOURNISSEUR : rappeler les faits, exposer la demande, cadrer la suite, conserver un ton ferme mais maîtrisé',
     courrier_formalites: 'COURRIER FORMALITÉS : rappeler la formalité, la référence de dossier, la pièce ou l’action attendue, proposer un texte directement exploitable',
     devis_prive: 'DEVIS / PROPOSITION COMMERCIALE : structurer l’offre, clarifier les prestations, les hypothèses, les options, les délais et produire un document professionnel prêt à relire',
-    design_document_prive: 'MISE EN FORME D’UN DOCUMENT BRUT : réorganiser un texte brouillon, hiérarchiser le contenu, améliorer la lisibilité et produire une version plus professionnelle',
     formalites_creation: 'FORMALITÉS DE CRÉATION : proposer une check-list claire, une chronologie, les pièces à préparer, les arbitrages à confirmer et les prochaines étapes',
     formalites_modification: 'FORMALITÉS DE MODIFICATION : structurer la démarche, les pièces, les acteurs, la chronologie et les courriers éventuels',
     formalites_sociales: 'FORMALITÉS SOCIALES : organiser les étapes, documents, échéances, courriers ou demandes nécessaires',
     synthese_dossier_prive: 'SYNTHÈSE / CADRAGE DE DOSSIER : clarifier les pièces, les actions à mener, l’ordre de traitement, les points de vigilance et les suites',
-    note_synthese_dossier_prive: 'NOTE DE SYNTHÈSE À PARTIR D’UN DOSSIER JOINT : produire une note claire, structurée et directement exploitable à partir des pièces déposées, avec points clés, risques, arbitrages et prochaines actions'
+    trame_reponse_marche_public: 'TRAME DE RÉPONSE À UN MARCHÉ PUBLIC : produire une trame claire à partir du DCE, du RC, du BPU et des pièces déposées, avec structure de réponse, mémoire technique, check-list et points de vigilance',
+    rapport_synthese_argumente_public: 'RAPPORT DE SYNTHÈSE ARGUMENTÉ : produire un rapport structuré à partir des pièces jointes et de benchmarking, avec faits, analyse, comparaisons utiles, options, recommandation et suites',
+    rapport_synthese_argumente_prive: 'RAPPORT DE SYNTHÈSE ARGUMENTÉ : produire un rapport structuré à partir des pièces jointes et de benchmarking, avec faits, analyse, comparaisons utiles, options, recommandation et suites'
   };
 
   const instructionByMode = {

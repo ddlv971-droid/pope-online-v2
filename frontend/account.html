@@ -55,8 +55,8 @@
   <div class="grid2">
     <div class="panel">
       <h3>Supprimer mon compte</h3>
-      <p class="muted">Pour éviter toute rupture du backend existant, la suppression de compte est déclenchée par une demande sécurisée adressée à l’équipe POPE Online.</p>
-      <a class="btn" href="mailto:contact@popeconsulting-group.com?subject=Demande%20de%20suppression%20de%20compte%20POPE%20Online&body=Bonjour,%0D%0A%0D%0AJe souhaite demander la suppression de mon compte POPE Online.%0D%0A%0D%0AMerci de m’indiquer la marche à suivre et les éléments nécessaires à la vérification de mon identité.%0D%0A">Demander la suppression</a>
+      <p class="muted">Vous pouvez supprimer votre compte directement depuis cette page. Une confirmation vous sera demandée avant suppression définitive.</p>
+      <button class="btn" id="deleteAccountBtn" type="button">Supprimer mon compte</button>
     </div>
     <div class="panel">
       <h3>Mentions légales & confidentialité</h3>
@@ -74,9 +74,23 @@
 
 <script src="./auth-guard.js"></script>
 <script type="module">
-import { requireLogin, wireLogout } from './app.js';
+import { requireLogin, wireLogout, showToast } from './app.js';
+import { apiFetch, getApiMessage, clearSession } from './api.js';
 if (!requireLogin('account.html')) {}
 wireLogout();
+const btn = document.getElementById('deleteAccountBtn');
+btn?.addEventListener('click', async()=>{
+  const confirmed = window.confirm('Confirmez-vous la suppression définitive de votre compte POPE Online ? Cette action est irréversible.');
+  if (!confirmed) return;
+  try {
+    await apiFetch('/auth/me', { method:'DELETE' });
+    clearSession();
+    alert('Votre compte a été supprimé.');
+    window.location.href = 'index.html';
+  } catch (e) {
+    showToast(getApiMessage(e), 'err');
+  }
+});
 </script>
 </body>
 </html>
