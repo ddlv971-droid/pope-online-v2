@@ -8,7 +8,6 @@ import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
-import { resolveFrontendBaseUrl } from '../services/urls.js';
 
 const router = express.Router();
 
@@ -23,9 +22,9 @@ const loginLimiter = rateLimit({
 
 function signJwt(user) {
   return jwt.sign(
-    { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public', sv: Number(user.session_version || 1) },
+    { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public' },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '12h' }
+    { expiresIn: '7d' }
   );
 }
 
@@ -71,6 +70,11 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
   };
 }
 
+function resolveFrontendBaseUrl() {
+  const raw = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '');
+  return raw;
+}
+
 async function requireTurnstile(req, res) {
   const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
   const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
@@ -101,58 +105,44 @@ router.post('/signup', async (req, res) => {
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
-  // ── PHASE 1 : Transaction DB uniquement ──────────────────────────────────
-  // sendMail est VOLONTAIREMENT hors de ce bloc : son echec ne doit jamais
-  // provoquer un 500 apres un commit DB reussi (c'est la cause du bug historique).
-  let verifyToken = null;
-
   try {
     await withClient(async (client) => {
       await client.query('begin');
-
       const existing = await client.query('select 1 from users where email=$1', [email]);
       if (existing.rowCount) {
         await client.query('rollback');
-        res.status(409).json({ error: 'email_exists' });
-        return;
+        return res.status(409).json({ error: 'email_exists' });
       }
 
       const password_hash = await bcrypt.hash(password, 12);
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
-      // Verif deleted_accounts (resiliente si table absente)
-      let wasDeletedBySelf = false;
-      try {
-        const emailHash = sha256Hex(normalizeEmail(email));
-        const selfDel = await client.query(
-          `SELECT 1 FROM deleted_accounts WHERE (email_hash=$1 OR fp_hash=$2) AND deleted_by='self' LIMIT 1`,
-          [emailHash, fp_hash]
-        );
-        wasDeletedBySelf = selfDel.rowCount > 0;
-      } catch (_) { /* table absente */ }
-
       const userIns = await client.query(
         `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious, phone_country, phone_number, phone_full)
          values($1,$2,$3,$4,$5,$6,$7,$8,$9)
-         returning id`,
+         returning id, email, account_space, is_email_verified, is_suspicious, role, phone_country, phone_number, phone_full`,
         [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
       );
       const user = userIns.rows[0];
+const entitlements = resolveFreeTrialEntitlements(accountSpace);
+     await client.query(
+  `insert into wallets(
+    user_id, plan_code, status, tickets_ai, tickets_expert,
+    public_dossiers_used, private_dossiers_used,
+    public_dossiers_limit, private_dossiers_limit, private_users_limit
+  ) values($1,'FREE','pending_verification',$2,0,0,0,$3,$4,$5)`,
+  [
+    user.id,
+    entitlements.ticketsAi,
+    entitlements.publicDossiersLimit,
+    entitlements.privateDossiersLimit,
+    entitlements.privateUsersLimit
+  ]
+);
 
-      const entitlements = resolveFreeTrialEntitlements(accountSpace);
-      const initialWalletStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
       await client.query(
-        `insert into wallets(
-          user_id, plan_code, status, tickets_ai, tickets_expert,
-          public_dossiers_used, private_dossiers_used,
-          public_dossiers_limit, private_dossiers_limit, private_users_limit
-        ) values($1,'FREE',$2,$3,0,0,0,$4,$5,$6)`,
-        [user.id, initialWalletStatus, entitlements.ticketsAi,
-         entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
-      );
-
-      await client.query(
-        `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash) values($1,$2,$3,$4)`,
+        `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
+         values($1,$2,$3,$4)`,
         [user.id, fp_hash, ip_hash, user_agent_hash]
       );
 
@@ -160,40 +150,33 @@ router.post('/signup', async (req, res) => {
       const token_hash = sha256Hex(token);
       const expires = nowPlusHours(24);
       await client.query(
-        `insert into email_verifications(user_id, token_hash, expires_at) values($1,$2,$3)`,
+        `insert into email_verifications(user_id, token_hash, expires_at)
+         values($1,$2,$3)`,
         [user.id, token_hash, expires]
       );
-
       await client.query('commit');
-      verifyToken = token; // stocke le token apres commit reussi
+
+      const base = resolveFrontendBaseUrl();
+      const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
+      await sendMail({
+        to: email,
+        subject: 'POPE Online — Vérification de votre compte',
+        text: `Bonjour,
+
+Veuillez vérifier votre compte POPE Online en cliquant sur ce lien :
+${verifyUrl}
+
+Ce lien expire dans 24h.
+
+— POPE Online`,
+        html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
+      });
+
+      return res.json({ ok: true, message: 'verification_email_sent' });
     });
   } catch (e) {
-    // Erreur DB pure => 500 legitime, pas de compte cree
-    console.error('[signup] DB error:', e.message);
-    if (!res.headersSent) return res.status(500).json({ error: 'server_error' });
-    return;
-  }
-
-  // Si email_exists a deja repondu (409), on s'arrete
-  if (res.headersSent) return;
-
-  // ── PHASE 2 : Envoi du mail (jamais dans withClient) ─────────────────────
-  const base = resolveFrontendBaseUrl();
-  const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(verifyToken)}`;
-
-  try {
-    await sendMail({
-      to: email,
-      subject: 'POPE Online — Vérification de votre compte',
-      text: `Bonjour,\n\nVeuillez vérifier votre compte POPE Online en cliquant sur ce lien :\n${verifyUrl}\n\nCe lien expire dans 24h.\n\n— POPE Online`,
-      html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">À vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
-    });
-    return res.json({ ok: true, message: 'verification_email_sent' });
-  } catch (mailErr) {
-    // Mail echoue mais compte cree => 200 avec flag mailFailed
-    // Evite le bug "erreur technique puis email deja existant"
-    console.error('[signup] sendMail failed (account saved):', mailErr?.message);
-    return res.json({ ok: true, message: 'verification_email_sent', mailFailed: true });
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
   }
 });
 
@@ -218,7 +201,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     await withClient(async (client) => {
       const u = await client.query(
         `select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
-                phone_country, phone_number, phone_full, session_version
+                phone_country, phone_number, phone_full
            from users
           where email=$1`,
         [email]
@@ -255,8 +238,7 @@ router.post('/login', loginLimiter, async (req, res) => {
           phoneNumber: user.phone_number,
           phoneFull: user.phone_full
         },
-        wallet: walletPayload(w.rows[0]),
-        token
+        wallet: walletPayload(w.rows[0])
       });
     });
   } catch (e) {
@@ -372,8 +354,7 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
       await client.query(
         `update users
             set password_hash=$1,
-                must_change_password=false,
-                session_version = session_version + 1
+                must_change_password=false
           where id=$2`,
         [password_hash, reset.user_id]
       );
@@ -418,7 +399,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
   try {
     await withClient(async (client) => {
       const u = await client.query(`select id, email, password_hash, is_email_verified, is_suspicious, full_name, organization, account_space, role, must_change_password,
-                phone_country, phone_number, phone_full, session_version
+                phone_country, phone_number, phone_full
            from users
           where email=$1`, [email]);
       if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
@@ -434,7 +415,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       const w = await client.query('select * from wallets where user_id=$1', [user.id]);
       const token = signJwt(user);
       setSessionCookie(res, token);
-      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]), token });
+      return res.json({ user: { id: user.id, email: user.email, fullName: user.full_name, organization: user.organization, accountSpace: user.account_space, isEmailVerified: user.is_email_verified, isSuspicious: user.is_suspicious, role: user.role || 'client', mustChangePassword: !!user.must_change_password, phoneCountry: user.phone_country, phoneNumber: user.phone_number, phoneFull: user.phone_full }, wallet: walletPayload(w.rows[0]) });
     });
   } catch (e) {
     console.error(e);
@@ -489,7 +470,7 @@ async function handleVerify(req, res) {
           const expiresAt = trialExpiryDate(15);
           await client.query(
             `update wallets
-                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=$2,
+                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=0,
                     public_dossiers_used=0, private_dossiers_used=0,
                     public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
                     trial_started_at=$6, trial_expires_at=$7, updated_at=now()
@@ -506,7 +487,7 @@ async function handleVerify(req, res) {
         await client.query('update users set is_suspicious=true where id=$1', [row.user_id]);
       }
       const walletRes = await client.query('select * from wallets where user_id=$1', [row.user_id]);
-      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [row.user_id]);
+      const tokenRes = await client.query('select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [row.user_id]);
       await client.query('commit');
       const user = tokenRes.rows[0];
       const token = signJwt(user);
@@ -545,7 +526,7 @@ router.get('/me', requireAuth, async (req, res) => {
     await withClient(async (client) => {
       const u = await client.query(
         `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at, role, must_change_password,
-                phone_country, phone_number, phone_full, session_version
+                phone_country, phone_number, phone_full
            from users
           where id=$1`,
         [req.user.sub]
@@ -580,7 +561,7 @@ router.put('/me', requireAuth, async (req, res) => {
           where id=$1`,
         [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
       );
-      const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [req.user.sub]);
+      const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full from users where id=$1', [req.user.sub]);
       return res.json({ ok: true, user: u.rows[0] });
     });
   } catch (e) {
@@ -603,10 +584,7 @@ router.put('/change-password', requireAuth, async (req, res) => {
         if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
       }
       const password_hash = await bcrypt.hash(newPassword, 12);
-      await client.query('update users set password_hash=$2, must_change_password=false, session_version = session_version + 1 where id=$1', [req.user.sub, password_hash]);
-      const fresh = await client.query('select id, email, account_space, role, session_version from users where id=$1', [req.user.sub]);
-      const token = signJwt(fresh.rows[0]);
-      setSessionCookie(res, token);
+      await client.query('update users set password_hash=$2, must_change_password=false where id=$1', [req.user.sub, password_hash]);
       return res.json({ ok: true });
     });
   } catch (e) {
@@ -615,87 +593,7 @@ router.put('/change-password', requireAuth, async (req, res) => {
   }
 });
 
-
-router.get('/me/export', requireAuth, async (req, res) => {
-  try {
-    await withClient(async (client) => {
-      const userRes = await client.query(
-        `select id, email, full_name, organization, account_space, is_email_verified, is_suspicious, created_at, last_login_at, role,
-                phone_country, phone_number, phone_full, satisfaction_mail_sent_at, satisfaction_response_received_at, satisfaction_last_response
-           from users
-          where id=$1`,
-        [req.user.sub]
-      );
-      if (!userRes.rowCount) return res.status(404).json({ error: 'user_not_found' });
-      const walletRes = await client.query('select * from wallets where user_id=$1', [req.user.sub]);
-      const usageRes = await client.query(
-        `select kind, meta, created_at from usage_logs where user_id=$1 order by created_at desc limit 200`,
-        [req.user.sub]
-      );
-      return res.json({
-        ok: true,
-        exportedAt: new Date().toISOString(),
-        user: userRes.rows[0],
-        wallet: walletRes.rows[0] || null,
-        usage: usageRes.rows
-      });
-    });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'server_error' });
-  }
-});
-
-router.delete('/me', requireAuth, async (req, res) => {
-  try {
-    await withClient(async (client) => {
-      await client.query('begin');
-
-      // Récupérer email + devices pour enregistrer l'empreinte (bloque le free trial à la réinscription)
-      const userRow = await client.query(
-        `SELECT u.email FROM users u WHERE u.id=$1`, [req.user.sub]
-      );
-      if (userRow.rowCount) {
-        const devicesRes = await client.query(
-          `SELECT fp_hash, ip_hash FROM devices WHERE user_id=$1 LIMIT 10`, [req.user.sub]
-        );
-        try {
-          const emailHash = sha256Hex(normalizeEmail(userRow.rows[0].email));
-          const ipHash = ipToHash(req);
-          await client.query(
-            `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-             VALUES($1,$2,$3,'self') ON CONFLICT DO NOTHING`,
-            [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
-          );
-          for (const dev of devicesRes.rows.slice(1)) {
-            await client.query(
-              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-               VALUES($1,$2,null,'self') ON CONFLICT DO NOTHING`,
-              [emailHash, dev.fp_hash]
-            );
-          }
-        } catch (_) { /* table deleted_accounts absente → on supprime quand même */ }
-      }
-
-      await client.query('delete from users where id=$1', [req.user.sub]);
-      await client.query('commit');
-    });
-    clearSessionCookie(res);
-    return res.json({ ok: true, message: 'account_deleted' });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'server_error' });
-  }
-});
-
-router.post('/logout', requireAuth, async (req, res) => {
-  try {
-    await withClient(async (client) => {
-      await client.query('update users set session_version = session_version + 1 where id=$1', [req.user.sub]);
-    });
-  } catch (e) {
-    console.error(e);
-  }
+router.post('/logout', (_req, res) => {
   clearSessionCookie(res);
   return res.json({ ok: true });
 });

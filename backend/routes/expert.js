@@ -96,9 +96,9 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const attachments = [];
     if (generationAttachment?.result) {
       attachments.push({
-        filename: 'pope-online-generation-attachee.doc',
+        filename: 'pope-online-generation-attachee.html',
         content: buildAttachmentContent('Pièce jointe de génération', generationAttachment),
-        type: 'application/msword'
+        type: 'text/html'
       });
     }
 

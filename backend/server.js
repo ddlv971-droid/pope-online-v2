@@ -16,8 +16,7 @@ import { localizeApiBody } from './services/i18n.js';
 
 dotenv.config();
 
-const isProd = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
-const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', 'MAIL_API_KEY', 'MAIL_FROM', ...(isProd ? ['CORS_ORIGIN', 'TURNSTILE_SECRET_KEY'] : [])];
+const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL'];
 const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
 if (missingEnv.length) {
   console.error(`Missing required environment variables: ${missingEnv.join(', ')}`);
@@ -29,24 +28,6 @@ app.set('trust proxy', 1);
 
 // 🔒 Headers sécurité
 app.use((req, res, next) => {
-  const csp = [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "object-src 'none'",
-    "frame-ancestors 'none'",
-    "img-src 'self' data: https:",
-    "font-src 'self' data:",
-    "style-src 'self' 'unsafe-inline' https:",
-    "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
-    "connect-src 'self' https://challenges.cloudflare.com",
-    "frame-src https://challenges.cloudflare.com",
-    "form-action 'self'",
-    "upgrade-insecure-requests"
-  ].join('; ');
-  res.setHeader('Content-Security-Policy', csp);
-  if (req.secure || String(req.headers['x-forwarded-proto'] || '').includes('https')) {
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  }
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -76,12 +57,12 @@ console.log('Allowed origins =', allowedOrigins);
 const corsOptions = {
   origin(origin, cb) {
     if (!origin) return cb(null, true); // mobile / curl
-    if (allowedOrigins.length === 0) return cb(new Error('CORS not configured'), false);
+    if (allowedOrigins.length === 0) return cb(null, true);
     if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS blocked: ${origin}`), false);
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 204
 };
@@ -92,7 +73,7 @@ app.options('*', cors(corsOptions)); // 🔥 FIX PRE-FLIGHT
 // 🚦 Rate limit
 app.use(rateLimit({
   windowMs: 60 * 1000,
-  max: 90,
+  max: 120,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => req.method === 'OPTIONS'

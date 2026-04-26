@@ -13,11 +13,6 @@ if (!requireLogin('mission.html')) {}
 wireLogout();
 const el=(id)=>document.getElementById(id); const forcedSpace = (document.body?.dataset?.forcedSpace || '').trim();
 let currentUser=null, vaultFiles=[];
-const DRAFT_KEYS = { public: 'pope_mission_form_public', private: 'pope_mission_form_private' };
-function draftKey(){ return DRAFT_KEYS[isPrivate() ? 'private' : 'public']; }
-function persistDraft(){ try { sessionStorage.setItem(draftKey(), JSON.stringify({ subject: el('subject')?.value || '', context: el('context')?.value || '', content: el('content')?.value || '' })); } catch {} }
-function restoreDraft(){ try { const raw = sessionStorage.getItem(draftKey()); if (!raw) return; const saved = JSON.parse(raw); if (typeof saved.subject === 'string') el('subject').value = saved.subject; if (typeof saved.context === 'string') el('context').value = saved.context; if (typeof saved.content === 'string') el('content').value = saved.content; } catch {} }
-function clearDraft(){ try { sessionStorage.removeItem(draftKey()); } catch {} }
 function isPrivate(){ return (forcedSpace || currentUser?.accountSpace || 'public') === 'private'; }
 function selectedVaultIds(){ return Array.from(document.querySelectorAll('[data-vault-file]:checked')).map((n)=>n.value); }
 function applySpaceLabels(){
@@ -46,5 +41,4 @@ async function refreshWallet(){
   try{ const data=await apiFetch('/vault'); vaultFiles=data.items||[]; }catch{ vaultFiles=[]; }
   renderVault();
 }
-['subject','context','content'].forEach((id)=>{ const node=el(id); if(node){ node.addEventListener('input', persistDraft); node.addEventListener('change', persistDraft); }}); document.querySelectorAll('a[href*="vault.html"]').forEach((link)=>link.addEventListener('click', persistDraft)); window.addEventListener('beforeunload', persistDraft); restoreDraft();
-el('btnSend').addEventListener('click', async ()=>{ try { persistDraft(); const data=await apiFetch('/mission/request',{ method:'POST', body:{ subject:el('subject').value.trim(), context:el('context').value.trim(), content:el('content').value.trim(), vault_file_ids:selectedVaultIds() } }); setTicketsBadge(data.wallet); clearDraft(); el('msg').textContent='✅ Votre demande a été transmise. Nous revenons vers vous après analyse et cadrage.'; showToast('Demande transmise', 'ok'); } catch(e){ console.error(e); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Envoi impossible', 'err'); } }); refreshWallet();
+el('btnSend').addEventListener('click', async ()=>{ try { const data=await apiFetch('/mission/request',{ method:'POST', body:{ subject:el('subject').value.trim(), context:el('context').value.trim(), content:el('content').value.trim(), vault_file_ids:selectedVaultIds() } }); setTicketsBadge(data.wallet); el('msg').textContent='✅ Votre demande a été transmise. Nous revenons vers vous après analyse et cadrage.'; showToast('Demande transmise', 'ok'); } catch(e){ console.error(e); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Envoi impossible', 'err'); } }); refreshWallet();

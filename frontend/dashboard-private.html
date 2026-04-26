@@ -7,7 +7,7 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body data-logout-target="private.html" class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
+<body class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="private.html">
@@ -39,7 +39,7 @@
     <article class="card dash14-card dash14-card-main dash14-card-main-private dash15-main-card dash16-main-card">
       <div class="dash14-pill">Génération IA privée</div>
       <h2>Produire un livrable sécurisé</h2>
-      <p>Choisissez un assistant métier calibré pour votre activité : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.</p>
+      <p>Choisissez un assistant métier calibré pour votre activité : réponse à un marché public à partir de vos pièces 48h, courrier administratif contextualisé ou formalité d’entreprise à préparer rapidement.</p>
       <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta dash16-maincta" href="app-private.html">Produire un livrable sécurisé</a></div>
       <div class="dash16-pill-grid">
         <div class="dash16-pill-card"><strong>Marchés publics</strong><span>DCE, RC, pièces 48h et trame de réponse pour préparer votre offre.</span></div>
@@ -75,7 +75,6 @@
   </section>
 </main>
 <script src="./auth-guard.js"></script>
-<script type="module" src="./protected-topbar.js"></script>
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';

@@ -104,8 +104,6 @@ alter table users add column if not exists phone_full text;
 alter table users add column if not exists role text not null default 'client';
 alter table users add column if not exists must_change_password boolean not null default false;
 
-alter table users add column if not exists session_version integer not null default 1;
-
 create table if not exists client_messages (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references users(id) on delete set null,
