@@ -94,7 +94,7 @@ router.get('/users', async (_req, res) => {
                    from jsonb_array_elements(coalesce(u.satisfaction_last_response->'criteria', '[]'::jsonb)) elem
                  ), 0) * 10.0 / 7.0
                , 1) as satisfaction_score_10,
-               w.plan_code, w.status, w.tickets_ai, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
+               w.plan_code, w.status, w.tickets_ai, w.tickets_expert, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
           left join wallets w on w.user_id = u.id

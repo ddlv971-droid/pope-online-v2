@@ -72,11 +72,18 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 async function requireTurnstile(req, res) {
-  const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
-  const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
-  if (outcome.success) return true;
-  res.status(403).json({ error: 'bot_protection_failed' });
-  return false;
+  try {
+    const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+    const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
+    if (outcome.success) return true;
+    console.warn('[turnstile] failed:', outcome.code);
+    res.status(403).json({ error: 'bot_protection_failed' });
+    return false;
+  } catch (e) {
+    // Erreur réseau vers Cloudflare → on laisse passer (fail-open)
+    console.error('[turnstile] fetch error, fail-open:', e.message);
+    return true;
+  }
 }
 
 
@@ -101,9 +108,8 @@ router.post('/signup', async (req, res) => {
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
-  // ── PHASE 1 : Transaction DB uniquement ──────────────────────────────────
-  // sendMail est VOLONTAIREMENT hors de ce bloc : son echec ne doit jamais
-  // provoquer un 500 apres un commit DB reussi (c'est la cause du bug historique).
+  // ── PHASE 1 : Transaction DB uniquement ─────────────────────────────────
+  console.log('[signup] start for:', email, '| space:', accountSpace);
   let verifyToken = null;
 
   try {
@@ -165,11 +171,12 @@ router.post('/signup', async (req, res) => {
       );
 
       await client.query('commit');
-      verifyToken = token; // stocke le token apres commit reussi
+      verifyToken = token;
+      console.log('[signup] DB commit OK, token stored, about to send mail');
     });
   } catch (e) {
     // Erreur DB pure => 500 legitime, pas de compte cree
-    console.error('[signup] DB error:', e.message);
+    console.error('[signup] DB error:', e.message, e.stack);
     if (!res.headersSent) return res.status(500).json({ error: 'server_error' });
     return;
   }
@@ -177,7 +184,8 @@ router.post('/signup', async (req, res) => {
   // Si email_exists a deja repondu (409), on s'arrete
   if (res.headersSent) return;
 
-  // ── PHASE 2 : Envoi du mail (jamais dans withClient) ─────────────────────
+  // ── PHASE 2 : Envoi du mail ─────────────────────────────────────────────
+  console.log('[signup] phase2 - sending mail to:', email);
   const base = resolveFrontendBaseUrl();
   const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(verifyToken)}`;
 
