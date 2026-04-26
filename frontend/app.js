@@ -152,8 +152,8 @@ export function showTrialExpiredModal(wallet) {
   const header = document.createElement('div');
   header.style.cssText = 'text-align:center;margin-bottom:32px';
   header.innerHTML = '<div style="font-size:48px;margin-bottom:16px">🎯</div>' +
-    '<h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d'essai est terminée</h2>' +
-    '<p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">Merci d'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d'expertise sécurisée. <strong style="color:#0b2440">Continuez avec un plan adapté.</strong></p>';
+    '<h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d\'essai est terminée</h2>' +
+    '<p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">Merci d\'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d\'expertise sécurisée. <strong style="color:#0b2440">Continuez avec un plan adapté.</strong></p>';
   card.appendChild(header);
 
   // Plans
