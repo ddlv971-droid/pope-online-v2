@@ -75,7 +75,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
           await client.query('update wallets set tickets_expert=tickets_expert-1, updated_at=now() where user_id=$1', [userId]);
         } else {
           const used = Number(wallet?.public_dossiers_used ?? 0);
-          const limit = Number(wallet?.public_dossiers_limit ?? 10000);
+          const limit = Number(wallet?.public_dossiers_limit ?? 1);
           if (used >= limit) {
             await client.query('rollback');
             return { ok: false, status: 402, body: { error: 'public_dossier_limit_reached' } };

@@ -111,6 +111,18 @@ router.post('/signup', async (req, res) => {
       }
 
       const password_hash = await bcrypt.hash(password, 12);
+
+      // Vérifier si le compte a été supprimé par l'utilisateur lui-même (bloque le free trial)
+      const emailHash = sha256Hex(normalizeEmail(email));
+      const selfDeleted = await client.query(
+        `SELECT 1 FROM deleted_accounts
+          WHERE (email_hash = $1 OR fp_hash = $2)
+            AND deleted_by = 'self'
+          LIMIT 1`,
+        [emailHash, fp_hash]
+      );
+      const wasDeletedBySelf = selfDeleted.rowCount > 0;
+
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
       const userIns = await client.query(
@@ -121,15 +133,17 @@ router.post('/signup', async (req, res) => {
       );
       const user = userIns.rows[0];
 const entitlements = resolveFreeTrialEntitlements(accountSpace);
+      // Si le compte a été auto-supprimé → wallet en verified_no_trial (pas de free trial)
+      const initialStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
      await client.query(
   `insert into wallets(
     user_id, plan_code, status, tickets_ai, tickets_expert,
     public_dossiers_used, private_dossiers_used,
     public_dossiers_limit, private_dossiers_limit, private_users_limit
-  ) values($1,'FREE','pending_verification',$2,0,0,0,$3,$4,$5)`,
+  ) values($1,'FREE',$2,0,0,0,0,$3,$4,$5)`,
   [
     user.id,
-    entitlements.ticketsAi,
+    initialStatus,
     entitlements.publicDossiersLimit,
     entitlements.privateDossiersLimit,
     entitlements.privateUsersLimit
@@ -468,7 +482,7 @@ async function handleVerify(req, res) {
           const expiresAt = trialExpiryDate(15);
           await client.query(
             `update wallets
-                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=0,
+                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=$2,
                     public_dossiers_used=0, private_dossiers_used=0,
                     public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
                     trial_started_at=$6, trial_expires_at=$7, updated_at=now()
@@ -629,6 +643,47 @@ router.delete('/me', requireAuth, async (req, res) => {
   try {
     await withClient(async (client) => {
       await client.query('begin');
+
+      // Récupérer les empreintes avant suppression pour bloquer la réinscription gratuite
+      const userRow = await client.query(
+        `SELECT u.email, w.trial_started_at
+           FROM users u
+           LEFT JOIN wallets w ON w.user_id = u.id
+          WHERE u.id = $1`,
+        [req.user.sub]
+      );
+      const user = userRow.rows[0];
+
+      if (user) {
+        // Récupérer toutes les empreintes du device de cet utilisateur
+        const devicesRes = await client.query(
+          `SELECT fp_hash, ip_hash FROM devices WHERE user_id = $1 LIMIT 10`,
+          [req.user.sub]
+        );
+
+        const emailHash = sha256Hex(normalizeEmail(user.email));
+        const ipHash = ipToHash(req);
+
+        // Enregistrer dans deleted_accounts pour bloquer la réinscription gratuite
+        // (suppression "self" = ne peut plus bénéficier d'un free trial sur ce device/email)
+        await client.query(
+          `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+           VALUES($1, $2, $3, 'self')
+           ON CONFLICT DO NOTHING`,
+          [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
+        );
+
+        // Insérer une empreinte par device connu (pour couvrir tous les navigateurs)
+        for (const dev of devicesRes.rows.slice(1)) {
+          await client.query(
+            `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+             VALUES($1, $2, $3, 'self')
+             ON CONFLICT DO NOTHING`,
+            [emailHash, dev.fp_hash, null]
+          );
+        }
+      }
+
       await client.query('delete from users where id=$1', [req.user.sub]);
       await client.query('commit');
     });

@@ -132,8 +132,8 @@ router.post('/users', async (req, res) => {
          returning id`,
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
-      await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','trial_active',$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+      await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit)
+                          values($1,'CUSTOM','trial_active',$2,$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -159,13 +159,17 @@ router.put('/users/:id', async (req, res) => {
       }
       if (req.body.wallet) {
         const w = req.body.wallet;
+        // tickets_expert suit tickets_ai sauf si explicitement fourni
+        const ticketsAi = Number(w.ticketsAi ?? 0);
+        const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : ticketsAi;
         await client.query(
-          `insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit, trial_expires_at)
-           values($1,$2,$3,$4,$5,$6,$7,$8)
+          `insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit, trial_expires_at)
+           values($1,$2,$3,$4,$5,$6,$7,$8,$9)
            on conflict(user_id) do update set
              plan_code=excluded.plan_code,
              status=excluded.status,
              tickets_ai=excluded.tickets_ai,
+             tickets_expert=excluded.tickets_expert,
              public_dossiers_limit=excluded.public_dossiers_limit,
              private_dossiers_limit=excluded.private_dossiers_limit,
              private_users_limit=excluded.private_users_limit,
@@ -175,7 +179,8 @@ router.put('/users/:id', async (req, res) => {
             id,
             w.planCode || 'CUSTOM',
             w.status || 'trial_active',
-            Number(w.ticketsAi ?? 0),
+            ticketsAi,
+            ticketsExpert,
             Number(w.publicDossiersLimit ?? 1),
             Number(w.privateDossiersLimit ?? 1),
             Number(w.privateUsersLimit ?? 1),
@@ -237,12 +242,64 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
 });
 
 router.delete('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const fullReset = String(req.query.reset || '').toLowerCase() === 'true';
   try {
     await withClient(async (client) => {
-      await client.query("delete from users where id=$1 and role<>'admin'", [req.params.id]);
+      await client.query('begin');
+
+      // Vérifier que l'utilisateur cible n'est pas admin
+      const target = await client.query(
+        `SELECT u.email, u.role, d.fp_hash, d.ip_hash
+           FROM users u
+           LEFT JOIN devices d ON d.user_id = u.id
+          WHERE u.id = $1 AND u.role <> 'admin'
+          LIMIT 1`,
+        [id]
+      );
+      if (!target.rowCount) {
+        await client.query('rollback');
+        return res.status(404).json({ error: 'user_not_found_or_protected' });
+      }
+      const user = target.rows[0];
+
+      if (fullReset) {
+        // SUPPRESSION ADMIN FULL : supprime aussi les enregistrements dans deleted_accounts
+        // → permet à l'utilisateur de se réinscrire avec un nouveau free trial
+        const emailHash = (await import('../services/security.js')).sha256Hex(
+          String(user.email || '').trim().toLowerCase()
+        );
+        await client.query(
+          `DELETE FROM deleted_accounts WHERE email_hash = $1`,
+          [emailHash]
+        );
+        if (user.fp_hash) {
+          await client.query(
+            `DELETE FROM deleted_accounts WHERE fp_hash = $1`,
+            [user.fp_hash]
+          );
+        }
+        logAdminEvent(req, 'delete_user_full_reset', { userId: id, email: user.email });
+      } else {
+        // SUPPRESSION ADMIN SOFT : on enregistre l'empreinte comme 'admin_soft'
+        // → free trial déjà consommé, l'utilisateur ne peut pas en bénéficier à nouveau
+        const emailHash = (await import('../services/security.js')).sha256Hex(
+          String(user.email || '').trim().toLowerCase()
+        );
+        await client.query(
+          `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+           VALUES($1, $2, $3, 'admin_soft')
+           ON CONFLICT DO NOTHING`,
+          [emailHash, user.fp_hash || null, user.ip_hash || null]
+        );
+        logAdminEvent(req, 'delete_user_soft', { userId: id, email: user.email });
+      }
+
+      // Supprimer le compte (CASCADE supprime wallets, devices, usage_logs, etc.)
+      await client.query("DELETE FROM users WHERE id=$1 AND role<>'admin'", [id]);
+      await client.query('commit');
     });
-    logAdminEvent(req, 'delete_user', { userId: req.params.id });
-    return res.json({ ok: true });
+    return res.json({ ok: true, fullReset });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });
