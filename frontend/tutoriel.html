@@ -25,11 +25,7 @@
       --pope-warn: #c47900;
       --tuto-radius: 28px;
       --tuto-shadow: 0 24px 64px rgba(0,0,0,.14);
-<<<<<<< HEAD
-      --avatar-size: 96px;
-=======
       --avatar-size: 110px;
->>>>>>> staging
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -138,18 +134,6 @@
       background: radial-gradient(circle at 30% 20%, rgba(0,121,193,.35) 0%, transparent 60%);
     }
 
-<<<<<<< HEAD
-    /* AVATAR SVG ANIMÉ */
-    .tuto-avatar-wrap {
-      position: relative; z-index: 2;
-      width: var(--avatar-size); height: var(--avatar-size);
-      margin-bottom: 20px;
-    }
-    .tuto-avatar-wrap .avatar-glow {
-      position: absolute; inset: -8px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(3,160,215,.4) 0%, transparent 70%);
-=======
     /* AVATAR PHOTO RÉELLE */
     .tuto-avatar-wrap {
       position: relative; z-index: 2;
@@ -161,51 +145,10 @@
       position: absolute; inset: -6px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(3,160,215,.5) 0%, transparent 70%);
->>>>>>> staging
       animation: glow-pulse 2.4s ease-in-out infinite;
     }
     @keyframes glow-pulse {
       0%,100%{opacity:.6;transform:scale(1)}
-<<<<<<< HEAD
-      50%{opacity:1;transform:scale(1.08)}
-    }
-
-    /* SVG AVATAR */
-    .avatar-svg {
-      width: var(--avatar-size);
-      height: var(--avatar-size);
-      border-radius: 50%;
-      display: block;
-      position: relative; z-index: 1;
-    }
-
-    /* Eyes blink */
-    .eye-left, .eye-right { animation: blink 4.5s ease-in-out infinite; }
-    .eye-right { animation-delay: .12s; }
-    @keyframes blink {
-      0%,92%,100%{transform:scaleY(1)}
-      95%{transform:scaleY(.05)}
-    }
-
-    /* Mouth talk */
-    .avatar-mouth { animation: talk-idle 2s ease-in-out infinite; }
-    @keyframes talk-idle {
-      0%,100%{d:path("M 48 66 Q 60 70 72 66")}
-      50%{d:path("M 48 66 Q 60 74 72 66")}
-    }
-    .is-talking .avatar-mouth { animation: talking 0.22s ease-in-out infinite alternate; }
-    @keyframes talking {
-      0%{d:path("M 48 65 Q 60 68 72 65")}
-      100%{d:path("M 48 65 Q 60 78 72 65")}
-    }
-
-    /* Head bob */
-    .avatar-head-group { animation: head-bob 3.8s ease-in-out infinite; transform-origin: 60px 60px; }
-    @keyframes head-bob {
-      0%,100%{transform:rotate(0deg) translateY(0)}
-      25%{transform:rotate(1.2deg) translateY(-1px)}
-      75%{transform:rotate(-1.2deg) translateY(1px)}
-=======
       50%{opacity:1;transform:scale(1.06)}
     }
 
@@ -240,7 +183,6 @@
     @keyframes talking-ring {
       0%{transform:scale(1);opacity:.8}
       100%{transform:scale(1.06);opacity:.3}
->>>>>>> staging
     }
 
     .tuto-avatar-name {
@@ -648,84 +590,6 @@
 
     <!-- SIDEBAR AVATAR -->
     <aside class="tuto-sidebar">
-<<<<<<< HEAD
-      <!-- AVATAR SVG ANIMÉ -->
-      <div class="tuto-avatar-wrap" id="avatarWrap">
-        <div class="avatar-glow"></div>
-        <svg class="avatar-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="skinGrad" cx="50%" cy="45%" r="55%">
-              <stop offset="0%" stop-color="#f5c8a0"/>
-              <stop offset="100%" stop-color="#e8a87c"/>
-            </radialGradient>
-            <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#1a6aad"/>
-              <stop offset="100%" stop-color="#0b3a6e"/>
-            </radialGradient>
-            <clipPath id="circleClip">
-              <circle cx="60" cy="60" r="60"/>
-            </clipPath>
-          </defs>
-
-          <!-- Fond -->
-          <circle cx="60" cy="60" r="60" fill="url(#bgGrad)"/>
-
-          <!-- Corps costume -->
-          <g clip-path="url(#circleClip)">
-            <ellipse cx="60" cy="118" rx="34" ry="22" fill="#0b2440"/>
-            <rect x="38" y="100" width="44" height="30" rx="4" fill="#0b2440"/>
-            <!-- Cravate -->
-            <polygon points="60,98 56,110 60,114 64,110" fill="#0079c1"/>
-            <!-- Chemise -->
-            <rect x="50" y="98" width="20" height="16" rx="2" fill="#e8f4fd"/>
-          </g>
-
-          <!-- Cou -->
-          <ellipse cx="60" cy="97" rx="10" ry="7" fill="url(#skinGrad)"/>
-
-          <!-- Tête groupe animé -->
-          <g class="avatar-head-group">
-            <!-- Tête -->
-            <ellipse cx="60" cy="66" rx="26" ry="28" fill="url(#skinGrad)"/>
-
-            <!-- Cheveux -->
-            <ellipse cx="60" cy="42" rx="26" ry="12" fill="#1a1a2e"/>
-            <rect x="34" y="42" width="52" height="14" fill="#1a1a2e"/>
-            <rect x="34" y="38" width="8" height="20" rx="4" fill="#1a1a2e"/>
-            <rect x="78" y="38" width="8" height="20" rx="4" fill="#1a1a2e"/>
-
-            <!-- Oreilles -->
-            <ellipse cx="34" cy="66" rx="5" ry="7" fill="#e8a87c"/>
-            <ellipse cx="86" cy="66" rx="5" ry="7" fill="#e8a87c"/>
-
-            <!-- Sourcils -->
-            <path d="M 44 55 Q 50 52 56 55" stroke="#5a3010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M 64 55 Q 70 52 76 55" stroke="#5a3010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-            <!-- Yeux -->
-            <g class="eye-left" style="transform-origin:50px 62px">
-              <ellipse cx="50" cy="62" rx="6" ry="7" fill="#fff"/>
-              <circle cx="51" cy="63" r="4" fill="#3d2b1f"/>
-              <circle cx="52" cy="61" r="1.5" fill="#fff"/>
-            </g>
-            <g class="eye-right" style="transform-origin:70px 62px">
-              <ellipse cx="70" cy="62" rx="6" ry="7" fill="#fff"/>
-              <circle cx="71" cy="63" r="4" fill="#3d2b1f"/>
-              <circle cx="72" cy="61" r="1.5" fill="#fff"/>
-            </g>
-
-            <!-- Nez -->
-            <ellipse cx="60" cy="71" rx="3" ry="2.5" fill="#d4956a"/>
-
-            <!-- Bouche (animée via JS car path animation limitée sans GSAP) -->
-            <path class="avatar-mouth" d="M 48 78 Q 60 83 72 78" stroke="#b5533c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-            <!-- Joues -->
-            <circle cx="43" cy="74" r="6" fill="rgba(220,100,100,.18)"/>
-            <circle cx="77" cy="74" r="6" fill="rgba(220,100,100,.18)"/>
-          </g>
-        </svg>
-=======
       <!-- AVATAR PHOTO RÉELLE -->
       <div class="tuto-avatar-wrap" id="avatarWrap">
         <div class="avatar-glow"></div>
@@ -735,7 +599,6 @@
           src="./assets/lea-avatar.jpg"
           alt="Léa, conseillère POPE Online"
         />
->>>>>>> staging
       </div>
 
       <div class="tuto-avatar-name">Léa</div>
@@ -1016,15 +879,12 @@ function typeText(text, el, cb) {
 function setTalking(talking) {
   if (talking) avatarWrap.classList.add('is-talking');
   else avatarWrap.classList.remove('is-talking');
-<<<<<<< HEAD
-=======
   // Effet visuel sur la photo : légère mise en avant quand Léa "parle"
   const photo = avatarWrap.querySelector('.avatar-photo');
   if (photo) {
     photo.style.transform = talking ? 'scale(1.04)' : '';
     photo.style.transition = 'transform 0.3s ease';
   }
->>>>>>> staging
 }
 
 function showStep(idx, direction = 1) {
