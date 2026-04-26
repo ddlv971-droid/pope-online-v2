@@ -26,7 +26,7 @@ async function resolveAuthenticatedUser(req) {
   });
 
   if (!row) return { error: 'unauthorized', status: 401 };
-  if (Number(row.session_version || 0) !== sessionVersion) return { error: 'unauthorized', status: 401 };
+  if (Number(row.session_version || 1) !== sessionVersion) return { error: 'unauthorized', status: 401 };
 
   return {
     user: {
@@ -34,7 +34,7 @@ async function resolveAuthenticatedUser(req) {
       email: row.email,
       role: row.role || 'client',
       accountSpace: row.account_space || 'public',
-      sv: Number(row.session_version || 0)
+      sv: Number(row.session_version || 1)
     }
   };
 }
