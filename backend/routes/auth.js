@@ -110,19 +110,25 @@ router.post('/signup', async (req, res) => {
         return res.status(409).json({ error: 'email_exists' });
       }
 
-      const password_hash = await bcrypt.hash(password, 12);
-
       // Vérifier si le compte a été supprimé par l'utilisateur lui-même (bloque le free trial)
+      // Résilient : si la table deleted_accounts n'existe pas encore, on ignore silencieusement
       const emailHash = sha256Hex(normalizeEmail(email));
-      const selfDeleted = await client.query(
-        `SELECT 1 FROM deleted_accounts
-          WHERE (email_hash = $1 OR fp_hash = $2)
-            AND deleted_by = 'self'
-          LIMIT 1`,
-        [emailHash, fp_hash]
-      );
-      const wasDeletedBySelf = selfDeleted.rowCount > 0;
+      let wasDeletedBySelf = false;
+      try {
+        const selfDeleted = await client.query(
+          `SELECT 1 FROM deleted_accounts
+            WHERE (email_hash = $1 OR fp_hash = $2)
+              AND deleted_by = 'self'
+            LIMIT 1`,
+          [emailHash, fp_hash]
+        );
+        wasDeletedBySelf = selfDeleted.rowCount > 0;
+      } catch (_) {
+        // Table deleted_accounts absente (migration pas encore passée) → pas de blocage
+        wasDeletedBySelf = false;
+      }
 
+      const password_hash = await bcrypt.hash(password, 12);
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
 
       const userIns = await client.query(
@@ -665,22 +671,24 @@ router.delete('/me', requireAuth, async (req, res) => {
         const ipHash = ipToHash(req);
 
         // Enregistrer dans deleted_accounts pour bloquer la réinscription gratuite
-        // (suppression "self" = ne peut plus bénéficier d'un free trial sur ce device/email)
-        await client.query(
-          `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-           VALUES($1, $2, $3, 'self')
-           ON CONFLICT DO NOTHING`,
-          [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
-        );
-
-        // Insérer une empreinte par device connu (pour couvrir tous les navigateurs)
-        for (const dev of devicesRes.rows.slice(1)) {
+        // Résilient : si la table n'existe pas encore, on supprime quand même le compte
+        try {
           await client.query(
             `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
              VALUES($1, $2, $3, 'self')
              ON CONFLICT DO NOTHING`,
-            [emailHash, dev.fp_hash, null]
+            [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
           );
+          for (const dev of devicesRes.rows.slice(1)) {
+            await client.query(
+              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+               VALUES($1, $2, $3, 'self')
+               ON CONFLICT DO NOTHING`,
+              [emailHash, dev.fp_hash, null]
+            );
+          }
+        } catch (_) {
+          // Table absente → pas de blocage d'empreinte, on supprime quand même
         }
       }
 

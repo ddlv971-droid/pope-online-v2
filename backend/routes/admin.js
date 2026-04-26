@@ -264,34 +264,36 @@ router.delete('/users/:id', async (req, res) => {
       const user = target.rows[0];
 
       if (fullReset) {
-        // SUPPRESSION ADMIN FULL : supprime aussi les enregistrements dans deleted_accounts
-        // → permet à l'utilisateur de se réinscrire avec un nouveau free trial
-        const emailHash = (await import('../services/security.js')).sha256Hex(
-          String(user.email || '').trim().toLowerCase()
-        );
-        await client.query(
-          `DELETE FROM deleted_accounts WHERE email_hash = $1`,
-          [emailHash]
-        );
-        if (user.fp_hash) {
-          await client.query(
-            `DELETE FROM deleted_accounts WHERE fp_hash = $1`,
-            [user.fp_hash]
-          );
-        }
+        // SUPPRESSION ADMIN FULL : supprime les enregistrements dans deleted_accounts
+        // ET insère une entrée 'admin_full' pour que hasPriorFreeTrialOnFingerprint autorise un nouveau free trial
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(`DELETE FROM deleted_accounts WHERE email_hash = $1`, [emailHash]);
+          if (user.fp_hash) {
+            await client.query(`DELETE FROM deleted_accounts WHERE fp_hash = $1`, [user.fp_hash]);
+            // Marquer ce fp comme 'admin_full' pour autoriser un nouveau free trial
+            await client.query(
+              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+               VALUES($1, $2, $3, 'admin_full')
+               ON CONFLICT DO NOTHING`,
+              [emailHash, user.fp_hash, null]
+            );
+          }
+        } catch (_) { /* table absente → on continue */ }
         logAdminEvent(req, 'delete_user_full_reset', { userId: id, email: user.email });
       } else {
         // SUPPRESSION ADMIN SOFT : on enregistre l'empreinte comme 'admin_soft'
-        // → free trial déjà consommé, l'utilisateur ne peut pas en bénéficier à nouveau
-        const emailHash = (await import('../services/security.js')).sha256Hex(
-          String(user.email || '').trim().toLowerCase()
-        );
-        await client.query(
-          `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-           VALUES($1, $2, $3, 'admin_soft')
-           ON CONFLICT DO NOTHING`,
-          [emailHash, user.fp_hash || null, user.ip_hash || null]
-        );
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(
+            `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+             VALUES($1, $2, $3, 'admin_soft')
+             ON CONFLICT DO NOTHING`,
+            [emailHash, user.fp_hash || null, user.ip_hash || null]
+          );
+        } catch (_) { /* table absente → on continue */ }
         logAdminEvent(req, 'delete_user_soft', { userId: id, email: user.email });
       }
 
