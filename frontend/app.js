@@ -133,81 +133,100 @@ export function setTicketsBadge(wallet) {
 }
 
 export function showTrialExpiredModal(wallet) {
-  // Créer la modale de fin de trial avec les plans
+  if (document.getElementById('pope-trial-modal')) return;
   const overlay = document.createElement('div');
   overlay.id = 'pope-trial-modal';
-  overlay.style.cssText = `
-    position:fixed;inset:0;z-index:9999;
-    background:rgba(11,36,64,.7);backdrop-filter:blur(6px);
-    display:flex;align-items:center;justify-content:center;padding:20px;
-  `;
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(11,36,64,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;';
 
-  const accountSpace = localStorage.getItem('pope_account_space') || 'public';
-  const pricingUrl = 'pricing.html';
+  const base = (typeof window !== 'undefined') ? window.location.origin : '';
 
-  overlay.innerHTML = \`
-    <div style="background:#fff;border-radius:24px;padding:48px 40px;max-width:880px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);animation:modal-in .35s ease;position:relative">
-      <style>@keyframes modal-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}</style>
-      <div style="text-align:center;margin-bottom:32px">
-        <div style="font-size:48px;margin-bottom:16px">🎯</div>
-        <h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d'essai est terminée</h2>
-        <p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">
-          Merci d'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d'expertise sécurisée.
-          <strong>Continuez avec un plan adapté à vos besoins.</strong>
-        </p>
-      </div>
+  // Construction sans template literals imbriqués pour compatibilité Vite
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border-radius:24px;padding:48px 40px;max-width:880px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);position:relative;animation:pope-modal-in .35s ease';
 
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
-        <div style="border:2px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center">
-          <div style="font-size:12px;font-weight:700;color:#50627a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Starter</div>
-          <div style="font-size:28px;font-weight:800;color:#0b2440">49€<span style="font-size:14px;font-weight:400">/mois</span></div>
-          <div style="font-size:12px;color:#50627a;margin-bottom:16px">ou 499€/an (−15%)</div>
-          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
-            <li>✓ Production illimitée</li>
-            <li>✓ 5 relectures expertes/mois</li>
-            <li>✓ Accès au closier documentaire</li>
-            <li>✓ Support prioritaire</li>
-          </ul>
-          <a href="pricing.html?plan=starter" style="display:block;margin-top:16px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Choisir Starter</a>
-        </div>
+  const style = document.createElement('style');
+  style.textContent = '@keyframes pope-modal-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}';
+  card.appendChild(style);
 
-        <div style="border:2px solid #0079c1;border-radius:16px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,#f0f7fc,#e0f0fb);position:relative">
-          <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700">RECOMMANDÉ</div>
-          <div style="font-size:12px;font-weight:700;color:#0079c1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pro</div>
-          <div style="font-size:28px;font-weight:800;color:#0b2440">89€<span style="font-size:14px;font-weight:400">/mois</span></div>
-          <div style="font-size:12px;color:#50627a;margin-bottom:16px">ou 890€/an (−15%)</div>
-          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
-            <li>✓ Production illimitée</li>
-            <li>✓ 15 relectures expertes/mois</li>
-            <li>✓ Accès au closier documentaire</li>
-            <li>✓ Accompagnement sur mesure inclus</li>
-          </ul>
-          <a href="pricing.html?plan=pro" style="display:block;margin-top:16px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Choisir Pro</a>
-        </div>
+  // Header
+  const header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:32px';
+  header.innerHTML = '<div style="font-size:48px;margin-bottom:16px">🎯</div>' +
+    '<h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d'essai est terminée</h2>' +
+    '<p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">Merci d'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d'expertise sécurisée. <strong style="color:#0b2440">Continuez avec un plan adapté.</strong></p>';
+  card.appendChild(header);
 
-        <div style="border:2px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center">
-          <div style="font-size:12px;font-weight:700;color:#50627a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Premium</div>
-          <div style="font-size:28px;font-weight:800;color:#0b2440">Sur<span style="font-size:18px"> devis</span></div>
-          <div style="font-size:12px;color:#50627a;margin-bottom:16px">Collectivités & Entreprises</div>
-          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
-            <li>✓ Production illimitée</li>
-            <li>✓ Relectures illimitées</li>
-            <li>✓ Conseiller dédié</li>
-            <li>✓ Intégration sur mesure</li>
-          </ul>
-          <a href="mailto:contact@pope-online.com?subject=Offre%20Premium%20POPE%20Online" style="display:block;margin-top:16px;border:1.5px solid #0079c1;color:#0079c1;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Nous contacter</a>
-        </div>
-      </div>
+  // Plans
+  const plansGrid = document.createElement('div');
+  plansGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px';
 
-      <div style="text-align:center">
-        <button onclick="document.getElementById('pope-trial-modal').remove()" style="background:none;border:none;color:#50627a;font-size:14px;cursor:pointer;text-decoration:underline">Continuer en consultation uniquement</button>
-      </div>
-    </div>
-  \`;
+  const plans = [
+    { name:'Starter', price:'49€', period:'/mois', annual:'ou 499€/an (−15%)', features:['Production illimitée','5 relectures expertes/mois','Closier documentaire','Support prioritaire'], url:'pricing.html?plan=starter', featured:false },
+    { name:'Pro', price:'89€', period:'/mois', annual:'ou 890€/an (−15%)', features:['Production illimitée','15 relectures expertes/mois','Closier documentaire premium','Accompagnement inclus'], url:'pricing.html?plan=pro', featured:true },
+    { name:'Premium', price:'Sur devis', period:'', annual:'Collectivités & Entreprises', features:['Production illimitée','Relectures illimitées','Conseiller dédié','Intégration sur mesure'], url:'mailto:contact@pope-online.com?subject=Offre%20Premium', featured:false },
+  ];
 
+  plans.forEach(function(plan) {
+    const col = document.createElement('div');
+    col.style.cssText = plan.featured
+      ? 'border:2px solid #0079c1;border-radius:16px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,#f0f7fc,#e0f0fb);position:relative'
+      : 'border:1.5px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center';
+
+    if (plan.featured) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700;white-space:nowrap';
+      badge.textContent = 'RECOMMANDÉ';
+      col.appendChild(badge);
+    }
+
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:12px;font-weight:700;color:' + (plan.featured ? '#0079c1' : '#50627a') + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px';
+    nameEl.textContent = plan.name;
+    col.appendChild(nameEl);
+
+    const priceEl = document.createElement('div');
+    priceEl.innerHTML = '<span style="font-size:28px;font-weight:800;color:#0b2440">' + plan.price + '</span><span style="font-size:14px;font-weight:400;color:#50627a">' + plan.period + '</span>';
+    col.appendChild(priceEl);
+
+    const annualEl = document.createElement('div');
+    annualEl.style.cssText = 'font-size:12px;color:#50627a;margin-bottom:16px;margin-top:4px';
+    annualEl.textContent = plan.annual;
+    col.appendChild(annualEl);
+
+    const ul = document.createElement('ul');
+    ul.style.cssText = 'list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2;padding:0;margin:0 0 16px';
+    plan.features.forEach(function(f) {
+      const li = document.createElement('li');
+      li.textContent = '✓ ' + f;
+      ul.appendChild(li);
+    });
+    col.appendChild(ul);
+
+    const cta = document.createElement('a');
+    cta.href = plan.url.startsWith('mailto') ? plan.url : base + '/' + plan.url;
+    cta.style.cssText = 'display:block;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none';
+    cta.textContent = plan.url.startsWith('mailto') ? 'Nous contacter' : 'Choisir ' + plan.name;
+    col.appendChild(cta);
+
+    plansGrid.appendChild(col);
+  });
+  card.appendChild(plansGrid);
+
+  // Lien fermeture
+  const closeWrap = document.createElement('div');
+  closeWrap.style.cssText = 'text-align:center';
+  const closeBtn = document.createElement('button');
+  closeBtn.style.cssText = 'background:none;border:none;color:#50627a;font-size:14px;cursor:pointer;text-decoration:underline';
+  closeBtn.textContent = 'Continuer en consultation uniquement';
+  closeBtn.onclick = function() { overlay.remove(); };
+  closeWrap.appendChild(closeBtn);
+  card.appendChild(closeWrap);
+
+  overlay.appendChild(card);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
+
 
 export function showToast(text, tone='ok'){
   let host = document.querySelector('.toast-host');
