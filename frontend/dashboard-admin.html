@@ -495,10 +495,19 @@ async function loadUsers() {
   try {
     const data = await apiFetch('/admin/users');
     usersCache = data.users || [];
+    if (usersCache.length === 0) console.warn('[admin] loadUsers: 0 users returned from API');
     updateStats(usersCache);
     applyFilters();
   } catch (e) {
-    if (getToken()) showToast(getApiMessage(e), 'err');
+    console.error('[admin] loadUsers error:', e?.status, e?.message);
+    if (e?.status === 401) {
+      clearSession();
+      el('adminLoginBox').hidden = false;
+      el('adminApp').hidden = true;
+      showToast('Session expirée, reconnectez-vous', 'warn');
+    } else {
+      showToast(getApiMessage(e), 'err');
+    }
   }
 }
 
@@ -509,7 +518,7 @@ async function adminLogin() {
       body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard', turnstileToken:getTurnstileToken() }
     });
     if (data?.user?.role !== 'admin') throw new Error('forbidden');
-    setSession(data.user || {});
+    setSession(data.user || {}, data.token || '');
     el('adminLoginBox').hidden = true;
     el('adminApp').hidden = false;
     el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';

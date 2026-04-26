@@ -94,7 +94,7 @@ router.get('/users', async (_req, res) => {
                    from jsonb_array_elements(coalesce(u.satisfaction_last_response->'criteria', '[]'::jsonb)) elem
                  ), 0) * 10.0 / 7.0
                , 1) as satisfaction_score_10,
-               w.plan_code, w.status, w.tickets_ai, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
+               w.plan_code, w.status, w.tickets_ai, w.tickets_expert, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
           left join wallets w on w.user_id = u.id
@@ -264,6 +264,7 @@ router.delete('/users/:id', async (req, res) => {
       const user = target.rows[0];
 
       if (fullReset) {
+<<<<<<< HEAD
         // SUPPRESSION ADMIN FULL : supprime aussi les enregistrements dans deleted_accounts
         // → permet à l'utilisateur de se réinscrire avec un nouveau free trial
         const emailHash = (await import('../services/security.js')).sha256Hex(
@@ -292,6 +293,38 @@ router.delete('/users/:id', async (req, res) => {
            ON CONFLICT DO NOTHING`,
           [emailHash, user.fp_hash || null, user.ip_hash || null]
         );
+=======
+        // SUPPRESSION ADMIN FULL : supprime les enregistrements dans deleted_accounts
+        // ET insère une entrée 'admin_full' pour que hasPriorFreeTrialOnFingerprint autorise un nouveau free trial
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(`DELETE FROM deleted_accounts WHERE email_hash = $1`, [emailHash]);
+          if (user.fp_hash) {
+            await client.query(`DELETE FROM deleted_accounts WHERE fp_hash = $1`, [user.fp_hash]);
+            // Marquer ce fp comme 'admin_full' pour autoriser un nouveau free trial
+            await client.query(
+              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+               VALUES($1, $2, $3, 'admin_full')
+               ON CONFLICT DO NOTHING`,
+              [emailHash, user.fp_hash, null]
+            );
+          }
+        } catch (_) { /* table absente → on continue */ }
+        logAdminEvent(req, 'delete_user_full_reset', { userId: id, email: user.email });
+      } else {
+        // SUPPRESSION ADMIN SOFT : on enregistre l'empreinte comme 'admin_soft'
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(
+            `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+             VALUES($1, $2, $3, 'admin_soft')
+             ON CONFLICT DO NOTHING`,
+            [emailHash, user.fp_hash || null, user.ip_hash || null]
+          );
+        } catch (_) { /* table absente → on continue */ }
+>>>>>>> staging
         logAdminEvent(req, 'delete_user_soft', { userId: id, email: user.email });
       }
 

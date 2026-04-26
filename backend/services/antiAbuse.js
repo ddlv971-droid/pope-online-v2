@@ -52,5 +52,22 @@ export async function hasPriorFreeTrialOnFingerprint({ client, fp_hash }) {
       limit 1`,
     [fp_hash]
   );
-  return r.rowCount > 0;
+  if (!r.rowCount) return false;
+
+  // Si un admin a fait un reset intégral pour ce fp_hash, on autorise un nouveau free trial
+  // Résilient : si la table deleted_accounts n'existe pas encore, on ne bloque pas
+  try {
+    const adminReset = await client.query(
+      `SELECT 1 FROM deleted_accounts
+        WHERE fp_hash = $1
+          AND deleted_by = 'admin_full'
+        LIMIT 1`,
+      [fp_hash]
+    );
+    if (adminReset.rowCount > 0) return false; // reset complet → free trial autorisé
+  } catch (_) {
+    // Table absente → pas de reset connu → comportement normal (bloquer)
+  }
+
+  return true;
 }
