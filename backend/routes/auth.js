@@ -102,53 +102,54 @@ router.post('/signup', async (req, res) => {
   const user_agent_hash = uaToHash(req);
 
   try {
-    // ── Phase 1 : tout ce qui touche la base dans une seule transaction ──────
-    let verifyToken = null;
-    let createdEmail = null;
-
     await withClient(async (client) => {
       await client.query('begin');
-
       const existing = await client.query('select 1 from users where email=$1', [email]);
       if (existing.rowCount) {
         await client.query('rollback');
         return res.status(409).json({ error: 'email_exists' });
       }
 
-      // Vérifier si supprimé par l'utilisateur lui-même (bloque free trial)
-      // Résilient : si deleted_accounts n'existe pas encore → pas de blocage
-      const emailHash = sha256Hex(normalizeEmail(email));
-      let wasDeletedBySelf = false;
-      try {
-        const selfDeleted = await client.query(
-          `SELECT 1 FROM deleted_accounts
-            WHERE (email_hash = $1 OR fp_hash = $2) AND deleted_by = 'self'
-            LIMIT 1`,
-          [emailHash, fp_hash]
-        );
-        wasDeletedBySelf = selfDeleted.rowCount > 0;
-      } catch (_) { /* table absente → pas de blocage */ }
-
       const password_hash = await bcrypt.hash(password, 12);
       const suspicious = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
+
+      // Vérifier si compte précédemment supprimé par l'utilisateur lui-même
+      // → bloque le free trial mais autorise la réinscription
+      // Résilient : si deleted_accounts n'existe pas encore → wasDeletedBySelf = false
+      let wasDeletedBySelf = false;
+      try {
+        const emailHash = sha256Hex(normalizeEmail(email));
+        const selfDel = await client.query(
+          `SELECT 1 FROM deleted_accounts WHERE (email_hash=$1 OR fp_hash=$2) AND deleted_by='self' LIMIT 1`,
+          [emailHash, fp_hash]
+        );
+        wasDeletedBySelf = selfDel.rowCount > 0;
+      } catch (_) { /* table absente → pas de blocage */ }
 
       const userIns = await client.query(
         `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious, phone_country, phone_number, phone_full)
          values($1,$2,$3,$4,$5,$6,$7,$8,$9)
-         returning id, email, account_space`,
+         returning id, email, account_space, is_email_verified, is_suspicious, role, phone_country, phone_number, phone_full`,
         [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
       );
       const user = userIns.rows[0];
-
-      const entitlements = resolveFreeTrialEntitlements(accountSpace);
-      const initialStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
-      await client.query(
-        `insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert,
-          public_dossiers_used, private_dossiers_used,
-          public_dossiers_limit, private_dossiers_limit, private_users_limit)
-         values($1,'FREE',$2,0,0,0,0,$3,$4,$5)`,
-        [user.id, initialStatus, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
-      );
+const entitlements = resolveFreeTrialEntitlements(accountSpace);
+      const initialWalletStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
+     await client.query(
+  `insert into wallets(
+    user_id, plan_code, status, tickets_ai, tickets_expert,
+    public_dossiers_used, private_dossiers_used,
+    public_dossiers_limit, private_dossiers_limit, private_users_limit
+  ) values($1,'FREE',$2,$3,0,0,0,$4,$5,$6)`,
+  [
+    user.id,
+    initialWalletStatus,
+    entitlements.ticketsAi,
+    entitlements.publicDossiersLimit,
+    entitlements.privateDossiersLimit,
+    entitlements.privateUsersLimit
+  ]
+);
 
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
@@ -164,41 +165,28 @@ router.post('/signup', async (req, res) => {
          values($1,$2,$3)`,
         [user.id, token_hash, expires]
       );
-
       await client.query('commit');
 
-      // Stocker pour l'envoi mail HORS transaction
-      verifyToken = token;
-      createdEmail = email;
+      const base = resolveFrontendBaseUrl();
+      const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
+      await sendMail({
+        to: email,
+        subject: 'POPE Online — Vérification de votre compte',
+        text: `Bonjour,
+
+Veuillez vérifier votre compte POPE Online en cliquant sur ce lien :
+${verifyUrl}
+
+Ce lien expire dans 24h.
+
+— POPE Online`,
+        html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
+      });
+
+      return res.json({ ok: true, message: 'verification_email_sent' });
     });
-
-    // Si withClient a déjà répondu (ex: email_exists), on s'arrête
-    if (res.headersSent) return;
-
-    // ── Phase 2 : envoi du mail HORS withClient ──────────────────────────────
-    // Si le mail échoue, le compte est quand même créé et on répond ok:true
-    // Le mail peut être renvoyé depuis la page de login (lien "renvoyer le mail")
-    let mailFailed = false;
-    if (verifyToken && createdEmail) {
-      try {
-        const base = resolveFrontendBaseUrl();
-        const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(verifyToken)}`;
-        await sendMail({
-          to: createdEmail,
-          subject: 'POPE Online — Vérification de votre compte',
-          text: `Bonjour,\n\nVeuillez vérifier votre compte POPE Online en cliquant sur ce lien :\n${verifyUrl}\n\nCe lien expire dans 24h.\n\n— POPE Online`,
-          html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
-        });
-      } catch (mailErr) {
-        console.error('[signup] sendMail failed (account created):', mailErr?.message);
-        mailFailed = true;
-      }
-    }
-
-    return res.json({ ok: true, message: 'verification_email_sent', mailFailed });
-
   } catch (e) {
-    console.error('[signup]', e);
+    console.error(e);
     return res.status(500).json({ error: 'server_error' });
   }
 });
@@ -657,46 +645,30 @@ router.delete('/me', requireAuth, async (req, res) => {
     await withClient(async (client) => {
       await client.query('begin');
 
-      // Récupérer les empreintes avant suppression pour bloquer la réinscription gratuite
+      // Récupérer email + devices pour enregistrer l'empreinte (bloque le free trial à la réinscription)
       const userRow = await client.query(
-        `SELECT u.email, w.trial_started_at
-           FROM users u
-           LEFT JOIN wallets w ON w.user_id = u.id
-          WHERE u.id = $1`,
-        [req.user.sub]
+        `SELECT u.email FROM users u WHERE u.id=$1`, [req.user.sub]
       );
-      const user = userRow.rows[0];
-
-      if (user) {
-        // Récupérer toutes les empreintes du device de cet utilisateur
+      if (userRow.rowCount) {
         const devicesRes = await client.query(
-          `SELECT fp_hash, ip_hash FROM devices WHERE user_id = $1 LIMIT 10`,
-          [req.user.sub]
+          `SELECT fp_hash, ip_hash FROM devices WHERE user_id=$1 LIMIT 10`, [req.user.sub]
         );
-
-        const emailHash = sha256Hex(normalizeEmail(user.email));
-        const ipHash = ipToHash(req);
-
-        // Enregistrer dans deleted_accounts pour bloquer la réinscription gratuite
-        // Résilient : si la table n'existe pas encore, on supprime quand même le compte
         try {
+          const emailHash = sha256Hex(normalizeEmail(userRow.rows[0].email));
+          const ipHash = ipToHash(req);
           await client.query(
             `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-             VALUES($1, $2, $3, 'self')
-             ON CONFLICT DO NOTHING`,
+             VALUES($1,$2,$3,'self') ON CONFLICT DO NOTHING`,
             [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
           );
           for (const dev of devicesRes.rows.slice(1)) {
             await client.query(
               `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
-               VALUES($1, $2, $3, 'self')
-               ON CONFLICT DO NOTHING`,
-              [emailHash, dev.fp_hash, null]
+               VALUES($1,$2,null,'self') ON CONFLICT DO NOTHING`,
+              [emailHash, dev.fp_hash]
             );
           }
-        } catch (_) {
-          // Table absente → pas de blocage d'empreinte, on supprime quand même
-        }
+        } catch (_) { /* table deleted_accounts absente → on supprime quand même */ }
       }
 
       await client.query('delete from users where id=$1', [req.user.sub]);
