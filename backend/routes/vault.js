@@ -1,4 +1,3 @@
-
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -551,5 +550,18 @@ router.post('/admin/share', requireAdmin, async (req, res) => {
     return res.status(500).json({ error: 'server_error' });
   }
 });
+
+export function buildDossierAnalysis(files = []) {
+  const total = files.length;
+  const aiReady = files.filter(f => f.canFeedAI).length;
+  const totalSize = files.reduce((acc, f) => acc + (f.size || 0), 0);
+  return {
+    totalFiles: total,
+    aiReadyFiles: aiReady,
+    totalSizeBytes: totalSize,
+    fileNames: files.map(f => f.name)
+  };
+}
+
 
 export default router;
