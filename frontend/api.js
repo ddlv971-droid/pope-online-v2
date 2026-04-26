@@ -43,6 +43,7 @@ const FR_MESSAGES = {
   ai_error: "La génération IA n'a pas pu aboutir.",
   cors_blocked: "Accès refusé depuis cette origine.",
   server_error: "Une erreur technique est survenue.",
+  mail_send_warning: "Votre compte a bien été créé, mais l'envoi de l'e-mail de confirmation a échoué. Contactez le support ou réessayez depuis la page de connexion.",
   missing_objective: "L'objectif est manquant.",
   missing_expectations: "Les attentes sont manquantes.",
   missing_subject: "L'objet est manquant.",

@@ -51,9 +51,14 @@ el('btn').addEventListener('click', async () => {
   if (!el('cgu').checked) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
   try {
     const fp = await getFingerprint();
-    await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken() } });
-    showToast('Compte créé. Vérifiez votre email.', 'ok');
-    el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
+    const data = await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken() } });
+    if (data?.mailFailed) {
+      el('msg').textContent = '⚠️ Compte créé, mais l\'e-mail de vérification n\'a pas pu être envoyé. Contactez le support : contact@pope-online.com';
+      showToast('Compte créé — e-mail non envoyé', 'warn');
+    } else {
+      showToast('Compte créé. Vérifiez votre email.', 'ok');
+      el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
+    }
   } catch (e) { resetTurnstile(); el('msg').textContent = 'Erreur : ' + getApiMessage(e); showToast('Erreur de création', 'err'); }
 });
 </script>
