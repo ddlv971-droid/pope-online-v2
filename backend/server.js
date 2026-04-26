@@ -39,7 +39,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https:",
     "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
     "connect-src 'self' https://challenges.cloudflare.com",
-    "frame-src https://challenges.cloudflare.com",
+    "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com",
     "form-action 'self'",
     "upgrade-insecure-requests"
   ].join('; ');
