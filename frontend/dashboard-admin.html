@@ -284,7 +284,7 @@ function buildUserCard(u) {
           <label class="po-admin-field">
             <span class="po-admin-field-label">Tickets Relecture experte</span>
             <input data-field="ticketsExpert" value="${u.tickets_expert || 0}" class="input" type="number" min="0">
-            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Laisser vide = synchronisé avec Tickets IA</small>
+            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Laisser vide ou 0 = synchronisé automatiquement avec Tickets IA</small>
           </label>
 
           <label class="po-admin-field">
@@ -376,7 +376,15 @@ function attachCardActions(card, user) {
           planCode: card.querySelector('[data-field="planCode"]').value,
           status: card.querySelector('[data-field="status"]').value,
           ticketsAi: Number(card.querySelector('[data-field="ticketsAi"]').value || 0),
-          ticketsExpert: Number(card.querySelector('[data-field="ticketsExpert"]')?.value ?? card.querySelector('[data-field="ticketsAi"]').value ?? 0),
+          ticketsExpert: (() => {
+            const expertEl = card.querySelector('[data-field="ticketsExpert"]');
+            const expertVal = expertEl ? expertEl.value.trim() : '';
+            if (expertVal === '' || expertVal === '0') {
+              // Si vide ou 0 → synchroniser avec tickets IA
+              return Number(card.querySelector('[data-field="ticketsAi"]').value || 0);
+            }
+            return Number(expertVal);
+          })(),
           trialExpiresAt: card.querySelector('[data-field="expiry"]').value || null,
           publicDossiersLimit: Number(card.querySelector('[data-field="publicLimit"]').value || 0),
           privateDossiersLimit: Number(card.querySelector('[data-field="privateLimit"]').value || 0),

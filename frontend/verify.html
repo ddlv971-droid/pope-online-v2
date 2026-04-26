@@ -3,96 +3,109 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Vérification email</title>
+<title>POPE Online — Bienvenue !</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style>
+.verify-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#f0f7fc 0%,#e3f0fa 50%,#d4e8f6 100%)}
+.verify-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:36px;text-decoration:none}
+.verify-logo img{height:40px}
+.verify-logo-text{font-weight:800;font-size:16px;color:#0b2440}
+.verify-card{background:#fff;border-radius:28px;box-shadow:0 24px 64px rgba(0,0,0,.10);padding:52px 44px;max-width:560px;width:100%;text-align:center;animation:card-in .5s ease forwards}
+@keyframes card-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.verify-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0079c1,#03a0d7);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 12px 32px rgba(0,121,193,.3);font-size:36px;animation:icon-pop .6s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes icon-pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.verify-card h1{font-size:28px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin:0 0 12px}
+.verify-subtitle{font-size:16px;color:#50627a;line-height:1.65;margin:0 0 28px}
+.verify-subtitle strong{color:#0b2440}
+.verify-loading{display:flex;flex-direction:column;align-items:center;gap:16px;color:#50627a;font-size:15px}
+.verify-spinner{width:44px;height:44px;border:3px solid #dce9f4;border-top-color:#0079c1;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.verify-success,.verify-error{display:none}
+.verify-success.active,.verify-error.active{display:block}
+.verify-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:16px;color:#b91c1c;font-size:14px;margin-bottom:24px;line-height:1.5}
+.verify-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 32px;text-align:left}
+.verify-feature{background:#f0f7fc;border:1px solid #dce9f4;border-radius:14px;padding:14px 12px;font-size:13px;color:#0b2440;line-height:1.45}
+.verify-feature .feat-icon{font-size:20px;display:block;margin-bottom:6px}
+.verify-feature strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+.verify-cta{display:flex;flex-direction:column;gap:12px}
+.verify-btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:16px;padding:16px 28px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.35);transition:transform .2s,box-shadow .2s}
+.verify-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,121,193,.45)}
+.verify-btn-ghost{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1.5px solid #dce9f4;color:#50627a;border-radius:14px;padding:13px 24px;font-size:14px;font-weight:600;text-decoration:none;transition:border-color .2s,color .2s}
+.verify-btn-ghost:hover{border-color:#0079c1;color:#0079c1}
+.verify-footer{margin-top:24px;font-size:12px;color:#7a8fa8}
+@media(max-width:560px){.verify-card{padding:32px 20px}.verify-features{grid-template-columns:1fr}.verify-card h1{font-size:22px}}
+</style>
 </head>
-<body class="bg po-v5-harmony">
-<header class="topbar">
-<div class="container row between">
-<a class="brand link" href="index.html">
-<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-<div>
-<div class="brand-title">POPE Online</div>
-<div class="brand-sub">Vérification email</div>
+<body style="margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif">
+<div class="verify-wrap">
+  <a class="verify-logo" href="index.html">
+    <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+    <span class="verify-logo-text">POPE Online</span>
+  </a>
+  <div class="verify-card">
+    <div class="verify-loading" id="stateLoading">
+      <div class="verify-spinner"></div>
+      <span>Vérification de votre compte en cours…</span>
+    </div>
+    <div class="verify-success" id="stateSuccess">
+      <div class="verify-icon">✓</div>
+      <h1 id="welcomeTitle">Bienvenue sur POPE Online !</h1>
+      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et vos <strong id="ticketCount">5 tickets</strong> sont prêts à être utilisés.</p>
+      <div class="verify-features" id="featureGrid"></div>
+      <div class="verify-cta">
+        <a href="#" id="ctaDashboard" class="verify-btn-primary">Commencer mon expérience POPE Online →</a>
+        <a href="#" id="ctaSpace" class="verify-btn-ghost">Découvrir mon espace</a>
+      </div>
+    </div>
+    <div class="verify-error" id="stateError">
+      <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+      <h1>Lien invalide</h1>
+      <div class="verify-error-box" id="errorMsg">Ce lien de vérification est invalide ou a expiré.</div>
+      <div class="verify-cta">
+        <a href="login.html" class="verify-btn-primary">Retour à la connexion</a>
+        <a href="index.html" class="verify-btn-ghost">Retour à l'accueil</a>
+      </div>
+    </div>
+    <div class="verify-footer">En cas de problème : <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a></div>
+  </div>
 </div>
-</a>
-</div>
-</header>
-<main class="auth-wrap">
-<section class="auth-card" style="max-width:720px;margin:0 auto">
-<h2>Vérification de votre email</h2>
-<div class="fineprint" id="out">Vérification en cours…</div>
-<div class="row gap wrap" style="margin-top:14px">
-<a class="btn" href="login.html">Se connecter</a>
-<a class="btn ghost" href="public.html">Retour à l’espace public</a>
-</div>
-</section>
-</main>
 <script type="module">
 import { apiFetch, setSession, getApiMessage } from './api.js';
-import { showToast, getFingerprint } from './app.js';
-
-const out = document.getElementById('out');
-const actions = document.querySelector('.row.gap.wrap');
-const u = new URL(window.location.href);
-const token = u.searchParams.get('token') || '';
-
-function buildNextRoute(accountSpace){
-  return accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
-}
-
-function resolveCanonicalOrigin(){
-  const { origin, hostname } = window.location;
-  const isLocal = /localhost|127\.0\.0\.1/i.test(hostname);
-  const isStaging = /staging/i.test(hostname);
-  const isLegacyNetlify = /popeonlinev1\.netlify\.app$/i.test(hostname);
-  if (isLocal || isStaging) return origin;
-  if (hostname === 'pope-online.com' || hostname === 'www.pope-online.com') return 'https://pope-online.com';
-  if (isLegacyNetlify || /\.netlify\.app$/i.test(hostname)) return 'https://pope-online.com';
-  return origin;
-}
-
+import { getFingerprint } from './app.js';
+const L=document.getElementById('stateLoading'),S=document.getElementById('stateSuccess'),E=document.getElementById('stateError');
+function show(s){L.style.display=s==='loading'?'flex':'none';S.classList.toggle('active',s==='success');E.classList.toggle('active',s==='error');}
+function origin(){const{origin:o,hostname:h}=window.location;if(/localhost|127\.0\.0\.1/i.test(h))return o;if(h==='pope-online.com'||h==='www.pope-online.com')return'https://pope-online.com';return o;}
+function features(sp){return sp==='private'?[{i:'✨',t:'Génération IA',d:'Rédigez courriers, réponses et formalités en quelques secondes'},{i:'🔍',t:'Relecture experte',d:'Un conseiller POPE relit et améliore vos documents'},{i:'🔒',t:'Coffre sécurisé 48h',d:'Déposez vos pièces pour enrichir vos générations'},{i:'📋',t:'Accompagnement',d:'Soumettez votre besoin à un expert POPE'}]:[{i:'✨',t:'Génération IA',d:"Produisez livrables, notes et délibérations guidés par l'IA"},{i:'🔍',t:'Relecture experte',d:'Un conseiller POPE sécurise vos documents officiels'},{i:'📁',t:'Archivage local',d:'Capitalisez vos drafts utiles dans votre navigateur'},{i:'📋',t:'Accompagnement',d:'Soumettez votre besoin stratégique à un expert POPE'}];}
 async function run(){
-  if (!token) {
-    out.textContent = 'Token manquant.';
-    return;
-  }
-  try {
-    const fp = await getFingerprint();
-    const data = await apiFetch('/auth/verify-email', { method:'POST', body:{ token, fp }});
-    setSession(data?.user || {}, data?.token || '');
-    const accountSpace = data?.user?.accountSpace === 'private' ? 'private' : 'public';
-    const next = buildNextRoute(accountSpace);
-    const nextUrl = `${resolveCanonicalOrigin()}/${next}`;
-    try {
-      localStorage.setItem('pope_account_space', accountSpace);
-      localStorage.removeItem('pope_post_signup_next');
-      if (accountSpace === 'public') {
-        localStorage.setItem('pope_public_login_next', 'dashboard.html');
-      }
-    } catch {}
-    showToast('Email vérifié ✓', 'ok');
-    out.textContent = accountSpace === 'private'
-      ? '✅ Email vérifié. Redirection directe vers votre tableau de bord privé…'
-      : '✅ Email vérifié. Redirection directe vers votre tableau de bord public…';
-    if (actions) {
-      actions.replaceChildren();
-      const mainLink = document.createElement('a');
-      mainLink.className = 'btn';
-      mainLink.href = nextUrl;
-      mainLink.textContent = accountSpace === 'private' ? 'Voir mon tableau de bord privé' : 'Voir mon tableau de bord public';
-      const backLink = document.createElement('a');
-      backLink.className = 'btn ghost';
-      backLink.href = `${resolveCanonicalOrigin()}/${accountSpace === 'private' ? 'private.html' : 'public.html'}`;
-      backLink.textContent = accountSpace === 'private' ? 'Retour à l’espace privé' : 'Retour à l’espace public';
-      actions.append(mainLink, backLink);
-    }
-    window.location.replace(nextUrl);
-  } catch (e) {
+  show('loading');
+  const token=new URL(window.location.href).searchParams.get('token')||'';
+  if(!token){document.getElementById('errorMsg').textContent='Lien de vérification manquant.';show('error');return;}
+  try{
+    const fp=await getFingerprint();
+    const data=await apiFetch('/auth/verify-email',{method:'POST',body:{token,fp}});
+    setSession(data?.user||{},data?.token||'');
+    const sp=data?.user?.accountSpace==='private'?'private':'public';
+    const tickets=data?.user?.ticketsAi??5;
+    const base=origin();
+    const dashUrl=`${base}/${sp==='private'?'dashboard-private.html':'dashboard.html'}`;
+    const spaceUrl=`${base}/${sp==='private'?'private.html':'public.html'}`;
+    document.getElementById('welcomeTitle').textContent=sp==='private'?'Bienvenue dans votre espace privé !':'Bienvenue dans votre espace public !';
+    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé. Votre compte est actif et vos <strong>${tickets} tickets</strong> sont prêts à être utilisés.`;
+    document.getElementById('ctaDashboard').href=dashUrl;
+    document.getElementById('ctaSpace').href=spaceUrl;
+    document.getElementById('ctaSpace').textContent=sp==='private'?"Découvrir l'espace privé":"Découvrir l'espace public";
+    document.getElementById('featureGrid').innerHTML=features(sp).map(f=>`<div class="verify-feature"><span class="feat-icon">${f.i}</span><strong>${f.t}</strong>${f.d}</div>`).join('');
+    try{localStorage.setItem('pope_account_space',sp);localStorage.removeItem('pope_post_signup_next');}catch{}
+    show('success');
+  }catch(e){
     console.error(e);
-    showToast('Vérification impossible', 'err');
-    out.textContent = 'Erreur : ' + getApiMessage(e);
+    const code=e?.data?.error;
+    document.getElementById('errorMsg').textContent=
+      code==='token_used'?'Ce lien a déjà été utilisé. Votre compte est peut-être déjà actif — connectez-vous directement.':
+      code==='token_expired'?'Ce lien a expiré (validité 24h). Créez un nouveau compte ou contactez le support.':
+      getApiMessage(e);
+    show('error');
   }
 }
 run();

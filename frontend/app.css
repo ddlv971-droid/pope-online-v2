@@ -2469,6 +2469,17 @@ body.bg > *{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:16px;
+  min-width:0;
+}
+.po-grid-cards .po-surface-card{
+  min-width:0;
+  overflow:hidden;
+}
+.po-grid-cards .po-surface-card h3,
+.po-grid-cards .po-surface-card p{
+  overflow-wrap:break-word;
+  word-break:break-word;
+  hyphens:auto;
 }
 .po-surface-card{
   background:rgba(255,255,255,.86);
@@ -5536,4 +5547,11 @@ body.po-auth-menu-open::before{content:'';position:fixed;inset:0;background:rgba
   .topbar .brand{gap:8px;}
   .topbar .container.row.between > .brand .brand-sub{display:none !important;}
   .topbar .row{padding:6px 0;}
+}
+
+/* V28 - Fix responsive overflow */
+.po-page-wrap h1,.po-section-head h1,.po-pane h1{
+  overflow-wrap:break-word;
+  word-break:break-word;
+  hyphens:auto;
 }
