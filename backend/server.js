@@ -17,7 +17,7 @@ import { localizeApiBody } from './services/i18n.js';
 dotenv.config();
 
 const isProd = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
-const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', ...(isProd ? ['CORS_ORIGIN', 'TURNSTILE_SECRET_KEY'] : [])];
+const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', 'MAIL_API_KEY', 'MAIL_FROM', ...(isProd ? ['CORS_ORIGIN', 'TURNSTILE_SECRET_KEY'] : [])];
 const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
 if (missingEnv.length) {
   console.error(`Missing required environment variables: ${missingEnv.join(', ')}`);
