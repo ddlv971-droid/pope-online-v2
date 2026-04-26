@@ -4,13 +4,13 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>POPE Online — Tutoriel guidé</title>
-  <meta name="description" content="Découvrez POPE Online en quelques minutes grâce à notre tutoriel interactif guidé par votre conseiller virtuel."/>
+  <meta name="description" content="Découvrez POPE Online en quelques minutes grâce à notre tutoriel interactif guidé par votre conseillère virtuelle Léa."/>
   <link rel="icon" href="./assets/favicon.png" type="image/png"/>
   <link rel="stylesheet" href="app.css"/>
   <style>
     /* ======================================================
-       POPE ONLINE — TUTORIEL V1
-       Avatar animé + slides pédagogiques
+       POPE ONLINE — TUTORIEL V2
+       Vidéo YouTube 9:16 + tutoriel interactif
     ====================================================== */
 
     :root {
@@ -21,8 +21,6 @@
       --pope-white: #ffffff;
       --pope-muted: #50627a;
       --pope-line: #dce9f4;
-      --pope-success: #1a9e5f;
-      --pope-warn: #c47900;
       --tuto-radius: 28px;
       --tuto-shadow: 0 24px 64px rgba(0,0,0,.14);
       --avatar-size: 110px;
@@ -37,8 +35,206 @@
       color: var(--pope-dark);
     }
 
-    /* NAV */
-    .tuto-nav {
+    /* ── TABS ─────────────────────────────────────────── */
+    .tuto-tabs-bar {
+      max-width: 900px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+      display: flex;
+      gap: 8px;
+    }
+    .tuto-tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 16px;
+      border: 2px solid var(--pope-line);
+      background: #fff;
+      color: var(--pope-muted);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .25s;
+    }
+    .tuto-tab-btn:hover {
+      border-color: var(--pope-blue);
+      color: var(--pope-blue);
+    }
+    .tuto-tab-btn.active {
+      background: linear-gradient(135deg, var(--pope-blue), var(--pope-cyan));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(0,121,193,.3);
+    }
+    .tuto-tab-btn .tab-icon { font-size: 20px; }
+
+    /* ── VIDEO SECTION ────────────────────────────────── */
+    .tuto-video-section {
+      max-width: 900px;
+      margin: 24px auto 60px;
+      padding: 0 20px;
+    }
+    .tuto-video-card {
+      background: #fff;
+      border-radius: var(--tuto-radius);
+      box-shadow: var(--tuto-shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    /* Vidéo 9:16 à gauche */
+    .tuto-video-player {
+      background: #0b2440;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .tuto-video-frame {
+      width: 280px;
+      aspect-ratio: 9 / 16;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,.4);
+      position: relative;
+      background: #000;
+    }
+    .tuto-video-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Infos à droite */
+    .tuto-video-info {
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+    .tuto-video-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #eef7ff, #e0f0fb);
+      border: 1px solid #b8dcf0;
+      color: var(--pope-blue);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      width: fit-content;
+    }
+    .tuto-video-info h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--pope-dark);
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+    .tuto-video-info p {
+      font-size: 15px;
+      color: var(--pope-muted);
+      line-height: 1.7;
+    }
+    .tuto-video-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tuto-video-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--pope-dark);
+    }
+    .tuto-video-step .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--pope-blue), var(--pope-cyan));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tuto-video-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .tuto-video-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--pope-blue), var(--pope-cyan));
+      color: #fff;
+      border-radius: 14px;
+      padding: 13px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0,121,193,.3);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .tuto-video-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,121,193,.4);
+    }
+    .tuto-video-btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1.5px solid var(--pope-line);
+      color: var(--pope-muted);
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color .2s, color .2s;
+      cursor: pointer;
+    }
+    .tuto-video-btn-ghost:hover {
+      border-color: var(--pope-blue);
+      color: var(--pope-blue);
+    }
+
+    /* Responsive vidéo */
+    @media (max-width: 780px) {
+      .tuto-video-card {
+        grid-template-columns: 1fr;
+      }
+      .tuto-video-player {
+        padding: 28px 20px;
+      }
+      .tuto-video-frame {
+        width: min(260px, 70vw);
+      }
+      .tuto-video-info {
+        padding: 28px 24px;
+      }
+      .tuto-video-info h2 { font-size: 22px; }
+      .tuto-tabs-bar { flex-direction: column; }
+    }
+
+
       position: sticky; top: 0; z-index: 100;
       background: rgba(255,255,255,.92);
       backdrop-filter: blur(12px);
@@ -575,8 +771,56 @@
   <p>Suivez le guide avec Léa, votre conseillère virtuelle, pour découvrir toutes les fonctionnalités de la plateforme.</p>
 </div>
 
-<!-- CHAPTERS -->
-<div class="tuto-chapters" id="chaptersNav">
+<!-- TABS -->
+<div class="tuto-tabs-bar">
+  <button class="tuto-tab-btn active" id="tabVideo" onclick="switchTab('video')">
+    <span class="tab-icon">🎬</span> Vidéo avec Léa
+  </button>
+  <button class="tuto-tab-btn" id="tabInteractif" onclick="switchTab('interactif')">
+    <span class="tab-icon">🖱️</span> Tutoriel interactif
+  </button>
+</div>
+
+<!-- SECTION VIDÉO -->
+<div class="tuto-video-section" id="sectionVideo">
+  <div class="tuto-video-card">
+
+    <!-- Vidéo YouTube 9:16 -->
+    <div class="tuto-video-player">
+      <div class="tuto-video-frame">
+        <iframe
+          src="https://www.youtube.com/embed/_lnuh8nK1Ss?rel=0&modestbranding=1&playsinline=1"
+          title="POPE Online — Tutoriel avec Léa"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Infos -->
+    <div class="tuto-video-info">
+      <div class="tuto-video-badge">🎓 Tutoriel officiel</div>
+      <h2>Démarrez avec POPE Online<br>en quelques minutes</h2>
+      <p>Léa, votre conseillère virtuelle, vous guide pas à pas pour créer votre compte, générer vos premiers livrables et utiliser la relecture experte.</p>
+
+      <div class="tuto-video-steps">
+        <div class="tuto-video-step"><div class="step-num">1</div>Créer votre compte et vérifier votre email</div>
+        <div class="tuto-video-step"><div class="step-num">2</div>Accéder à votre tableau de bord</div>
+        <div class="tuto-video-step"><div class="step-num">3</div>Générer un livrable avec l'IA (1 ticket)</div>
+        <div class="tuto-video-step"><div class="step-num">4</div>Demander une relecture experte (1 ticket)</div>
+        <div class="tuto-video-step"><div class="step-num">5</div>Exporter votre document en PDF</div>
+      </div>
+
+      <div class="tuto-video-cta">
+        <a href="signup.html" class="tuto-video-btn-primary">Créer mon compte gratuit →</a>
+        <button class="tuto-video-btn-ghost" onclick="switchTab('interactif')">Tutoriel interactif</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION TUTORIEL INTERACTIF -->
+<div id="sectionInteractif" style="display:none">
   <button class="tuto-chapter-btn active" data-step="0"><span class="ch-num">1</span> Créer un compte</button>
   <button class="tuto-chapter-btn" data-step="1"><span class="ch-num">2</span> Vérifier votre email</button>
   <button class="tuto-chapter-btn" data-step="2"><span class="ch-num">3</span> Votre tableau de bord</button>
@@ -764,6 +1008,7 @@
     </main>
   </div>
 </div>
+</div><!-- /sectionInteractif -->
 
 <!-- END CTA -->
 <div class="tuto-end" id="endSection" style="display:none">
@@ -782,6 +1027,28 @@
 </div>
 
 <script>
+/* =============================================
+   TABS : Vidéo / Interactif
+   ============================================= */
+function switchTab(tab) {
+  const videoSection = document.getElementById('sectionVideo');
+  const interactifSection = document.getElementById('sectionInteractif');
+  const tabVideo = document.getElementById('tabVideo');
+  const tabInteractif = document.getElementById('tabInteractif');
+
+  if (tab === 'video') {
+    videoSection.style.display = 'block';
+    interactifSection.style.display = 'none';
+    tabVideo.classList.add('active');
+    tabInteractif.classList.remove('active');
+  } else {
+    videoSection.style.display = 'none';
+    interactifSection.style.display = 'block';
+    tabVideo.classList.remove('active');
+    tabInteractif.classList.add('active');
+  }
+}
+
 /* =============================================
    POPE ONLINE TUTORIEL — Controller JS
    ============================================= */
