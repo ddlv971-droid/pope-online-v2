@@ -4,9 +4,27 @@ import jwt from 'jsonwebtoken';
 import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
+import { resolveFrontendBaseUrl } from '../services/urls.js';
+
 
 const router = express.Router();
 router.use(requireAdmin);
+
+function requestIp(req) {
+  return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+}
+
+function logAdminEvent(req, action, details = {}) {
+  const payload = {
+    scope: 'admin',
+    action,
+    actor: req.user?.email || req.user?.sub || 'unknown',
+    ip: requestIp(req),
+    at: new Date().toISOString(),
+    details
+  };
+  console.log(JSON.stringify(payload));
+}
 
 function resolveFreeTrialEntitlements(accountSpace = 'public') {
   const space = String(accountSpace || 'public').trim().toLowerCase();
@@ -17,9 +35,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 }
 
 function buildSatisfactionLink(user) {
-  const frontendBase = String(process.env.FRONTEND_BASE_URL || '').trim().replace(/\/$/, '')
-    .replace('https://popeonlinev1.netlify.app', 'https://pope-online.com')
-    .replace('http://popeonlinev1.netlify.app', 'https://pope-online.com') || 'https://pope-online.com';
+  const frontendBase = resolveFrontendBaseUrl(process.env);
   const token = jwt.sign(
     {
       scope: 'satisfaction',
@@ -99,9 +115,10 @@ router.post('/users', async (req, res) => {
   const organization = String(req.body?.organization || '').trim() || null;
   const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
   const phoneFull = String(req.body?.phoneFull || '').trim() || null;
-  const password = String(req.body?.password || 'admin12345');
+  const password = String(req.body?.password || '');
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
+  if (password.length < 12) return res.status(400).json({ error: 'password_too_short' });
   try {
     const passwordHash = await bcrypt.hash(password, 12);
     const entitlements = resolveFreeTrialEntitlements(accountSpace);
@@ -115,8 +132,8 @@ router.post('/users', async (req, res) => {
          returning id`,
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
-      await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','trial_active',$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+      await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit)
+                          values($1,'CUSTOM','trial_active',$2,$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -142,13 +159,17 @@ router.put('/users/:id', async (req, res) => {
       }
       if (req.body.wallet) {
         const w = req.body.wallet;
+        // tickets_expert suit tickets_ai sauf si explicitement fourni
+        const ticketsAi = Number(w.ticketsAi ?? 0);
+        const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : ticketsAi;
         await client.query(
-          `insert into wallets(user_id, plan_code, status, tickets_ai, public_dossiers_limit, private_dossiers_limit, private_users_limit, trial_expires_at)
-           values($1,$2,$3,$4,$5,$6,$7,$8)
+          `insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit, trial_expires_at)
+           values($1,$2,$3,$4,$5,$6,$7,$8,$9)
            on conflict(user_id) do update set
              plan_code=excluded.plan_code,
              status=excluded.status,
              tickets_ai=excluded.tickets_ai,
+             tickets_expert=excluded.tickets_expert,
              public_dossiers_limit=excluded.public_dossiers_limit,
              private_dossiers_limit=excluded.private_dossiers_limit,
              private_users_limit=excluded.private_users_limit,
@@ -158,7 +179,8 @@ router.put('/users/:id', async (req, res) => {
             id,
             w.planCode || 'CUSTOM',
             w.status || 'trial_active',
-            Number(w.ticketsAi ?? 0),
+            ticketsAi,
+            ticketsExpert,
             Number(w.publicDossiersLimit ?? 1),
             Number(w.privateDossiersLimit ?? 1),
             Number(w.privateUsersLimit ?? 1),
@@ -220,11 +242,66 @@ router.post('/users/:id/send-satisfaction', async (req, res) => {
 });
 
 router.delete('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const fullReset = String(req.query.reset || '').toLowerCase() === 'true';
   try {
     await withClient(async (client) => {
-      await client.query("delete from users where id=$1 and role<>'admin'", [req.params.id]);
+      await client.query('begin');
+
+      // Vérifier que l'utilisateur cible n'est pas admin
+      const target = await client.query(
+        `SELECT u.email, u.role, d.fp_hash, d.ip_hash
+           FROM users u
+           LEFT JOIN devices d ON d.user_id = u.id
+          WHERE u.id = $1 AND u.role <> 'admin'
+          LIMIT 1`,
+        [id]
+      );
+      if (!target.rowCount) {
+        await client.query('rollback');
+        return res.status(404).json({ error: 'user_not_found_or_protected' });
+      }
+      const user = target.rows[0];
+
+      if (fullReset) {
+        // SUPPRESSION ADMIN FULL : supprime les enregistrements dans deleted_accounts
+        // ET insère une entrée 'admin_full' pour que hasPriorFreeTrialOnFingerprint autorise un nouveau free trial
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(`DELETE FROM deleted_accounts WHERE email_hash = $1`, [emailHash]);
+          if (user.fp_hash) {
+            await client.query(`DELETE FROM deleted_accounts WHERE fp_hash = $1`, [user.fp_hash]);
+            // Marquer ce fp comme 'admin_full' pour autoriser un nouveau free trial
+            await client.query(
+              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+               VALUES($1, $2, $3, 'admin_full')
+               ON CONFLICT DO NOTHING`,
+              [emailHash, user.fp_hash, null]
+            );
+          }
+        } catch (_) { /* table absente → on continue */ }
+        logAdminEvent(req, 'delete_user_full_reset', { userId: id, email: user.email });
+      } else {
+        // SUPPRESSION ADMIN SOFT : on enregistre l'empreinte comme 'admin_soft'
+        const { sha256Hex: sha } = await import('../services/security.js');
+        const emailHash = sha(String(user.email || '').trim().toLowerCase());
+        try {
+          await client.query(
+            `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by)
+             VALUES($1, $2, $3, 'admin_soft')
+             ON CONFLICT DO NOTHING`,
+            [emailHash, user.fp_hash || null, user.ip_hash || null]
+          );
+        } catch (_) { /* table absente → on continue */ }
+        logAdminEvent(req, 'delete_user_soft', { userId: id, email: user.email });
+      }
+
+      // Supprimer le compte (CASCADE supprime wallets, devices, usage_logs, etc.)
+      await client.query("DELETE FROM users WHERE id=$1 AND role<>'admin'", [id]);
+      await client.query('commit');
     });
-    return res.json({ ok: true });
+    return res.json({ ok: true, fullReset });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });

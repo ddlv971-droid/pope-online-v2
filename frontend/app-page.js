@@ -19,6 +19,7 @@ let currentUser = null;
 let archiveStore = null;
 let generationInFlight = false;
 let vaultFiles = [];
+let lastDossierAnalysis = null;
 
 const PUBLIC_USECASES = [
   ['note_strategique', 'Note stratégique / arbitrage'],
@@ -26,7 +27,7 @@ const PUBLIC_USECASES = [
   ['deliberation', 'Projet de délibération'],
   ['synthese_reunion', 'Synthèse de réunion'],
   ['cadrage_projet', 'Cadrage projet / pilotage'],
-  ['design_document_public', 'Mise en forme d’un document brut']
+  ['rapport_synthese_argumente_public', 'Rapport de synthèse argumenté (pièces jointes + benchmarking)']
 ];
 
 const PRIVATE_USECASE_GROUPS = [
@@ -44,8 +45,7 @@ const PRIVATE_USECASE_GROUPS = [
       ['courrier_banque', 'Courrier banque / trésorerie / justificatifs'],
       ['courrier_client_fournisseur', 'Courrier client / fournisseur / relance / mise au point'],
       ['courrier_formalites', 'Courrier formalités / greffe / CCI / INPI'],
-      ['devis_prive', 'Devis / proposition commerciale'],
-      ['design_document_prive', 'Mise en forme d’un document brut']
+      ['devis_prive', 'Devis / proposition commerciale']
     ]
   },
   {
@@ -54,7 +54,9 @@ const PRIVATE_USECASE_GROUPS = [
       ['formalites_creation', 'Création d’entreprise / lancement d’activité'],
       ['formalites_modification', 'Modification d’entreprise / siège / activité / dirigeants'],
       ['formalites_sociales', 'Formalités sociales / embauche / documents / affiliation'],
-      ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier']
+      ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier'],
+      ['trame_reponse_marche_public', 'Trame de réponse à un marché public (DCE / RC / BPU / pièces jointes)'],
+      ['rapport_synthese_argumente_prive', 'Rapport de synthèse argumenté (pièces jointes + benchmarking)']
     ]
   }
 ];
@@ -74,6 +76,51 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Références du marché, échéance, allotissement, exigences du RC, points techniques, références client, pièces déjà prêtes…',
     vaultTitle: 'Pièces temporaires 48h — marché public',
     vaultCopy: 'Sélectionnez par exemple le DCE, le règlement de consultation, une trame d’offre ou vos justificatifs utiles à la préparation de la réponse.'
+  },
+  trame_reponse_marche_public: {
+    title: 'Trame de réponse à un marché public',
+    intro: 'Produisez une trame de réponse structurée à partir du DCE, du RC, du BPU et de vos pièces jointes pour sécuriser votre compréhension du marché et organiser votre offre.',
+    bullets: [
+      'Pièces recommandées : DCE, règlement de consultation, BPU, DPGF, acte d’engagement, mémoire technique, pièces administratives.',
+      'Résultats utiles : architecture de réponse, trame du mémoire, check-list des pièces, angles de différenciation, points de vigilance et questions éventuelles.',
+      'Repère benchmark : les meilleures réponses mettent en avant la compréhension du besoin, la méthode, les moyens, les engagements et la lisibilité de l’offre.'
+    ],
+    source: 'Repères : commande publique / benchmark mémoire technique',
+    contextPlaceholder: 'Votre activité, le marché visé, les attentes perçues de l’acheteur, vos atouts, vos références et vos contraintes de remise…',
+    objectivePlaceholder: 'Ex : obtenir une trame de mémoire technique, une structure de réponse, une check-list des pièces et des points de vigilance.',
+    factsPlaceholder: 'Références du marché, échéance, allotissement, critères, exigences du RC, pièces disponibles, références internes, organisation de réponse…',
+    vaultTitle: 'Pièces temporaires 48h — trame réponse marché public',
+    vaultCopy: 'Ajoutez le DCE, le RC, le BPU, vos notes internes et vos pièces utiles pour construire une trame de réponse exploitable.'
+  },
+  rapport_synthese_argumente_public: {
+    title: 'Rapport de synthèse argumenté',
+    intro: 'Produisez un rapport de synthèse argumenté à partir des pièces jointes et d’un benchmarking utile pour éclairer une décision, une orientation ou un arbitrage.',
+    bullets: [
+      'Le rapport vise une lecture cabinet : contexte, constats, analyse, benchmark, options, recommandation et suites.',
+      'Les pièces jointes servent à asseoir les faits et à faire ressortir les enjeux opérationnels, financiers et organisationnels.',
+      'Le benchmarking aide à situer le dossier, comparer des approches et renforcer l’argumentation.'
+    ],
+    source: 'Repères : rapport décisionnel / benchmark sectoriel',
+    contextPlaceholder: 'Objet du dossier, environnement institutionnel, destinataire du rapport, niveau de décision attendu, points de comparaison utiles…',
+    objectivePlaceholder: 'Ex : produire un rapport de synthèse argumenté à partir des pièces jointes avec éléments de benchmark et recommandations.',
+    factsPlaceholder: 'Pièces disponibles, dates, montants, acteurs, difficultés, comparaisons, hypothèses, contraintes et décisions attendues…',
+    vaultTitle: 'Pièces temporaires 48h — rapport de synthèse argumenté',
+    vaultCopy: 'Ajoutez les pièces du dossier à analyser pour produire un rapport structuré, argumenté et enrichi de repères comparatifs.'
+  },
+  rapport_synthese_argumente_prive: {
+    title: 'Rapport de synthèse argumenté',
+    intro: 'Préparez un rapport de synthèse argumenté à partir de vos pièces jointes et d’un benchmarking utile pour cadrer un dossier, défendre une position ou préparer une décision.',
+    bullets: [
+      'Le rapport met en évidence les faits, les enjeux, les constats, les comparaisons utiles, les options et la recommandation.',
+      'Il est particulièrement adapté à un dossier complexe, à une préparation de rendez-vous, à une décision de dirigeant ou à une restitution client.',
+      'Le benchmarking sert à comparer des pratiques, des structures de réponse ou des positionnements observés.'
+    ],
+    source: 'Repères : dossier privé / benchmark opérationnel',
+    contextPlaceholder: 'Nature du dossier, entreprise concernée, destinataire du rapport, objectif de décision, repères ou comparaisons utiles…',
+    objectivePlaceholder: 'Ex : produire un rapport de synthèse argumenté à partir des pièces du dossier avec benchmark et recommandation.',
+    factsPlaceholder: 'Pièces disponibles, dates, montants, interlocuteurs, risques, options, éléments de comparaison et suites attendues…',
+    vaultTitle: 'Pièces temporaires 48h — rapport de synthèse argumenté',
+    vaultCopy: 'Ajoutez les pièces du dossier pour produire une synthèse argumentée enrichie de repères comparatifs et de recommandations.'
   },
   courrier_urssaf: {
     title: 'Courrier URSSAF / cotisations / délai / contestation',
@@ -224,21 +271,6 @@ const PRIVATE_USECASE_HELP = {
     factsPlaceholder: 'Prestations, quantités, prix, délais, options, conditions d’intervention, hypothèses et éléments à confirmer…',
     vaultTitle: 'Pièces temporaires 48h — devis / proposition',
     vaultCopy: 'Ajoutez vos notes, ancien devis, cahier des charges ou échange client pour produire un document plus propre et plus complet.'
-  },
-  design_document_prive: {
-    title: 'Mise en forme d’un document brut',
-    intro: 'Transformez un contenu brut en document propre, lisible et professionnel : courrier, note, devis, procédure, fiche pratique ou document à remettre à un client ou à un organisme.',
-    bullets: [
-      'Utile quand vous avez du texte mal présenté, des notes copiées-collées ou un document à clarifier rapidement.',
-      'Résultats possibles : version réécrite, structurée, hiérarchisée et prête à être intégrée dans votre mise en page finale.',
-      'Repère métier : particulièrement adapté aux utilisateurs peu familiers avec les outils bureautiques ou la présentation documentaire.'
-    ],
-    source: 'Repères : usages fréquents artisans / TPE',
-    contextPlaceholder: 'Nature du document, destinataire, ton attendu et niveau de formalité souhaité…',
-    objectivePlaceholder: 'Ex : obtenir un document plus professionnel, mieux structuré et plus facile à transmettre.',
-    factsPlaceholder: 'Texte brut, notes, éléments indispensables à garder, titres souhaités, ordre des parties et contraintes de forme…',
-    vaultTitle: 'Pièces temporaires 48h — document brut',
-    vaultCopy: 'Déposez le document brut, vos notes ou une trame existante pour générer une version mieux présentée et mieux structurée.'
   },
   design_document_public: {
     title: 'Mise en forme d’un document brut',
@@ -423,6 +455,42 @@ function setOutput(text) {
   node.innerHTML = renderMarkdownish(raw);
 }
 
+function renderList(values = []) {
+  if (!Array.isArray(values) || !values.length) return '<p class="muted">Aucun élément détecté automatiquement.</p>';
+  return `<ul>${values.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+}
+
+function setDossierIntel(analysis) {
+  lastDossierAnalysis = analysis || null;
+  const node = el('dossierIntel');
+  if (!node) return;
+  if (!analysis || !analysis.documentCount) {
+    node.hidden = true;
+    node.innerHTML = '';
+    return;
+  }
+  const quality = analysis.quality || {};
+  node.hidden = false;
+  node.innerHTML = `
+    <h3>Analyse automatique du dossier</h3>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-card"><span class="muted">Score qualité</span><strong>${escapeHtml(String(quality.score ?? '—'))}/100</strong><span>${escapeHtml(quality.label || '')}</span></div>
+      <div class="dossier-intel-card"><span class="muted">Documents analysés</span><strong>${escapeHtml(String(analysis.readableCount || 0))}/${escapeHtml(String(analysis.documentCount || 0))}</strong><span>pièces exploitables</span></div>
+      <div class="dossier-intel-card"><span class="muted">OCR PDF scan</span><strong>${escapeHtml(String(analysis.ocrUsedCount || 0))}</strong><span>document(s) OCR</span></div>
+      <div class="dossier-intel-card"><span class="muted">Volume lu</span><strong>${escapeHtml(String(Math.round((analysis.totalTextLength || 0) / 100) / 10))}k</strong><span>caractères utiles</span></div>
+    </div>
+    <div class="dossier-intel-block"><strong>Résumé automatique multi-documents</strong><p>${escapeHtml(analysis.multiDocumentSummary || 'Aucun résumé disponible.')}</p></div>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-block dossier-intel-card"><strong>Dates détectées</strong>${renderList(analysis.dates)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Montants détectés</strong>${renderList(analysis.amounts)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Acteurs détectés</strong>${renderList(analysis.actors)}</div>
+    </div>
+    <div class="dossier-intel-grid">
+      <div class="dossier-intel-block dossier-intel-card"><strong>Points forts</strong>${renderList(quality.strengths)}</div>
+      <div class="dossier-intel-block dossier-intel-card"><strong>Points à compléter</strong>${renderList(quality.gaps)}</div>
+    </div>`;
+}
+
 function setGenerationLoading(loading) {
   generationInFlight = Boolean(loading);
   const indicator = el('generationIndicator');
@@ -476,7 +544,8 @@ function buildArchiveRecord() {
     title: inferArchiveTitle(),
     usecaseLabel: currentUsecaseLabel(),
     prompt: { context: payload.context, objective: payload.objective, facts: payload.facts },
-    result
+    result,
+    dossierAnalysis: lastDossierAnalysis || null
   };
 }
 
@@ -486,7 +555,8 @@ function rememberLastGeneration(record) {
       createdAt: new Date().toISOString(),
       usecaseLabel: record.usecaseLabel,
       prompt: record.prompt,
-      result: record.result
+      result: record.result,
+      dossierAnalysis: record.dossierAnalysis || null
     }));
   } catch {}
 }
@@ -496,6 +566,7 @@ function fillFormFromArchive(item) {
   el('objective').value = item?.prompt?.objective || '';
   el('facts').value = item?.prompt?.facts || '';
   setOutput(item?.result || '');
+  setDossierIntel(item?.dossierAnalysis || null);
   status('Archive chargée');
   persistFormState();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -511,15 +582,175 @@ function downloadFile(filename, content, mimeType) {
   setTimeout(() => URL.revokeObjectURL(url), 800);
 }
 
+function openPrintableDocument(html) {
+  const printableHtml = String(html || '').replace('</body>', `<script>window.addEventListener('load',()=>{setTimeout(()=>{try{window.focus();window.print();}catch(e){}},250);});</script></body>`);
+  const blob = new Blob([printableHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  let opened = false;
+  try {
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    opened = !!win;
+  } catch {}
+  if (!opened) {
+    try {
+      const frame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.right = '0';
+      frame.style.bottom = '0';
+      frame.style.width = '1px';
+      frame.style.height = '1px';
+      frame.style.opacity = '0';
+      frame.style.pointerEvents = 'none';
+      frame.setAttribute('aria-hidden', 'true');
+      frame.src = url;
+      frame.onload = () => {
+        try {
+          frame.contentWindow?.focus();
+          frame.contentWindow?.print();
+        } catch {}
+        setTimeout(() => {
+          try { frame.remove(); } catch {}
+          try { URL.revokeObjectURL(url); } catch {}
+        }, 30000);
+      };
+      document.body.appendChild(frame);
+      return true;
+    } catch {
+      try { URL.revokeObjectURL(url); } catch {}
+      return false;
+    }
+  }
+  setTimeout(() => {
+    try { URL.revokeObjectURL(url); } catch {}
+  }, 30000);
+  return true;
+}
+
+function csvEscape(value = '') {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
+
+function buildArchiveCsv(items = []) {
+  const rows = [['id','title','usecaseLabel','favorite','createdAt','updatedAt','context','objective','facts','result']];
+  for (const item of items) {
+    rows.push([
+      item.id,
+      item.title,
+      item.usecaseLabel,
+      item.favorite ? '1' : '0',
+      item.createdAt,
+      item.updatedAt,
+      item.prompt?.context || '',
+      item.prompt?.objective || '',
+      item.prompt?.facts || '',
+      item.result || ''
+    ]);
+  }
+  return rows.map((row) => row.map(csvEscape).join(',')).join('\n');
+}
+
+function parseCsvLine(line = '') {
+  const out = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (ch === ',' && !inQuotes) {
+      out.push(current);
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  out.push(current);
+  return out;
+}
+
+function parseArchiveImport(fileName = '', raw = '') {
+  const ext = (fileName.split('.').pop() || '').toLowerCase();
+  const content = String(raw || '').trim();
+  if (!content) return [];
+  if (ext === 'csv') {
+    const lines = content.split(/\r?\n/).filter(Boolean);
+    if (lines.length <= 1) return [];
+    const header = parseCsvLine(lines[0]);
+    const byName = Object.fromEntries(header.map((name, index) => [String(name || '').trim(), index]));
+    return lines.slice(1).map((line) => {
+      const cols = parseCsvLine(line);
+      const value = (key) => cols[byName[key]] || '';
+      return {
+        id: value('id') || undefined,
+        title: value('title') || 'Archive importée',
+        usecaseLabel: value('usecaseLabel') || 'Archive importée',
+        favorite: value('favorite') === '1',
+        createdAt: value('createdAt') || new Date().toISOString(),
+        updatedAt: value('updatedAt') || new Date().toISOString(),
+        prompt: {
+          context: value('context') || '',
+          objective: value('objective') || '',
+          facts: value('facts') || ''
+        },
+        result: value('result') || ''
+      };
+    }).filter((item) => item.result || item.prompt?.context || item.prompt?.objective || item.prompt?.facts);
+  }
+  return [{
+    title: fileName.replace(/\.[^.]+$/, '') || 'Archive importée',
+    usecaseLabel: ['doc', 'pdf'].includes(ext) ? 'Document importé' : 'Texte importé',
+    prompt: { context: '', objective: '', facts: '' },
+    result: content
+  }];
+}
+
 function buildExportContent(format) {
   const payload = buildPayload();
   const result = getCurrentResultText();
   const stamp = new Date().toLocaleString('fr-FR');
-  if (format === 'html' || format === 'doc') {
-    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${payload.context || '-'}</pre></section><section><h2>Objectif</h2><pre>${payload.objective || '-'}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${payload.facts || '-'}</pre></section><section><h2>Génération IA</h2><pre>${result}</pre></section></body></html>`;
-    return { filename: format === 'doc' ? 'pope-online-livrable.doc' : 'pope-online-livrable.html', mime: 'text/html;charset=utf-8', content: html };
+  if (format === 'doc') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section></body></html>`;
+    return { filename: 'pope-online-livrable.doc', mime: 'application/msword', content: html };
   }
-  return { filename: 'pope-online-livrable.txt', mime: 'text/plain;charset=utf-8', content: `Livrable POPE Online\nDate : ${stamp}\nType : ${currentUsecaseLabel()}\n\nContexte\n${payload.context || '-'}\n\nObjectif\n${payload.objective || '-'}\n\nÉléments factuels utiles\n${payload.facts || '-'}\n\nGénération IA\n${result}\n` };
+  if (format === 'pdf') {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A;line-height:1.5}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}small{color:#51606f}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section><small>Utilisez la fonction d’impression du navigateur puis « Enregistrer au format PDF » pour finaliser le document.</small></body></html>`;
+    return { filename: 'pope-online-livrable.pdf', mime: 'text/html;charset=utf-8', content: html, printable: true };
+  }
+  if (format === 'csv') {
+    const csv = [
+      ['Section', 'Contenu'],
+      ['Date', stamp],
+      ['Type', currentUsecaseLabel()],
+      ['Contexte', payload.context || '-'],
+      ['Objectif', payload.objective || '-'],
+      ['Éléments factuels utiles', payload.facts || '-'],
+      ['Génération IA', result || '-']
+    ].map((row) => row.map((cell) => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    return { filename: 'pope-online-livrable.csv', mime: 'text/csv;charset=utf-8', content: csv };
+  }
+  return { filename: 'pope-online-livrable.txt', mime: 'text/plain;charset=utf-8', content: `Livrable POPE Online
+Date : ${stamp}
+Type : ${currentUsecaseLabel()}
+
+Contexte
+${payload.context || '-'}
+
+Objectif
+${payload.objective || '-'}
+
+Éléments factuels utiles
+${payload.facts || '-'}
+
+Génération IA
+${result}
+` };
 }
 
 function setArchiveAvailability(enabled) {
@@ -614,7 +845,7 @@ function renderUsecaseInsight(space = currentSpace) {
   if (space !== 'private') {
     host.innerHTML = `<div class="usecase-insight-card-v15"><strong>Cadre public</strong><p>Choisissez un format de livrable pour cadrer un besoin de collectivité, préparer un arbitrage ou produire un draft sécurisé avant relecture humaine si nécessaire.</p></div>`;
     el('vaultInlineTitle').textContent = 'Pièces temporaires 48h';
-    el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats texte alimentent l’IA directement ; les autres formats restent disponibles en dépôt sécurisé.';
+    el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats TXT, DOC, CSV et PDF sélectionnés depuis le dépôt sécurisé 48h peuvent être analysés pour nourrir la génération.';
     el('safeNote').textContent = '🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.';
     el('context').placeholder = 'Collectivité, enjeu, contraintes, échéance, destinataires…';
     el('objective').placeholder = 'Décision attendue, arbitrage, message clé, finalité…';
@@ -645,7 +876,7 @@ function applySpaceConfig(space) {
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
   el('heroTitle').textContent = isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';
   el('heroCopy').textContent = isPrivate
-    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : réponse à un marché public, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
+    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
     : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
   el('formCopy').textContent = isPrivate
     ? 'Sélectionnez un assistant métier privé, décrivez votre situation et ajoutez vos pièces temporaires si besoin pour produire un draft immédiatement exploitable.'
@@ -690,7 +921,7 @@ function renderVaultInline() {
       <input type="checkbox" data-vault-select value="${item.id}">
       <div>
         <strong>${escapeHtml(item.name)}</strong>
-        <span>${formatFileSize(item.size)} · expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')} · ${item.canFeedAI ? 'exploitable dans la génération' : 'transmis comme pièce jointe'}</span>
+        <span>${formatFileSize(item.size)} · expire le ${new Date(item.expiresAt).toLocaleString('fr-FR')} · ${item.canFeedAI ? 'analysable dans la génération' : 'transmis comme pièce jointe'}</span>
       </div>
     </label>`).join('');
 }
@@ -733,14 +964,16 @@ async function callAI() {
   }
   if (generationInFlight) return;
   status('En cours…');
+  setDossierIntel(null);
   setGenerationLoading(true);
   try {
     const data = await apiFetch('/ai/generate', { method: 'POST', body: payload });
     const resultText = data.text || '(vide)';
     setOutput(resultText);
+    setDossierIntel(data.dossierAnalysis || null);
     status('Terminé');
     setTicketsBadge(data.wallet);
-    rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText });
+    rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText, dossierAnalysis: data.dossierAnalysis || null });
     persistFormState();
     if (el('archiveAutoSave').checked) archiveCurrentGeneration(false);
   } catch (e) {
@@ -748,15 +981,18 @@ async function callAI() {
     status('Erreur');
     if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
       setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
+      setDossierIntel(null);
       showToast('Accès temporairement limité', 'warn');
       return;
     }
     if (e.status === 400 && e.data?.error === 'sensitive_data') {
       setOutput('⚠️ Le contenu semble contenir des données sensibles. Merci de les retirer puis réessayez.');
+      setDossierIntel(null);
       showToast('Données sensibles détectées', 'warn');
       return;
     }
     setOutput('Erreur : ' + getApiMessage(e));
+    setDossierIntel(null);
     showToast('Erreur de génération', 'err');
   } finally {
     setGenerationLoading(false);
@@ -786,6 +1022,11 @@ el('btnExport').addEventListener('click', () => {
     return;
   }
   const file = buildExportContent(format);
+  if (file.printable) {
+    const opened = openPrintableDocument(file.content);
+    showToast(opened ? 'Préparation du PDF lancée' : 'Veuillez autoriser l’ouverture ou l’impression du PDF', opened ? 'ok' : 'warn');
+    return;
+  }
   downloadFile(file.filename, file.content, file.mime);
   showToast(`Export ${format.toUpperCase()} prêt`, 'ok');
 });
@@ -806,8 +1047,8 @@ el('btnExportArchive').addEventListener('click', () => {
   if (!archiveStore) return;
   const items = archiveStore.exportAll();
   if (!items.length) { showToast('Aucune archive à exporter', 'warn'); return; }
-  downloadFile('pope-online-archives.json', JSON.stringify(items, null, 2), 'application/json;charset=utf-8');
-  showToast('Archives exportées', 'ok');
+  downloadFile('pope-online-archives.csv', buildArchiveCsv(items), 'text/csv;charset=utf-8');
+  showToast('Archives exportées en CSV', 'ok');
 });
 
 el('archiveImportInput').addEventListener('change', async (event) => {
@@ -816,7 +1057,8 @@ el('archiveImportInput').addEventListener('change', async (event) => {
   if (!file) return;
   try {
     const raw = await file.text();
-    const parsed = JSON.parse(raw);
+    const parsed = parseArchiveImport(file.name, raw);
+    if (!parsed.length) throw new Error('empty_import');
     const count = archiveStore.importMany(parsed);
     renderArchive();
     showToast(`${count} archive(s) importée(s)`, 'ok');
@@ -857,7 +1099,8 @@ el('archiveList').addEventListener('click', async (event) => {
     return;
   }
   if (action === 'download') {
-    downloadFile(buildArchiveFilename(item, 'json'), JSON.stringify(item, null, 2), 'application/json;charset=utf-8');
+    const content = `Archive POPE Online\nTitre : ${item.title}\nType : ${item.usecaseLabel}\nDate : ${new Date(item.updatedAt || item.createdAt).toLocaleString('fr-FR')}\n\nContexte\n${item.prompt?.context || '-'}\n\nObjectif\n${item.prompt?.objective || '-'}\n\nÉléments factuels utiles\n${item.prompt?.facts || '-'}\n\nRésultat\n${item.result || '-'}\n`;
+    downloadFile(buildArchiveFilename(item, 'txt'), content, 'text/plain;charset=utf-8');
     showToast('Archive téléchargée', 'ok');
     return;
   }

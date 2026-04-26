@@ -19,6 +19,7 @@ const FR_MESSAGES = {
   password_too_short: "Le mot de passe doit contenir au moins 8 caractères.",
   missing_fp: "Informations techniques manquantes. Merci de réessayer.",
   missing_turnstile_token: "Validation anti-bot manquante.",
+  turnstile_not_configured: "La protection anti-bot n'est pas configurée sur le serveur.",
   bot_protection_failed: "La vérification de sécurité anti-bot a échoué. Merci de recommencer.",
   invalid_account_space: "Type de compte invalide.",
   email_exists: "Un compte existe déjà avec cette adresse e-mail.",
@@ -42,10 +43,14 @@ const FR_MESSAGES = {
   ai_error: "La génération IA n'a pas pu aboutir.",
   cors_blocked: "Accès refusé depuis cette origine.",
   server_error: "Une erreur technique est survenue.",
+  mail_send_warning: "Votre compte a bien été créé, mais l'envoi de l'e-mail de confirmation a échoué. Contactez le support ou réessayez depuis la page de connexion.",
   missing_objective: "L'objectif est manquant.",
   missing_expectations: "Les attentes sont manquantes.",
   missing_subject: "L'objet est manquant.",
   missing_description: "La description est manquante.",
+  invalid_file_type: "Format de fichier non autorisé. Utilisez uniquement TXT, DOC, CSV ou PDF.",
+  invalid_file_content: "Le contenu du fichier ne correspond pas au format annoncé.",
+  account_deleted: "Votre compte a été supprimé.",
   missing_need: "Le besoin est manquant.",
   satisfaction_mail_sent: "L'e-mail de satisfaction a bien été envoyé.",
   satisfaction_mail_already_sent: "L'e-mail de satisfaction a déjà été envoyé.",
@@ -57,6 +62,7 @@ const FR_MESSAGES = {
 
 const SESSION_KEY = 'pope_session_active';
 const USER_KEY = 'pope_session_user';
+const TOKEN_KEY = 'pope_session_token';
 
 export function translateApiMessage(code, fallback = '') {
   if (!code) return fallback || '';
@@ -69,12 +75,13 @@ export function getApiMessage(payloadOrError, fallback = 'Une erreur est survenu
 }
 
 export function hasSessionMarker() {
-  return localStorage.getItem(SESSION_KEY) === '1';
+  return localStorage.getItem(SESSION_KEY) === '1' || !!sessionStorage.getItem(TOKEN_KEY);
 }
 
-export function setSession(user = null) {
+export function setSession(user = null, token = '') {
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (token) sessionStorage.setItem(TOKEN_KEY, String(token));
 }
 
 export function getSessionUser() {
@@ -90,19 +97,22 @@ export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
+  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 export function getToken() {
-  return hasSessionMarker() ? 'cookie-session' : '';
+  return sessionStorage.getItem(TOKEN_KEY) || '';
 }
 
 export function setToken(token, user = null) {
-  if (token || user) setSession(user || getSessionUser() || {});
+  if (token || user) setSession(user || getSessionUser() || {}, token || getToken());
   else clearSession();
 }
 
 export async function apiFetch(path, { method='GET', body=null } = {}) {
   const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
