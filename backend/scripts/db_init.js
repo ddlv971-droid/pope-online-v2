@@ -57,27 +57,9 @@ async function seedAdmin() {
 }
 
 async function main() {
-<<<<<<< HEAD
-  // Schéma principal
-  const schemaPath = path.join(__dirname, '..', 'db', 'schema.sql');
-  const sql = fs.readFileSync(schemaPath, 'utf8');
-  await pool.query(sql);
-  console.log('✅ DB schema applied');
-
-  // Patch V22 — table deleted_accounts + sync tickets_expert
-  // Idempotent : IF NOT EXISTS + UPDATE ciblé
-  const patchPath = path.join(__dirname, '..', 'db', 'schema_patch_v22.sql');
-  if (fs.existsSync(patchPath)) {
-    const patch = fs.readFileSync(patchPath, 'utf8');
-    await pool.query(patch);
-    console.log('✅ DB patch v22 applied (deleted_accounts + tickets_expert sync)');
-  }
-
-=======
-  await applyPatch('schema.sql',            'DB schema applied');
-  await applyPatch('schema_patch_v22.sql',  'Patch V22 applied (deleted_accounts + tickets_expert)');
-  await applyPatch('schema_patch_v24.sql',  'Patch V24 applied (admin promotion + idempotent V22)');
->>>>>>> staging
+  await applyPatch('schema.sql',           'DB schema applied');
+  await applyPatch('schema_patch_v22.sql', 'Patch V22 applied (deleted_accounts + tickets_expert)');
+  await applyPatch('schema_patch_v24.sql', 'Patch V24 applied (admin promotion + idempotent V22)');
   await seedAdmin();
   await pool.end();
 }
