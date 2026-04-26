@@ -34,7 +34,7 @@
           <label class="label">Identifiant</label>
           <input id="adminIdentifier" class="input" value="" autocomplete="username"/>
           <label class="label">Mot de passe</label>
-          <input id="adminPassword" class="input" type="password" value="admin"/>
+          <input id="adminPassword" class="input" type="password" value="" autocomplete="current-password" placeholder="Mot de passe administrateur"/>
         </div>
         <div>
           <div class="panel">
@@ -282,6 +282,12 @@ function buildUserCard(u) {
           </label>
 
           <label class="po-admin-field">
+            <span class="po-admin-field-label">Tickets Relecture experte</span>
+            <input data-field="ticketsExpert" value="${u.tickets_expert || 0}" class="input" type="number" min="0">
+            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Laisser vide = synchronisé avec Tickets IA</small>
+          </label>
+
+          <label class="po-admin-field">
             <span class="po-admin-field-label">Échéance</span>
             <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
           </label>
@@ -298,7 +304,8 @@ function buildUserCard(u) {
           <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
           <button class="btn ghost promote">Passer en offre standard</button>
           <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
-          <button class="btn ghost delete danger">Supprimer</button>
+          <button class="btn ghost delete danger">Supprimer le compte</button>
+          <button class="btn ghost delete-full danger">⚠️ Réinitialiser intégralement</button>
         </div>
       </div>
 
@@ -369,6 +376,7 @@ function attachCardActions(card, user) {
           planCode: card.querySelector('[data-field="planCode"]').value,
           status: card.querySelector('[data-field="status"]').value,
           ticketsAi: Number(card.querySelector('[data-field="ticketsAi"]').value || 0),
+          ticketsExpert: Number(card.querySelector('[data-field="ticketsExpert"]')?.value ?? card.querySelector('[data-field="ticketsAi"]').value ?? 0),
           trialExpiresAt: card.querySelector('[data-field="expiry"]').value || null,
           publicDossiersLimit: Number(card.querySelector('[data-field="publicLimit"]').value || 0),
           privateDossiersLimit: Number(card.querySelector('[data-field="privateLimit"]').value || 0),
@@ -394,10 +402,43 @@ function attachCardActions(card, user) {
   });
 
   deleteBtn.addEventListener('click', async () => {
-    if (!confirm('Supprimer ce compte ?')) return;
+    const name = user.full_name || user.email || 'ce compte';
+    const confirmed = confirm(
+      `⚠️ Suppression du compte\n\n` +
+      `Client : ${name}\nEmail : ${user.email}\n\n` +
+      `Le compte sera supprimé. L'empreinte est conservée : l'utilisateur ne pourra PAS recréer un compte avec une offre gratuite.\n\n` +
+      `Confirmer la suppression ?`
+    );
+    if (!confirmed) return;
     try {
-      await apiFetch('/admin/users/' + user.id, { method:'DELETE' });
-      showToast('Compte supprimé', 'ok');
+      await apiFetch('/admin/users/' + user.id + '?reset=false', { method:'DELETE' });
+      showToast('Compte supprimé (empreinte conservée)', 'ok');
+      await loadUsers();
+    } catch (e) {
+      showToast(getApiMessage(e), 'err');
+    }
+  });
+
+  const deleteFullBtn = card.querySelector('.delete-full');
+  deleteFullBtn?.addEventListener('click', async () => {
+    const name = user.full_name || user.email || 'ce compte';
+    const step1 = confirm(
+      `🔴 RÉINITIALISATION INTÉGRALE DU COMPTE\n\n` +
+      `Client : ${name}\nEmail : ${user.email}\n\n` +
+      `Cette action supprime TOUTES les données ET l'empreinte de l'utilisateur.\n` +
+      `Il pourra se réinscrire et bénéficier à nouveau d'une offre gratuite.\n\n` +
+      `⚠️ Cette action est IRRÉVERSIBLE. Confirmer ?`
+    );
+    if (!step1) return;
+    const step2 = confirm(
+      `CONFIRMATION FINALE\n\n` +
+      `Tapez OK pour confirmer la réinitialisation intégrale de "${name}".\n` +
+      `L'utilisateur sera autorisé à se réinscrire avec un nouveau free trial.`
+    );
+    if (!step2) return;
+    try {
+      await apiFetch('/admin/users/' + user.id + '?reset=true', { method:'DELETE' });
+      showToast('Compte réinitialisé intégralement', 'ok');
       await loadUsers();
     } catch (e) {
       showToast(getApiMessage(e), 'err');
