@@ -1,96 +1,344 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>POPE Online — Parcours publics</title>
-  <meta name="description" content="Parcours publics POPE Online : génération guidée, relecture experte et accompagnement sur mesure." />
-  <link rel="icon" href="./assets/favicon.png" type="image/png">
-  <link rel="stylesheet" href="app.css"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Offres & Tarifs</title>
+<meta name="description" content="Choisissez l'offre POPE Online adaptée à vos besoins : Free, Starter, Pro ou Premium. Production fiable, validée, exploitable immédiatement."/>
+<link rel="icon" href="./assets/favicon.png" type="image/png"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+:root{--blue:#0079c1;--cyan:#03a0d7;--dark:#0b2440;--muted:#50627a;--line:#dce9f4;--light:#f0f7fc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155deg,#f0f7fc,#e3f0fa,#d4e8f6);min-height:100vh;color:var(--dark)}
+.pricing-nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.pricing-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--dark);font-weight:800;font-size:17px}
+.pricing-nav-brand img{height:36px}
+.pricing-nav-back{text-decoration:none;color:var(--blue);font-size:14px;font-weight:600;border:1px solid var(--blue);padding:8px 16px;border-radius:12px;transition:.2s}
+.pricing-nav-back:hover{background:var(--blue);color:#fff}
+.pricing-hero{text-align:center;padding:56px 24px 40px}
+.pricing-hero h1{font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px}
+.pricing-hero h1 span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pricing-hero p{font-size:18px;color:var(--muted);max-width:580px;margin:0 auto 28px;line-height:1.65}
+.pricing-toggle{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:600;color:var(--muted);margin-bottom:0}
+.pricing-toggle input{display:none}
+.toggle-switch{width:44px;height:24px;background:#dce9f4;border-radius:999px;position:relative;cursor:pointer;transition:.25s}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+#billingToggle:checked + .toggle-switch{background:linear-gradient(135deg,var(--blue),var(--cyan))}
+#billingToggle:checked + .toggle-switch::after{transform:translateX(20px)}
+.pricing-save-badge{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700}
+/* GRID PLANS */
+.pricing-grid-wrap{max-width:1100px;margin:0 auto 80px;padding:0 20px}
+.pricing-billing-info{text-align:center;font-size:14px;color:var(--muted);margin-bottom:28px;height:20px}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+.plan-card{background:#fff;border-radius:22px;padding:28px 24px;border:2px solid var(--line);position:relative;transition:transform .2s,box-shadow .2s}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.1)}
+.plan-card.featured{border-color:var(--blue);background:linear-gradient(165deg,#f0f7fc,#e8f4fd)}
+.plan-card.featured::before{content:'Recommandé';position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:999px;padding:5px 16px;font-size:12px;font-weight:700;white-space:nowrap}
+.plan-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.plan-name{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:4px}
+.plan-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:20px;min-height:40px}
+.plan-price{margin-bottom:20px}
+.plan-price .amount{font-size:36px;font-weight:800;color:var(--dark);letter-spacing:-.02em}
+.plan-price .period{font-size:14px;color:var(--muted);font-weight:400}
+.plan-price .annual{font-size:12px;color:#065f46;font-weight:600;margin-top:4px}
+.plan-features{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:10px}
+.plan-features li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--dark);line-height:1.45}
+.plan-features li .feat-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.plan-features li.muted-feat{color:var(--muted)}
+.plan-cta{display:block;width:100%;text-align:center;padding:13px;border-radius:14px;font-size:14px;font-weight:700;text-decoration:none;transition:.2s}
+.plan-cta-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 6px 20px rgba(0,121,193,.3)}
+.plan-cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,121,193,.4)}
+.plan-cta-ghost{border:1.5px solid var(--line);color:var(--muted)}
+.plan-cta-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.plan-divider{border:none;border-top:1px solid var(--line);margin:16px 0}
+/* CLOSIER NOTE */
+.pricing-closier{max-width:1100px;margin:0 auto 40px;padding:0 20px}
+.pricing-closier-card{background:#fff;border-radius:20px;padding:28px 32px;border:1.5px solid var(--line);display:flex;align-items:center;gap:24px}
+.pricing-closier-card .icon{font-size:36px;flex-shrink:0}
+.pricing-closier-card h3{font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.pricing-closier-card p{font-size:14px;color:var(--muted);line-height:1.6}
+/* FAQ */
+.pricing-faq{max-width:760px;margin:0 auto 80px;padding:0 20px}
+.pricing-faq h2{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:24px;text-align:center}
+.faq-item{background:#fff;border-radius:14px;border:1.5px solid var(--line);margin-bottom:10px;overflow:hidden}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--dark)}
+.faq-q:hover{color:var(--blue)}
+.faq-a{padding:0 20px;font-size:14px;color:var(--muted);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding:0 20px 16px}
+/* Responsive */
+@media(max-width:900px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pricing-grid{grid-template-columns:1fr}.pricing-closier-card{flex-direction:column;text-align:center}}
+</style>
 </head>
-<body class="bg po-v5-harmony po-public-v24">
-  <header class="topbar">
-    <div class="container">
-      <div class="row">
-        <a class="brand" href="public.html">
-          <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-          <div>
-            <div class="title">POPE Online</div>
-            <div class="sub">Parcours publics</div>
-          </div>
-        </a>
-        <nav class="nav">
-          <a class="btn secondary" href="about.html">Qui sommes-nous</a>
-          <a href="public.html">Accueil public</a>
-          <a href="app.html">Génération guidée</a>
-          <a href="expert.html">Relecture experte</a>
-          <a class="btn primary" href="signup.html">Créer un compte</a>
-        </nav>
+<body>
+<nav class="pricing-nav">
+  <a class="pricing-nav-brand" href="index.html">
+    <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+    <span>POPE Online</span>
+  </a>
+  <a class="pricing-nav-back" href="index.html">← Retour</a>
+</nav>
+
+<div class="pricing-hero">
+  <h1>Des livrables <span>fiables et validés</span><br>à chaque usage</h1>
+  <p>Choisissez le plan adapté à votre volume de production et d'expertise. L'IA est toujours disponible — l'expertise humaine est limitée selon le plan.</p>
+
+  <div class="pricing-toggle" style="margin-bottom:8px">
+    <span id="labelMensuel" style="color:var(--blue);font-weight:700">Mensuel</span>
+    <label>
+      <input type="checkbox" id="billingToggle" onchange="toggleBilling()"/>
+      <span class="toggle-switch"></span>
+    </label>
+    <span id="labelAnnuel">Annuel</span>
+    <span class="pricing-save-badge">−15%</span>
+  </div>
+</div>
+
+<div class="pricing-grid-wrap">
+  <div class="pricing-billing-info" id="billingInfo">Facturation mensuelle · Sans engagement</div>
+  <div class="pricing-grid">
+
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-badge">Découverte</div>
+      <div class="plan-name">Free</div>
+      <div class="plan-desc">15 jours pour découvrir la puissance de l'expertise sécurisée</div>
+      <div class="plan-price">
+        <span class="amount">0€</span>
+        <span class="period"> · 15 jours</span>
+        <div class="annual" style="color:var(--muted)">Sans carte bancaire</div>
       </div>
+      <ul class="plan-features">
+        <li><span class="feat-icon">✓</span>Production de livrables illimitée</li>
+        <li><span class="feat-icon">✓</span>2 relectures expertes incluses</li>
+        <li><span class="feat-icon">✓</span>Dépôt sécurisé 48h</li>
+        <li><span class="feat-icon">✓</span>Accompagnement sur mesure</li>
+        <li class="muted-feat"><span class="feat-icon">—</span>Closier documentaire</li>
+        <li class="muted-feat"><span class="feat-icon">—</span>Conseiller dédié</li>
+      </ul>
+      <a href="signup.html" class="plan-cta plan-cta-ghost">Commencer gratuitement</a>
     </div>
-  </header>
 
-  <main class="container">
-    <section class="section">
-      <div class="split-title">
-        <h1 class="h2" style="margin:0">Un accompagnement sur mesure pour vos livrables publics stratégiques</h1>
-        <div class="right">Choisissez le niveau d’intervention adapté à votre besoin, sans affichage tarifaire ni logique de packs.</div>
+    <!-- STARTER -->
+    <div class="plan-card">
+      <div class="plan-badge">Essentiel</div>
+      <div class="plan-name">Starter</div>
+      <div class="plan-desc">Pour les professionnels qui produisent régulièrement et sécurisent leurs livrables</div>
+      <div class="plan-price">
+        <span class="amount" id="starterPrice">49€</span>
+        <span class="period" id="starterPeriod">/mois</span>
+        <div class="annual" id="starterAnnual" style="visibility:hidden">ou 499€/an</div>
       </div>
-    </section>
+      <ul class="plan-features">
+        <li><span class="feat-icon">✓</span>Production de livrables illimitée</li>
+        <li><span class="feat-icon">✓</span><strong>5 relectures expertes/mois</strong></li>
+        <li><span class="feat-icon">✓</span>Dépôt sécurisé 48h</li>
+        <li><span class="feat-icon">✓</span>Accompagnement sur mesure</li>
+        <li><span class="feat-icon">✓</span>Closier documentaire</li>
+        <li class="muted-feat"><span class="feat-icon">—</span>Conseiller dédié</li>
+      </ul>
+      <a href="mailto:contact@pope-online.com?subject=Offre%20Starter%20POPE%20Online" class="plan-cta plan-cta-primary">Souscrire Starter</a>
+    </div>
 
-    <section class="section tight">
-      <div class="card soft">
-        <div class="split-title">
-          <h2 class="h2">Trois parcours</h2>
-          <div class="right">Une même exigence de qualité, trois niveaux d’intervention.</div>
-        </div>
-
-        <div class="grid grid-3" style="margin-top:12px">
-          <div class="price">
-            <div class="name">Niveau 1 — Génération guidée</div>
-            <div class="val">Premier draft structuré</div>
-            <ul>
-              <li>Production rapide</li>
-              <li>Cadre responsable et traçable</li>
-              <li>Préparation d’un livrable exploitable</li>
-            </ul>
-            <a class="btn primary" href="signup.html">Produire un livrable sécurisé</a>
-          </div>
-
-          <div class="price">
-            <div class="name">Niveau 2 — Relecture experte</div>
-            <div class="val">Relecture & consolidation</div>
-            <ul>
-              <li>Relecture ou échange avec un expert</li>
-              <li>Sécurisation du contenu</li>
-              <li>Consolidation des options et arbitrages</li>
-            </ul>
-            <a class="btn primary" href="expert.html">Décrire ma demande</a>
-          </div>
-
-          <div class="price">
-            <div class="name">Niveau 3 — Accompagnement sur mesure</div>
-            <div class="val">Appui stratégique complet</div>
-            <ul>
-              <li>Besoin complexe ou sensible</li>
-              <li>Cadrage approfondi</li>
-              <li>Accompagnement personnalisé</li>
-            </ul>
-            <a class="btn primary" href="mission.html">Qualifier mon besoin</a>
-          </div>
-        </div>
+    <!-- PRO -->
+    <div class="plan-card featured">
+      <div class="plan-badge" style="color:var(--blue)">Professionnel</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-desc">Pour les structures qui ont besoin d'un accompagnement expert régulier et fiable</div>
+      <div class="plan-price">
+        <span class="amount" id="proPrice">89€</span>
+        <span class="period" id="proPeriod">/mois</span>
+        <div class="annual" id="proAnnual" style="visibility:hidden">ou 890€/an</div>
       </div>
-    </section>
+      <ul class="plan-features">
+        <li><span class="feat-icon">✓</span>Production de livrables illimitée</li>
+        <li><span class="feat-icon">✓</span><strong>15 relectures expertes/mois</strong></li>
+        <li><span class="feat-icon">✓</span>Dépôt sécurisé 48h</li>
+        <li><span class="feat-icon">✓</span>Accompagnement sur mesure inclus</li>
+        <li><span class="feat-icon">✓</span>Closier documentaire premium</li>
+        <li><span class="feat-icon">✓</span>Support prioritaire</li>
+      </ul>
+      <a href="mailto:contact@pope-online.com?subject=Offre%20Pro%20POPE%20Online" class="plan-cta plan-cta-primary">Souscrire Pro</a>
+    </div>
 
-    <section class="section">
-      <div class="card soft">
-        <div class="split-title">
-          <h2 class="h2">Après l’envoi</h2>
-          <div class="right">Analyse de votre besoin, prise de contact, proposition adaptée, cadrage puis accompagnement.</div>
-        </div>
+    <!-- PREMIUM -->
+    <div class="plan-card">
+      <div class="plan-badge">Excellence</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-desc">Collectivités, entreprises et structures à fort volume d'enjeux sensibles</div>
+      <div class="plan-price">
+        <span class="amount" style="font-size:26px">Sur devis</span>
+        <div class="annual" style="color:var(--muted)">Validité 12 mois</div>
       </div>
-    </section>
-  </main>
-<script src="./auth-links.js"></script>
+      <ul class="plan-features">
+        <li><span class="feat-icon">✓</span>Production de livrables illimitée</li>
+        <li><span class="feat-icon">✓</span><strong>Relectures expertes illimitées</strong></li>
+        <li><span class="feat-icon">✓</span>Conseiller POPE dédié</li>
+        <li><span class="feat-icon">✓</span>Accompagnement stratégique</li>
+        <li><span class="feat-icon">✓</span>Closier documentaire sur mesure</li>
+        <li><span class="feat-icon">✓</span>Intégration & déploiement multi-utilisateurs</li>
+      </ul>
+      <a href="mailto:contact@pope-online.com?subject=Offre%20Premium%20POPE%20Online" class="plan-cta plan-cta-ghost">Nous contacter</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLOSIER NOTE -->
+<div class="pricing-closier">
+  <div class="pricing-closier-card">
+    <div class="icon">📚</div>
+    <div>
+      <h3>Closier documentaire — inclus dès Starter</h3>
+      <p>Accédez à une bibliothèque de modèles prêts à l'emploi : marchés publics, courriers administratifs, délibérations, documents types. Alimentée et maintenue par les experts POPE Online, disponible dès le plan Starter.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="pricing-faq">
+  <h2>Questions fréquentes</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Qu'est-ce qu'une relecture experte ? <span>+</span></div>
+    <div class="faq-a">Un conseiller POPE Online analyse votre document sur le fond, la forme et les formulations. Vous recevez un retour personnalisé par email dans les 48h. C'est la garantie d'un livrable sécurisé avant diffusion ou arbitrage.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">La production de livrables est-elle vraiment illimitée ? <span>+</span></div>
+    <div class="faq-a">Oui, sur tous les plans. La limite porte uniquement sur le nombre de relectures expertes mensuelles. Vous pouvez produire autant de documents que nécessaire.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Que se passe-t-il après les 15 jours gratuits ? <span>+</span></div>
+    <div class="faq-a">Votre compte reste accessible en consultation. La production et la relecture experte sont suspendues jusqu'à souscription d'un plan. Vous recevez un email de fin de période avec les options disponibles.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Les relectures non utilisées sont-elles reportées ? <span>+</span></div>
+    <div class="faq-a">Non, les relectures expertes sont comptabilisées par mois calendaire et ne se cumulent pas. Elles sont dimensionnées pour correspondre à un usage régulier et professionnel.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Quelle est la différence entre espace public et privé ? <span>+</span></div>
+    <div class="faq-a">L'espace public est conçu pour les collectivités, établissements et organisations publiques (notes, délibérations, courriers institutionnels). L'espace privé est calibré pour les artisans, indépendants et TPE (formalités, réponses aux marchés, courriers métier). Les plans s'appliquent aux deux espaces.</div>
+  </div>
+</div>
+
+<script>
+let isAnnual = false;
+
+function toggleBilling() {
+  isAnnual = document.getElementById('billingToggle').checked;
+  document.getElementById('labelMensuel').style.color = isAnnual ? '' : 'var(--blue)';
+  document.getElementById('labelMensuel').style.fontWeight = isAnnual ? '' : '700';
+  document.getElementById('labelAnnuel').style.color = isAnnual ? 'var(--blue)' : '';
+  document.getElementById('labelAnnuel').style.fontWeight = isAnnual ? '700' : '';
+  document.getElementById('billingInfo').textContent = isAnnual
+    ? 'Facturation annuelle · −15% sur le prix mensuel'
+    : 'Facturation mensuelle · Sans engagement';
+
+  // Starter
+  document.getElementById('starterPrice').textContent = isAnnual ? '42€' : '49€';
+  document.getElementById('starterPeriod').textContent = isAnnual ? '/mois' : '/mois';
+  document.getElementById('starterAnnual').textContent = isAnnual ? 'soit 499€/an · économisez 89€' : '';
+  document.getElementById('starterAnnual').style.visibility = isAnnual ? 'visible' : 'hidden';
+
+  // Pro
+  document.getElementById('proPrice').textContent = isAnnual ? '76€' : '89€';
+  document.getElementById('proAnnual').textContent = isAnnual ? 'soit 890€/an · économisez 178€' : '';
+  document.getElementById('proAnnual').style.visibility = isAnnual ? 'visible' : 'hidden';
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-q span').textContent = '+';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    el.querySelector('span').textContent = '−';
+  }
+}
+
+// Adapter le wording selon l'espace de l'utilisateur
+(function adaptToSpace() {
+  const space = localStorage.getItem('pope_account_space') ||
+    new URL(location.href).searchParams.get('space') || 'public';
+  const isPrivate = space === 'private';
+
+  // Adapter le hero
+  const heroP = document.querySelector('.pricing-hero p');
+  if (heroP) {
+    heroP.textContent = isPrivate
+      ? 'Réponses aux marchés, formalités, courriers métier — produisez vite et faites valider par nos conseillers experts. L'IA est toujours disponible, les relectures expertes sont limitées selon le plan.'
+      : 'Notes, délibérations, courriers institutionnels — produisez des livrables sécurisés et validés par nos conseillers experts. L'IA est toujours disponible, les relectures expertes sont limitées selon le plan.';
+  }
+
+  // Adapter les descriptions de plans selon l'espace
+  const planDescs = document.querySelectorAll('.plan-desc');
+  const descsPublic = [
+    '15 jours pour découvrir la validation experte de vos livrables institutionnels',
+    'Pour les collectivités et établissements qui produisent régulièrement des livrables sécurisés',
+    'Pour les structures publiques à fort volume de production et d'enjeux sensibles',
+    'Collectivités, intercommunalités et grandes organisations publiques'
+  ];
+  const descsPrivate = [
+    '15 jours pour découvrir la sécurisation experte de votre administratif métier',
+    'Pour les artisans et indépendants qui sécurisent courriers, marchés et formalités',
+    'Pour les TPE et structures privées à fort volume de production documentaire',
+    'Entreprises et groupes nécessitant un accompagnement expert dédié'
+  ];
+  const descs = isPrivate ? descsPrivate : descsPublic;
+  planDescs.forEach((el, i) => { if (descs[i]) el.textContent = descs[i]; });
+
+  // Adapter les features selon l'espace
+  const FEATURES = {
+    public: [
+      ['Production de livrables illimitée','2 relectures expertes incluses','Dépôt sécurisé 48h','Accompagnement sur mesure','— Closier documentaire','— Conseiller dédié'],
+      ['Production de livrables illimitée','5 relectures expertes/mois','Dépôt sécurisé 48h','Accompagnement sur mesure','Closier documentaire','— Conseiller dédié'],
+      ['Production de livrables illimitée','15 relectures expertes/mois','Dépôt sécurisé 48h','Accompagnement sur mesure inclus','Closier documentaire premium','Support prioritaire'],
+      ['Production de livrables illimitée','Relectures expertes illimitées','Conseiller POPE dédié','Accompagnement stratégique','Closier documentaire sur mesure','Intégration multi-utilisateurs']
+    ],
+    private: [
+      ['Production illimitée · courriers, marchés, formalités','2 relectures expertes incluses','Dépôt sécurisé 48h de vos pièces','Accompagnement sur mesure','— Closier documentaire','— Conseiller dédié'],
+      ['Production illimitée · tous types de documents métier','5 relectures expertes/mois','Dépôt sécurisé 48h','Accompagnement sur mesure','Closier documentaire','— Conseiller dédié'],
+      ['Production illimitée · tous types de documents métier','15 relectures expertes/mois','Dépôt sécurisé 48h','Trame marchés publics avancée','Closier documentaire premium','Support prioritaire'],
+      ['Production illimitée · tous types de documents','Relectures expertes illimitées','Conseiller POPE dédié','Accompagnement formalités & marchés','Closier documentaire sur mesure','Déploiement multi-utilisateurs']
+    ]
+  };
+
+  const featureLists = document.querySelectorAll('.plan-features');
+  const features = isPrivate ? FEATURES.private : FEATURES.public;
+  featureLists.forEach((ul, planIdx) => {
+    if (!features[planIdx]) return;
+    const items = ul.querySelectorAll('li');
+    features[planIdx].forEach((feat, i) => {
+      if (!items[i]) return;
+      const isMuted = feat.startsWith('—');
+      items[i].className = isMuted ? 'muted-feat' : '';
+      items[i].innerHTML = isMuted
+        ? `<span class="feat-icon">—</span>${feat.slice(2)}`
+        : `<span class="feat-icon">✓</span>${feat}`;
+    });
+  });
+
+  // Adapter les CTAs signup
+  document.querySelector('.plan-card .plan-cta-ghost')?.setAttribute('href',
+    isPrivate ? 'signup-private.html' : 'signup-public.html'
+  );
+
+  // Badge espace
+  const badge = document.createElement('div');
+  badge.style.cssText = 'text-align:center;margin-bottom:12px';
+  badge.innerHTML = `<span style="background:#eef7ff;border:1px solid #b8dcf0;color:#0079c1;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:700">
+    Espace ${isPrivate ? 'privé — Artisans, indépendants, TPE' : 'public — Collectivités, établissements, organisations'}
+  </span>`;
+  document.querySelector('.pricing-grid-wrap')?.prepend(badge);
+})();
+</script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -33,18 +34,35 @@ function trialExpiryDate(days = 15) {
 }
 
 function walletPayload(row = {}) {
+  const now = Date.now();
+  const trialExpires = row.trial_expires_at ? new Date(row.trial_expires_at) : null;
+  const trialDaysLeft = trialExpires
+    ? Math.max(0, Math.ceil((trialExpires.getTime() - now) / 86400000))
+    : null;
+  const isTrialExpired = trialExpires ? trialExpires.getTime() < now : false;
+  const expertLimit = Number(row.expert_limit ?? 2);
+  const expertUsed  = Number(row.expert_used  ?? 0);
+  const expertLeft  = Math.max(0, expertLimit - expertUsed);
   return {
-    plan_code: row.plan_code || 'FREE',
-    status: row.status || 'pending_verification',
-    tickets_ai: Number(row.tickets_ai || 0),
-    tickets_expert: Number(row.tickets_expert || 0),
-    public_dossiers_used: Number(row.public_dossiers_used || 0),
+    plan_code:             row.plan_code   || 'FREE',
+    plan_label:            row.plan_label  || 'Free',
+    status:                row.status      || 'pending_verification',
+    ai_unlimited:          Boolean(row.ai_unlimited),
+    expert_limit:          expertLimit,
+    expert_used:           expertUsed,
+    expert_left:           expertLeft,
+    // Champs techniques internes (admin uniquement)
+    tickets_ai:            Number(row.tickets_ai    || 0),
+    tickets_expert:        Number(row.tickets_expert || 0),
+    public_dossiers_used:  Number(row.public_dossiers_used  || 0),
     private_dossiers_used: Number(row.private_dossiers_used || 0),
     public_dossiers_limit: Number(row.public_dossiers_limit || 1),
-    private_dossiers_limit: Number(row.private_dossiers_limit || 1),
-    private_users_limit: Number(row.private_users_limit || 1),
-    trial_started_at: row.trial_started_at || null,
-    trial_expires_at: row.trial_expires_at || null
+    private_dossiers_limit:Number(row.private_dossiers_limit|| 1),
+    private_users_limit:   Number(row.private_users_limit   || 1),
+    trial_started_at:      row.trial_started_at || null,
+    trial_expires_at:      row.trial_expires_at || null,
+    trial_days_left:       trialDaysLeft,
+    trial_expired:         isTrialExpired,
   };
 }
 
@@ -56,14 +74,18 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
   const space = String(accountSpace || 'public').trim().toLowerCase();
   if (space === 'private') {
     return {
-      ticketsAi: 5,
+      ticketsAi: 9999,      // IA illimitée (valeur sentinelle)
+      aiUnlimited: true,
+      expertLimit: 2,       // 2 relectures expertes
       publicDossiersLimit: 0,
       privateDossiersLimit: 1,
       privateUsersLimit: 1
     };
   }
   return {
-    ticketsAi: 5,
+    ticketsAi: 9999,        // IA illimitée
+    aiUnlimited: true,
+    expertLimit: 2,         // 2 relectures expertes
     publicDossiersLimit: 1,
     privateDossiersLimit: 0,
     privateUsersLimit: 1
@@ -139,11 +161,15 @@ const entitlements = resolveFreeTrialEntitlements(accountSpace);
       const initialWalletStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
       await client.query(
         `insert into wallets(
-          user_id, plan_code, status, tickets_ai, tickets_expert,
+          user_id, plan_code, plan_label, status,
+          tickets_ai, tickets_expert,
+          ai_unlimited, expert_limit, expert_used,
           public_dossiers_used, private_dossiers_used,
           public_dossiers_limit, private_dossiers_limit, private_users_limit
-        ) values($1,'FREE',$2,$3,$3,0,0,$4,$5,$6)`,
-        [user.id, initialWalletStatus, entitlements.ticketsAi,
+        ) values($1,'FREE','Free',$2,$3,$3,$4,$5,0,0,0,$6,$7,$8)`,
+        [user.id, initialWalletStatus,
+         entitlements.ticketsAi, entitlements.ticketsAi,
+         entitlements.aiUnlimited, entitlements.expertLimit,
          entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
       );
 
@@ -479,7 +505,7 @@ async function handleVerify(req, res) {
           const expiresAt = trialExpiryDate(15);
           await client.query(
             `update wallets
-                set plan_code='FREE', status='trial_active', tickets_ai=$2, tickets_expert=$2,
+                set plan_code='FREE', plan_label='Free', status='trial_active', tickets_ai=$2, tickets_expert=$2, ai_unlimited=true, expert_limit=2, expert_used=0,
                     public_dossiers_used=0, private_dossiers_used=0,
                     public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
                     trial_started_at=$6, trial_expires_at=$7, updated_at=now()

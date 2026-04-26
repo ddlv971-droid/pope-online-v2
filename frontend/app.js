@@ -100,17 +100,113 @@ export function wireLogout(){
 export function setTicketsBadge(wallet) {
   const t = document.querySelector('[data-tickets]');
   if (!t || !wallet) return;
-  const expiry = wallet?.trial_expires_at ? new Date(wallet.trial_expires_at) : null;
-  const expired = expiry && expiry.getTime() < Date.now();
+
+  const expired = wallet.trial_expired ||
+    (wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now());
+
   if (expired) {
-    t.textContent = 'Offre expirée';
+    t.textContent = 'Période d\'essai terminée';
+    t.style.background = '#fef2f2';
+    t.style.color = '#b91c1c';
+    // Afficher la modale de conversion si pas déjà affichée
+    if (!sessionStorage.getItem('pope_trial_modal_shown')) {
+      sessionStorage.setItem('pope_trial_modal_shown', '1');
+      showTrialExpiredModal(wallet);
+    }
     return;
   }
-  if ((wallet?.tickets_ai ?? 0) > 0) {
-    t.textContent = `${wallet.tickets_ai} ticket${wallet.tickets_ai > 1 ? 's' : ''} IA restant${wallet.tickets_ai > 1 ? 's' : ''}`;
+
+  const daysLeft = wallet.trial_days_left;
+  if (daysLeft !== null && daysLeft !== undefined) {
+    if (daysLeft <= 3) {
+      t.textContent = `${daysLeft}j d'essai restant${daysLeft > 1 ? 's' : ''}`;
+      t.style.background = '#fef3c7';
+      t.style.color = '#92400e';
+    } else {
+      t.textContent = `Essai gratuit · ${daysLeft}j restants`;
+    }
     return;
   }
-  t.textContent = 'Accès sécurisé';
+
+  const planLabel = wallet.plan_label || 'Free';
+  t.textContent = planLabel === 'Free' ? 'Accès sécurisé' : `Plan ${planLabel} actif`;
+}
+
+export function showTrialExpiredModal(wallet) {
+  // Créer la modale de fin de trial avec les plans
+  const overlay = document.createElement('div');
+  overlay.id = 'pope-trial-modal';
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(11,36,64,.7);backdrop-filter:blur(6px);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  `;
+
+  const accountSpace = localStorage.getItem('pope_account_space') || 'public';
+  const pricingUrl = 'pricing.html';
+
+  overlay.innerHTML = \`
+    <div style="background:#fff;border-radius:24px;padding:48px 40px;max-width:880px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);animation:modal-in .35s ease;position:relative">
+      <style>@keyframes modal-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}</style>
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:48px;margin-bottom:16px">🎯</div>
+        <h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d'essai est terminée</h2>
+        <p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">
+          Merci d'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d'expertise sécurisée.
+          <strong>Continuez avec un plan adapté à vos besoins.</strong>
+        </p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
+        <div style="border:2px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center">
+          <div style="font-size:12px;font-weight:700;color:#50627a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Starter</div>
+          <div style="font-size:28px;font-weight:800;color:#0b2440">49€<span style="font-size:14px;font-weight:400">/mois</span></div>
+          <div style="font-size:12px;color:#50627a;margin-bottom:16px">ou 499€/an (−15%)</div>
+          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
+            <li>✓ Production illimitée</li>
+            <li>✓ 5 relectures expertes/mois</li>
+            <li>✓ Accès au closier documentaire</li>
+            <li>✓ Support prioritaire</li>
+          </ul>
+          <a href="pricing.html?plan=starter" style="display:block;margin-top:16px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Choisir Starter</a>
+        </div>
+
+        <div style="border:2px solid #0079c1;border-radius:16px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,#f0f7fc,#e0f0fb);position:relative">
+          <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700">RECOMMANDÉ</div>
+          <div style="font-size:12px;font-weight:700;color:#0079c1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pro</div>
+          <div style="font-size:28px;font-weight:800;color:#0b2440">89€<span style="font-size:14px;font-weight:400">/mois</span></div>
+          <div style="font-size:12px;color:#50627a;margin-bottom:16px">ou 890€/an (−15%)</div>
+          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
+            <li>✓ Production illimitée</li>
+            <li>✓ 15 relectures expertes/mois</li>
+            <li>✓ Accès au closier documentaire</li>
+            <li>✓ Accompagnement sur mesure inclus</li>
+          </ul>
+          <a href="pricing.html?plan=pro" style="display:block;margin-top:16px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Choisir Pro</a>
+        </div>
+
+        <div style="border:2px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center">
+          <div style="font-size:12px;font-weight:700;color:#50627a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Premium</div>
+          <div style="font-size:28px;font-weight:800;color:#0b2440">Sur<span style="font-size:18px"> devis</span></div>
+          <div style="font-size:12px;color:#50627a;margin-bottom:16px">Collectivités & Entreprises</div>
+          <ul style="list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2">
+            <li>✓ Production illimitée</li>
+            <li>✓ Relectures illimitées</li>
+            <li>✓ Conseiller dédié</li>
+            <li>✓ Intégration sur mesure</li>
+          </ul>
+          <a href="mailto:contact@pope-online.com?subject=Offre%20Premium%20POPE%20Online" style="display:block;margin-top:16px;border:1.5px solid #0079c1;color:#0079c1;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none">Nous contacter</a>
+        </div>
+      </div>
+
+      <div style="text-align:center">
+        <button onclick="document.getElementById('pope-trial-modal').remove()" style="background:none;border:none;color:#50627a;font-size:14px;cursor:pointer;text-decoration:underline">Continuer en consultation uniquement</button>
+      </div>
+    </div>
+  \`;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
 
 export function showToast(text, tone='ok'){

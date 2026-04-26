@@ -1,3 +1,8 @@
+
+function planCodeToLabel(code) {
+  return { FREE: 'Free', STARTER: 'Starter', PRO: 'Pro', PREMIUM: 'Premium' }[String(code).toUpperCase()] || 'Free';
+}
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -94,7 +99,7 @@ router.get('/users', async (_req, res) => {
                    from jsonb_array_elements(coalesce(u.satisfaction_last_response->'criteria', '[]'::jsonb)) elem
                  ), 0) * 10.0 / 7.0
                , 1) as satisfaction_score_10,
-               w.plan_code, w.status, w.tickets_ai, w.tickets_expert, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
+               w.plan_code, w.plan_label, w.status, w.tickets_ai, w.tickets_expert, w.ai_unlimited, w.expert_limit, w.expert_used, w.public_dossiers_limit, w.private_dossiers_limit, w.private_users_limit,
                w.trial_expires_at, u.created_at
           from users u
           left join wallets w on w.user_id = u.id
@@ -132,8 +137,8 @@ router.post('/users', async (req, res) => {
          returning id`,
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
-      await client.query(`insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','trial_active',$2,$2,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+      await client.query(`insert into wallets(user_id, plan_code, plan_label, status, tickets_ai, tickets_expert, ai_unlimited, expert_limit, expert_used, public_dossiers_limit, private_dossiers_limit, private_users_limit)
+                          values($1,'CUSTOM','Custom','trial_active',$2,$2,false,$2,0,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -163,13 +168,21 @@ router.put('/users/:id', async (req, res) => {
         const ticketsAi = Number(w.ticketsAi ?? 0);
         const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : ticketsAi;
         await client.query(
-          `insert into wallets(user_id, plan_code, status, tickets_ai, tickets_expert, public_dossiers_limit, private_dossiers_limit, private_users_limit, trial_expires_at)
-           values($1,$2,$3,$4,$5,$6,$7,$8,$9)
+          `insert into wallets(
+             user_id, plan_code, plan_label, status,
+             tickets_ai, tickets_expert,
+             ai_unlimited, expert_limit, expert_used,
+             public_dossiers_limit, private_dossiers_limit, private_users_limit,
+             trial_expires_at
+           ) values($1,$2,$3,$4,$5,$5,$6,$7,0,$8,$9,$10,$11)
            on conflict(user_id) do update set
              plan_code=excluded.plan_code,
+             plan_label=excluded.plan_label,
              status=excluded.status,
              tickets_ai=excluded.tickets_ai,
              tickets_expert=excluded.tickets_expert,
+             ai_unlimited=excluded.ai_unlimited,
+             expert_limit=excluded.expert_limit,
              public_dossiers_limit=excluded.public_dossiers_limit,
              private_dossiers_limit=excluded.private_dossiers_limit,
              private_users_limit=excluded.private_users_limit,
@@ -177,10 +190,12 @@ router.put('/users/:id', async (req, res) => {
              updated_at=now()`,
           [
             id,
-            w.planCode || 'CUSTOM',
+            w.planCode || 'FREE',
+            planCodeToLabel(w.planCode || 'FREE'),
             w.status || 'trial_active',
-            ticketsAi,
-            ticketsExpert,
+            Number(w.ticketsAi ?? 9999),
+            Boolean(w.aiUnlimited !== undefined ? w.aiUnlimited : true),
+            Number(w.expertLimit ?? 2),
             Number(w.publicDossiersLimit ?? 1),
             Number(w.privateDossiersLimit ?? 1),
             Number(w.privateUsersLimit ?? 1),

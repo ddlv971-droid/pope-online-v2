@@ -1,3 +1,11 @@
+
+function planCodeToLabel(code) {
+  return { FREE: 'Free', STARTER: 'Starter', PRO: 'Pro', PREMIUM: 'Premium', CUSTOM: 'Custom' }[String(code).toUpperCase()] || 'Free';
+}
+function planDefaultExpert(code) {
+  return { FREE: 2, STARTER: 5, PRO: 15, PREMIUM: 999, CUSTOM: 2 }[String(code).toUpperCase()] || 2;
+}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -171,6 +179,15 @@ function formatDate(value) {
   return d.toLocaleDateString('fr-FR');
 }
 
+function trialDaysInfo(trialExpiresAt) {
+  if (!trialExpiresAt) return '';
+  const d = new Date(trialExpiresAt);
+  const days = Math.ceil((d - Date.now()) / 86400000);
+  if (days < 0) return 'Essai expiré';
+  if (days === 0) return 'Expire aujourd\'hui';
+  return `${days}j d'essai restants`;
+}
+
 function getOfferValue(user) {
   return (user.plan_code || '').toUpperCase() === 'STANDARD' || user.status === 'active' ? 'STANDARD' : 'FREE';
 }
@@ -277,14 +294,25 @@ function buildUserCard(u) {
           </label>
 
           <label class="po-admin-field">
-            <span class="po-admin-field-label">Tickets IA</span>
-            <input data-field="ticketsAi" value="${u.tickets_ai || 0}" class="input" type="number" min="0">
+            <span class="po-admin-field-label">Plan</span>
+            <select data-field="planCode" class="input">
+              <option value="FREE" ${(u.plan_code||'FREE')==='FREE'?'selected':''}>Free (essai)</option>
+              <option value="STARTER" ${(u.plan_code||'')==='STARTER'?'selected':''}>Starter — 49€/mois</option>
+              <option value="PRO" ${(u.plan_code||'')==='PRO'?'selected':''}>Pro — 89€/mois</option>
+              <option value="PREMIUM" ${(u.plan_code||'')==='PREMIUM'?'selected':''}>Premium — Sur devis</option>
+              <option value="CUSTOM" ${(u.plan_code||'')==='CUSTOM'?'selected':''}>Custom (admin)</option>
+            </select>
           </label>
 
           <label class="po-admin-field">
-            <span class="po-admin-field-label">Tickets Relecture experte</span>
-            <input data-field="ticketsExpert" value="${u.tickets_expert || 0}" class="input" type="number" min="0">
-            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Laisser vide ou 0 = synchronisé automatiquement avec Tickets IA</small>
+            <span class="po-admin-field-label">Relectures expertes/mois</span>
+            <input data-field="expertLimit" value="${u.expert_limit ?? 2}" class="input" type="number" min="0">
+            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Free=2 · Starter=5 · Pro=15 · Premium=999</small>
+          </label>
+
+          <label class="po-admin-field">
+            <span class="po-admin-field-label">Relectures utilisées</span>
+            <input data-field="expertUsed" value="${u.expert_used ?? 0}" class="input" type="number" min="0">
           </label>
 
           <label class="po-admin-field">
@@ -371,11 +399,20 @@ function attachCardActions(card, user) {
 
   saveBtn.addEventListener('click', async () => {
     try {
+      const planCode = card.querySelector('[data-field="planCode"]').value || 'FREE';
+      const expertLimitEl = card.querySelector('[data-field="expertLimit"]');
+      const expertLimit = expertLimitEl ? Number(expertLimitEl.value) : planDefaultExpert(planCode);
+      const expertUsedEl = card.querySelector('[data-field="expertUsed"]');
+      const expertUsed  = expertUsedEl ? Number(expertUsedEl.value) : 0;
       const payload = {
         wallet: {
-          planCode: card.querySelector('[data-field="planCode"]').value,
+          planCode,
+          planLabel: planCodeToLabel(planCode),
+          aiUnlimited: true,
+          expertLimit,
+          expertUsed,
           status: card.querySelector('[data-field="status"]').value,
-          ticketsAi: Number(card.querySelector('[data-field="ticketsAi"]').value || 0),
+          ticketsAi: 9999,
           ticketsExpert: (() => {
             const expertEl = card.querySelector('[data-field="ticketsExpert"]');
             const expertVal = expertEl ? expertEl.value.trim() : '';
