@@ -1,4 +1,3 @@
-
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -143,7 +142,7 @@ const entitlements = resolveFreeTrialEntitlements(accountSpace);
           user_id, plan_code, status, tickets_ai, tickets_expert,
           public_dossiers_used, private_dossiers_used,
           public_dossiers_limit, private_dossiers_limit, private_users_limit
-        ) values($1,'FREE',$2,$3,0,0,0,$4,$5,$6)`,
+        ) values($1,'FREE',$2,$3,$3,0,0,$4,$5,$6)`,
         [user.id, initialWalletStatus, entitlements.ticketsAi,
          entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
       );
