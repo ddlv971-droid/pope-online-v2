@@ -25,7 +25,7 @@
     <h2>Bienvenue dans votre espace privé</h2>
     <p class="auth-note-premium"><strong>Votre période gratuite démarre maintenant.</strong><br/>Vous pouvez accéder à votre espace privé, générer vos premiers livrables pour les marchés publics, courriers administratifs et formalités d’entreprise, déposer des pièces 48h et solliciter une relecture experte si nécessaire.</p>
     <div class="po-grid-cards" style="margin-top:18px">
-      <article class="po-surface-card"><h3 id="ticketsTitle">5 tickets IA</h3><p>Pour tester la génération privée sur vos premiers besoins marchés publics, courriers administratifs et formalités d’entreprise.</p></article>
+      <article class="po-surface-card"><h3>Production illimitée</h3><p>Produisez autant de livrables que nécessaire pendant vos 15 jours d’essai — courriers, marchés, formalités.</p></article>
       <article class="po-surface-card"><h3 id="usersTitle">1 utilisateur</h3><p>Pour tester le parcours privé dans un cadre clair et maîtrisé.</p></article>
       <article class="po-surface-card"><h3 id="dateTitle">Activation immédiate</h3><p id="expiryText">Votre essai gratuit est activé pour 15 jours.</p></article>
     </div>
@@ -42,7 +42,7 @@
   const ticketsAi = u.searchParams.get('ticketsAi') || '5';
   const users = u.searchParams.get('privateUsersLimit') || '1';
   const trialEnds = u.searchParams.get('trialEnds');
-  document.getElementById('ticketsTitle').textContent = `${ticketsAi} ticket${ticketsAi === '1' ? '' : 's'} IA`;
+  // Production illimitée - pas de compteur à afficher
   document.getElementById('usersTitle').textContent = `${users} utilisateur${users === '1' ? '' : 's'}`;
   if (trialEnds) {
     const d = new Date(trialEnds);

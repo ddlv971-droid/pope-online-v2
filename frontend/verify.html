@@ -51,7 +51,7 @@
     <div class="verify-success" id="stateSuccess">
       <div class="verify-icon">✓</div>
       <h1 id="welcomeTitle">Bienvenue sur POPE Online !</h1>
-      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et vos <strong id="ticketCount">5 tickets</strong> sont prêts à être utilisés.</p>
+      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et votre accès est <strong>actif</strong>. Production illimitée et 2 relectures expertes vous attendent.</p>
       <div class="verify-features" id="featureGrid"></div>
       <div class="verify-cta">
         <a href="#" id="ctaDashboard" class="verify-btn-primary">Commencer mon expérience POPE Online →</a>
@@ -86,12 +86,11 @@ async function run(){
     const data=await apiFetch('/auth/verify-email',{method:'POST',body:{token,fp}});
     setSession(data?.user||{},data?.token||'');
     const sp=data?.user?.accountSpace==='private'?'private':'public';
-    const tickets=data?.user?.ticketsAi??5;
-    const base=origin();
+        const base=origin();
     const dashUrl=`${base}/${sp==='private'?'dashboard-private.html':'dashboard.html'}`;
     const spaceUrl=`${base}/${sp==='private'?'private.html':'public.html'}`;
     document.getElementById('welcomeTitle').textContent=sp==='private'?'Bienvenue dans votre espace privé !':'Bienvenue dans votre espace public !';
-    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé. Votre compte est actif et vos <strong>${tickets} tickets</strong> sont prêts à être utilisés.`;
+    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé. Votre compte est actif. Production illimitée et <strong>2 relectures expertes</strong> vous attendent.`;
     document.getElementById('ctaDashboard').href=dashUrl;
     document.getElementById('ctaSpace').href=spaceUrl;
     document.getElementById('ctaSpace').textContent=sp==='private'?"Découvrir l'espace privé":"Découvrir l'espace public";

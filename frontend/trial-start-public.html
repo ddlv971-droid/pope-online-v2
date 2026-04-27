@@ -25,8 +25,8 @@
     <h2>Bienvenue dans votre espace public</h2>
     <p class="auth-note-premium"><strong>Votre période gratuite démarre maintenant.</strong><br/>Vous pouvez lancer vos premières générations IA dans un cadre public guidé, fluide et sécurisé.</p>
     <div class="po-grid-cards" style="margin-top:18px">
-      <article class="po-surface-card"><h3 id="ticketsTitle">5 tickets IA</h3><p>Pour produire vos premiers drafts et tester la génération guidée.</p></article>
-      <article class="po-surface-card"><h3 id="dossiersTitle">5 relectures expertes</h3><p>Pour faire relire et améliorer vos livrables par un conseiller POPE.</p></article>
+      <article class="po-surface-card"><h3>Production illimitée</h3><p>Produisez autant de livrables que nécessaire pendant vos 15 jours d'essai.</p></article>
+      <article class="po-surface-card"><h3>2 relectures expertes</h3><p>Pour faire relire et améliorer vos livrables par un conseiller POPE.</p></article>
       <article class="po-surface-card"><h3 id="dateTitle">Activation immédiate</h3><p id="expiryText">Votre essai gratuit est activé pour 15 jours.</p></article>
     </div>
     <div class="row gap wrap" style="margin-top:18px">
@@ -42,7 +42,7 @@
   const tickets = u.searchParams.get('ticketsAi') || '5';
   const dossiers = u.searchParams.get('publicDossiersLimit') || '1';
   const trialEnds = u.searchParams.get('trialEnds');
-  document.getElementById('ticketsTitle').textContent = `${tickets} ticket${tickets === '1' ? '' : 's'} IA`;
+  // Production illimitée - pas de compteur à afficher
   document.getElementById('dossiersTitle').textContent = `${dossiers} dossier${dossiers === '1' ? '' : 's'}`;
   if (trialEnds) {
     const d = new Date(trialEnds);
