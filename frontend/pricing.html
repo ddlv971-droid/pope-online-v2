@@ -100,6 +100,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 </div>
 
 <div class="pgrid-wrap">
+  <p style="text-align:center;font-size:12px;color:#7a8fa8;margin-bottom:6px">Tous les prix sont indiqués hors taxes (HT). TVA applicable selon la réglementation en vigueur.</p>
   <p class="pbilling-info" id="billing-info">Facturation mensuelle · Sans engagement · Résiliable à tout moment</p>
 
   <div id="space-badge" style="text-align:center;margin-bottom:20px"></div>
@@ -132,7 +133,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
       <div class="plan-name">Starter</div>
       <div class="plan-desc">Pour les professionnels qui produisent régulièrement</div>
       <div class="plan-price-wrap">
-        <div><span class="plan-amount" id="s-amount">49€</span><span class="plan-period" id="s-period">/mois</span></div>
+        <div><span class="plan-amount" id="s-amount">49€</span><span class="plan-period"> HT<span id="s-period">/mois</span></span></div>
         <div class="plan-annual" id="s-annual">&nbsp;</div>
       </div>
       <ul class="plan-feats">
@@ -152,7 +153,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
       <div class="plan-name">Pro</div>
       <div class="plan-desc">Pour les structures à fort volume de documents sensibles</div>
       <div class="plan-price-wrap">
-        <div><span class="plan-amount" id="p-amount">89€</span><span class="plan-period" id="p-period">/mois</span></div>
+        <div><span class="plan-amount" id="p-amount">89€</span><span class="plan-period"> HT<span id="p-period">/mois</span></span></div>
         <div class="plan-annual" id="p-annual">&nbsp;</div>
       </div>
       <ul class="plan-feats">
@@ -285,10 +286,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 // ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
 // Créez-les sur : https://dashboard.stripe.com/payment-links
 var STRIPE = {
-  starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01',
-  starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00',
-  pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'
+  starter_m: '', // ex: https://buy.stripe.com/xxxx
+  starter_a: '', // ex: https://buy.stripe.com/xxxx
+  pro_m:     '', // ex: https://buy.stripe.com/xxxx
+  pro_a:     ''  // ex: https://buy.stripe.com/xxxx
 };
 
 // ── Tarifs (ne pas modifier les prix mensuels) ─────────────────────────────
@@ -319,15 +320,15 @@ function setBilling(annual) {
   document.getElementById('s-amount').textContent = annual ? PLANS.starter.annual + '€' : PLANS.starter.monthly + '€';
   document.getElementById('s-period').textContent = annual ? '/an' : '/mois';
   document.getElementById('s-annual').textContent = annual
-    ? 'soit ' + PLANS.starter.annualMonthly + '€/mois · économisez ' + PLANS.starter.save + '€'
-    : 'ou ' + PLANS.starter.annual + '€/an (−15%)';
+    ? 'soit ' + PLANS.starter.annualMonthly + '€ HT/mois · économisez ' + PLANS.starter.save + '€'
+    : 'ou ' + PLANS.starter.annual + '€ HT/an (−15%)';
 
   // Pro
   document.getElementById('p-amount').textContent = annual ? PLANS.pro.annual + '€' : PLANS.pro.monthly + '€';
   document.getElementById('p-period').textContent = annual ? '/an' : '/mois';
   document.getElementById('p-annual').textContent = annual
-    ? 'soit ' + PLANS.pro.annualMonthly + '€/mois · économisez ' + PLANS.pro.save + '€'
-    : 'ou ' + PLANS.pro.annual + '€/an (−15%)';
+    ? 'soit ' + PLANS.pro.annualMonthly + '€ HT/mois · économisez ' + PLANS.pro.save + '€'
+    : 'ou ' + PLANS.pro.annual + '€ HT/an (−15%)';
 }
 
 toggle.addEventListener('click', function() { setBilling(!isAnnual); });
@@ -336,8 +337,8 @@ toggle.addEventListener('keydown', function(e) {
 });
 
 // Initialiser les prix annuels visibles dès le départ
-document.getElementById('s-annual').textContent = 'ou ' + PLANS.starter.annual + '€/an (−15%)';
-document.getElementById('p-annual').textContent = 'ou ' + PLANS.pro.annual + '€/an (−15%)';
+document.getElementById('s-annual').textContent = 'ou ' + PLANS.starter.annual + '€ HT/an (−15%)';
+document.getElementById('p-annual').textContent = 'ou ' + PLANS.pro.annual + '€ HT/an (−15%)';
 
 // ── FAQ ────────────────────────────────────────────────────────────────────
 document.querySelectorAll('.faq-item').forEach(function(item) {
@@ -361,7 +362,7 @@ document.querySelectorAll('.faq-item').forEach(function(item) {
 function openCheckout(plan) {
   var p = PLANS[plan];
   var annual = isAnnual;
-  var price = annual ? p.annual + '€/an' : p.monthly + '€/mois';
+  var price = annual ? p.annual + '€ HT/an' : p.monthly + '€ HT/mois';
   var link = annual ? STRIPE[plan + '_a'] : STRIPE[plan + '_m'];
 
   document.getElementById('co-title').textContent = 'Souscrire ' + p.name + (annual ? ' · Annuel' : ' · Mensuel');
