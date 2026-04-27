@@ -82,7 +82,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 
 <div class="pricing-hero">
   <h1>Des livrables <span>fiables et validés</span><br>à chaque usage</h1>
-  <p>Choisissez le plan adapté à votre volume de production et d'expertise. L'IA est toujours disponible — l'expertise humaine est limitée selon le plan.</p>
+  <p>Choisissez le plan adapté à votre volume de production et d'expertise.</p>
 
   <div class="pricing-toggle" style="margin-bottom:8px">
     <span id="labelMensuel" style="color:var(--blue);font-weight:700">Mensuel</span>
@@ -138,7 +138,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="feat-icon">✓</span>Closier documentaire</li>
         <li class="muted-feat"><span class="feat-icon">—</span>Conseiller dédié</li>
       </ul>
-      <a href="mailto:contact@pope-online.com?subject=Offre%20Starter%20POPE%20Online" class="plan-cta plan-cta-primary">Souscrire Starter</a>
+      <button class="plan-cta plan-cta-primary" onclick="openCheckout('starter', isAnnual)">Souscrire Starter</button>
     </div>
 
     <!-- PRO -->
@@ -159,7 +159,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="feat-icon">✓</span>Closier documentaire premium</li>
         <li><span class="feat-icon">✓</span>Support prioritaire</li>
       </ul>
-      <a href="mailto:contact@pope-online.com?subject=Offre%20Pro%20POPE%20Online" class="plan-cta plan-cta-primary">Souscrire Pro</a>
+      <button class="plan-cta plan-cta-primary" onclick="openCheckout('pro', isAnnual)">Souscrire Pro</button>
     </div>
 
     <!-- PREMIUM -->
@@ -201,27 +201,27 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
   <h2>Questions fréquentes</h2>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Qu'est-ce qu'une relecture experte ? <span>+</span></div>
+    <div class="faq-q">Qu'est-ce qu'une relecture experte ? <span>+</span></div>
     <div class="faq-a">Un conseiller POPE Online analyse votre document sur le fond, la forme et les formulations. Vous recevez un retour personnalisé par email dans les 48h. C'est la garantie d'un livrable sécurisé avant diffusion ou arbitrage.</div>
   </div>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">La production de livrables est-elle vraiment illimitée ? <span>+</span></div>
+    <div class="faq-q">La production de livrables est-elle vraiment illimitée ? <span>+</span></div>
     <div class="faq-a">Oui, sur tous les plans. La limite porte uniquement sur le nombre de relectures expertes mensuelles. Vous pouvez produire autant de documents que nécessaire.</div>
   </div>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Que se passe-t-il après les 15 jours gratuits ? <span>+</span></div>
+    <div class="faq-q">Que se passe-t-il après les 15 jours gratuits ? <span>+</span></div>
     <div class="faq-a">Votre compte reste accessible en consultation. La production et la relecture experte sont suspendues jusqu'à souscription d'un plan. Vous recevez un email de fin de période avec les options disponibles.</div>
   </div>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Les relectures non utilisées sont-elles reportées ? <span>+</span></div>
+    <div class="faq-q">Les relectures non utilisées sont-elles reportées ? <span>+</span></div>
     <div class="faq-a">Non, les relectures expertes sont comptabilisées par mois calendaire et ne se cumulent pas. Elles sont dimensionnées pour correspondre à un usage régulier et professionnel.</div>
   </div>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Quelle est la différence entre espace public et privé ? <span>+</span></div>
+    <div class="faq-q">Quelle est la différence entre espace public et privé ? <span>+</span></div>
     <div class="faq-a">L'espace public est conçu pour les collectivités, établissements et organisations publiques (notes, délibérations, courriers institutionnels). L'espace privé est calibré pour les artisans, indépendants et TPE (formalités, réponses aux marchés, courriers métier). Les plans s'appliquent aux deux espaces.</div>
   </div>
 </div>
@@ -231,38 +231,57 @@ let isAnnual = false;
 
 function toggleBilling() {
   isAnnual = document.getElementById('billingToggle').checked;
-  document.getElementById('labelMensuel').style.color = isAnnual ? '' : 'var(--blue)';
-  document.getElementById('labelMensuel').style.fontWeight = isAnnual ? '' : '700';
-  document.getElementById('labelAnnuel').style.color = isAnnual ? 'var(--blue)' : '';
-  document.getElementById('labelAnnuel').style.fontWeight = isAnnual ? '700' : '';
+
+  // Labels
+  var lm = document.getElementById('labelMensuel');
+  var la = document.getElementById('labelAnnuel');
+  lm.style.color = isAnnual ? '#50627a' : 'var(--blue)';
+  lm.style.fontWeight = isAnnual ? '400' : '700';
+  la.style.color = isAnnual ? 'var(--blue)' : '#50627a';
+  la.style.fontWeight = isAnnual ? '700' : '400';
+
   document.getElementById('billingInfo').textContent = isAnnual
-    ? 'Facturation annuelle · −15% sur le prix mensuel'
-    : 'Facturation mensuelle · Sans engagement';
+    ? 'Facturation annuelle · Paiement en une fois · Economisez 15%'
+    : 'Facturation mensuelle · Sans engagement · Resiliable a tout moment';
 
-  // Starter
-  document.getElementById('starterPrice').textContent = isAnnual ? '42€' : '49€';
-  document.getElementById('starterPeriod').textContent = isAnnual ? '/mois' : '/mois';
-  document.getElementById('starterAnnual').textContent = isAnnual ? 'soit 499€/an · économisez 89€' : '';
-  document.getElementById('starterAnnual').style.visibility = isAnnual ? 'visible' : 'hidden';
+  // Starter : 49€/mois → 499€/an (soit 41,58€/mois)
+  document.getElementById('starterPrice').textContent = isAnnual ? '499€' : '49€';
+  document.getElementById('starterPeriod').textContent = isAnnual ? '/an' : '/mois';
+  document.getElementById('starterAnnual').textContent = isAnnual ? 'soit 41,58 €/mois · economisez 89€' : 'ou 499€/an (-15%)';
+  document.getElementById('starterAnnual').style.visibility = 'visible';
 
-  // Pro
-  document.getElementById('proPrice').textContent = isAnnual ? '76€' : '89€';
-  document.getElementById('proAnnual').textContent = isAnnual ? 'soit 890€/an · économisez 178€' : '';
-  document.getElementById('proAnnual').style.visibility = isAnnual ? 'visible' : 'hidden';
+  // Pro : 89€/mois → 890€/an (soit 74,17€/mois)
+  document.getElementById('proPrice').textContent = isAnnual ? '890€' : '89€';
+  document.getElementById('proPeriod').textContent = isAnnual ? '/an' : '/mois';
+  document.getElementById('proAnnual').textContent = isAnnual ? 'soit 74,17 €/mois · economisez 178€' : 'ou 890€/an (-15%)';
+  document.getElementById('proAnnual').style.visibility = 'visible';
 }
 
 function toggleFaq(el) {
-  const item = el.parentElement;
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => {
+  var item = el.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(i) {
     i.classList.remove('open');
-    i.querySelector('.faq-q span').textContent = '+';
+    var sp = i.querySelector('.faq-q span');
+    if (sp) sp.textContent = '+';
   });
   if (!isOpen) {
     item.classList.add('open');
-    el.querySelector('span').textContent = '−';
+    var sp2 = el.querySelector('span');
+    if (sp2) sp2.textContent = '\u2212';
   }
 }
+
+// Attacher les FAQ via JS (plus fiable que onclick inline avec apostrophes)
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.faq-q').forEach(function(q) {
+    q.style.cursor = 'pointer';
+    q.addEventListener('click', function() { toggleFaq(this); });
+  });
+  // Initialiser les prix annuels visibles
+  document.getElementById('starterAnnual').style.visibility = 'visible';
+  document.getElementById('proAnnual').style.visibility = 'visible';
+});
 
 // Adapter le wording selon l'espace de l'utilisateur
 (function adaptToSpace() {
@@ -340,5 +359,103 @@ function toggleFaq(el) {
   document.querySelector('.pricing-grid-wrap')?.prepend(badge);
 })();
 </script>
+
+<!-- MODALE PAIEMENT SÉCURISÉ -->
+<div id="checkout-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(11,36,64,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:24px;padding:40px;max-width:480px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);position:relative">
+    <button onclick="closeCheckout()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#50627a">✕</button>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:48px;height:48px;background:linear-gradient(135deg,#0079c1,#03a0d7);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px">🔒</div>
+      <h2 style="font-size:20px;font-weight:800;color:#0b2440;margin:0 0 6px" id="checkout-title">Souscrire au plan Starter</h2>
+      <p style="font-size:14px;color:#50627a;margin:0" id="checkout-price">49€/mois</p>
+    </div>
+
+    <!-- Sécurité badges -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap">
+      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a;display:flex;align-items:center;gap:5px">🔒 SSL 256-bit</span>
+      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a;display:flex;align-items:center;gap:5px">💳 Stripe sécurisé</span>
+      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a;display:flex;align-items:center;gap:5px">✓ PCI DSS</span>
+    </div>
+
+    <!-- Info abonnement -->
+    <div style="background:#f0f7fc;border-radius:14px;padding:16px;margin-bottom:24px;font-size:13px;color:#0b2440;line-height:1.7">
+      <div id="checkout-details"></div>
+      <div style="margin-top:8px;color:#50627a;font-size:12px">
+        Résiliable à tout moment depuis votre espace. Aucun engagement tacite.<br/>
+        Vos données de paiement ne transitent jamais sur nos serveurs — traitées directement par Stripe.
+      </div>
+    </div>
+
+    <!-- CTA vers checkout -->
+    <a id="checkout-link" href="#" target="_blank" rel="noopener"
+       style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:15px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.3);margin-bottom:12px">
+      Procéder au paiement sécurisé →
+    </a>
+    <p style="text-align:center;font-size:12px;color:#7a8fa8;margin:0">
+      Vous serez redirigé vers la page de paiement sécurisée Stripe.<br/>
+      Questions : <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a>
+    </p>
+  </div>
+</div>
+
+<script>
+var currentPlan = null;
+var currentAnnual = false;
+
+var STRIPE_LINKS = {
+  starter_monthly: 'https://buy.stripe.com/VOTRE_LIEN_STARTER_MENSUEL',
+  starter_annual:  'https://buy.stripe.com/VOTRE_LIEN_STARTER_ANNUEL',
+  pro_monthly:     'https://buy.stripe.com/VOTRE_LIEN_PRO_MENSUEL',
+  pro_annual:      'https://buy.stripe.com/VOTRE_LIEN_PRO_ANNUEL',
+};
+
+function openCheckout(plan, annual) {
+  currentPlan = plan;
+  currentAnnual = !!annual;
+  var modal = document.getElementById('checkout-modal');
+  modal.style.display = 'flex';
+
+  var title = plan === 'starter' ? 'Souscrire au plan Starter' : 'Souscrire au plan Pro';
+  var price, details, linkKey;
+
+  if (plan === 'starter') {
+    if (annual) {
+      price = '499€/an (soit 41,58€/mois)';
+      details = '<strong>Plan Starter annuel</strong><br>✓ Production illimitée<br>✓ 5 relectures expertes/mois<br>✓ Closier documentaire<br>✓ Economisez 89€ vs mensuel';
+      linkKey = 'starter_annual';
+    } else {
+      price = '49€/mois';
+      details = '<strong>Plan Starter mensuel</strong><br>✓ Production illimitée<br>✓ 5 relectures expertes/mois<br>✓ Closier documentaire<br>✓ Résiliable à tout moment';
+      linkKey = 'starter_monthly';
+    }
+  } else {
+    if (annual) {
+      price = '890€/an (soit 74,17€/mois)';
+      details = '<strong>Plan Pro annuel</strong><br>✓ Production illimitée<br>✓ 15 relectures expertes/mois<br>✓ Accompagnement inclus<br>✓ Economisez 178€ vs mensuel';
+      linkKey = 'pro_annual';
+    } else {
+      price = '89€/mois';
+      details = '<strong>Plan Pro mensuel</strong><br>✓ Production illimitée<br>✓ 15 relectures expertes/mois<br>✓ Accompagnement inclus<br>✓ Résiliable à tout moment';
+      linkKey = 'pro_monthly';
+    }
+  }
+
+  document.getElementById('checkout-title').textContent = title;
+  document.getElementById('checkout-price').textContent = price;
+  document.getElementById('checkout-details').innerHTML = details;
+  document.getElementById('checkout-link').href = STRIPE_LINKS[linkKey] || 'mailto:contact@pope-online.com?subject=Souscription%20' + plan;
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').style.display = 'none';
+}
+
+document.getElementById('checkout-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeCheckout();
+});
+</script>
+
 </body>
 </html>

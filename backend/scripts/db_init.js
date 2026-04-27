@@ -60,6 +60,7 @@ async function main() {
   await applyPatch('schema.sql',           'DB schema applied');
   await applyPatch('schema_patch_v22.sql', 'Patch V22 applied (deleted_accounts + tickets_expert)');
   await applyPatch('schema_patch_v24.sql', 'Patch V24 applied (admin promotion + idempotent V22)');
+  await applyPatch('schema_patch_v29.sql', 'Patch V29 applied (plans hybrides + IA illimitee)');
   await seedAdmin();
   await pool.end();
 }

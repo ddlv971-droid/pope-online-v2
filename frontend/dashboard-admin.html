@@ -1,11 +1,3 @@
-
-function planCodeToLabel(code) {
-  return { FREE: 'Free', STARTER: 'Starter', PRO: 'Pro', PREMIUM: 'Premium', CUSTOM: 'Custom' }[String(code).toUpperCase()] || 'Free';
-}
-function planDefaultExpert(code) {
-  return { FREE: 2, STARTER: 5, PRO: 15, PREMIUM: 999, CUSTOM: 2 }[String(code).toUpperCase()] || 2;
-}
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -275,14 +267,6 @@ function buildUserCard(u) {
 
       <div class="po-admin-user-body po-admin-user-body-flat">
         <div class="po-admin-user-fields po-admin-user-fields-flat">
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Offre</span>
-            <select data-field="planCode" class="input">
-              <option value="FREE" ${offerValue === 'FREE' ? 'selected' : ''}>Free trial</option>
-              <option value="STANDARD" ${offerValue === 'STANDARD' ? 'selected' : ''}>Offre standard</option>
-            </select>
-          </label>
-
           <label class="po-admin-field">
             <span class="po-admin-field-label">Statut</span>
             <select data-field="status" class="input">

@@ -124,6 +124,7 @@ router.post('/signup', async (req, res) => {
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
 
   const fp_hash = fpHash(fp);
+  let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
@@ -188,28 +189,30 @@ const entitlements = resolveFreeTrialEntitlements(accountSpace);
         [user.id, token_hash, expires]
       );
       await client.query('commit');
-
-      const base = resolveFrontendBaseUrl();
-      const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(token)}`;
-      await sendMail({
-        to: email,
-        subject: 'POPE Online — Vérification de votre compte',
-        text: `Bonjour,
-
-Veuillez vérifier votre compte POPE Online en cliquant sur ce lien :
-${verifyUrl}
-
-Ce lien expire dans 24h.
-
-— POPE Online`,
-        html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">Vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
-      });
-
-      return res.json({ ok: true, message: 'verification_email_sent' });
+      verifyToken = token; // hors withClient
     });
   } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'server_error' });
+    console.error('[signup] DB error:', e.message);
+    if (!res.headersSent) return res.status(500).json({ error: 'server_error' });
+    return;
+  }
+
+  if (res.headersSent) return;
+
+  // PHASE 2 : Envoi du mail hors withClient
+  const base = resolveFrontendBaseUrl();
+  const verifyUrl = `${base}/verify.html?token=${encodeURIComponent(verifyToken)}`;
+  try {
+    await sendMail({
+      to: email,
+      subject: 'POPE Online — Vérification de votre compte',
+      text: `Bonjour,\n\nVeuillez vérifier votre compte POPE Online en cliquant sur ce lien :\n${verifyUrl}\n\nCe lien expire dans 24h.\n\n— POPE Online`,
+      html: `<p>Bonjour,</p><p>Veuillez vérifier votre compte POPE Online :</p><p><a href="${verifyUrl}">À vérifier mon compte</a></p><p><small>Ce lien expire dans 24h.</small></p><p>— POPE Online</p>`
+    });
+    return res.json({ ok: true, message: 'verification_email_sent' });
+  } catch (mailErr) {
+    console.error('[signup] sendMail failed (account saved):', mailErr?.message);
+    return res.json({ ok: true, message: 'verification_email_sent', mailFailed: true });
   }
 });
 
@@ -227,6 +230,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
 
   const fp_hash = fpHash(fp);
+  let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
@@ -428,6 +432,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
   if (!password) return res.status(400).json({ error: 'missing_password' });
 
   const fp_hash = fpHash(fp);
+  let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
@@ -466,6 +471,7 @@ async function handleVerify(req, res) {
 
   const token_hash = sha256Hex(token);
   const fp_hash = fpHash(fp);
+  let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
 
