@@ -1,4 +1,3 @@
-
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -158,7 +157,7 @@ router.post('/signup', async (req, res) => {
         [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
       );
       const user = userIns.rows[0];
-const entitlements = resolveFreeTrialEntitlements(accountSpace);
+      const entitlements = resolveFreeTrialEntitlements(accountSpace);
       const initialWalletStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
       await client.query(
         `insert into wallets(

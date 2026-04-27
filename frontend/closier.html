@@ -147,7 +147,31 @@ function filterDocs() {
   renderDocs();
 }
 
-document.addEventListener("DOMContentLoaded", function() { renderDocs(); });
+document.addEventListener("DOMContentLoaded", function() {
+  // Vérifier le plan depuis localStorage (positionné à la connexion)
+  try {
+    var userRaw = localStorage.getItem('pope_session_user');
+    if (userRaw) {
+      var user = JSON.parse(userRaw);
+      var wallet = user.wallet || {};
+      var planLabel = wallet.plan_label || 'Free';
+      var trialExpired = wallet.trial_expired || false;
+      var status = wallet.status || '';
+      // Bloquer uniquement si plan Free ET essai expiré
+      if (planLabel === 'Free' && (trialExpired || status === 'trial_expired')) {
+        document.getElementById('docGrid').innerHTML =
+          '<div class="closier-locked">' +
+          '<div style="font-size:40px;margin-bottom:12px">🔒</div>' +
+          '<h3>Closier disponible dès le plan Starter</h3>' +
+          '<p>Votre période d\'essai est terminée. Souscrivez un plan pour accéder à la bibliothèque documentaire.</p>' +
+          '<a href="pricing.html" style="display:inline-flex;margin-top:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px 24px;font-weight:700;text-decoration:none">Voir les plans</a>' +
+          '</div>';
+        return;
+      }
+    }
+  } catch(e) {}
+  renderDocs();
+});
 </script>
 </body>
 </html>
