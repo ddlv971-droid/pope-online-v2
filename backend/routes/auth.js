@@ -159,19 +159,40 @@ router.post('/signup', async (req, res) => {
       const user = userIns.rows[0];
       const entitlements = resolveFreeTrialEntitlements(accountSpace);
       const initialWalletStatus = wasDeletedBySelf ? 'verified_no_trial' : 'pending_verification';
-      await client.query(
-        `insert into wallets(
-          user_id, plan_code, plan_label, status,
-          tickets_ai, tickets_expert,
-          ai_unlimited, expert_limit, expert_used,
-          public_dossiers_used, private_dossiers_used,
-          public_dossiers_limit, private_dossiers_limit, private_users_limit
-        ) values($1,'FREE','Free',$2,$3,$3,$4,$5,0,0,0,$6,$7,$8)`,
-        [user.id, initialWalletStatus,
-         entitlements.ticketsAi, entitlements.ticketsAi,
-         entitlements.aiUnlimited, entitlements.expertLimit,
-         entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
-      );
+      // Essayer d'abord avec les colonnes V29 (ai_unlimited, plan_label, expert_limit)
+      // Si les colonnes n'existent pas encore → fallback sur l'ancien schema
+      try {
+        await client.query(
+          `insert into wallets(
+            user_id, plan_code, plan_label, status,
+            tickets_ai, tickets_expert,
+            ai_unlimited, expert_limit, expert_used,
+            public_dossiers_used, private_dossiers_used,
+            public_dossiers_limit, private_dossiers_limit, private_users_limit
+          ) values($1,'FREE','Free',$2,$3,$3,$4,$5,0,0,0,$6,$7,$8)`,
+          [user.id, initialWalletStatus,
+           entitlements.ticketsAi,
+           entitlements.aiUnlimited, entitlements.expertLimit,
+           entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
+        );
+      } catch (walletErr) {
+        if (walletErr.message && walletErr.message.includes('column')) {
+          // Fallback : INSERT sans les colonnes V29
+          console.warn('[signup] wallet V29 columns missing, using legacy schema');
+          await client.query(
+            `insert into wallets(
+              user_id, plan_code, status, tickets_ai, tickets_expert,
+              public_dossiers_used, private_dossiers_used,
+              public_dossiers_limit, private_dossiers_limit, private_users_limit
+            ) values($1,'FREE',$2,$3,$3,0,0,$4,$5,$6)`,
+            [user.id, initialWalletStatus,
+             Math.min(entitlements.ticketsAi, 9999),
+             entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
+          );
+        } else {
+          throw walletErr;
+        }
+      }
 
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
