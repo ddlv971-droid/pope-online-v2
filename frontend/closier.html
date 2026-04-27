@@ -44,7 +44,7 @@
     </a>
     <div class="row gap">
       <a class="btn ghost" href="dashboard.html">Mon espace</a>
-      <button class="btn ghost" data-logout>Déconnexion</button>
+      <button class="btn ghost" onclick="localStorage.removeItem('pope_session_active');sessionStorage.removeItem('pope_session_token');window.location.href='login.html'">Déconnexion</button>
     </div>
   </div>
 </header>
@@ -74,29 +74,27 @@
   </div>
 </div>
 
-<script src="./auth-guard.js"></script>
-<script type="module" src="./protected-topbar.js"></script>
 <script>
 // Bibliothèque documentaire — à alimenter via le dashboard admin
 const DOCS = [
-  {cat:'marches',title:'DC1 — Lettre de candidature',desc:'Formulaire officiel DC1 : habilitation du mandataire pour marchés publics.',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_12481.do'},
-  {cat:'marches',title:'DC2 — Déclaration du candidat',desc:'Formulaire officiel DC2 : capacités techniques et financières du candidat.',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_12482.do'},
-  {cat:'marches',title:'Modèles CCAP, RC, AE — DAJ',desc:'Bibliothèque complète de modèles types publiée par la Direction des Affaires Juridiques.',type:'Word/PDF',url:'https://www.economie.gouv.fr/daj/modeles-de-documents'},
-  {cat:'marches',title:'Guide pratique MAPA 2024',desc:'Guide officiel de la procédure adaptée : seuils, publicité, mise en concurrence.',type:'PDF',url:'https://www.economie.gouv.fr/daj/marches-publics-guide-pratique'},
-  {cat:'marches',title:'Rapport analyse des offres — trame DAJ',desc:'Trame officielle pour la rédaction du rapport d'analyse des candidatures et offres.',type:'Word',url:'https://www.economie.gouv.fr/daj/formulaires-et-modeles-documents'},
-  {cat:'courriers',title:'Bibliothèque lettres types — service-public.fr',desc:'Modèles officiels de courriers pour toutes situations : démarches, réclamations, demandes.',type:'Word/PDF',url:'https://www.service-public.fr/particuliers/vosdroits/N31'},
-  {cat:'courriers',title:'Lettre de mise en demeure',desc:'Modèle officiel avec structure légale, délai de réponse et mentions obligatoires.',type:'Word',url:'https://www.service-public.fr/particuliers/vosdroits/F13180'},
-  {cat:'courriers',title:'Réponse à réclamation usager',desc:'Trame officielle de réponse à une réclamation d'usager ou de client.',type:'Word',url:'https://www.service-public.fr/particuliers/vosdroits/F1149'},
-  {cat:'deliberations',title:'Modèles de délibérations — AMF',desc:'Bibliothèque AMF : modèles de délibérations municipales, mis à jour régulièrement.',type:'Word',url:'https://www.amf.asso.fr/documents-modeles-deliberations/'},
-  {cat:'deliberations',title:'Guide actes collectivités — DGCL',desc:'Guide officiel sur la légalité des actes administratifs des collectivités locales.',type:'PDF',url:'https://www.collectivites-locales.gouv.fr/'},
-  {cat:'formalites',title:'Formulaire P0 CMB — Micro-entrepreneur',desc:'Cerfa officiel de déclaration de début d'activité artisan/commerçant.',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_P0_CMB.do'},
-  {cat:'formalites',title:'Guichet unique — Formalités entreprises',desc:'Portail officiel de dépôt des formalités : création, modification, cessation d'activité.',type:'En ligne',url:'https://formalites.entreprises.gouv.fr/'},
-  {cat:'formalites',title:'Modèles statuts — Bpifrance Création',desc:'Statuts types pour SAS, SASU, SARL, EURL. Notice d'utilisation incluse.',type:'Word',url:'https://bpifrance-creation.fr/encyclopedie/structures-juridiques'},
-  {cat:'formalites',title:'Cerfa 13844 — Cessation d'activité',desc:'Formulaire officiel de déclaration de cessation pour entreprise individuelle.',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_13844.do'},
-  {cat:'rh',title:'Cerfa 14598 — Rupture conventionnelle',desc:'Formulaire officiel d'homologation de rupture conventionnelle (art. L1237-14 CT).',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_14598.do'},
-  {cat:'rh',title:'Cerfa 13219 — Attestation employeur',desc:'Attestation employeur obligatoire à remettre au salarié à la rupture du contrat.',type:'PDF officiel',url:'https://www.formulaires.service-public.fr/gf/cerfa_13219.do'},
-  {cat:'rh',title:'Contrat CDI — Ministère du Travail',desc:'Trame officielle de CDI conforme au code du travail avec notice d'utilisation.',type:'Word',url:'https://www.service-public.fr/particuliers/vosdroits/F1906'},
-  {cat:'rh',title:'Conventions collectives — Légifrance',desc:'Accès direct à toutes les conventions collectives nationales en vigueur.',type:'En ligne',url:'https://www.legifrance.gouv.fr/liste/texte?nature=CONV_COLL'},
+  {cat:"marches",title:"DC1 — Lettre de candidature",desc:"Formulaire officiel DC1 : habilitation du mandataire pour marchés publics.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_12481.do"},
+  {cat:"marches",title:"DC2 — Déclaration du candidat",desc:"Formulaire officiel DC2 : capacités techniques et financières du candidat.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_12482.do"},
+  {cat:"marches",title:"Modèles CCAP, RC, AE — DAJ",desc:"Bibliothèque complète de modèles types publiée par la Direction des Affaires Juridiques.",type:"Word/PDF",url:"https://www.economie.gouv.fr/daj/modeles-de-documents"},
+  {cat:"marches",title:"Guide pratique MAPA 2024",desc:"Guide officiel de la procédure adaptée : seuils, publicité, mise en concurrence.",type:"PDF",url:"https://www.economie.gouv.fr/daj/marches-publics-guide-pratique"},
+  {cat:"marches",title:"Rapport analyse des offres — DAJ",desc:"Trame officielle pour la rédaction du rapport d’analyse des candidatures et offres.",type:"Word",url:"https://www.economie.gouv.fr/daj/formulaires-et-modeles-documents"},
+  {cat:"courriers",title:"Bibliothèque lettres types — service-public.fr",desc:"Modèles officiels de courriers pour toutes situations : démarches, réclamations, demandes.",type:"Word/PDF",url:"https://www.service-public.fr/particuliers/vosdroits/N31"},
+  {cat:"courriers",title:"Lettre de mise en demeure",desc:"Modèle officiel avec structure légale, délai de réponse et mentions obligatoires.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F13180"},
+  {cat:"courriers",title:"Réponse à réclamation usager",desc:"Trame officielle de réponse à une réclamation d’usager ou de client.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F1149"},
+  {cat:"deliberations",title:"Modèles de délibérations — AMF",desc:"Bibliothèque AMF : modèles de délibérations municipales, mis à jour régulièrement.",type:"Word",url:"https://www.amf.asso.fr/documents-modeles-deliberations/"},
+  {cat:"deliberations",title:"Guide actes collectivités — DGCL",desc:"Guide officiel sur la légalité des actes administratifs des collectivités locales.",type:"PDF",url:"https://www.collectivites-locales.gouv.fr/"},
+  {cat:"formalites",title:"Formulaire P0 CMB — Micro-entrepreneur",desc:"Cerfa officiel de déclaration de début d’activité artisan ou commerçant.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_P0_CMB.do"},
+  {cat:"formalites",title:"Guichet unique — Formalités entreprises",desc:"Portail officiel de dépôt des formalités : création, modification, cessation d’activité.",type:"En ligne",url:"https://formalites.entreprises.gouv.fr/"},
+  {cat:"formalites",title:"Modèles statuts — Bpifrance Création",desc:"Statuts types pour SAS, SASU, SARL, EURL. Notice d’utilisation incluse.",type:"Word",url:"https://bpifrance-creation.fr/encyclopedie/structures-juridiques"},
+  {cat:"formalites",title:"Cerfa 13844 — Cessation d’activité",desc:"Formulaire officiel de déclaration de cessation pour entreprise individuelle.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_13844.do"},
+  {cat:"rh",title:"Cerfa 14598 — Rupture conventionnelle",desc:"Formulaire officiel d’homologation de rupture conventionnelle (art. L1237-14 CT).",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_14598.do"},
+  {cat:"rh",title:"Cerfa 13219 — Attestation employeur",desc:"Attestation employeur obligatoire à remettre au salarié à la rupture du contrat.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_13219.do"},
+  {cat:"rh",title:"Contrat CDI — Ministère du Travail",desc:"Trame officielle de CDI conforme au code du travail avec notice d’utilisation.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F1906"},
+  {cat:"rh",title:"Conventions collectives — Légifrance",desc:"Accès direct à toutes les conventions collectives nationales en vigueur.",type:"En ligne",url:"https://www.legifrance.gouv.fr/liste/texte?nature=CONV_COLL"},
 ];
 
 let currentCat = 'all';
@@ -149,8 +147,7 @@ function filterDocs() {
   renderDocs();
 }
 
-// Afficher les documents immédiatement (accès vérifié par auth-guard.js)
-renderDocs();
+document.addEventListener("DOMContentLoaded", function() { renderDocs(); });
 </script>
 </body>
 </html>
