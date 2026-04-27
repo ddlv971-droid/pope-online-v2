@@ -282,11 +282,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 <script>
 // ── Configuration Stripe Payment Links ──────────────────────────────────────
 // Remplacez ces URLs par vos vrais liens Stripe Payment Links
+// ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
+// Créez-les sur : https://dashboard.stripe.com/payment-links
 var STRIPE = {
-  starter_m: 'https://buy.stripe.com/LIEN_STARTER_MENSUEL',
-  starter_a: 'https://buy.stripe.com/LIEN_STARTER_ANNUEL',
-  pro_m:     'https://buy.stripe.com/LIEN_PRO_MENSUEL',
-  pro_a:     'https://buy.stripe.com/LIEN_PRO_ANNUEL'
+  starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01',
+  starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00',
+  pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02',
+  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'
 };
 
 // ── Tarifs (ne pas modifier les prix mensuels) ─────────────────────────────
@@ -370,7 +372,14 @@ function openCheckout(plan) {
     '✓ ' + p.expert + ' relectures expertes/mois<br>' +
     '✓ Closier documentaire inclus<br>' +
     (annual ? '✓ Économie de ' + p.save + '€ par rapport au mensuel' : '✓ Sans engagement · Résiliable à tout moment');
-  document.getElementById('co-link').href = link;
+  // Si pas de lien Stripe configuré → redirection vers email
+  var finalLink = link && link.startsWith('https://buy.stripe.com/') && !link.includes('LIEN_')
+    ? link
+    : 'mailto:contact@pope-online.com?subject=Souscription%20' + p.name + (annual ? '%20Annuel' : '%20Mensuel') + '&body=Bonjour%2C%0A%0AJe%20souhaite%20souscrire%20au%20plan%20' + p.name + (annual ? '%20annuel.' : '%20mensuel.');
+  document.getElementById('co-link').href = finalLink;
+  document.getElementById('co-link').textContent = finalLink.startsWith('mailto')
+    ? 'Nous contacter pour souscrire →'
+    : 'Payer en toute sécurité →';
 
   document.getElementById('stripe-overlay').classList.add('active');
 }

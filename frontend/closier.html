@@ -122,7 +122,12 @@ function renderDocs() {
       <div class="doc-desc">${d.desc}</div>
       <div class="doc-footer">
         <span class="doc-type">${d.type}</span>
-        <a href="${d.url}" class="doc-action" target="_blank" rel="noopener">${d.url === '#' ? 'Bientôt disponible' : 'Télécharger →'}</a>
+        ${d.url !== '#' ? '<span style="background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px;margin-left:4px">✓ Officiel</span>' : ''}
+        <a href="${d.url}" class="doc-action" target="_blank" rel="noopener noreferrer"
+           onclick="${d.url === '#' ? 'return false' : ''}"
+           style="${d.url === '#' ? 'opacity:.4;cursor:not-allowed' : ''}">
+          ${d.url === '#' ? '⏳ Bientôt disponible' : '↗ Accéder à la source'}
+        </a>
       </div>
     </div>
   `).join('');
@@ -144,24 +149,8 @@ function filterDocs() {
   renderDocs();
 }
 
-// Vérifier accès (plan Starter minimum)
-import('./api.js').then(({ apiFetch }) => {
-  apiFetch('/auth/me').then(me => {
-    const plan = me?.wallet?.plan_label || 'Free';
-    const expired = me?.wallet?.trial_expired;
-    if (plan === 'Free' && expired) {
-      document.getElementById('docGrid').innerHTML = `
-        <div class="closier-locked">
-          <div style="font-size:40px;margin-bottom:12px">🔒</div>
-          <h3>Closier disponible dès le plan Starter</h3>
-          <p>Votre période d'essai est terminée. Souscrivez un plan pour accéder à la bibliothèque documentaire.</p>
-          <a href="pricing.html" class="btn" style="display:inline-flex;margin-top:0">Voir les plans</a>
-        </div>`;
-    } else {
-      renderDocs();
-    }
-  }).catch(() => renderDocs());
-});
+// Afficher les documents immédiatement (accès vérifié par auth-guard.js)
+renderDocs();
 </script>
 </body>
 </html>
