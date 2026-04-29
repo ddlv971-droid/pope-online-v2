@@ -12,7 +12,7 @@
 <main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
 <h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
 <label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..." autocomplete="off">
-<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe" onclick="(function(){var i=document.getElementById('password');var s=i.type==='text';i.type=s?'password':'text';this.textContent=s?'👁':'🙈';}).call(this)">👁</button></div>
+<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe" onclick="(function(b){var i=document.getElementById(&quot;password&quot;);var s=i.type===&quot;text&quot;;i.type=s?&quot;password&quot;:&quot;text&quot;;b.textContent=s?&quot;👁&quot;:&quot;🙈&quot;;}).call(this,this)">👁</button></div>
 <div id="turnstileBox" style="margin-top:14px" hidden></div>
 <div id="turnstileStatus" style="font-size:12px;color:#50627a;margin-top:6px;display:none">🔄 Vérification de sécurité en cours…</div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
 <div class="fineprint" id="msg"></div></section></main>
@@ -72,13 +72,13 @@ el('btn').addEventListener('click', async () => {
     resetTurnstile();
     const raw = getApiMessage(e);
     const friendly = {
-      'bot_protection_failed': 'Vérification de sécurité échouée. Patientez quelques secondes et réessayez.',
-      'missing_turnstile_token': 'Vérification de sécurité en cours. Patientez puis réessayez.',
-      'invalid_credentials': 'Email ou mot de passe incorrect.',
-      'missing_fp': 'Erreur de configuration navigateur. Essayez sans mode privé.',
-      'invalid_email': 'Format d'email invalide.',
-      'too_many_requests': 'Trop de tentatives. Attendez quelques minutes.',
-    }[raw] || ('Erreur : ' + raw);
+      bot_protection_failed: "Vérification de sécurité échouée. Patientez et réessayez.",
+      missing_turnstile_token: "Vérification de sécurité en cours. Patientez puis réessayez.",
+      invalid_credentials: "Email ou mot de passe incorrect.",
+      missing_fp: "Erreur navigateur. Essayez sans mode privé.",
+      invalid_email: "Format d’email invalide.",
+      too_many_requests: "Trop de tentatives. Attendez quelques minutes."
+    }[raw] || ("Erreur : " + raw);
     msg.textContent = friendly;
     msg.style.color = '#b91c1c';
     showToast('Connexion impossible','err');
