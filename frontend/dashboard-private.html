@@ -7,84 +7,100 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body data-logout-target="private.html" class="bg po-v14-dashboard po-v14-private-dash po-v15-private-dash po-v16-private-dash">
+<body data-logout-target="private.html" class="bg po-v14-dashboard">
 <header class="topbar">
-<div class="container row between">
-<a class="brand link" href="dashboard-private.html">
-<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-<div><div class="brand-title">POPE Online</div><div class="brand-sub">Tableau de bord privé</div></div>
-</a>
-<div class="row gap wrap">
-<span class="badge" data-tickets>Accès sécurisé</span>
-<a class="btn ghost" href="vault.html?space=private&amp;return=dashboard-private.html">Dépôt sécurisé 48h</a>
-<a class="btn ghost" href="clausier.html">📚 Clausier</a>
-<a class="btn ghost" href="profile.html">Mon compte</a>
-<button class="btn" data-logout>Déconnexion</button>
-</div>
-</div>
-</header>
-<main class="container dash14-shell dash15-shell">
-  <section class="card dash14-hero dash15-hero">
-    <div>
-      <span class="badge">Espace privé — Production illimitée</span>
-      <h1>Mon espace</h1>
-      <p class="muted">Un espace de production conçu pour les artisans, indépendants et TPE qui doivent répondre vite, fiabiliser leurs courriers et préparer des formalités sans perdre du temps opérationnel.</p>
-    </div>
-    <div class="dash14-toplinks dash15-toplinks">
-      <a class="btn ghost" href="parcours.html">Voir les parcours</a>
-      <a class="btn ghost" href="private-onboarding.html">Actualiser mon besoin</a>
-    </div>
-  </section>
-
-  <section class="dash14-grid dash15-grid dash14-grid-private dash16-private-grid">
-    <article class="card dash14-card dash14-card-main dash14-card-main-private dash15-main-card dash16-main-card">
-      <div class="dash14-pill">Génération IA privée</div>
-      <h2>Produire un livrable sécurisé</h2>
-      <p>Choisissez un assistant métier calibré pour votre activité : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.</p>
-      <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta dash16-maincta" href="app-private.html">Produire un livrable sécurisé</a></div>
-      <div class="dash16-pill-grid">
-        <div class="dash16-pill-card"><strong>Marchés publics</strong><span>DCE, RC, pièces 48h et trame de réponse pour préparer votre offre.</span></div>
-        <div class="dash16-pill-card"><strong class="dash16-title-admin">Courrier<br>administratifs</strong><span>URSSAF, impôts, banque, client, fournisseur et relances prêtes à adapter.</span></div>
-        <div class="dash16-pill-card"><strong class="dash16-title-formalites">Formalités<br>d’entreprise</strong><span>Création, modification et obligations courantes avec cadrage documentaire.</span></div>
-      </div>
-      <div class="dash16-evidence"><strong>Repères intégrés</strong><span>Parcours construits à partir de ressources officielles Urssaf, Bpifrance Création, commande publique et CCI.</span></div>
-    </article>
-
-    <article class="card dash14-card dash14-card-side dash14-card-expert dash14-card-private-expert dash15-side-card dash16-side-card">
-      <div class="dash14-pill">Service expert</div>
-      <h2>Relecture experte</h2>
-      <p>Faites relire une réponse sensible, un courrier engageant ou un document généré avant envoi à un organisme, un acheteur public ou un partenaire.</p>
-      <ul class="dash14-list dash15-list-tight dash16-list">
-        <li>Choix d’une génération archivée à joindre</li>
-        <li>Ajout de pièces du dépôt sécurisé 48h</li>
-        <li>Validation du fond, du ton et du niveau d’engagement</li>
-      </ul>
-      <a class="btn secondary dash14-sidebtn dash16-sidebtn" href="expert-private.html">Accéder à la relecture experte</a>
-    </article>
-
-    <article class="card dash14-card dash14-card-side dash14-card-premium dash14-card-private-premium dash15-side-card dash15-premium-card dash16-side-card">
-      <div class="dash14-pill">Service premium</div>
-      <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
-      <p>Prolongez la génération par un appui humain pour un dossier plus structurant : lancement d’activité, formalité complexe ou organisation d’un dossier administratif.</p>
-      <ul class="dash14-list dash15-list-tight dash16-list">
-        <li>Création ou reprise d’entreprise</li>
-        <li>Formalités de modification et obligations courantes</li>
-        <li>Préparation d’un dossier administratif complexe</li>
-      </ul>
-      <a class="btn secondary dash14-sidebtn dash16-sidebtn" href="mission-private.html">Accéder à l’accompagnement</a>
-    </article>
-  </section>
-  <section style="max-width:900px;margin:0 auto 32px;padding:0 20px">
-    <a href="referral.html" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:18px;padding:18px 22px;text-decoration:none;transition:.2s" onmouseover="this.style.background='#dbeeff'" onmouseout="this.style.background='linear-gradient(135deg,#eef7ff,#f0f9ff)'">
-      <span style="font-size:28px">🎁</span>
-      <div>
-        <div style="font-weight:700;font-size:15px;color:#0b2440">Parrainez vos contacts</div>
-        <div style="font-size:13px;color:#50627a;margin-top:2px">Partagez POPE Online à votre réseau professionnel — essai 15 jours gratuit pour chaque filleul.</div>
-      </div>
-      <span style="margin-left:auto;color:#0079c1;font-size:18px">→</span>
+  <div class="container row between">
+    <a class="brand link" href="dashboard-private.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Espace public</div></div>
     </a>
-  </section>
+    <div class="row gap wrap">
+      <span class="badge" data-tickets id="ticketBadge">—</span>
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+      <button class="btn ghost" data-logout>Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<main class="v37-dash">
+
+  <!-- Hero -->
+  <div class="v37-dash-hero">
+    <div class="v37-dash-hero-text">
+      <div class="eyebrow">🏛️ 🔒 Espace privé — Artisans &amp; indépendants</div>
+      <h1 id="dashWelcome">Bonjour, bienvenue sur POPE Online</h1>
+      <p>Produisez, sécurisez et faites relire vos livrables professionnels par des conseillers experts.</p>
+    </div>
+    <div class="v37-dash-hero-stats">
+      <div class="v37-stat-pill" id="statExpert">
+        <div class="n" id="expertLeftN">—</div>
+        <div class="l">Relectures restantes</div>
+      </div>
+      <div class="v37-stat-pill" id="statPlan">
+        <div class="n" id="planN">—</div>
+        <div class="l">Plan actif</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services principaux -->
+  <div class="v37-dash-grid">
+    <div class="v37-service-card main">
+      <div class="v37-service-tag blue">⚡ Génération IA</div>
+      <h2>Produire un livrable sécurisé</h2>
+      <p>Courriers URSSAF, formalités, réponses aux marchés, devis, formalités RH — générés et structurés par l'IA, prêts à valider.</p>
+      <a class="v37-service-cta primary" href="app-private.html">Générer un livrable →</a>
+    </div>
+    <div class="v37-service-card">
+      <div class="v37-service-tag green">✍️ Relecture experte</div>
+      <h2>Faire valider par un conseiller</h2>
+      <p>Un expert POPE Online analyse le fond, la forme et les risques de votre document sous 48h ouvrées.</p>
+      <a class="v37-service-cta secondary" href="expert-private.html">Demander une relecture</a>
+    </div>
+    <div class="v37-service-card">
+      <div class="v37-service-tag amber">🎯 Sur mesure</div>
+      <h2>Accompagnement approfondi</h2>
+      <p>Dossier complexe ou besoin multi-étapes ? Nous cadrons et vous accompagnons de A à Z.</p>
+      <a class="v37-service-cta secondary" href="mission-private.html">Qualifier mon besoin</a>
+    </div>
+  </div>
+
+  <!-- Accès rapides -->
+  <div class="v37-quick-grid">
+    <a class="v37-quick-card" href="vault.html?space=private&return=dashboard-private.html">
+      <span class="icon">📂</span>
+      <strong>Dépôt sécurisé</strong>
+      <span>Pièces 48h</span>
+    </a>
+    <a class="v37-quick-card" href="clausier.html">
+      <span class="icon">📚</span>
+      <strong>Clausier</strong>
+      <span>Modèles officiels</span>
+    </a>
+    <a class="v37-quick-card" href="tutoriel.html">
+      <span class="icon">▶️</span>
+      <strong>Tutoriel</strong>
+      <span>Prise en main</span>
+    </a>
+    <a class="v37-quick-card" href="referral.html">
+      <span class="icon">🎁</span>
+      <strong>Parrainage</strong>
+      <span>Inviter mes contacts</span>
+    </a>
+  </div>
+
+  <!-- Alerte trial / plan -->
+  <div id="trialAlert" hidden style="background:linear-gradient(to right,#fffbeb,#fff8f0);border:1.5px solid #fde68a;border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:14px;margin-bottom:20px">
+    <span style="font-size:24px">⏳</span>
+    <div>
+      <strong style="color:#0b2440;font-size:14px" id="trialAlertTitle">Période d'essai</strong>
+      <div style="font-size:13px;color:#50627a;margin-top:3px" id="trialAlertBody"></div>
+    </div>
+    <a href="pricing.html" style="margin-left:auto;background:#0079c1;color:#fff;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">Voir les plans</a>
+  </div>
+
 </main>
+
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
 <script type="module">
@@ -92,7 +108,35 @@ import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
 if (!requireLogin('dashboard-private.html')) {}
 wireLogout();
-(async()=>{ try { const me = await apiFetch('/auth/me'); setTicketsBadge(me.wallet); } catch {} })();
+(async () => {
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+    const u = me.user || {};
+    const w = me.wallet || {};
+    // Welcome
+    const name = u.full_name ? u.full_name.split(' ')[0] : '';
+    if (name) document.getElementById('dashWelcome').textContent = 'Bonjour ' + name + ' 👋';
+    // Stats
+    document.getElementById('expertLeftN').textContent = w.expert_left ?? '—';
+    document.getElementById('planN').textContent = w.plan_label || 'Free';
+    // Trial alert
+    if (w.status === 'trial_active' && w.trial_days_left !== null) {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      document.getElementById('trialAlertTitle').textContent = 'Essai gratuit — ' + w.trial_days_left + ' jour(s) restant(s)';
+      document.getElementById('trialAlertBody').textContent = 'Souscrivez un plan pour continuer à profiter de toutes les fonctionnalités après votre essai.';
+    }
+    if (w.status === 'trial_expired') {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      alert.style.background = 'linear-gradient(to right,#fef2f2,#fff0f0)';
+      alert.style.borderColor = '#fecaca';
+      document.getElementById('trialAlertTitle').textContent = 'Période d\'essai terminée';
+      document.getElementById('trialAlertBody').textContent = 'Votre accès à la génération et à la relecture est suspendu. Choisissez un plan pour reprendre.';
+    }
+  } catch {}
+})();
 </script>
 </body>
 </html>

@@ -3,75 +3,104 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Tableau de bord public</title>
+<title>POPE Online — Tableau de bord</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body data-logout-target="public.html" class="bg po-v14-dashboard">
 <header class="topbar">
-<div class="container row between">
-<a class="brand link" href="dashboard.html">
-<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-<div><div class="brand-title">POPE Online</div><div class="brand-sub">Tableau de bord public</div></div>
-</a>
-<div class="row gap wrap">
-<span class="badge" data-tickets>Accès sécurisé</span>
-<a class="btn ghost" href="expert.html">Relecture experte</a>
-<a class="btn ghost" href="vault.html?space=public&amp;return=dashboard.html">Dépôt sécurisé 48h</a>
-<a class="btn ghost" href="clausier.html">📚 Clausier</a>
-<button class="btn" data-logout>Déconnexion</button>
-</div>
-</div>
-</header>
-<main class="container dash14-shell">
-  <section class="card dash14-hero">
-    <div>
-      <span class="badge">Espace public</span>
-      <h1>Mon espace</h1>
-      <p class="muted">Un espace premium centré sur la production, la sécurisation des livrables et l'appui expert selon le niveau d'enjeu.</p>
-    </div>
-    <div class="dash14-toplinks">
-      <a class="btn ghost" href="pricing.html">Voir les parcours</a>
-      <a class="btn ghost" href="profile.html">Mon compte</a>
-    </div>
-  </section>
-  <section class="dash14-grid dash14-grid-public">
-    <article class="card dash14-card dash14-card-main">
-      <div class="dash14-pill">Génération guidée</div>
-      <h2>Produire un livrable sécurisé</h2>
-      <p>Cadrez votre besoin, produisez un premier draft structuré, exploitez le résultat puis montez en gamme si le dossier l'exige.</p>
-      <div class="dash14-maincta-wrap"><a class="btn primary dash14-maincta" href="app.html">Produire un livrable sécurisé</a></div>
-      <div class="dash14-chipgrid">
-        <div><strong>Parcours</strong><span>Préparation du besoin, génération, archivage local, relecture experte éventuelle.</span></div>
-        <div><strong>Public concerné</strong><span>Collectivités, établissements, DGS, directions, cabinets, cadres support et chargés de mission.</span></div>
-      </div>
-    </article>
-    <article class="card dash14-card dash14-card-side dash14-card-expert">
-      <div class="dash14-pill">Service expert</div>
-      <h2>Relecture experte</h2>
-      <p>Faites sécuriser un livrable, un courrier sensible ou une production à fort enjeu avant diffusion ou arbitrage.</p>
-      <ul class="dash14-list"><li>Validation du fond et de la structure</li><li>Sécurisation des formulations</li><li>Pièce jointe possible depuis les générations archivées</li></ul>
-      <a class="btn secondary dash14-sidebtn" href="expert.html">Accéder à la relecture experte</a>
-    </article>
-    <article class="card dash14-card dash14-card-side dash14-card-premium">
-      <div class="dash14-pill">Service premium</div>
-      <h2><span class="line1">Accompagnement</span><span class="line2">sur mesure</span></h2>
-      <p>Prolongez la génération par un appui ciblé sur le calendrier, la sensibilité du dossier et le niveau d'exigence attendu.</p>
-      <ul class="dash14-list"><li>Cadrage et priorisation des options</li><li>Appui rédactionnel ciblé</li><li>Montée en gamme selon le niveau d'enjeu</li></ul>
-      <a class="btn secondary dash14-sidebtn" href="mission.html">Accéder à l'accompagnement</a>
-    </article>
-  </section>
-  <section style="max-width:900px;margin:0 auto 32px;padding:0 20px">
-    <a href="referral.html" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:18px;padding:18px 22px;text-decoration:none;transition:.2s" onmouseover="this.style.background='#dbeeff'" onmouseout="this.style.background='linear-gradient(135deg,#eef7ff,#f0f9ff)'">
-      <span style="font-size:28px">🎁</span>
-      <div>
-        <div style="font-weight:700;font-size:15px;color:#0b2440">Parrainez vos contacts</div>
-        <div style="font-size:13px;color:#50627a;margin-top:2px">Partagez POPE Online à votre réseau professionnel — essai 15 jours gratuit pour chaque filleul.</div>
-      </div>
-      <span style="margin-left:auto;color:#0079c1;font-size:18px">→</span>
+  <div class="container row between">
+    <a class="brand link" href="dashboard.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Espace public</div></div>
     </a>
-  </section>
+    <div class="row gap wrap">
+      <span class="badge" data-tickets id="ticketBadge">—</span>
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+      <button class="btn ghost" data-logout>Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<main class="v37-dash">
+
+  <!-- Hero -->
+  <div class="v37-dash-hero">
+    <div class="v37-dash-hero-text">
+      <div class="eyebrow">🏛️ Espace public — Collectivités &amp; organisations</div>
+      <h1 id="dashWelcome">Bonjour, bienvenue sur POPE Online</h1>
+      <p>Produisez, sécurisez et faites relire vos livrables professionnels par des conseillers experts.</p>
+    </div>
+    <div class="v37-dash-hero-stats">
+      <div class="v37-stat-pill" id="statExpert">
+        <div class="n" id="expertLeftN">—</div>
+        <div class="l">Relectures restantes</div>
+      </div>
+      <div class="v37-stat-pill" id="statPlan">
+        <div class="n" id="planN">—</div>
+        <div class="l">Plan actif</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services principaux -->
+  <div class="v37-dash-grid">
+    <div class="v37-service-card main">
+      <div class="v37-service-tag blue">⚡ Génération IA</div>
+      <h2>Produire un livrable sécurisé</h2>
+      <p>Notes stratégiques, courriers, délibérations, réponses aux marchés publics, synthèses — générés et structurés par l'IA, prêts à valider.</p>
+      <a class="v37-service-cta primary" href="app.html">Générer un livrable →</a>
+    </div>
+    <div class="v37-service-card">
+      <div class="v37-service-tag green">✍️ Relecture experte</div>
+      <h2>Faire valider par un conseiller</h2>
+      <p>Un expert POPE Online analyse le fond, la forme et les risques de votre document sous 48h ouvrées.</p>
+      <a class="v37-service-cta secondary" href="expert.html">Demander une relecture</a>
+    </div>
+    <div class="v37-service-card">
+      <div class="v37-service-tag amber">🎯 Sur mesure</div>
+      <h2>Accompagnement approfondi</h2>
+      <p>Dossier complexe ou besoin multi-étapes ? Nous cadrons et vous accompagnons de A à Z.</p>
+      <a class="v37-service-cta secondary" href="mission.html">Qualifier mon besoin</a>
+    </div>
+  </div>
+
+  <!-- Accès rapides -->
+  <div class="v37-quick-grid">
+    <a class="v37-quick-card" href="vault.html?space=public&return=dashboard.html">
+      <span class="icon">📂</span>
+      <strong>Dépôt sécurisé</strong>
+      <span>Pièces 48h</span>
+    </a>
+    <a class="v37-quick-card" href="clausier.html">
+      <span class="icon">📚</span>
+      <strong>Clausier</strong>
+      <span>Modèles officiels</span>
+    </a>
+    <a class="v37-quick-card" href="tutoriel.html">
+      <span class="icon">▶️</span>
+      <strong>Tutoriel</strong>
+      <span>Prise en main</span>
+    </a>
+    <a class="v37-quick-card" href="referral.html">
+      <span class="icon">🎁</span>
+      <strong>Parrainage</strong>
+      <span>Inviter mes contacts</span>
+    </a>
+  </div>
+
+  <!-- Alerte trial / plan -->
+  <div id="trialAlert" hidden style="background:linear-gradient(to right,#fffbeb,#fff8f0);border:1.5px solid #fde68a;border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:14px;margin-bottom:20px">
+    <span style="font-size:24px">⏳</span>
+    <div>
+      <strong style="color:#0b2440;font-size:14px" id="trialAlertTitle">Période d'essai</strong>
+      <div style="font-size:13px;color:#50627a;margin-top:3px" id="trialAlertBody"></div>
+    </div>
+    <a href="pricing.html" style="margin-left:auto;background:#0079c1;color:#fff;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">Voir les plans</a>
+  </div>
+
 </main>
+
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
 <script type="module">
@@ -79,7 +108,35 @@ import { apiFetch } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
 if (!requireLogin('dashboard.html')) {}
 wireLogout();
-(async()=>{ try { const me = await apiFetch('/auth/me'); setTicketsBadge(me.wallet); } catch {} })();
+(async () => {
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+    const u = me.user || {};
+    const w = me.wallet || {};
+    // Welcome
+    const name = u.full_name ? u.full_name.split(' ')[0] : '';
+    if (name) document.getElementById('dashWelcome').textContent = 'Bonjour ' + name + ' 👋';
+    // Stats
+    document.getElementById('expertLeftN').textContent = w.expert_left ?? '—';
+    document.getElementById('planN').textContent = w.plan_label || 'Free';
+    // Trial alert
+    if (w.status === 'trial_active' && w.trial_days_left !== null) {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      document.getElementById('trialAlertTitle').textContent = 'Essai gratuit — ' + w.trial_days_left + ' jour(s) restant(s)';
+      document.getElementById('trialAlertBody').textContent = 'Souscrivez un plan pour continuer à profiter de toutes les fonctionnalités après votre essai.';
+    }
+    if (w.status === 'trial_expired') {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      alert.style.background = 'linear-gradient(to right,#fef2f2,#fff0f0)';
+      alert.style.borderColor = '#fecaca';
+      document.getElementById('trialAlertTitle').textContent = 'Période d\'essai terminée';
+      document.getElementById('trialAlertBody').textContent = 'Votre accès à la génération et à la relecture est suspendu. Choisissez un plan pour reprendre.';
+    }
+  } catch {}
+})();
 </script>
 </body>
 </html>

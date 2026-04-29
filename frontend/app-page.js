@@ -970,6 +970,14 @@ async function callAI() {
     const data = await apiFetch('/ai/generate', { method: 'POST', body: payload });
     const resultText = data.text || '(vide)';
     setOutput(resultText);
+    // V37: révéler la zone résultat
+    var rEmpty = document.getElementById('resultEmpty');
+    var rCard  = document.getElementById('resultCard');
+    var rNext  = document.getElementById('nextActions');
+    if (rEmpty) rEmpty.style.display = 'none';
+    if (rCard)  rCard.removeAttribute('hidden');
+    if (rNext)  rNext.removeAttribute('hidden');
+    if (typeof window.setWorkflowStep === 'function') window.setWorkflowStep(3);
     setDossierIntel(data.dossierAnalysis || null);
     status('Terminé');
     setTicketsBadge(data.wallet);

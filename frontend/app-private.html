@@ -3,42 +3,48 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Génération privée</title>
+<title>POPE Online — Génération guidée</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body data-logout-target="private.html" class="bg v36-page po-v8-public" data-forced-space="private">
 
-<!-- TOPBAR -->
 <header class="topbar">
   <div class="container row between">
     <a class="brand link" href="dashboard-private.html" id="appHomeLink">
       <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="appSubTitle">Génération guidée</div></div>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub" id="appSubTitle">Génération guidée</div>
+      </div>
     </a>
     <div class="row gap wrap">
-      <a class="btn ghost" href="vault.html?space=private&amp;return=app-private.html" id="appVaultLink">📂 Dépôt sécurisé</a>
+      <a class="btn ghost" href="vault.html?space=private&amp;return=app-private.html" id="appVaultLink">📂 Dépôt</a>
       <span class="badge" data-tickets id="ticketBadge">—</span>
-      <a class="btn ghost" href="expert-private.html" id="appExpertLink">✍️ Relecture experte</a>
+      <a class="btn ghost" href="expert-private.html" id="appExpertLink">✍️ Relecture</a>
       <button class="btn ghost" data-logout>Déconnexion</button>
     </div>
   </div>
 </header>
 
-<!-- BARRE DE WORKFLOW -->
+<!-- Barre workflow -->
 <div class="v36-workflow-bar">
   <div class="v36-workflow-inner">
-    <div class="v36-wf-step active" id="wfStep1">
-      <span class="v36-wf-num">1</span> Préparer
-    </div>
-    <div class="v36-wf-step" id="wfStep2">
-      <span class="v36-wf-num">2</span> Générer
-    </div>
-    <div class="v36-wf-step" id="wfStep3">
-      <span class="v36-wf-num">3</span> Exploiter
-    </div>
+    <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
+    <div class="v36-wf-step" id="wfStep2"><span class="v36-wf-num">2</span> Générer</div>
+    <div class="v36-wf-step" id="wfStep3"><span class="v36-wf-num">3</span> Exploiter</div>
   </div>
 </div>
+
+<!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
+<span id="spaceBadge" hidden></span>
+<span id="heroTitle" hidden></span>
+<span id="heroCopy" hidden></span>
+<span id="formCopy" hidden></span>
+<span id="status" hidden></span>
+<span id="archiveModeLabel" hidden></span>
+<span id="safeNote" hidden></span>
+<span id="factsLabel" hidden></span>
 
 <main class="v36-gen-layout">
 
@@ -72,15 +78,15 @@
       <div class="v36-form-card-head">
         <div class="v36-form-icon teal">🔍</div>
         <div>
-          <h3 id="factsLabelHead">Éléments factuels</h3>
+          <h3>Éléments factuels</h3>
           <p>Données, chiffres, acteurs, dates clés</p>
         </div>
       </div>
-      <textarea class="input" id="facts" rows="5" id="facts"></textarea>
+      <textarea class="input" id="facts" rows="5"></textarea>
     </div>
 
     <!-- Pièces vault -->
-    <div class="v36-form-card" id="vaultCard">
+    <div class="v36-form-card">
       <div class="v36-form-card-head">
         <div class="v36-form-icon amber">📎</div>
         <div>
@@ -94,18 +100,13 @@
       <a class="btn ghost" href="vault.html?space=private&return=app-private.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
     </div>
 
-    <!-- Note sécurité -->
-    <div style="font-size:12px;color:#50627a;background:#f8fafc;border-radius:12px;padding:12px 14px;border:1px solid #e4edf6">
-      🔒 N'insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés.
-    </div>
-
     <!-- Bouton générer -->
     <button class="v36-generate-btn" id="btnGenerate" type="button">
       <span>⚡</span> <span id="btnGenerateLabel">Produire un livrable sécurisé</span>
     </button>
 
-    <!-- Indicateur de chargement -->
-    <div class="v36-loading" id="generationIndicator">
+    <!-- Indicateur chargement -->
+    <div class="v36-loading" id="generationIndicator" hidden>
       <div class="v36-spinner"></div>
       <div>
         <strong style="font-size:14px;color:#0b2440">Génération en cours…</strong>
@@ -130,7 +131,7 @@
       </div>
     </div>
 
-    <!-- Résultat généré (caché au départ) -->
+    <!-- Résultat généré -->
     <div class="v36-result-card" id="resultCard" hidden>
       <div class="v36-result-header">
         <div>
@@ -151,42 +152,30 @@
         </div>
       </div>
       <div class="v36-result-body">
-        <div class="v36-output" id="output" data-raw=""></div>
         <section class="dossier-intel-panel" id="dossierIntel" hidden></section>
+        <div class="v36-output output output-rich-v11" id="output" data-raw=""></div>
       </div>
     </div>
 
-    <!-- Actions suivantes (caché au départ) -->
+    <!-- Actions suivantes -->
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
         <a class="v36-next-btn" href="expert-private.html" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
-          <div class="v36-next-btn-text">
-            <strong>Relecture experte</strong>
-            <span>Faire valider par un conseiller</span>
-          </div>
+          <div class="v36-next-btn-text"><strong>Relecture experte</strong><span>Faire valider par un conseiller</span></div>
         </a>
         <a class="v36-next-btn" href="mission-private.html" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
-          <div class="v36-next-btn-text">
-            <strong>Sur mesure</strong>
-            <span>Accompagnement approfondi</span>
-          </div>
+          <div class="v36-next-btn-text"><strong>Sur mesure</strong><span>Accompagnement approfondi</span></div>
         </a>
-        <button class="v36-next-btn" id="btnRefine" type="button" style="border:none;text-align:left;background:#fff;border:1.5px solid var(--v36-line)">
+        <button class="v36-next-btn" id="btnRefine" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
           <span class="v36-next-btn-icon">✨</span>
-          <div class="v36-next-btn-text">
-            <strong>Affiner</strong>
-            <span>Améliorer la qualité</span>
-          </div>
+          <div class="v36-next-btn-text"><strong>Affiner</strong><span>Améliorer la qualité</span></div>
         </button>
-        <button class="v36-next-btn" id="btnRiskCheck" type="button" style="border:none;text-align:left;background:#fff;border:1.5px solid var(--v36-line)">
+        <button class="v36-next-btn" id="btnRiskCheck" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
           <span class="v36-next-btn-icon">⚠️</span>
-          <div class="v36-next-btn-text">
-            <strong>Vérifier les risques</strong>
-            <span>Analyse des points sensibles</span>
-          </div>
+          <div class="v36-next-btn-text"><strong>Vérifier les risques</strong><span>Analyse des points sensibles</span></div>
         </button>
       </div>
     </div>
@@ -204,7 +193,7 @@
         </label>
       </div>
       <div class="v36-archive-toolbar">
-        <button class="btn ghost" id="btnExportArchive" type="button" style="font-size:13px">Exporter tout</button>
+        <button class="btn ghost" id="btnExportArchive" type="button" style="font-size:13px">Exporter</button>
         <label class="btn ghost archive-import-v10" for="archiveImportInput" style="font-size:13px">Importer</label>
         <input id="archiveImportInput" type="file" accept=".txt,.csv,.doc,text/plain,text/csv,application/msword" hidden/>
         <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button" style="font-size:13px">Vider</button>
@@ -222,9 +211,8 @@
 </main>
 
 <script>
-// Workflow steps UI
 function setWorkflowStep(n) {
-  ['wfStep1','wfStep2','wfStep3'].forEach(function(id, i) {
+  ['wfStep1','wfStep2','wfStep3'].forEach(function(id,i) {
     var el = document.getElementById(id);
     if (!el) return;
     el.classList.remove('active','done');
@@ -232,18 +220,12 @@ function setWorkflowStep(n) {
     else if (i+1 < n) el.classList.add('done');
   });
 }
-// Montrer résultat
-function showResult(html, meta) {
-  document.getElementById('resultEmpty').style.display = 'none';
-  var card = document.getElementById('resultCard');
-  card.removeAttribute('hidden');
-  var next = document.getElementById('nextActions');
-  next.removeAttribute('hidden');
-  if (meta) document.getElementById('resultMeta').textContent = meta;
-  setWorkflowStep(3);
-}
 window.setWorkflowStep = setWorkflowStep;
-window.showResult = showResult;
+// Step 2 au clic sur générer
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('btnGenerate');
+  if (btn) btn.addEventListener('click', function() { setWorkflowStep(2); }, true);
+});
 </script>
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>

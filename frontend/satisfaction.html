@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Enquête satisfaction</title>
+<title>POPE Online — Votre avis</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
@@ -12,106 +12,109 @@
   <div class="container row between">
     <a class="brand link" href="index.html">
       <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div>
-        <div class="brand-title">POPE Online</div>
-        <div class="brand-sub">Formulaire de satisfaction client</div>
-      </div>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Enquête satisfaction</div></div>
     </a>
   </div>
 </header>
 
-<main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:980px;margin:0 auto;width:100%">
-    <section class="po-satisfaction-hero">
-      <div>
-        <div class="po-admin-eyebrow">Votre avis compte</div>
-        <h1>Merci pour votre inscription à POPE Online</h1>
-        <p>Merci de nous consacrer quelques instants. Ce questionnaire nous aide à améliorer l'accompagnement, la fluidité de la plateforme et la qualité de service apportée à chaque client.</p>
-      </div>
-      <div class="po-satisfaction-legend">
-        <span class="level level-1">Mauvais</span>
-        <span class="level level-2">Insuffisant</span>
-        <span class="level level-3">Moyen</span>
-        <span class="level level-4">Correct</span>
-        <span class="level level-5">Satisfaisant</span>
-        <span class="level level-6">Très bon</span>
-        <span class="level level-7">Excellent</span>
-      </div>
-    </section>
+<main class="v37-satisfaction-layout">
 
-    <form id="satisfactionForm" class="panel po-satisfaction-form">
-      <div id="criteriaWrap"></div>
-      <label class="label">Commentaire complémentaire</label>
-      <textarea id="comment" class="input" rows="5" placeholder="Un commentaire libre pour nous aider à progresser"></textarea>
-      <div class="row gap wrap" style="margin-top:18px">
-        <button class="btn" type="submit">Envoyer mon retour</button>
-        <span class="fineprint" id="formMsg"></span>
-      </div>
-    </form>
-  </section>
+  <div class="v37-satisfaction-hero">
+    <div style="font-size:44px;margin-bottom:14px">⭐</div>
+    <h1>Merci de nous consacrer 2 minutes</h1>
+    <p>Votre retour nous aide directement à améliorer le service et la qualité de l'accompagnement proposé à chaque client.</p>
+  </div>
+
+  <div class="v37-criteria-card">
+    <div id="criteriaWrap"></div>
+
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid #f0f7fc">
+      <label class="label">Commentaire libre (optionnel)</label>
+      <textarea id="comment" class="input" rows="4"
+        placeholder="Un retour complémentaire, une suggestion, un point à améliorer…"></textarea>
+    </div>
+
+    <button class="v36-send-btn" type="button" id="btnSubmit" style="margin-top:20px">
+      ⭐ Envoyer mon avis
+    </button>
+
+    <div id="satisfactionMsg" class="fineprint" style="margin-top:10px;text-align:center"></div>
+  </div>
+
 </main>
 
 <script type="module">
 import { apiFetch, getApiMessage } from './api.js';
-import { showToast } from './app.js';
 
-const params = new URLSearchParams(window.location.search);
-const token = params.get('token') || '';
-const criteria = [
-  { key: 'first_contact', label: 'Votre satisfaction concernant le premier contact avec un conseiller POPE Online' },
-  { key: 'ergonomics', label: 'Votre satisfaction vis-à-vis de l’ergonomie et de la facilité d’utilisation des fonctionnalités du site' },
-  { key: 'clarity', label: 'Votre satisfaction concernant la clarté des parcours et des services proposés' },
-  { key: 'fluidity', label: 'Votre satisfaction concernant la rapidité et la fluidité globale de la plateforme' },
-  { key: 'relevance', label: 'Votre satisfaction sur la pertinence de l’accompagnement et la compréhension de votre besoin' }
+const CRITERIA = [
+  { key: 'first_contact',  label: 'Premier contact avec un conseiller POPE Online' },
+  { key: 'ergonomics',     label: 'Ergonomie et facilité d\'utilisation de la plateforme' },
+  { key: 'clarity',        label: 'Clarté des parcours et des services proposés' },
+  { key: 'fluidity',       label: 'Rapidité et fluidité globale' },
+  { key: 'relevance',      label: 'Pertinence de l\'accompagnement et compréhension de votre besoin' }
 ];
-const levels = [
-  { score: 1, label: 'Mauvais' },
-  { score: 2, label: 'Insuffisant' },
-  { score: 3, label: 'Passable' },
-  { score: 4, label: 'Moyen' },
-  { score: 5, label: 'Satisfaisant' },
-  { score: 6, label: 'Très bon' },
-  { score: 7, label: 'Excellent' }
-];
+
+const LABELS = ['Mauvais','Insuffisant','Moyen','Correct','Excellent'];
+const EMOJIS = ['😞','😕','😐','🙂','😄'];
+const ratings = {};
 
 const wrap = document.getElementById('criteriaWrap');
-const msg = document.getElementById('formMsg');
+wrap.innerHTML = CRITERIA.map(function(c, ci) {
+  return '<div class="v37-criterion">' +
+    '<div class="v37-criterion-label">' + c.label + '</div>' +
+    '<div class="v37-stars">' +
+    [1,2,3,4,5].map(function(n) {
+      return '<button class="v37-star-btn" type="button" data-criterion="' + c.key + '" data-value="' + n + '" title="' + LABELS[n-1] + '">' +
+        EMOJIS[n-1] + '</button>';
+    }).join('') +
+    '<span class="v37-star-label" id="lbl_' + c.key + '" style="font-size:13px;color:#50627a;margin-left:8px;align-self:center"></span>' +
+    '</div></div>';
+}).join('');
 
-wrap.innerHTML = criteria.map((criterion, idx) => `
-  <section class="po-satisfaction-criterion">
-    <h3>${idx + 1}. ${criterion.label}</h3>
-    <div class="po-rating-scale">
-      ${levels.map((level) => `
-        <label class="po-rating-option score-${level.score}">
-          <input type="radio" name="${criterion.key}" value="${level.score}" required>
-          <span class="dot"></span>
-          <span class="text">${level.label}</span>
-        </label>
-      `).join('')}
-    </div>
-  </section>
-`).join('');
+document.querySelectorAll('.v37-star-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var key = this.dataset.criterion;
+    var val = parseInt(this.dataset.value);
+    ratings[key] = val;
+    document.querySelectorAll('[data-criterion="' + key + '"]').forEach(function(b) {
+      b.classList.toggle('selected', parseInt(b.dataset.value) <= val);
+    });
+    document.getElementById('lbl_' + key).textContent = LABELS[val-1];
+  });
+});
 
-document.getElementById('satisfactionForm').addEventListener('submit', async (event) => {
-  event.preventDefault();
+const params = new URLSearchParams(location.search);
+const token  = params.get('token') || '';
+
+document.getElementById('btnSubmit').addEventListener('click', async function() {
+  var btn = this;
+  var msg = document.getElementById('satisfactionMsg');
+  var criteria = CRITERIA.filter(function(c) { return ratings[c.key]; })
+                         .map(function(c) { return { key: c.key, label: c.label, score: ratings[c.key] }; });
+  if (!criteria.length) {
+    msg.textContent = 'Veuillez noter au moins un critère.';
+    msg.style.color = '#b91c1c';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
   try {
-    const payload = {
-      token,
-      comment: document.getElementById('comment').value.trim(),
-      criteria: criteria.map((criterion) => {
-        const selected = document.querySelector(`input[name="${criterion.key}"]:checked`);
-        const score = Number(selected?.value || 0);
-        const label = levels.find((item) => item.score === score)?.label || '';
-        return { key: criterion.key, label: criterion.label, value: label, score };
-      })
-    };
-    await apiFetch('/client/satisfaction-submit', { method: 'POST', auth: false, body: payload });
-    msg.textContent = 'Merci. Votre retour a bien été transmis à contact@pope-online.com.';
-    showToast('Retour envoyé', 'ok');
-    event.target.reset();
-  } catch (e) {
-    msg.textContent = getApiMessage(e);
-    showToast('Envoi impossible', 'err');
+    await apiFetch('/client/satisfaction-submit', {
+      method: 'POST',
+      body: { token, criteria, comment: document.getElementById('comment').value.trim() }
+    });
+    document.querySelector('.v37-criteria-card').innerHTML =
+      '<div style="text-align:center;padding:40px">' +
+      '<div style="font-size:56px;margin-bottom:16px">🎉</div>' +
+      '<h2 style="color:#0b2440;margin-bottom:10px">Merci pour votre retour !</h2>' +
+      '<p style="color:#50627a;font-size:14px">Votre avis est précieux et contribue directement à améliorer POPE Online.</p>' +
+      '<a href="dashboard.html" style="display:inline-block;margin-top:20px;background:#0079c1;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Retour à mon espace →</a>' +
+      '</div>';
+  } catch(e) {
+    msg.textContent = 'Erreur : ' + getApiMessage(e);
+    msg.style.color = '#b91c1c';
+    btn.disabled = false;
+    btn.textContent = '⭐ Envoyer mon avis';
   }
 });
 </script>
