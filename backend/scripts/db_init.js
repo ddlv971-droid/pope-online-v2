@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -61,6 +60,7 @@ async function main() {
   await applyPatch('schema_patch_v22.sql', 'Patch V22 applied (deleted_accounts + tickets_expert)');
   await applyPatch('schema_patch_v24.sql', 'Patch V24 applied (admin promotion + idempotent V22)');
   await applyPatch('schema_patch_v29.sql', 'Patch V29 applied (plans hybrides + IA illimitee)');
+  await applyPatch('schema_patch_v35.sql', 'Patch V35 applied (referral + onboarding + notifications + stripe_events)');
   await seedAdmin();
   await pool.end();
 }
