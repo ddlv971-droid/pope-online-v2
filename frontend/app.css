@@ -5555,3 +5555,36 @@ body.po-auth-menu-open::before{content:'';position:fixed;inset:0;background:rgba
   word-break:break-word;
   hyphens:auto;
 }
+
+/* V33 — Fix responsive line breaks dans les listes */
+.plan-feats li,
+.po-signup-choice-list li,
+.v17-offer-list li,
+.auth-note-premium li {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Éviter les coupures disgracieuses dans les boutons et badges */
+.plan-cta, .badge, .btn {
+  white-space: nowrap;
+}
+
+/* Responsive amélioré pour les titres h1 */
+h1 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Fix plan features sur mobile */
+@media (max-width: 480px) {
+  .plan-feats li {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .phero h1 {
+    font-size: clamp(22px, 6vw, 32px);
+  }
+}

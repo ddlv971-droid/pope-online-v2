@@ -161,8 +161,8 @@ export function showTrialExpiredModal(wallet) {
   plansGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px';
 
   const plans = [
-    { name:'Starter', price:'49€', period:'/mois', annual:'ou 499€/an (−15%)', features:['Production illimitée','5 relectures expertes/mois','Closier documentaire','Support prioritaire'], url:'pricing.html?plan=starter', featured:false },
-    { name:'Pro', price:'89€', period:'/mois', annual:'ou 890€/an (−15%)', features:['Production illimitée','15 relectures expertes/mois','Closier documentaire premium','Accompagnement inclus'], url:'pricing.html?plan=pro', featured:true },
+    { name:'Starter', price:'49€', period:'/mois', annual:'ou 499€/an (−15%)', features:['Production illimitée','5 relectures expertes/mois','Clausier documentaire','Support prioritaire'], url:'pricing.html?plan=starter', featured:false },
+    { name:'Pro', price:'89€', period:'/mois', annual:'ou 890€/an (−15%)', features:['Production illimitée','15 relectures expertes/mois','Clausier documentaire premium','Accompagnement inclus'], url:'pricing.html?plan=pro', featured:true },
     { name:'Premium', price:'Sur devis', period:'', annual:'Collectivités & Entreprises', features:['Production illimitée','Relectures illimitées','Conseiller dédié','Intégration sur mesure'], url:'mailto:contact@pope-online.com?subject=Offre%20Premium', featured:false },
   ];
 

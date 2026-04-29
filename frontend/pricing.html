@@ -53,10 +53,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,121,193,.4)}
 .cta-ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
 .cta-ghost:hover{border-color:var(--blue);color:var(--blue)}
-/* Closier */
-.pclosier{max-width:1100px;margin:0 auto 40px;padding:0 20px}
-.pclosier-card{background:#fff;border-radius:20px;padding:28px 32px;border:1.5px solid var(--line);display:flex;align-items:center;gap:24px}
-.pclosier-card .icon{font-size:36px;flex-shrink:0}
+/* Clausier */
+.pclausier{max-width:1100px;margin:0 auto 40px;padding:0 20px}
+.pclausier-card{background:#fff;border-radius:20px;padding:28px 32px;border:1.5px solid var(--line);display:flex;align-items:center;gap:24px}
+.pclausier-card .icon{font-size:36px;flex-shrink:0}
 /* FAQ */
 .pfaq{max-width:760px;margin:0 auto 80px;padding:0 20px}
 .pfaq h2{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:24px;text-align:center}
@@ -73,7 +73,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 .stripe-card{background:#fff;border-radius:24px;padding:40px;max-width:480px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);position:relative}
 /* Responsive */
 @media(max-width:900px){.pgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.pgrid{grid-template-columns:1fr}.pclosier-card{flex-direction:column;text-align:center}}
+@media(max-width:560px){.pgrid{grid-template-columns:1fr}.pclausier-card{flex-direction:column;text-align:center}}
 </style>
 </head>
 <body>
@@ -103,7 +103,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
   <p style="text-align:center;font-size:12px;color:#7a8fa8;margin-bottom:6px">Tous les prix sont indiqués hors taxes (HT). TVA applicable selon la réglementation en vigueur.</p>
   <p class="pbilling-info" id="billing-info">Facturation mensuelle · Sans engagement · Résiliable à tout moment</p>
 
-  <div id="space-badge" style="text-align:center;margin-bottom:20px"></div>
+  <div style="text-align:center;margin-bottom:20px">
+    <span style="background:#eef7ff;border:1px solid #b8dcf0;color:#0079c1;border-radius:999px;padding:5px 16px;font-size:12px;font-weight:700">
+      🏛️ Espaces public &amp; privé — Mêmes tarifs, même accès
+    </span>
+  </div>
 
   <div class="pgrid">
     <!-- FREE -->
@@ -121,7 +125,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="fi">✓</span>2 relectures expertes offertes</li>
         <li><span class="fi">✓</span>Dépôt sécurisé 48h</li>
         <li><span class="fi">✓</span>Accompagnement sur mesure</li>
-        <li class="off"><span class="fi">—</span>Closier documentaire</li>
+        <li><span class="fi">✓</span>Clausier documentaire</li>
         <li class="off"><span class="fi">—</span>Conseiller dédié</li>
       </ul>
       <a href="signup.html" class="plan-cta cta-ghost">Commencer gratuitement</a>
@@ -141,7 +145,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="fi">✓</span><strong>5 relectures expertes/mois</strong></li>
         <li><span class="fi">✓</span>Dépôt sécurisé 48h</li>
         <li><span class="fi">✓</span>Accompagnement sur mesure</li>
-        <li><span class="fi">✓</span>Closier documentaire</li>
+        <li><span class="fi">✓</span>Clausier documentaire</li>
         <li class="off"><span class="fi">—</span>Conseiller dédié</li>
       </ul>
       <button class="plan-cta cta-primary" onclick="openCheckout('starter')">Souscrire Starter</button>
@@ -161,7 +165,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="fi">✓</span><strong>15 relectures expertes/mois</strong></li>
         <li><span class="fi">✓</span>Dépôt sécurisé 48h</li>
         <li><span class="fi">✓</span>Accompagnement inclus</li>
-        <li><span class="fi">✓</span>Closier documentaire premium</li>
+        <li><span class="fi">✓</span>Clausier documentaire premium</li>
         <li><span class="fi">✓</span>Support prioritaire</li>
       </ul>
       <button class="plan-cta cta-primary" onclick="openCheckout('pro')">Souscrire Pro</button>
@@ -182,7 +186,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
         <li><span class="fi">✓</span><strong>Relectures illimitées</strong></li>
         <li><span class="fi">✓</span>Conseiller POPE dédié</li>
         <li><span class="fi">✓</span>Accompagnement stratégique</li>
-        <li><span class="fi">✓</span>Closier sur mesure</li>
+        <li><span class="fi">✓</span>Clausier sur mesure</li>
         <li><span class="fi">✓</span>Déploiement multi-utilisateurs</li>
       </ul>
       <a href="mailto:contact@pope-online.com?subject=Offre%20Premium%20POPE%20Online" class="plan-cta cta-ghost">Nous contacter</a>
@@ -191,12 +195,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 </div>
 
 <!-- CLOSIER -->
-<div class="pclosier">
-  <div class="pclosier-card">
+<div class="pclausier">
+  <div class="pclausier-card">
     <div class="icon">📚</div>
     <div>
-      <h3 style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px">Closier documentaire — inclus dès Starter</h3>
-      <p style="font-size:14px;color:var(--muted);line-height:1.6">Bibliothèque de modèles prêts à l'emploi : marchés publics, courriers administratifs, délibérations, formalités, RH. Liens vers les formulaires officiels service-public.fr et sources gouvernementales.</p>
+      <h3 style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px">Clausier documentaire — inclus dès Starter</h3>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6">Le clausier POPE Online est disponible dès l'offre gratuite. Accédez à une bibliothèque de modèles officiels : marchés publics (DC1, DC2, DC4, MAPA), courriers administratifs, délibérations, formalités et RH. Sources gouvernementales vérifiées (economie.gouv.fr, service-public.fr, AMF, Légifrance).</p>
     </div>
   </div>
 </div>
@@ -371,7 +375,7 @@ function openCheckout(plan) {
     '<strong>Plan ' + p.name + (annual ? ' annuel' : ' mensuel') + '</strong><br>' +
     '✓ Production de livrables illimitée<br>' +
     '✓ ' + p.expert + ' relectures expertes/mois<br>' +
-    '✓ Closier documentaire inclus<br>' +
+    '✓ Clausier documentaire inclus<br>' +
     (annual ? '✓ Économie de ' + p.save + '€ par rapport au mensuel' : '✓ Sans engagement · Résiliable à tout moment');
   // Si pas de lien Stripe configuré → redirection vers email
   var finalLink = link && link.startsWith('https://buy.stripe.com/') && !link.includes('LIEN_')
@@ -394,26 +398,8 @@ document.getElementById('stripe-overlay').addEventListener('click', function(e) 
 });
 
 // ── Wording selon l'espace ─────────────────────────────────────────────────
-(function() {
-  var space = (localStorage.getItem('pope_account_space') || '') ||
-    (new URLSearchParams(location.search).get('space') || 'public');
-  var isPrivate = space === 'private';
-
-  var badge = document.getElementById('space-badge');
-  badge.innerHTML = '<span style="background:#eef7ff;border:1px solid #b8dcf0;color:#0079c1;border-radius:999px;padding:5px 16px;font-size:12px;font-weight:700">' +
-    (isPrivate ? '🔒 Espace privé — Artisans, indépendants, TPE' : '🏛️ Espace public — Collectivités, établissements, organisations') +
-    '</span>';
-
-  var heroP = document.querySelector('.phero p');
-  if (heroP) {
-    heroP.textContent = isPrivate
-      ? 'Marchés, formalités, courriers métier — produisez vite et faites valider par nos conseillers experts.'
-      : 'Notes, délibérations, courriers institutionnels — des livrables sécurisés validés par notre réseau d\'experts.';
-  }
-
-  var freeLink = document.querySelector('.plan-cta.cta-ghost[href="signup.html"]');
-  if (freeLink) freeLink.href = isPrivate ? 'signup-private.html' : 'signup-public.html';
-})();
+// Espace commun - même tarifs public et privé
+// Pas de différenciation visuelle nécessaire
 </script>
 </body>
 </html>

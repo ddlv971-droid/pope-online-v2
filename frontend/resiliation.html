@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Gérer mon abonnement</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="dashboard.html" id="homeLink">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Mon abonnement</div></div>
+    </a>
+    <div class="row gap">
+      <a class="btn ghost" href="profile.html">Mon compte</a>
+      <button class="btn ghost" onclick="localStorage.removeItem('pope_session_active');sessionStorage.removeItem('pope_session_token');window.location.href='login.html'">Déconnexion</button>
+    </div>
+  </div>
+</header>
+<main class="auth-wrap" style="max-width:680px;margin:0 auto;padding:40px 20px">
+  <div class="card" style="padding:40px">
+    <h1 style="font-size:24px;font-weight:800;color:#0b2440;margin-bottom:8px">Gérer mon abonnement</h1>
+    <p style="color:#50627a;margin-bottom:32px">Consultez votre plan actuel et gérez votre abonnement.</p>
+
+    <!-- Plan actuel -->
+    <div id="currentPlanBox" style="background:#f0f7fc;border-radius:16px;padding:24px;margin-bottom:28px;border:1.5px solid #dce9f4">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#50627a;margin-bottom:8px">Plan actuel</div>
+      <div id="planName" style="font-size:24px;font-weight:800;color:#0b2440;margin-bottom:4px">—</div>
+      <div id="planDetails" style="font-size:14px;color:#50627a">Chargement…</div>
+    </div>
+
+    <!-- Résiliation -->
+    <div id="cancelSection" style="display:none">
+      <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin-bottom:12px">Résilier mon abonnement</h2>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;color:#b91c1c">
+        <strong>Attention :</strong> La résiliation prend effet à la fin de la période en cours. Aucun remboursement au prorata ne sera effectué.
+      </div>
+      <p style="color:#50627a;font-size:14px;margin-bottom:16px">
+        Pour résilier votre abonnement, contactez notre équipe par email. Nous traiterons votre demande dans les 48h ouvrées.
+      </p>
+      <a href="mailto:contact@pope-online.com?subject=Résiliation%20abonnement%20POPE%20Online&body=Bonjour,%0A%0AJe%20souhaite%20résilier%20mon%20abonnement%20POPE%20Online.%0A%0AEmail%20du%20compte%20:%20%0APlan%20actuel%20:%20%0A%0ACordialement"
+         style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #fecaca;color:#b91c1c;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:700;text-decoration:none;transition:.2s"
+         onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+        ✉️ Demander la résiliation par email
+      </a>
+      <p style="font-size:12px;color:#7a8fa8;margin-top:12px">
+        Conformément aux CGV, votre accès reste actif jusqu'à la fin de la période payée.<br>
+        <a href="cgv.html" style="color:#0079c1">Consulter les CGV</a> · <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a>
+      </p>
+    </div>
+
+    <!-- Plan gratuit / expiré -->
+    <div id="upgradeSection" style="display:none">
+      <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin-bottom:12px">Passer à un plan payant</h2>
+      <p style="color:#50627a;font-size:14px;margin-bottom:16px">Accédez à plus de relectures expertes et à toutes les fonctionnalités premium.</p>
+      <a href="pricing.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:13px 24px;font-size:14px;font-weight:700;text-decoration:none">
+        Voir les plans →
+      </a>
+    </div>
+
+    <!-- Droit de rétractation -->
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid #dce9f4">
+      <h3 style="font-size:14px;font-weight:700;color:#0b2440;margin-bottom:8px">Droit de rétractation</h3>
+      <p style="font-size:13px;color:#50627a;line-height:1.6">
+        Conformément à l'article L.221-18 du Code de la consommation, vous disposez d'un délai de <strong>14 jours</strong> à compter de votre souscription pour exercer votre droit de rétractation.
+        Pour l'exercer, contactez-nous à <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a> en mentionnant « Rétractation ».
+      </p>
+    </div>
+  </div>
+</main>
+<script type="module">
+import { apiFetch, getSessionUser } from './api.js';
+
+const user = getSessionUser();
+const space = user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
+document.getElementById('homeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+
+try {
+  const me = await apiFetch('/auth/me');
+  const wallet = me?.wallet || {};
+  const plan = wallet.plan_label || 'Free';
+  const status = wallet.status || '';
+  const trialDays = wallet.trial_days_left;
+  const expertLeft = wallet.expert_left ?? 0;
+  const expertLimit = wallet.expert_limit ?? 2;
+
+  document.getElementById('planName').textContent = plan;
+
+  let details = '';
+  if (status === 'trial_active') {
+    details = `Essai gratuit · ${trialDays !== null ? trialDays + ' jour(s) restant(s)' : 'actif'}`;
+  } else if (status === 'trial_expired') {
+    details = 'Période d\'essai expirée';
+  } else if (plan !== 'Free') {
+    details = `${expertLeft} relecture(s) experte(s) restante(s) ce mois / ${expertLimit}`;
+  }
+  document.getElementById('planDetails').textContent = details || 'Plan actif';
+
+  if (plan !== 'Free' && status !== 'trial_active' && status !== 'trial_expired') {
+    document.getElementById('cancelSection').style.display = 'block';
+  } else {
+    document.getElementById('upgradeSection').style.display = 'block';
+  }
+} catch(e) {
+  document.getElementById('planDetails').textContent = 'Impossible de charger les informations';
+  document.getElementById('upgradeSection').style.display = 'block';
+}
+</script>
+</body>
+</html>
