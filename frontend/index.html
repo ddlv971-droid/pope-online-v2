@@ -95,6 +95,7 @@
   position: absolute; top: 0; left: calc(var(--i) * -100%);
   width: 500%; height: 100%; object-fit: cover;
   pointer-events: none; transform: scale(1.02);
+  filter: saturate(1.2) contrast(1.05) brightness(.92);
 }
 .v39-panel.hide {
   opacity: 0; transform: translateY(-3%) scale(.99); filter: blur(8px);
@@ -104,8 +105,8 @@
   content: '';
   position: absolute; inset: 0; z-index: 5; pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(2,17,31,.4) 0%, transparent 25%, transparent 60%, rgba(2,17,31,.85) 100%),
-    linear-gradient(90deg, rgba(2,17,31,.2), transparent 15%, transparent 85%, rgba(2,17,31,.15));
+    linear-gradient(180deg, rgba(2,17,31,.55) 0%, transparent 20%, transparent 55%, rgba(2,17,31,.92) 100%),
+    linear-gradient(90deg, rgba(2,17,31,.35), transparent 12%, transparent 88%, rgba(2,17,31,.3));
 }
 
 /* Filigrane logo sur la mosaïque */
@@ -126,13 +127,14 @@
   padding: 0 24px; text-align: center;
   pointer-events: none;
 }
-.v39-band-logo { height: clamp(32px, 5vw, 54px); margin-bottom: 20px; }
+.v39-band-logo { height: clamp(110px, 14vw, 190px); margin-bottom: 28px; filter: drop-shadow(0 4px 24px rgba(0,0,0,.4)); }
 
-.v39-slogan-wrap { min-height: 60px; display: flex; align-items: center; justify-content: center; }
+.v39-slogan-wrap { min-height: 100px; display: flex; align-items: center; justify-content: center; }
 .v39-slogan {
-  font-size: clamp(22px, 3.5vw, 42px);
+  font-size: clamp(36px, 5.5vw, 70px);
   font-weight: 800; letter-spacing: -.03em;
   color: #fff; line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0,0,0,.5);
   animation: v39fadeIn .7s ease;
 }
 @keyframes v39fadeIn {
@@ -140,17 +142,25 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.v39-band-tagline {
+  color: rgba(255,255,255,.85);
+  font-size: clamp(14px, 1.8vw, 22px);
+  font-weight: 600; font-style: italic;
+  margin-top: 16px; letter-spacing: .01em;
+  text-shadow: 0 1px 12px rgba(0,0,0,.5);
+}
 .v39-band-sub {
-  color: rgba(255,255,255,.55); font-size: clamp(13px, 1.8vw, 17px);
-  margin-top: 14px; font-weight: 400;
+  color: rgba(255,255,255,.65); font-size: clamp(15px, 2.2vw, 26px);
+  margin-top: 18px; font-weight: 500; letter-spacing: .02em;
+  text-shadow: 0 1px 12px rgba(0,0,0,.4);
 }
 
 /* Ticker texte défilant en bas du bandeau */
 .v39-ticker {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 7;
-  height: 38px; background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
+  height: 50px; background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
   display: flex; align-items: center; overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,.06);
+  border-top: 1px solid rgba(255,255,255,.08);
 }
 .v39-ticker-track {
   display: flex; gap: 0; white-space: nowrap;
@@ -162,11 +172,11 @@
 }
 .v39-ticker-item {
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 0 28px; font-size: 12px; font-weight: 600;
-  color: rgba(255,255,255,.55); letter-spacing: .04em;
+  padding: 0 32px; font-size: 15px; font-weight: 600;
+  color: rgba(255,255,255,.7); letter-spacing: .04em;
   border-right: 1px solid rgba(255,255,255,.08);
 }
-.v39-ticker-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.v39-ticker-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .v39-ticker-dot.blue  { background: #0079c1; }
 .v39-ticker-dot.pink  { background: #c22e83; }
 .v39-ticker-dot.cyan  { background: #03a0d7; }
@@ -394,7 +404,8 @@
       <div class="v39-slogan-wrap">
         <div class="v39-slogan" id="slogan">Deux univers, une même exigence</div>
       </div>
-      <div class="v39-band-sub">Intelligence artificielle · Expertise humaine · Livrables professionnels</div>
+      <div class="v39-band-tagline">Là où l'expertise humaine fait toute la différence</div>
+      <div class="v39-band-sub">Conseillers experts · Production sécurisée · Résultats fiables</div>
     </div>
 
     <!-- Ticker défilant -->

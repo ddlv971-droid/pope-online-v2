@@ -2,50 +2,120 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Connexion client</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Connexion</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body class="bg po-v5-harmony">
-<header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div></a><div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div></div></header>
-<main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
-<h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
-<label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..." autocomplete="off">
-<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
-<div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
-<div class="fineprint" id="msg"></div></section></main>
+<body class="v40-auth-body">
+<div class="v40-auth-wrap">
+
+  <!-- Panneau gauche image -->
+  <div class="v40-auth-left">
+    <div class="v40-auth-mosaic">
+      <img src="./assets/mosaic.png" alt=""/>
+    </div>
+    <div class="v40-auth-left-content">
+      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <h2 class="v40-auth-headline">
+        L&rsquo;expertise humaine<br>au service de vos<br><em>livrables professionnels</em>
+      </h2>
+      <p class="v40-auth-sub">Conseillers experts, production guid&eacute;e et validation humaine &mdash; pour chaque document que vous produisez.</p>
+      <div class="v40-auth-features">
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Relecture experte sous 48h</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> 18 types de livrables m&eacute;tier</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Donn&eacute;es chiffr&eacute;es &middot; RGPD</div>
+      </div>
+      <p class="v40-auth-tagline">L&agrave; o&ugrave; l&rsquo;expertise humaine fait toute la diff&eacute;rence</p>
+    </div>
+  </div>
+
+  <!-- Panneau droit formulaire -->
+  <div class="v40-auth-right">
+    <div class="v40-auth-right-head">
+      <h1>Connexion</h1>
+      <p>Acc&eacute;dez &agrave; votre espace public ou priv&eacute; via vos identifiants.</p>
+    </div>
+
+    <div class="v40-field">
+      <label for="identifier">Email</label>
+      <input class="v40-input" id="identifier" type="email" placeholder="votre@email.fr" autocomplete="username"/>
+    </div>
+
+    <div class="v40-field">
+      <label for="password">Mot de passe</label>
+      <div class="v40-pw-wrap">
+        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"/>
+        <button class="v40-pw-eye" id="togglePw" type="button">&#128065;</button>
+      </div>
+    </div>
+
+    <div id="turnstileBox" hidden style="margin-bottom:14px"></div>
+
+    <button class="v40-submit" id="btnLogin" type="button">Se connecter &#8594;</button>
+    <div class="v40-msg" id="loginMsg"></div>
+
+    <div class="v40-divider">ou</div>
+    <div class="v40-links">
+      <a href="forgot-password.html">Mot de passe oubli&eacute; ?</a>
+      <span>&middot;</span>
+      <a href="signup.html">Cr&eacute;er un compte</a>
+      <span>&middot;</span>
+      <a href="offre-gratuite.html">Essai gratuit 15j</a>
+    </div>
+    <div style="margin-top:28px;text-align:center">
+      <a href="index.html" style="font-size:12px;color:#9aabbc;text-decoration:none">&#8592; Accueil</a>
+    </div>
+  </div>
+</div>
 <script type="module">
 import { apiFetch, getApiMessage, setSession } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
-const el = (id) => document.getElementById(id);
-const params = new URLSearchParams(window.location.search || '');
-const requestedNext = (params.get('next') || '').trim();
-mountTurnstile('turnstileBox').catch(() => {});
-function getDefaultNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
-function normalizeNext(target, user) {
-  if (!target) return getDefaultNext(user);
-  const cleaned = target.replace(/^https?:\/\/[^/]+/i, '');
-  if (!cleaned || cleaned.startsWith('//')) return getDefaultNext(user);
-  if (!/^[\w./?=&%-]+$/.test(cleaned)) return getDefaultNext(user);
-  const route = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
-  const isPrivateUser = user?.accountSpace === 'private';
-  const forbiddenPrivate = ['app-private.html','expert-private.html','mission-private.html','dashboard-private.html'];
-  const forbiddenPublic = ['app.html','expert.html','mission.html','dashboard.html'];
-  if (!isPrivateUser && forbiddenPrivate.some((value) => route.startsWith(value))) return getDefaultNext(user);
-  if (isPrivateUser && forbiddenPublic.some((value) => route.startsWith(value))) return getDefaultNext(user);
-  return route || getDefaultNext(user);
+
+function $(id) { return document.getElementById(id); }
+var params = new URLSearchParams(window.location.search || '');
+var requestedNext = (params.get('next') || '').trim();
+mountTurnstile('turnstileBox').catch(function(){});
+
+$('togglePw').addEventListener('click', function() {
+  var i = $('password');
+  var h = i.type === 'password';
+  i.type = h ? 'text' : 'password';
+  this.textContent = h ? String.fromCodePoint(0x1F648) : String.fromCodePoint(0x1F441);
+});
+
+function getDefaultNext(user) {
+  if (user && user.role === 'admin') return 'dashboard-admin.html';
+  return (user && user.accountSpace === 'private') ? 'dashboard-private.html' : 'dashboard.html';
 }
-el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}, data?.token || ''); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); const nextTarget = normalizeNext(requestedNext, data.user); setTimeout(() => window.location.href=nextTarget, 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
-</script>
-<script>
-window.addEventListener("load",function(){
-  document.querySelectorAll("input").forEach(i=>{
-    if(i.type!=="hidden"){ i.value=""; }
-  });
+
+$('btnLogin').addEventListener('click', async function() {
+  var btn = $('btnLogin');
+  var msg = $('loginMsg');
+  btn.disabled = true; btn.textContent = 'Connexion...';
+  msg.textContent = ''; msg.className = 'v40-msg';
+  try {
+    var identifier = ($('identifier').value || '').trim();
+    var password   = ($('password').value || '');
+    if (!identifier || !password) {
+      msg.textContent = 'Renseignez votre email et mot de passe.';
+      btn.disabled = false; btn.textContent = 'Se connecter \u2192'; return;
+    }
+    var fp = await getFingerprint();
+    var data = await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier:identifier, password:password, fp:fp, turnstileToken:getTurnstileToken() }});
+    setSession(data.user || {}, data.token || '');
+    localStorage.setItem('pope_account_space', (data.user && data.user.accountSpace) || 'public');
+    showToast('Connect\u00e9 \u2713', 'ok');
+    setTimeout(function() { window.location.href = getDefaultNext(data.user); }, 250);
+  } catch(err) {
+    resetTurnstile();
+    var code = getApiMessage(err);
+    var MSGS = { invalid_credentials:'Email ou mot de passe incorrect.', too_many_requests:'Trop de tentatives. Attendez quelques minutes.' };
+    msg.textContent = MSGS[code] || ('Erreur : ' + code);
+    btn.disabled = false; btn.textContent = 'Se connecter \u2192';
+  }
 });
 </script>
-
-</body></html>
+</body>
+</html>

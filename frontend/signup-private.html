@@ -2,72 +2,163 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Créer un compte privé</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Cr&eacute;er un compte priv&eacute;</title>
 <link href="app.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body class="bg po-v5-harmony">
-<header class="topbar"><div class="container row between"><a class="brand link" href="private.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Créer un compte privé</div></div></a></div></header>
-<main class="auth-wrap"><section class="auth-card" style="max-width:760px;margin:0 auto">
-<h2>Créer un compte privé</h2>
-<p class="auth-note-premium"><strong>Merci pour votre inscription sur POPE Online.</strong><br/>Commencez une expérience qui décuplera votre efficacité métier.</p>
-<p class="muted">Ce compte est destiné à l’espace privé. Après validation de votre email, vous pourrez vous connecter et nous soumettre votre besoin.</p>
-<div class="panel" style="margin:14px 0 6px"><strong>Essai gratuit — Espace privé</strong><ul style="margin:8px 0 0 18px"><li>15 jours · Production illimitée</li><li>2 relectures expertes par nos conseillers</li><li>Dépôt sécurisé 48h · Accompagnement</li></ul></div>
-<label class="label">Nom / Prénom</label><input class="input" id="fullName" placeholder="XXXX yyyy" autocomplete="off">
-<label class="label">Organisation / Société</label><input class="input" id="organization" placeholder="Artisans,TPE, indépendants…" autocomplete="off">
-<label class="label">Email</label><input class="input" id="email" placeholder="xxxx@..." autocomplete="off">
-<label class="label">Téléphone</label>
-<div class="po-phone-grid">
-  <div>
-    <label class="label small">Indicatif</label>
-    <select class="input" id="phoneCountrySelect"></select>
-    <input type="hidden" id="phoneCountry" autocomplete="off">
+<body class="v40-auth-body">
+<div class="v40-auth-wrap">
+
+  <!-- Panneau gauche -->
+  <div class="v40-auth-left">
+    <div class="v40-auth-mosaic">
+      <img src="./assets/mosaic.png" alt=""/>
+    </div>
+    <div class="v40-auth-left-content">
+      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <div class="v40-trial-badge" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);max-width:340px">
+        <div class="icon" style="font-size:22px;flex-shrink:0">&#127381;</div>
+        <div>
+          <strong style="color:#fff">Essai gratuit 15 jours</strong>
+          <p style="color:rgba(255,255,255,.65);font-size:12px;margin:4px 0 0">Production illimit&eacute;e &middot; 2 relectures expertes &middot; Sans CB</p>
+        </div>
+      </div>
+      <h2 class="v40-auth-headline">Artisans, ind&eacute;pendants<br>&amp; TPE</h2>
+      <div class="v40-auth-features">
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Courriers, formalit&eacute;s, march&eacute;s</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Relecture experte sous 48h</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Accompagnement sur mesure</div>
+      </div>
+      <p class="v40-auth-tagline">L&agrave; o&ugrave; l&rsquo;expertise humaine fait toute la diff&eacute;rence</p>
+    </div>
   </div>
-  <div>
-    <label class="label small">Numéro</label>
-    <input class="input" id="phoneNumber" placeholder="Votre numéro" autocomplete="off">
+
+  <!-- Panneau droit -->
+  <div class="v40-auth-right">
+    <div class="v40-auth-right-head">
+      <h1>Cr&eacute;er un compte priv&eacute;</h1>
+      <p>Espace d&eacute;di&eacute; aux artisans, ind&eacute;pendants, TPE et petites structures.</p>
+    </div>
+
+    <div class="v40-field">
+      <label for="fullName">Nom &amp; pr&eacute;nom</label>
+      <input class="v40-input" id="fullName" type="text" placeholder="Jean Dupont" autocomplete="off"/>
+    </div>
+
+    <div class="v40-field">
+      <label for="organization">Structure ou entreprise</label>
+      <input class="v40-input" id="organization" type="text" placeholder="Martin B&acirc;timent, Auto-entrepreneur..." autocomplete="off"/>
+    </div>
+
+    <div class="v40-field">
+      <label for="email">Email professionnel</label>
+      <input class="v40-input" id="email" type="email" placeholder="votre@email.fr" autocomplete="off"/>
+    </div>
+
+    <div class="v40-field">
+      <label>T&eacute;l&eacute;phone</label>
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:10px">
+        <div>
+          <label class="label small" style="font-size:11px;color:#7a8fa8;display:block;margin-bottom:5px">Indicatif</label>
+          <select class="v40-input" id="phoneCountrySelect" style="padding:11px 12px"></select>
+          <input type="hidden" id="phoneCountry"/>
+        </div>
+        <div>
+          <label class="label small" style="font-size:11px;color:#7a8fa8;display:block;margin-bottom:5px">Num&eacute;ro</label>
+          <input class="v40-input" id="phoneNumber" type="tel" placeholder="Votre num&eacute;ro" autocomplete="off"/>
+        </div>
+      </div>
+      <input type="hidden" id="phoneFull"/>
+    </div>
+
+    <div class="v40-field">
+      <label for="password">Mot de passe <span style="color:#9aabbc;font-weight:400;font-size:12px">(8 caract&egrave;res min.)</span></label>
+      <div class="v40-pw-wrap">
+        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password"/>
+        <button class="v40-pw-eye" id="togglePw" type="button">&#128065;</button>
+      </div>
+    </div>
+
+    <div class="v40-cgu">
+      <input id="cgu" type="checkbox"/>
+      <span>J&rsquo;accepte les <a href="cgu.html" target="_blank">conditions d&rsquo;utilisation</a> et les <a href="cgv.html" target="_blank">CGV</a>. Je m&rsquo;engage &agrave; ne pas transmettre de donn&eacute;es sensibles.</span>
+    </div>
+
+    <div id="turnstileBox" hidden style="margin-bottom:14px"></div>
+
+    <button class="v40-submit " id="btnSignup" type="button">Cr&eacute;er mon compte priv&eacute; &rarr;</button>
+    <div class="v40-msg" id="signupMsg"></div>
+
+    <div class="v40-links" style="margin-top:20px">
+      <a href="signup.html">Changer d&rsquo;espace</a>
+      <span>&middot;</span>
+      <a href="login.html">D&eacute;j&agrave; un compte ?</a>
+    </div>
   </div>
 </div>
-<input type="hidden" id="phoneFull" autocomplete="off">
-<label class="label">Mot de passe (8 caractères min.)</label>
-<div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
-<label class="row gap" style="align-items:flex-start;margin-top:10px"><input id="cgu" style="margin-top:4px" type="checkbox" autocomplete="off"><span class="muted"><span class="consent-text">J’accepte les conditions d’utilisation et je m’engage à ne pas transmettre de données personnelles ou sensibles</span>.</span></label>
-<div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:16px"><button class="btn" id="btn">Créer mon compte privé</button><a class="btn ghost" href="signup.html">Changer d’espace</a></div>
-<div class="fineprint" id="msg"></div></section></main>
+
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
 <script type="module">
-import { apiFetch, getApiMessage } from './api.js';
-import { showToast, getFingerprint } from './app.js';
-import { attachIntlPhone } from './phone.js';
-import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
-const el = (id) => document.getElementById(id);
-mountTurnstile('turnstileBox').catch(() => {});
-attachIntlPhone({ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' });
-try { localStorage.setItem('pope_post_signup_next', 'login.html'); localStorage.setItem('pope_account_space', 'private'); } catch {}
-el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => {
-  if (!el('cgu').checked) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
-  try {
-    const fp = await getFingerprint();
-    const data = await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken(), ref:(new URLSearchParams(window.location.search).get('ref')||'') } });
-    if (data?.mailFailed) {
-      el('msg').textContent = '⚠️ Compte créé, mais l\'e-mail de vérification n\'a pas pu être envoyé. Contactez le support : contact@pope-online.com';
-      showToast('Compte créé — e-mail non envoyé', 'warn');
-    } else {
-      showToast('Compte créé. Vérifiez votre email.', 'ok');
-      el('msg').textContent = '📩 Un email de vérification vient de vous être envoyé.';
-    }
-  } catch (e) { resetTurnstile(); el('msg').textContent = 'Erreur : ' + getApiMessage(e); showToast('Erreur de création', 'err'); }
-});
-</script>
-<script>
-window.addEventListener("load",function(){
-  document.querySelectorAll("input").forEach(i=>{
-    if(i.type!=="hidden"){ i.value=""; }
-  });
-});
-</script>
+import {{ apiFetch, getApiMessage }} from './api.js';
+import {{ showToast, getFingerprint }} from './app.js';
+import {{ attachIntlPhone }} from './phone.js';
+import {{ mountTurnstile, getTurnstileToken, resetTurnstile }} from './turnstile.js';
 
-</body></html>
+function $(id) {{ return document.getElementById(id); }}
+var SPACE = 'private';
+
+mountTurnstile('turnstileBox').catch(function(){{}});
+attachIntlPhone({{ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' }});
+
+try {{ localStorage.setItem('pope_account_space', SPACE); }} catch(e) {{}}
+
+$('togglePw').addEventListener('click', function() {{
+  var i = $('password'); var h = i.type === 'password';
+  i.type = h ? 'text' : 'password';
+  this.textContent = h ? String.fromCodePoint(0x1F648) : String.fromCodePoint(0x1F441);
+}});
+
+$('btnSignup').addEventListener('click', async function() {{
+  var btn = $('btnSignup');
+  var msg = $('signupMsg');
+  if (!$('cgu').checked) {{ showToast('Acceptez les conditions d'utilisation.', 'warn'); return; }}
+  btn.disabled = true; btn.textContent = 'Cr&eacute;ation en cours...';
+  msg.textContent = ''; msg.className = 'v40-msg';
+  try {{
+    var fp = await getFingerprint();
+    var data = await apiFetch('/auth/signup', {{ method:'POST', body:{{
+      email: $('email').value.trim(),
+      password: $('password').value,
+      fullName: $('fullName').value.trim(),
+      organization: $('organization').value.trim(),
+      phoneCountry: $('phoneCountry').value,
+      phoneNumber: $('phoneNumber').value.trim(),
+      phoneFull: $('phoneFull').value,
+      fp: fp,
+      accountSpace: SPACE,
+      turnstileToken: getTurnstileToken(),
+      ref: (new URLSearchParams(window.location.search).get('ref') || '')
+    }}}});
+    if (data && data.mailFailed) {{
+      msg.textContent = 'Compte cr&eacute;&eacute; mais email non envoy&eacute;. Contactez-nous.';
+      msg.className = 'v40-msg';
+    }} else {{
+      msg.className = 'v40-msg ok';
+      msg.textContent = 'Compte cr&eacute;&eacute; ! V&eacute;rifiez votre email pour activer votre compte.';
+      showToast('Compte cr&eacute;&eacute; !', 'ok');
+    }}
+    btn.textContent = 'Compte cr&eacute;&eacute; !';
+  }} catch(err) {{
+    resetTurnstile();
+    var code = getApiMessage(err);
+    var MSGS = {{ email_exists:'Cette adresse email est d&eacute;j&agrave; utilis&eacute;e.', invalid_email:'Format d'email invalide.' }};
+    msg.textContent = MSGS[code] || ('Erreur : ' + code);
+    btn.disabled = false;
+    btn.textContent = 'Cr&eacute;er mon compte priv&eacute; &rarr;';
+  }}
+}});
+</script>
+</body>
+</html>
