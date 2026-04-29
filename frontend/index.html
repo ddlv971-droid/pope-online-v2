@@ -94,6 +94,7 @@
 .v39-panel img {
   position: absolute; top: 0; left: calc(var(--i) * -100%);
   width: 500%; height: 100%; object-fit: cover;
+  object-position: center 20%;
   pointer-events: none; transform: scale(1.02);
   filter: saturate(1.2) contrast(1.05) brightness(.92);
 }
@@ -128,12 +129,12 @@
   pointer-events: none;
 }
 .v39-band-logo {
-  height: clamp(80px, 14vw, 190px);
-  max-width: min(85vw, 800px);
+  height: clamp(90px, 21vw, 285px);
+  max-width: min(82vw, 900px);
   width: auto;
   object-fit: contain;
-  margin-bottom: 28px;
-  filter: drop-shadow(0 4px 24px rgba(0,0,0,.4));
+  margin-bottom: 32px;
+  filter: drop-shadow(0 6px 32px rgba(0,0,0,.5));
 }
 
 .v39-slogan-wrap { min-height: 100px; display: flex; align-items: center; justify-content: center; }
@@ -354,14 +355,30 @@
   }
   .v39-cta-zone { margin-top: -60px; }
   .v39-ticker { display: none; }
+  /* Mobile : logo plus grand et remonté */
+  .v39-band-content {
+    justify-content: flex-start;
+    padding-top: 10%;
+  }
+  .v39-band-logo {
+    height: clamp(70px, 18vw, 130px);
+    max-width: 75vw;
+    margin-bottom: 16px;
+  }
+  .v39-slogan-wrap { min-height: 60px; }
+  .v39-slogan { font-size: clamp(26px, 6.5vw, 48px); }
+  .v39-band-tagline { font-size: clamp(12px, 3vw, 16px); margin-top: 10px; }
+  .v39-band-sub { font-size: clamp(11px, 2.8vw, 15px); margin-top: 10px; }
 }
 @media(max-width: 500px) {
   .v39-space-card { padding: 22px 18px; }
   .v39-pitch-inner { padding: 24px 20px; }
-  .v39-band-logo { height: clamp(50px, 12vw, 80px); max-width: 78vw; }
-  .v39-slogan { font-size: clamp(24px, 7vw, 40px); }
-  .v39-band-sub { font-size: 13px; }
-  .v39-band-tagline { font-size: 12px; }
+  /* Portrait serré : logo encore plus compact */
+  .v39-band-content { padding-top: 8%; }
+  .v39-band-logo { height: clamp(55px, 16vw, 90px); max-width: 72vw; }
+  .v39-slogan { font-size: clamp(22px, 7vw, 36px); }
+  .v39-band-sub { font-size: 12px; }
+  .v39-band-tagline { font-size: 11px; }
 }
 </style>
 </head>
