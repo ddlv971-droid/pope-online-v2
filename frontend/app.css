@@ -135,6 +135,9 @@ a{color:inherit}
   line-height:1.03;
   letter-spacing:-.7px;
   margin:14px 0 10px;
+  hyphens:none;
+  overflow-wrap:normal;
+  word-break:normal;
 }
 .h2{
   font-size:26px;
@@ -1058,7 +1061,7 @@ body.premium-night{
   color:#b9ddf4; margin-bottom:16px;
 }
 .po-intro-block h1,
-.po-page-copy h1{margin:0; font-size:clamp(38px,5vw,72px); line-height:.98; letter-spacing:-.04em; max-width:10.5ch;}
+.po-page-copy h1{margin:0; font-size:clamp(28px,5vw,72px); line-height:1.05; letter-spacing:-.03em; max-width:12ch; hyphens:none; -webkit-hyphens:none; word-break:normal;}
 .po-intro-block p,
 .po-page-copy p,
 .po-section-head p,
@@ -2479,7 +2482,7 @@ body.bg > *{
 .po-grid-cards .po-surface-card p{
   overflow-wrap:break-word;
   word-break:break-word;
-  hyphens:auto;
+  hyphens:none;
 }
 .po-surface-card{
   background:rgba(255,255,255,.86);
@@ -5553,38 +5556,59 @@ body.po-auth-menu-open::before{content:'';position:fixed;inset:0;background:rgba
 .po-page-wrap h1,.po-section-head h1,.po-pane h1{
   overflow-wrap:break-word;
   word-break:break-word;
-  hyphens:auto;
 }
 
-/* V33 — Fix responsive line breaks dans les listes */
-.plan-feats li,
-.po-signup-choice-list li,
-.v17-offer-list li,
-.auth-note-premium li {
-  word-break: break-word;
+/* V34 — Anti coupures disgracieuses */
+h1, h2, h3, .h1, .h2,
+.po-intro-block h1, .po-page-copy h1,
+.phero h1, .legal-hero h1 {
+  hyphens: none !important;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.plan-feats li, .po-signup-choice-list li,
+.v17-offer-list li, .auth-note-premium li {
   overflow-wrap: break-word;
-  hyphens: auto;
+  hyphens: none;
 }
-
-/* Éviter les coupures disgracieuses dans les boutons et badges */
-.plan-cta, .badge, .btn {
-  white-space: nowrap;
-}
-
-/* Responsive amélioré pour les titres h1 */
-h1 {
-  overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-}
-
-/* Fix plan features sur mobile */
+.plan-cta, .badge, .btn { white-space: nowrap; }
 @media (max-width: 480px) {
-  .plan-feats li {
-    font-size: 12px;
-    line-height: 1.5;
+  .h1 { font-size: 30px; line-height: 1.1; }
+  .phero h1 { font-size: clamp(22px, 6vw, 32px); }
+}
+
+/* V34 — Anti-coupure mots dans les titres et listes */
+h1, h2, h3 {
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+}
+.po-intro-block h1, .po-page-copy h1, .po-pane h1, .po-section-head h1 {
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.plan-feats li, .po-signup-choice-list li, .v17-offer-list li {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: none !important;
+}
+
+/* V34 — Fix coupures h1 sur mobile */
+@media(max-width:600px){
+  .po-intro-block h1,.po-page-copy h1{
+    font-size:clamp(26px,8vw,40px);
+    max-width:none;
+    hyphens:none;
+    -webkit-hyphens:none;
+    word-break:normal;
+    line-height:1.15;
   }
-  .phero h1 {
-    font-size: clamp(22px, 6vw, 32px);
+  h1,h2,h3{
+    hyphens:none !important;
+    -webkit-hyphens:none !important;
+    word-break:normal !important;
   }
 }

@@ -6,63 +6,159 @@
 <title>POPE Online — Mentions légales</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7fa;color:#0b2440}
+.lp-fili{position:fixed;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
+.lp-fili img{width:80vmin;max-width:820px;opacity:.035;filter:grayscale(100%) contrast(1.2)}
+.lp-nav{position:sticky;top:0;z-index:200;height:56px;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid #e4edf6;display:flex;align-items:center;padding:0 32px;gap:16px;justify-content:space-between}
+.lp-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#0b2440;font-weight:800;font-size:15px}
+.lp-nav-brand img{height:30px}
+.lp-nav-back{font-size:13px;color:#0079c1;font-weight:600;text-decoration:none;border:1.5px solid #d0e8f6;border-radius:10px;padding:6px 14px;transition:.2s}
+.lp-nav-back:hover{background:#eef7ff;border-color:#0079c1}
+.lp-wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 20px 80px}
+.lp-hero{background:linear-gradient(135deg,#07162a,#0b3060 45%,#0079c1);border-radius:0 0 28px 28px;padding:44px 44px 36px;margin-bottom:36px;position:relative;overflow:hidden}
+.lp-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:260px;height:260px;background:rgba(255,255,255,.05);border-radius:50%}
+.lp-hero-inner{display:flex;align-items:center;gap:18px;margin-bottom:22px;position:relative;z-index:1}
+.lp-hero-logo{height:42px;filter:brightness(0) invert(1)}
+.lp-hero-text h1{margin:0 0 5px;color:#fff;font-size:clamp(22px,3.5vw,30px);font-weight:800;letter-spacing:-.025em;hyphens:none;-webkit-hyphens:none;word-break:normal}
+.lp-hero-text p{margin:0;color:rgba(255,255,255,.65);font-size:13px}
+.lp-tabs{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1}
+.lp-tabs a{color:rgba(255,255,255,.65);text-decoration:none;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:6px 16px;transition:.2s;white-space:nowrap}
+.lp-tabs a:hover{background:rgba(255,255,255,.2);color:#fff}
+.lp-tabs a.cur{background:rgba(255,255,255,.22);color:#fff;border-color:rgba(255,255,255,.3)}
+.lp-card{background:#fff;border-radius:20px;box-shadow:0 2px 18px rgba(11,36,64,.07);padding:38px 42px;margin-bottom:14px}
+.lp-section{padding-bottom:26px;margin-bottom:26px;border-bottom:1px solid #eef3f8}
+.lp-section:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
+.lp-sh{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.lp-num{min-width:30px;height:30px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.lp-sh h2{margin:0;font-size:16.5px;font-weight:700;color:#0b2440;hyphens:none;-webkit-hyphens:none}
+.lp-body{font-size:14px;color:#4a5e75;line-height:1.85}
+.lp-body p{margin:0 0 11px}
+.lp-body ul{margin:8px 0 8px 4px;padding:0;list-style:none}
+.lp-body ul li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid #f3f7fb}
+.lp-body ul li:last-child{border-bottom:none}
+.lp-body ul li::before{content:'›';position:absolute;left:0;color:#0079c1;font-weight:700;font-size:16px;line-height:1.3}
+.lp-body strong{color:#0b2440}
+.lp-body a{color:#0079c1}
+.lp-hl{background:linear-gradient(to right,#eef7ff,#f5fbff);border-left:3px solid #0079c1;border-radius:0 12px 12px 0;padding:13px 18px;margin:12px 0;font-size:13.5px;color:#0b3060;line-height:1.65}
+.lp-warn{background:linear-gradient(to right,#fff8f0,#fffbf5);border-left:3px solid #f59e0b;border-radius:0 12px 12px 0;padding:13px 18px;margin:12px 0;font-size:13.5px;color:#92400e}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.info-box{background:#f8fafc;border:1px solid #e4edf6;border-radius:12px;padding:14px 16px}
+.info-box dt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7a90a8;margin-bottom:5px}
+.info-box dd{font-size:14px;color:#0b2440;font-weight:600;margin:0}
+.lp-footer{background:#fff;border-radius:16px;padding:18px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.05);margin-top:20px}
+.lp-footer span{font-size:12px;color:#9aabbc}
+.lp-footer a{font-size:13px;font-weight:600;color:#0079c1;text-decoration:none;border:1.5px solid #d0e8f6;border-radius:10px;padding:6px 14px;transition:.2s}
+.lp-footer a:hover{background:#eef7ff;border-color:#0079c1}
+@media(max-width:640px){.lp-card{padding:22px 18px}.lp-hero{padding:28px 20px 24px}.lp-nav{padding:0 16px}.info-grid{grid-template-columns:1fr}}
+</style>
 </head>
-<body class="bg po-v5-harmony">
-<header class="topbar">
-  <div class="container row between">
-    <a class="brand link" href="index.html">
-      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Mentions légales</div></div>
-    </a>
-    <div class="row gap"><a class="btn ghost" href="index.html">Accueil</a></div>
-  </div>
-</header>
-<main class="auth-wrap" style="max-width:860px;margin:0 auto;padding:40px 20px">
-  <div class="card" style="padding:40px;line-height:1.8">
-    <h1 style="font-size:28px;font-weight:800;color:#0b2440;margin-bottom:8px">Mentions légales</h1>
-    <p style="color:#50627a;margin-bottom:32px;font-size:13px">Dernière mise à jour : avril 2026</p>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">1. Éditeur du site</h2>
-    <p>Le site <strong>pope-online.com</strong> est édité par :</p>
-    <ul style="margin:10px 0 10px 20px;color:#50627a">
-      <li><strong>Dénomination sociale :</strong> POPE Consulting Group</li>
-      <li><strong>Forme juridique :</strong> À préciser selon statut (SASU / SAS / SARL)</li>
-      <li><strong>Siège social :</strong> À renseigner</li>
-      <li><strong>SIRET :</strong> À renseigner</li>
-      <li><strong>Capital social :</strong> À renseigner</li>
-      <li><strong>Directeur de publication :</strong> Denis DELVER</li>
-      <li><strong>Email :</strong> <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a></li>
-      <li><strong>Téléphone :</strong> 09 70 70 30 55</li>
-    </ul>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">2. Hébergement</h2>
-    <ul style="margin:10px 0 10px 20px;color:#50627a">
-      <li><strong>Backend :</strong> Render Inc. — 525 Brannan Street, Suite 300, San Francisco, CA 94107, USA</li>
-      <li><strong>Frontend :</strong> Netlify Inc. — 44 Montgomery Street, Suite 300, San Francisco, CA 94104, USA</li>
-      <li><strong>Protection :</strong> Cloudflare Inc. — 101 Townsend St, San Francisco, CA 94107, USA</li>
-    </ul>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">3. Propriété intellectuelle</h2>
-    <p style="color:#50627a">L'ensemble du contenu de ce site (textes, graphiques, logos, images, sons, vidéos, logiciels) est protégé par le droit d'auteur et appartient à POPE Consulting Group ou à ses partenaires. Toute reproduction, représentation, modification, publication ou adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sans l'autorisation écrite préalable de l'éditeur.</p>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">4. Intelligence artificielle</h2>
-    <p style="color:#50627a">POPE Online utilise des technologies d'intelligence artificielle (Mistral AI) pour la génération de contenus. Ces contenus sont produits à titre indicatif et doivent faire l'objet d'une validation humaine avant toute utilisation officielle. POPE Online ne saurait être tenu responsable des erreurs ou omissions dans les contenus générés automatiquement.</p>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">5. Limitation de responsabilité</h2>
-    <p style="color:#50627a">POPE Online s'efforce de fournir des informations exactes et à jour. Toutefois, l'éditeur ne saurait garantir l'exactitude, la complétude et l'actualité des informations diffusées. L'utilisation des informations et contenus disponibles sur le site se fait sous l'entière responsabilité de l'utilisateur.</p>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">6. Cookies</h2>
-    <p style="color:#50627a">Le site utilise des cookies techniques nécessaires à son fonctionnement (authentification, préférences). Aucun cookie publicitaire ou de traçage commercial n'est utilisé. Conformément au RGPD, vous pouvez configurer votre navigateur pour refuser les cookies.</p>
-
-    <h2 style="font-size:18px;font-weight:700;color:#0b2440;margin:24px 0 10px">7. Droit applicable</h2>
-    <p style="color:#50627a">Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
-
-    <div style="margin-top:32px;padding-top:24px;border-top:1px solid #dce9f4;display:flex;gap:16px;flex-wrap:wrap">
-      <a href="cgu.html" style="color:#0079c1;font-size:13px">Conditions Générales d'Utilisation →</a>
-      <a href="cgv.html" style="color:#0079c1;font-size:13px">Conditions Générales de Vente →</a>
-      <a href="privacy.html" style="color:#0079c1;font-size:13px">Politique de confidentialité →</a>
+<body>
+<div class="lp-fili"><img src="./assets/pope-tree-filigrane.png" alt=""/></div>
+<nav class="lp-nav">
+  <a class="lp-nav-brand" href="index.html"><img src="./assets/popeonline-logo.png" alt="POPE Online"/>POPE Online</a>
+  <a class="lp-nav-back" href="index.html">← Retour</a>
+</nav>
+<div class="lp-wrap">
+  <div class="lp-hero">
+    <div class="lp-hero-inner">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online" class="lp-hero-logo"/>
+      <div class="lp-hero-text">
+        <h1>Mentions légales</h1>
+        <p>Pope Consulting SAS — Dernière mise à jour : avril 2026</p>
+      </div>
+    </div>
+    <div class="lp-tabs">
+      <a href="legal.html" class="cur">Mentions légales</a>
+      <a href="cgu.html">CGU</a>
+      <a href="cgv.html">CGV</a>
+      <a href="privacy.html">Confidentialité</a>
     </div>
   </div>
-</main>
+  <div class="lp-card">
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">1</span><h2>Éditeur du site</h2></div>
+      <div class="lp-body">
+        <p>Le site <strong>pope-online.com</strong> est édité par la société :</p>
+        <div class="info-grid">
+          <dl class="info-box"><dt>Dénomination sociale</dt><dd>Pope Consulting SAS</dd></dl>
+          <dl class="info-box"><dt>Forme juridique</dt><dd>Société par actions simplifiée (SAS)</dd></dl>
+          <dl class="info-box"><dt>Capital social</dt><dd>1 000 €</dd></dl>
+          <dl class="info-box"><dt>SIRET (siège)</dt><dd>100 786 862 00019</dd></dl>
+          <dl class="info-box"><dt>Siège social</dt><dd>60 rue François 1er — 75008 Paris</dd></dl>
+          <dl class="info-box"><dt>Directeur de publication</dt><dd>Denis DELVER</dd></dl>
+          <dl class="info-box"><dt>Contact</dt><dd><a href="mailto:contact@pope-online.com">contact@pope-online.com</a></dd></dl>
+          <dl class="info-box"><dt>Téléphone</dt><dd>09 70 70 30 55</dd></dl>
+        </div>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">2</span><h2>Hébergement et infrastructure</h2></div>
+      <div class="lp-body">
+        <ul>
+          <li><strong>Nom de domaine :</strong> OVHcloud — 2 rue Kellermann, 59100 Roubaix, France</li>
+          <li><strong>Backend applicatif :</strong> Render Inc. — 525 Brannan Street, Suite 300, San Francisco, CA 94107, USA</li>
+          <li><strong>Frontend / CDN :</strong> Netlify Inc. — 44 Montgomery Street, Suite 300, San Francisco, CA 94104, USA</li>
+          <li><strong>Sécurité &amp; CDN :</strong> Cloudflare Inc. — 101 Townsend St, San Francisco, CA 94107, USA</li>
+          <li><strong>Moteur IA :</strong> Mistral AI SAS — 15 rue des Halles, 75001 Paris, France</li>
+          <li><strong>Paiement :</strong> Stripe Inc. — 354 Oyster Point Blvd, South San Francisco, CA 94080, USA</li>
+          <li><strong>Emails transactionnels :</strong> Resend Inc. — San Francisco, CA, USA</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">3</span><h2>Propriété intellectuelle</h2></div>
+      <div class="lp-body">
+        <p>L’ensemble des éléments constituant pope-online.com (architecture, textes, graphismes, logiciels, bases de données, etc.) est la propriété exclusive de Pope Consulting SAS ou fait l’objet d’une licence d’utilisation. Toute reproduction, modification ou exploitation sans autorisation écrite préalable constitue une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">4</span><h2>Intelligence artificielle — Avertissement éditorial</h2></div>
+      <div class="lp-body">
+        <div class="lp-warn">Les contenus générés par IA constituent une aide à la rédaction. Ils ne valent pas avis juridique, fiscal ou professionnel.</div>
+        <p>Les contenus générés font l’objet d’une relecture par nos conseillers avant retour à l’utilisateur. Pope Consulting SAS décline toute responsabilité pour les conséquences d’un usage sans validation.</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">5</span><h2>Limitation de responsabilité</h2></div>
+      <div class="lp-body">
+        <p>Pope Consulting SAS s’efforce de maintenir des informations exactes et actualisées. Elle ne saurait garantir l’exactitude ni l’exhaustivité des informations diffusées. Sa responsabilité est plafonnée aux sommes versées par l’utilisateur au cours des 12 derniers mois.</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">6</span><h2>Disponibilité du service</h2></div>
+      <div class="lp-body">
+        <p>POPE Online vise un accès 24h/24 et 7j/7, sauf interruption planifiée (communiquée 48h à l’avance) ou forcée. Pope Consulting SAS ne peut être tenue responsable des pannes imputables à des tiers.</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">7</span><h2>Cookies et traceurs</h2></div>
+      <div class="lp-body">
+        <p>Uniquement des <strong>cookies techniques indispensables</strong> au service (session JWT, préférences). <strong>Aucun cookie publicitaire ni traceur tiers</strong>. Base : intérêt légitime (RGPD art. 6.1.f).</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">8</span><h2>Liens hypertextes</h2></div>
+      <div class="lp-body">
+        <p>Pope Consulting SAS décline toute responsabilité quant aux contenus des sites tiers accessibles depuis pope-online.com. Tout lien vers ce site nécessite accord écrit préalable.</p>
+      </div>
+    </div>
+    <div class="lp-section">
+      <div class="lp-sh"><span class="lp-num">9</span><h2>Médiation et droit applicable</h2></div>
+      <div class="lp-body">
+        <p>Droit français applicable. Médiation consommateur disponible. Plateforme européenne : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. À défaut, tribunaux du ressort de la Cour d’appel de Paris.</p>
+      </div>
+    </div>
+  </div>
+  <div class="lp-footer">
+    <span>Pope Consulting SAS — pope-online.com</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="cgu.html">CGU →</a>
+      <a href="cgv.html">CGV →</a>
+      <a href="privacy.html">Confidentialité →</a>
+    </div>
+  </div>
+</div>
 </body>
 </html>
