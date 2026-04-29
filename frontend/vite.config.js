@@ -23,7 +23,22 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: htmlInputs(ROOT)
+      input: htmlInputs(ROOT),
+      output: {
+        // Eviter que api.js soit extrait en chunk separe
+        // qui peut etre bloque par certains proxies/firewalls
+        manualChunks: (id) => {
+          // Garder api.js, turnstile.js, app.js inline dans chaque bundle
+          if (id.includes('/api.js') || id.includes('/turnstile.js')) {
+            return undefined; // inline dans le bundle appelant
+          }
+          // Regrouper les pages legales ensemble
+          if (id.includes('legal') || id.includes('cgu') || id.includes('cgv') ||
+              id.includes('privacy') || id.includes('resiliation')) {
+            return 'legal-pages';
+          }
+        }
+      }
     }
   },
   server: {
