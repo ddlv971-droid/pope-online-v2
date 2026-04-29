@@ -744,37 +744,66 @@ router.post('/logout', requireAuth, async (req, res) => {
 router.get('/referral', requireAuth, async (req, res) => {
   try {
     const userId = req.user.sub;
-    const row = await withClient(async (client) => {
-      const r = await client.query(
-        `select u.referral_code,
-                count(invited.id) as invites_count,
-                count(invited.id) filter (where w.status='active') as converted_count
-         from users u
-         left join users invited on invited.referred_by = u.id
-         left join wallets w on w.user_id = invited.id
-         where u.id = $1
-         group by u.referral_code`,
+
+    const result = await withClient(async (client) => {
+      // Étape 1 : récupérer le code existant
+      let userRes = await client.query(
+        'select referral_code from users where id=$1 limit 1',
         [userId]
       );
-      return r.rows[0] || null;
+      if (!userRes.rowCount) return { error: 'not_found' };
+
+      let code = userRes.rows[0].referral_code;
+
+      // Étape 2 : générer si absent (anciens comptes)
+      if (!code) {
+        code = Math.random().toString(36).slice(2,8).toUpperCase()
+              + Math.random().toString(36).slice(2,6).toUpperCase();
+        try {
+          await client.query(
+            'update users set referral_code=$2 where id=$1',
+            [userId, code]
+          );
+        } catch (dupErr) {
+          // Collision rare sur UNIQUE — regénérer
+          code = Math.random().toString(36).slice(2,10).toUpperCase()
+                + Math.random().toString(36).slice(2,4).toUpperCase();
+          await client.query(
+            'update users set referral_code=$2 where id=$1',
+            [userId, code]
+          );
+        }
+      }
+
+      // Étape 3 : statistiques
+      const statsRes = await client.query(
+        `select count(invited.id) as invites_count,
+                count(invited.id) filter (where w.status='active') as converted_count
+         from users invited
+         left join wallets w on w.user_id = invited.id
+         where invited.referred_by = $1`,
+        [userId]
+      );
+      const stats = statsRes.rows[0] || {};
+      return {
+        code,
+        invites_count:   Number(stats.invites_count   || 0),
+        converted_count: Number(stats.converted_count || 0)
+      };
     });
-    // Générer un code si l'utilisateur n'en a pas (comptes créés avant V35)
-    if (row && !row.referral_code) {
-      const newCode = Math.random().toString(36).slice(2,8).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
-      await withClient(async (client) => {
-        await client.query('update users set referral_code=$2 where id=$1', [userId, newCode]);
-      });
-      row.referral_code = newCode;
-    }
-    if (!row) return res.status(404).json({ error: 'not_found' });
+
+    if (result.error) return res.status(404).json({ error: result.error });
+
+    const base = (process.env.FRONTEND_BASE_URL || 'https://pope-online.com').replace(/\/$/, '');
     return res.json({
-      referral_code:   row.referral_code,
-      referral_url:    `${process.env.FRONTEND_BASE_URL || 'https://pope-online.com'}/signup.html?ref=${row.referral_code}`,
-      invites_count:   Number(row.invites_count || 0),
-      converted_count: Number(row.converted_count || 0)
+      referral_code:   result.code,
+      referral_url:    `${base}/signup.html?ref=${result.code}`,
+      invites_count:   result.invites_count,
+      converted_count: result.converted_count
     });
   } catch (e) {
-    return res.status(500).json({ error: 'server_error' });
+    console.error('[referral]', e.message);
+    return res.status(500).json({ error: 'server_error', detail: String(e.message) });
   }
 });
 

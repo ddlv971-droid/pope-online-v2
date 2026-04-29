@@ -7400,8 +7400,9 @@ h1, h2, h3 {
 /* Responsive auth */
 @media(max-width: 860px) {
   .v40-auth-wrap { grid-template-columns: 1fr; }
-  .v40-auth-left { min-height: 240px; padding: 32px 24px; }
-  .v40-auth-right { padding: 32px 24px; }
+  .v40-auth-left { min-height: 200px; padding: 28px 24px; }
+  .v40-auth-right { padding: 28px 24px; }
   .v40-offer-grid { grid-template-columns: 1fr; }
   .v40-offer-common-grid { grid-template-columns: 1fr; }
+  .v40-mobile-logo { display: block !important; }
 }
