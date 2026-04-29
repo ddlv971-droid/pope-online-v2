@@ -74,40 +74,44 @@
 <script type="module">
 import { apiFetch, getSessionUser } from './api.js';
 
-const user = getSessionUser();
-const space = user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
-document.getElementById('homeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+async function init() {
+  const user = getSessionUser();
+  const space = user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
+  document.getElementById('homeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
 
-try {
-  const me = await apiFetch('/auth/me');
-  const wallet = me?.wallet || {};
-  const plan = wallet.plan_label || 'Free';
-  const status = wallet.status || '';
-  const trialDays = wallet.trial_days_left;
-  const expertLeft = wallet.expert_left ?? 0;
-  const expertLimit = wallet.expert_limit ?? 2;
+  try {
+    const me = await apiFetch('/auth/me');
+    const wallet = me?.wallet || {};
+    const plan = wallet.plan_label || 'Free';
+    const status = wallet.status || '';
+    const trialDays = wallet.trial_days_left;
+    const expertLeft = wallet.expert_left ?? 0;
+    const expertLimit = wallet.expert_limit ?? 2;
 
-  document.getElementById('planName').textContent = plan;
+    document.getElementById('planName').textContent = plan;
 
-  let details = '';
-  if (status === 'trial_active') {
-    details = `Essai gratuit · ${trialDays !== null ? trialDays + ' jour(s) restant(s)' : 'actif'}`;
-  } else if (status === 'trial_expired') {
-    details = 'Période d\'essai expirée';
-  } else if (plan !== 'Free') {
-    details = `${expertLeft} relecture(s) experte(s) restante(s) ce mois / ${expertLimit}`;
-  }
-  document.getElementById('planDetails').textContent = details || 'Plan actif';
+    let details = '';
+    if (status === 'trial_active') {
+      details = 'Essai gratuit · ' + (trialDays !== null ? trialDays + ' jour(s) restant(s)' : 'actif');
+    } else if (status === 'trial_expired') {
+      details = "Periode d'essai expiree";
+    } else if (plan !== 'Free') {
+      details = expertLeft + ' relecture(s) experte(s) restante(s) ce mois / ' + expertLimit;
+    }
+    document.getElementById('planDetails').textContent = details || 'Plan actif';
 
-  if (plan !== 'Free' && status !== 'trial_active' && status !== 'trial_expired') {
-    document.getElementById('cancelSection').style.display = 'block';
-  } else {
+    if (plan !== 'Free' && status !== 'trial_active' && status !== 'trial_expired') {
+      document.getElementById('cancelSection').style.display = 'block';
+    } else {
+      document.getElementById('upgradeSection').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('planDetails').textContent = 'Impossible de charger les informations';
     document.getElementById('upgradeSection').style.display = 'block';
   }
-} catch(e) {
-  document.getElementById('planDetails').textContent = 'Impossible de charger les informations';
-  document.getElementById('upgradeSection').style.display = 'block';
 }
+
+init();
 </script>
 </body>
 </html>
