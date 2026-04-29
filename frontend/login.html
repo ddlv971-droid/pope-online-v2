@@ -3,89 +3,133 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Connexion client</title>
+<title>POPE Online — Connexion</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body class="bg po-v5-harmony">
-<header class="topbar"><div class="container row between"><a class="brand link" href="index.html"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div></a><div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div></div></header>
-<main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
-<h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
-<label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..." autocomplete="off">
-<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe" onclick="(function(b){var i=document.getElementById(&quot;password&quot;);var s=i.type===&quot;text&quot;;i.type=s?&quot;password&quot;:&quot;text&quot;;b.textContent=s?&quot;👁&quot;:&quot;🙈&quot;;}).call(this,this)">👁</button></div>
-<div id="turnstileBox" style="margin-top:14px" hidden></div>
-<div id="turnstileStatus" style="font-size:12px;color:#50627a;margin-top:6px;display:none">🔄 Vérification de sécurité en cours…</div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
-<div class="fineprint" id="msg"></div></section></main>
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="index.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Connexion client</div></div>
+    </a>
+    <div class="row gap wrap"><a class="btn ghost" href="signup.html">Créer un compte</a></div>
+  </div>
+</header>
+<main class="auth-wrap">
+  <section class="auth-card" style="max-width:700px;margin:0 auto">
+    <h2>Connexion</h2>
+    <p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
+    <label class="label">Email ou identifiant</label>
+    <input class="input" id="identifier" placeholder="xxxx@..." autocomplete="username"/>
+    <label class="label">Mot de passe</label>
+    <div class="password-wrap">
+      <input class="input" id="password" placeholder="••••••••" type="password" autocomplete="current-password"/>
+      <button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher">👁</button>
+    </div>
+    <div id="turnstileBox" style="margin-top:14px" hidden></div>
+    <div id="turnstileMsg" style="font-size:12px;color:#50627a;margin-top:6px;min-height:18px"></div>
+    <div class="row gap wrap" style="margin-top:14px">
+      <button class="btn" id="btnLogin" type="button">Se connecter</button>
+      <a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a>
+    </div>
+    <div class="fineprint" id="loginMsg" style="margin-top:10px"></div>
+  </section>
+</main>
 <script type="module">
 import { apiFetch, getApiMessage, setSession } from './api.js';
 import { showToast, getFingerprint } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
-const el = (id) => document.getElementById(id);
-const params = new URLSearchParams(window.location.search || '');
-const requestedNext = (params.get('next') || '').trim();
-const tsBox = el('turnstileBox');
-const tsStatus = el('turnstileStatus');
-mountTurnstile('turnstileBox').then(mounted => {
-  if (mounted && tsBox && !tsBox.hidden) {
-    if (tsStatus) tsStatus.style.display = 'block';
-    // Masquer le statut quand le widget est rendu
-    const observer = new MutationObserver(() => {
-      if (tsBox.querySelector('iframe')) { if (tsStatus) tsStatus.style.display = 'none'; observer.disconnect(); }
-    });
-    observer.observe(tsBox, { childList: true, subtree: true });
-  }
-}).catch(() => {});
-function getDefaultNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
+
+function $(id) { return document.getElementById(id); }
+
+var params = new URLSearchParams(window.location.search || '');
+var requestedNext = (params.get('next') || '').trim();
+
+mountTurnstile('turnstileBox').catch(function() {});
+
+function getDefaultNext(user) {
+  if (user && user.role === 'admin') return 'dashboard-admin.html';
+  return (user && user.accountSpace === 'private') ? 'dashboard-private.html' : 'dashboard.html';
+}
+
 function normalizeNext(target, user) {
   if (!target) return getDefaultNext(user);
-  const cleaned = target.replace(/^https?:\/\/[^/]+/i, '');
-  if (!cleaned || cleaned.startsWith('//')) return getDefaultNext(user);
+  var cleaned = target.replace(/^https?:\/\/[^/]+/i, '');
+  if (!cleaned || cleaned.indexOf('//') === 0) return getDefaultNext(user);
   if (!/^[\w./?=&%-]+$/.test(cleaned)) return getDefaultNext(user);
-  const route = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
-  const isPrivateUser = user?.accountSpace === 'private';
-  const forbiddenPrivate = ['app-private.html','expert-private.html','mission-private.html','dashboard-private.html'];
-  const forbiddenPublic = ['app.html','expert.html','mission.html','dashboard.html'];
-  if (!isPrivateUser && forbiddenPrivate.some((value) => route.startsWith(value))) return getDefaultNext(user);
-  if (isPrivateUser && forbiddenPublic.some((value) => route.startsWith(value))) return getDefaultNext(user);
+  var route = cleaned.charAt(0) === '/' ? cleaned.slice(1) : cleaned;
+  var isPrivate = user && user.accountSpace === 'private';
+  var noPrivate = ['app-private.html','expert-private.html','mission-private.html','dashboard-private.html'];
+  var noPublic  = ['app.html','expert.html','mission.html','dashboard.html'];
+  for (var i=0; i<noPrivate.length; i++) { if (!isPrivate && route.indexOf(noPrivate[i])===0) return getDefaultNext(user); }
+  for (var j=0; j<noPublic.length;  j++) { if (isPrivate  && route.indexOf(noPublic[j])===0)  return getDefaultNext(user); }
   return route || getDefaultNext(user);
 }
-el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => {
-  const btn = el('btn');
-  const msg = el('msg');
+
+$('togglePassword').addEventListener('click', function() {
+  var inp = $('password');
+  var isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  this.textContent = isHidden ? '🙈' : '👁';
+});
+
+$('btnLogin').addEventListener('click', async function() {
+  var btn = $('btnLogin');
+  var msgEl = $('loginMsg');
   btn.disabled = true;
   btn.textContent = 'Connexion…';
-  msg.textContent = '';
+  msgEl.textContent = '';
+  msgEl.style.color = '#50627a';
+
   try {
-    const fp = await getFingerprint();
-    const identifier = el('identifier').value.trim();
-    if (!identifier) { msg.textContent = 'Veuillez renseigner votre email.'; btn.disabled=false; btn.textContent='Se connecter'; return; }
-    if (!el('password').value) { msg.textContent = 'Veuillez renseigner votre mot de passe.'; btn.disabled=false; btn.textContent='Se connecter'; return; }
-    const turnstileToken = getTurnstileToken();
-    const data = await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken } });
-    setSession(data.user || {}, data?.token || '');
-    localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public');
-    showToast('Connecté ✓','ok');
-    const nextTarget = normalizeNext(requestedNext, data.user);
-    setTimeout(() => window.location.href=nextTarget, 250);
-  } catch(e) {
+    var identifier = ($('identifier').value || '').trim();
+    var password   = ($('password').value || '');
+
+    if (!identifier) {
+      msgEl.textContent = 'Veuillez renseigner votre email.';
+      msgEl.style.color = '#b91c1c';
+      btn.disabled = false; btn.textContent = 'Se connecter'; return;
+    }
+    if (!password) {
+      msgEl.textContent = 'Veuillez renseigner votre mot de passe.';
+      msgEl.style.color = '#b91c1c';
+      btn.disabled = false; btn.textContent = 'Se connecter'; return;
+    }
+
+    var fp = await getFingerprint();
+    var token = getTurnstileToken();
+
+    var data = await apiFetch('/auth/login', {
+      method: 'POST',
+      body: { email: identifier, identifier: identifier, password: password, fp: fp, turnstileToken: token }
+    });
+
+    setSession(data.user || {}, data.token || '');
+    localStorage.setItem('pope_account_space', (data.user && data.user.accountSpace) || 'public');
+    showToast('Connecté ✓', 'ok');
+    var next = normalizeNext(requestedNext, data.user);
+    setTimeout(function() { window.location.href = next; }, 250);
+
+  } catch(err) {
     resetTurnstile();
-    const raw = getApiMessage(e);
-    const friendly = {
-      bot_protection_failed: "Vérification de sécurité échouée. Patientez et réessayez.",
-      missing_turnstile_token: "Vérification de sécurité en cours. Patientez puis réessayez.",
-      invalid_credentials: "Email ou mot de passe incorrect.",
-      missing_fp: "Erreur navigateur. Essayez sans mode privé.",
-      invalid_email: "Format d’email invalide.",
-      too_many_requests: "Trop de tentatives. Attendez quelques minutes."
-    }[raw] || ("Erreur : " + raw);
-    msg.textContent = friendly;
-    msg.style.color = '#b91c1c';
-    showToast('Connexion impossible','err');
+    var code = getApiMessage(err);
+    var MSGS = {
+      bot_protection_failed:   'Vérification de sécurité échouée. Patientez et réessayez.',
+      missing_turnstile_token: 'Vérification en cours. Patientez puis réessayez.',
+      invalid_credentials:     'Email ou mot de passe incorrect.',
+      missing_fp:              'Erreur navigateur. Essayez sans mode privé.',
+      invalid_email:           'Format d’email invalide.',
+      too_many_requests:       'Trop de tentatives. Attendez quelques minutes.'
+    };
+    msgEl.textContent = MSGS[code] || ('Erreur : ' + code);
+    msgEl.style.color = '#b91c1c';
+    showToast('Connexion impossible', 'err');
     btn.disabled = false;
     btn.textContent = 'Se connecter';
   }
 });
 </script>
-
-</body></html>
+</body>
+</html>
