@@ -123,8 +123,8 @@ $('togglePw').addEventListener('click', function() {
 $('btnSignup').addEventListener('click', async function() {
   var btn = $('btnSignup');
   var msg = $('signupMsg');
-  if (!$('cgu').checked) { showToast('Acceptez les conditions d'utilisation.', 'warn'); return; }
-  btn.disabled = true; btn.textContent = 'Cr&eacute;ation en cours...';
+  if (!$('cgu').checked) { showToast('Acceptez les conditions d\'utilisation.', 'warn'); return; }
+  btn.disabled = true; btn.textContent = 'Création en cours...';
   msg.textContent = ''; msg.className = 'v40-msg';
   try {
     var fp = await getFingerprint();
@@ -142,21 +142,21 @@ $('btnSignup').addEventListener('click', async function() {
       ref: (new URLSearchParams(window.location.search).get('ref') || '')
     }});
     if (data && data.mailFailed) {
-      msg.textContent = 'Compte cr&eacute;&eacute; mais email non envoy&eacute;. Contactez-nous.';
+      msg.textContent = 'Compte créé mais email non envoyé. Contactez-nous.';
       msg.className = 'v40-msg';
     } else {
       msg.className = 'v40-msg ok';
-      msg.textContent = 'Compte cr&eacute;&eacute; ! V&eacute;rifiez votre email pour activer votre compte.';
-      showToast('Compte cr&eacute;&eacute; !', 'ok');
+      msg.textContent = 'Compte créé ! Vérifiez votre email pour activer votre compte.';
+      showToast('Compte créé !', 'ok');
     }
-    btn.textContent = 'Compte cr&eacute;&eacute; !';
+    btn.textContent = 'Compte créé !';
   } catch(err) {
     resetTurnstile();
     var code = getApiMessage(err);
-    var MSGS = { email_exists:'Cette adresse email est d&eacute;j&agrave; utilis&eacute;e.', invalid_email:'Format d'email invalide.' };
+    var MSGS = { email_exists:'Cette adresse email est déjà utilisée.', invalid_email:'Format d'email invalide.' };
     msg.textContent = MSGS[code] || ('Erreur : ' + code);
     btn.disabled = false;
-    btn.textContent = 'Cr&eacute;er mon compte public &rarr;';
+    btn.textContent = 'Créer mon compte public →';
   }
 });
 </script>
