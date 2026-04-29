@@ -7,28 +7,229 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body data-logout-target="private.html" class="bg po-v5-harmony po-public-v24 po-private-app" data-forced-space="private">
+<body data-logout-target="private.html" class="bg v36-page po-v5-harmony po-public-v24" data-forced-space="private">
+
 <header class="topbar">
   <div class="container row between">
-    <a class="brand link" href="dashboard-private.html" id="expertHomeLink"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub" id="expertSubTitle">Relecture experte</div></div></a>
-    <div class="row gap wrap"><span class="badge" data-tickets>Accès sécurisé</span><a class="btn ghost" href="app-private.html" id="spaceGenerateLink">Génération IA privée</a><a class="btn ghost" href="vault.html?space=private&amp;return=expert-private.html" id="spaceVaultLink">Dépôt sécurisé 48h</a><button class="btn" data-logout>Déconnexion</button></div>
+    <a class="brand link" href="dashboard-private.html" id="expertHomeLink">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="expertSubTitle">Relecture experte</div></div>
+    </a>
+    <div class="row gap wrap">
+      <span class="badge" data-tickets id="ticketBadge">—</span>
+      <a class="btn ghost" href="app-private.html" id="spaceGenerateLink">⚡ Génération</a>
+      <a class="btn ghost" href="mission-private.html" id="crossMissionLink">🎯 Sur mesure</a>
+      <a class="btn ghost" href="vault.html?space=private&amp;return=expert-private.html" id="spaceVaultLink">📂 Dépôt</a>
+      <button class="btn ghost" data-logout>Déconnexion</button>
+    </div>
   </div>
 </header>
-<main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:980px;margin:0 auto">
-    <div class="row between"><h2 id="expertTitle">Demande de relecture experte</h2><span class="badge" id="status">Prêt</span></div>
-    <p class="muted" id="expertLead">Décrivez votre besoin. Votre demande est transmise à l’équipe pour relecture, sécurisation et consolidation.</p>
-    <label class="label">Objet</label><input class="input" id="subject" placeholder="Ex : Relecture d'une note stratégique"/>
-    <label class="label">Contexte</label><textarea class="input" id="context" rows="6" placeholder="Précisez le contexte, l’échéance, le niveau de sensibilité et le destinataire."></textarea>
-    <label class="label" id="expertContentLabel">Document ou éléments à relire</label><textarea class="input" id="content" rows="10" placeholder="Collez votre texte ou décrivez les éléments à expertiser."></textarea>
-    <div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-top:16px;display:none"><div class="row between wrap" style="align-items:flex-start;gap:14px"><div><h3 style="margin:0 0 6px">Pièce jointe issue des générations archivées</h3><p class="muted" style="margin:0" id="attachmentLead">Choisissez la génération archivée à joindre à la demande de relecture experte. Le prompt et le résultat correspondants seront transmis.</p></div><span class="badge" id="attachmentStatus">Aucune archive sélectionnée</span></div><div class="expert-archive-picker" style="margin-top:14px"><label class="label" for="archiveAttachmentSelect">Génération archivée à joindre</label><select class="input" id="archiveAttachmentSelect"><option value="">Ne pas joindre de génération archivée</option></select></div><div id="attachmentPreview" class="fineprint expert-archive-preview" style="margin-top:10px"></div></div>
-    <div class="card soft" id="vaultExpertCard" style="margin-top:16px"><div class="row between wrap" style="align-items:flex-start;gap:14px"><div><h3 style="margin:0 0 6px">Pièces du dépôt sécurisé 48h</h3><p class="muted" style="margin:0" id="expertVaultLead">Ajoutez des pièces temporaires à votre demande de relecture experte.</p></div><a class="btn ghost" href="vault.html?space=private&amp;return=expert-private.html">Gérer mes pièces</a></div><div id="vaultExpertList" class="vault-inline-list" style="margin-top:12px"></div></div>
-    <div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btnSend">Envoyer ma demande</button><a class="btn ghost" href="mission-private.html" id="crossMissionLink">Besoin plus large</a></div>
-    <div class="fineprint" id="msg"></div>
-  </section>
+
+<main class="v36-expert-layout">
+
+  <!-- ═══ SIDEBAR GAUCHE ═══ -->
+  <aside class="v36-expert-sidebar">
+
+    <!-- Quota visuel -->
+    <div class="v36-quota-card" id="quotaCard">
+      <div class="v36-quota-label">Votre quota de relecture</div>
+      <div class="v36-quota-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="8"
+            stroke-dasharray="264" id="quotaArc" stroke-dashoffset="264" stroke-linecap="round"/>
+        </svg>
+        <div class="v36-quota-ring-text">
+          <div class="v36-quota-n" id="quotaN">—</div>
+          <div class="v36-quota-sub">restantes</div>
+        </div>
+      </div>
+      <div class="v36-quota-detail" id="quotaDetail">Chargement…</div>
+    </div>
+
+    <!-- Garanties -->
+    <div class="v36-expert-guarantee">
+      <div style="font-size:13px;font-weight:700;color:#0b2440;margin-bottom:12px">Ce que vous obtenez</div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">✍️</span>
+        <div><strong>Analyse fond &amp; forme</strong>Corrections, reformulations et points de vigilance identifiés.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">⏱️</span>
+        <div><strong>Retour sous 48h ouvrées</strong>Par votre conseiller POPE Online dédié.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">📩</span>
+        <div><strong>Réponse dans votre espace</strong>Notification email + accès direct ici.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">🔒</span>
+        <div><strong>Confidentialité garantie</strong>Vos documents ne sont jamais partagés.</div>
+      </div>
+    </div>
+
+    <!-- Différence avec sur mesure -->
+    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:16px;font-size:13px">
+      <div style="font-weight:700;color:#0b2440;margin-bottom:6px">📌 Besoin plus large ?</div>
+      <div style="color:#50627a;line-height:1.6;margin-bottom:10px">La relecture porte sur un document précis. Pour un accompagnement stratégique ou un dossier complexe, utilisez le Sur mesure.</div>
+      <a href="mission-private.html" style="color:#d97706;font-weight:700;font-size:13px">→ Accompagnement sur mesure</a>
+    </div>
+
+  </aside>
+
+  <!-- ═══ CONTENU PRINCIPAL ═══ -->
+  <div class="v36-expert-main">
+
+    <!-- Formulaire de demande -->
+    <div class="v36-expert-card">
+      <div class="v36-expert-card-head">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,#059669,#10b981);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✍️</div>
+        <div>
+          <h2 id="expertTitle">Demander une relecture experte</h2>
+          <p id="expertLead">Transmettez votre document ou votre production IA à votre conseiller pour une analyse fond &amp; forme.</p>
+        </div>
+      </div>
+      <div class="v36-expert-card-body">
+        <div style="margin-bottom:16px">
+          <label class="label">Objet de la relecture <span style="color:#b91c1c">*</span></label>
+          <input class="input" id="subject" placeholder="Ex : Relecture d'une réponse à un marché public MAPA"/>
+          <div style="font-size:12px;color:#50627a;margin-top:6px">Soyez précis — cela aide votre conseiller à prioriser.</div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label">Contexte &amp; enjeux</label>
+          <textarea class="input" id="context" rows="4"
+            placeholder="Précisez l'organisme concerné, l'échéance, le niveau de sensibilité du document et le destinataire final."></textarea>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label" id="expertContentLabel">Document ou éléments à relire <span style="color:#b91c1c">*</span></label>
+          <textarea class="input" id="content" rows="10"
+            placeholder="Collez ici votre texte, votre draft ou décrivez précisément les éléments à expertiser.&#10;&#10;Pour les documents longs, utilisez le dépôt sécurisé ci-dessous."></textarea>
+        </div>
+
+        <!-- Pièce jointe depuis archives -->
+        <div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-bottom:16px;display:none;border-radius:14px;padding:16px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
+            <div>
+              <h3 style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0b2440">Joindre une génération archivée</h3>
+              <p class="muted" style="margin:0;font-size:12px" id="attachmentLead">Sélectionnez une génération pour l'attacher à votre demande.</p>
+            </div>
+            <span class="badge" id="attachmentStatus">Aucune sélection</span>
+          </div>
+          <select class="input" id="archiveAttachmentSelect" style="font-size:13px">
+            <option value="">Ne pas joindre de génération archivée</option>
+          </select>
+          <div id="attachmentPreview" class="fineprint" style="margin-top:10px;font-size:12px;color:#50627a"></div>
+        </div>
+
+        <!-- Pièces vault -->
+        <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces du dépôt sécurisé 48h</div>
+              <div style="font-size:12px;color:#50627a;margin-top:2px" id="expertVaultLead">Joignez des pièces complémentaires à votre demande.</div>
+            </div>
+            <a class="btn ghost" href="vault.html?space=private&amp;return=expert-private.html" style="font-size:13px">Gérer mes pièces</a>
+          </div>
+          <div id="vaultExpertList" class="vault-inline-list"></div>
+        </div>
+
+        <button class="v36-send-btn" id="btnSend" type="button">
+          ✍️ Envoyer ma demande de relecture
+        </button>
+        <div class="fineprint" id="msg" style="margin-top:10px;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Mes relectures -->
+    <div class="v36-requests-card" id="myRequestsPanel">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #f0f7fc;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="margin:0 0 3px;font-size:17px;font-weight:700;color:#0b2440">Mes relectures</h2>
+          <p style="margin:0;font-size:12px;color:#50627a">Historique de vos demandes et réponses de vos conseillers</p>
+        </div>
+        <button class="btn ghost" id="btnRefreshRequests" type="button" style="font-size:13px">🔄 Actualiser</button>
+      </div>
+      <div id="requestsList">
+        <div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Chargement…</div>
+      </div>
+    </div>
+
+  </div>
 </main>
+
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
 <script type="module" src="./expert-page.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+
+// Mise à jour visuelle du quota
+async function updateQuota() {
+  try {
+    const me = await apiFetch('/auth/me');
+    const w  = me.wallet || {};
+    const left  = w.expert_left  ?? 0;
+    const limit = w.expert_limit ?? 2;
+    document.getElementById('quotaN').textContent = left;
+    document.getElementById('quotaDetail').textContent =
+      `${left} relecture${left > 1 ? 's' : ''} disponible${left > 1 ? 's' : ''} sur ${limit} ce mois`;
+    // Arc SVG
+    const pct = limit > 0 ? left / limit : 0;
+    const arc = document.getElementById('quotaArc');
+    if (arc) arc.style.strokeDashoffset = String(264 * (1 - pct));
+    // Couleur selon niveau
+    if (arc) {
+      arc.style.stroke = left === 0 ? '#ef4444' : left <= 2 ? '#f59e0b' : '#fff';
+    }
+  } catch(e) {}
+}
+
+updateQuota();
+
+// Chargement des relectures avec style V36
+async function loadMyRequests() {
+  const list = document.getElementById('requestsList');
+  if (!list) return;
+  try {
+    const data = await apiFetch('/expert/my-requests');
+    const reqs = data.requests || [];
+    if (!reqs.length) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#50627a;font-size:14px">Aucune demande de relecture pour le moment.<br><a href="#" onclick="document.getElementById(\'subject\').focus();return false" style="color:#0079c1;font-weight:600">Envoyer une première demande →</a></div>';
+      return;
+    }
+    const statusMap = {
+      new:         { label: 'En attente', cls: 'v36-status-new',      dot: '🟡' },
+      in_progress: { label: 'En cours',   cls: 'v36-status-progress', dot: '🔵' },
+      replied:     { label: 'Répondu',    cls: 'v36-status-replied',  dot: '🟢' },
+      closed:      { label: 'Clôturé',    cls: 'v36-status-closed',   dot: '⚪' }
+    };
+
+    function esc(v) { return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    list.innerHTML = reqs.map(function(r) {
+      var s = statusMap[r.status] || statusMap.new;
+      var date = new Date(r.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+      return '<div class="v36-request-item">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
+          '<div style="font-weight:700;font-size:14px;color:#0b2440;flex:1">' + esc(r.objective) + '</div>' +
+          '<span class="v36-request-status ' + s.cls + '">' + s.dot + ' ' + s.label + '</span>' +
+        '</div>' +
+        '<div style="font-size:12px;color:#7a8fa8">Demande du ' + date + '</div>' +
+        (r.reply_text ? '<div class="v36-reply-box"><div class="v36-reply-meta">✓ Réponse de votre conseiller — ' +
+          new Date(r.replied_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) +
+          '</div>' + esc(r.reply_text) + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Impossible de charger vos relectures.</div>';
+  }
+}
+
+loadMyRequests();
+var btnRef = document.getElementById('btnRefreshRequests');
+if (btnRef) btnRef.addEventListener('click', loadMyRequests);
+</script>
 </body>
 </html>

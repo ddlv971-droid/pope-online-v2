@@ -3,22 +3,133 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Accompagnement privé sur mesure</title>
+<title>POPE Online — Accompagnement sur mesure privé</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body data-logout-target="private.html" class="bg po-v5-harmony po-public-v24 po-private-app" data-forced-space="private">
-<header class="topbar"><div class="container row between"><a class="brand link" href="dashboard-private.html" id="missionHomeLink"><img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/><div><div class="brand-title">POPE Online</div><div class="brand-sub" id="missionSubTitle">Accompagnement sur mesure</div></div></a><div class="row gap wrap"><span class="badge" data-tickets>Accès sécurisé</span><a class="btn ghost" href="app-private.html" id="spaceGenerateLink">Génération IA privée</a><a class="btn ghost" href="vault.html?space=private&amp;return=mission-private.html" id="spaceVaultLink">Dépôt sécurisé 48h</a><button class="btn" data-logout>Déconnexion</button></div></div></header>
-<main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:980px;margin:0 auto">
-    <div class="row between"><h2 id="missionTitle">Demande d’accompagnement sur mesure</h2><span class="badge" id="status">Prêt</span></div>
-    <p class="muted" id="missionLead">Décrivez votre besoin. Après analyse, nous revenons vers vous avec une proposition adaptée et un cadrage.</p>
-    <label class="label">Sujet</label><input class="input" id="subject" placeholder="Ex : Appui stratégique sur une série de livrables"/>
-    <label class="label">Contexte et enjeu</label><textarea class="input" id="context" rows="8" placeholder="Présentez le contexte, les contraintes, les interlocuteurs et l’échéance."></textarea>
-    <label class="label" id="missionContentLabel">Attendu</label><textarea class="input" id="content" rows="10" placeholder="Décrivez ce qui est attendu, le périmètre et les points de vigilance."></textarea>
-    <div class="card soft" style="margin-top:16px"><div class="row between wrap" style="align-items:flex-start;gap:14px"><div><h3 style="margin:0 0 6px">Pièces du dépôt sécurisé 48h</h3><p class="muted" style="margin:0" id="missionVaultLead">Joignez les pièces nécessaires à l'analyse de votre besoin.</p></div><a class="btn ghost" href="vault.html?space=private&amp;return=mission-private.html">Gérer mes pièces</a></div><div id="vaultMissionList" class="vault-inline-list" style="margin-top:12px"></div></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btnSend">Qualifier mon besoin</button></div><div class="fineprint" id="msg"></div>
-  </section>
+<body data-logout-target="private.html" class="bg v36-page po-v5-harmony po-public-v24" data-forced-space="private">
+
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="dashboard-private.html" id="missionHomeLink">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="missionSubTitle">Accompagnement sur mesure</div></div>
+    </a>
+    <div class="row gap wrap">
+      <span class="badge" data-tickets id="ticketBadge">—</span>
+      <a class="btn ghost" href="app-private.html" id="spaceGenerateLink">⚡ Génération</a>
+      <a class="btn ghost" href="expert-private.html" id="crossExpertLink">✍️ Relecture experte</a>
+      <a class="btn ghost" href="vault.html?space=private&amp;return=mission-private.html" id="spaceVaultLink">📂 Dépôt</a>
+      <button class="btn ghost" data-logout>Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<main class="v36-mission-layout">
+
+  <!-- Hero explicatif -->
+  <div class="v36-mission-hero">
+    <div class="v36-mission-hero-icon">🎯</div>
+    <div class="v36-mission-hero-text">
+      <h1 id="missionTitle">Accompagnement sur mesure</h1>
+      <p id="missionLead">Vous avez un besoin plus large qu'un simple document à produire ou relire. Exposez-nous votre situation : nous analysons, cadrons et revenons vers vous avec une proposition d'accompagnement adaptée.</p>
+    </div>
+  </div>
+
+  <!-- Cartes de différenciation -->
+  <div class="v36-diff-grid">
+    <div class="v36-diff-card">
+      <div class="icon">⚡</div>
+      <h3>Génération guidée</h3>
+      <p>Vous savez ce que vous voulez produire. Vous avez le contexte et l'objectif. L'IA génère, vous exploitez.</p>
+      <a href="app-private.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#50627a">→ Accéder</a>
+    </div>
+    <div class="v36-diff-card">
+      <div class="icon">✍️</div>
+      <h3>Relecture experte</h3>
+      <p>Vous avez un document à faire valider. Un conseiller analyse le fond, la forme et les risques sous 48h.</p>
+      <a href="expert-private.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#50627a">→ Accéder</a>
+    </div>
+    <div class="v36-diff-card active">
+      <div class="icon">🎯</div>
+      <h3>Sur mesure</h3>
+      <p>Besoin complexe, dossier multi-étapes, stratégie à structurer. Nous cadrons et vous accompagnons.</p>
+      <span style="display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:#0079c1">✓ Vous êtes ici</span>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="v36-mission-form-card">
+    <div class="v36-mission-form-head">
+      <h2 id="missionFormTitle">Qualifiez votre besoin</h2>
+      <p id="missionFormLead">Plus votre description est précise, plus notre proposition d'accompagnement sera pertinente. Nous revenons vers vous après analyse et cadrage.</p>
+    </div>
+    <div class="v36-mission-form-body">
+
+      <!-- Sujet -->
+      <div class="v36-field">
+        <label for="subject">
+          Sujet principal
+          <span class="v36-field-badge required">Obligatoire</span>
+        </label>
+        <input class="input" id="subject"
+          placeholder="Ex : Appui sur un dossier de réponse à un MAPA de travaux / Accompagnement création d'entreprise"/>
+        <div class="v36-field-hint">Résumez votre besoin en une phrase claire — c'est ce que votre conseiller lira en premier.</div>
+      </div>
+
+      <!-- Contexte + Enjeu -->
+      <div class="v36-field">
+        <label for="context">
+          Contexte et enjeux
+          <span class="v36-field-badge required">Obligatoire</span>
+        </label>
+        <textarea class="input" id="context" rows="6"
+          placeholder="Décrivez votre situation : qui vous êtes, le contexte dans lequel s'inscrit ce besoin, les interlocuteurs impliqués, les contraintes de délai, le niveau d'enjeu et ce qui a déjà été fait."></textarea>
+        <div class="v36-field-hint">Plus le contexte est riche, plus l'accompagnement sera précis et utile.</div>
+      </div>
+
+      <!-- Attendu -->
+      <div class="v36-field">
+        <label for="content" id="missionContentLabel">
+          Ce que vous attendez
+          <span class="v36-field-badge required">Obligatoire</span>
+        </label>
+        <textarea class="input" id="content" rows="7"
+          placeholder="Décrivez précisément ce que vous souhaitez obtenir : &#10;• Quelles étapes souhaitez-vous couvrir ?&#10;• Quel niveau d'appui attendez-vous (conseil, rédaction, relecture, cadrage) ?&#10;• Y a-t-il des points de vigilance particuliers ?&#10;• Quelle est votre échéance ?"></textarea>
+      </div>
+
+      <!-- Pièces vault -->
+      <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces utiles à l'analyse</div>
+            <div style="font-size:12px;color:#50627a;margin-top:2px" id="missionVaultLead">Joignez les pièces qui aideront votre conseiller à comprendre le dossier.</div>
+          </div>
+          <a class="btn ghost" href="vault.html?space=private&amp;return=mission-private.html" style="font-size:13px">Gérer mes pièces</a>
+        </div>
+        <div id="vaultMissionList" class="vault-inline-list"></div>
+      </div>
+
+      <!-- Disponibilité -->
+      <div style="background:#f0f7fc;border:1.5px solid #b8dcf0;border-radius:14px;padding:16px;margin-bottom:20px;font-size:13px;color:#0b3060;display:flex;align-items:flex-start;gap:12px">
+        <span style="font-size:20px;flex-shrink:0">ℹ️</span>
+        <div>
+          <strong>Comment ça se passe ?</strong><br>
+          Votre demande est transmise à votre conseiller POPE Online. Après analyse, nous revenons vers vous dans les <strong>48h ouvrées</strong> avec un cadrage et une proposition d'accompagnement. Vous recevez une notification par email et dans votre espace.
+        </div>
+      </div>
+
+      <button class="v36-mission-submit" id="btnSend" type="button">
+        🎯 Qualifier mon besoin &amp; envoyer
+      </button>
+      <div id="msg" class="fineprint" style="margin-top:10px;text-align:center"></div>
+    </div>
+  </div>
+
 </main>
+
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
-<script type="module" src="./mission-page.js"></script></body></html>
+<script type="module" src="./mission-page.js"></script>
+</body>
+</html>

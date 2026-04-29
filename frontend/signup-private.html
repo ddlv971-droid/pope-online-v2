@@ -51,7 +51,7 @@ el('btn').addEventListener('click', async () => {
   if (!el('cgu').checked) return showToast('Merci d’accepter les conditions d’utilisation.', 'warn');
   try {
     const fp = await getFingerprint();
-    const data = await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken() } });
+    const data = await apiFetch('/auth/signup', { method:'POST', body:{ email:el('email').value.trim(), password:el('password').value, fullName:el('fullName').value.trim(), organization:el('organization').value.trim(), phoneCountry:el('phoneCountry').value, phoneNumber:el('phoneNumber').value.trim(), phoneFull:el('phoneFull').value, fp, accountSpace:'private', turnstileToken:getTurnstileToken(), ref:(new URLSearchParams(window.location.search).get('ref')||'') } });
     if (data?.mailFailed) {
       el('msg').textContent = '⚠️ Compte créé, mais l\'e-mail de vérification n\'a pas pu être envoyé. Contactez le support : contact@pope-online.com';
       showToast('Compte créé — e-mail non envoyé', 'warn');

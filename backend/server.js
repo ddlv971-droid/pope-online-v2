@@ -56,6 +56,8 @@ app.use((req, res, next) => {
   next();
 });
 
+// Stripe webhook raw body (doit être AVANT express.json)
+app.use('/billing/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '15mb' }));
 
 // 🌍 Localisation API
@@ -106,6 +108,7 @@ app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/expert', expertRoutes);
+app.use('/billing', billingRouter);
 app.use('/mission', missionRoutes);
 app.use('/billing', billingRoutes);
 app.use('/usage', usageRoutes);

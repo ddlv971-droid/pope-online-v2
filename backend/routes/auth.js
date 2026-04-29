@@ -739,4 +739,35 @@ router.post('/logout', requireAuth, async (req, res) => {
   return res.json({ ok: true });
 });
 
+
+// ── GET /auth/referral — infos parrainage du client connecté ────────────────
+router.get('/referral', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.sub;
+    const row = await withClient(async (client) => {
+      const r = await client.query(
+        `select u.referral_code,
+                count(invited.id) as invites_count,
+                count(invited.id) filter (where w.status='active') as converted_count
+         from users u
+         left join users invited on invited.referred_by = u.id
+         left join wallets w on w.user_id = invited.id
+         where u.id = $1
+         group by u.referral_code`,
+        [userId]
+      );
+      return r.rows[0] || null;
+    });
+    if (!row) return res.status(404).json({ error: 'not_found' });
+    return res.json({
+      referral_code:   row.referral_code,
+      referral_url:    `${process.env.FRONTEND_BASE_URL || 'https://pope-online.com'}/signup.html?ref=${row.referral_code}`,
+      invites_count:   Number(row.invites_count || 0),
+      converted_count: Number(row.converted_count || 0)
+    });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
 export default router;

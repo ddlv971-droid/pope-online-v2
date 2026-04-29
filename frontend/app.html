@@ -7,7 +7,9 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
-<body data-logout-target="public.html" class="bg po-v8-public" data-forced-space="public">
+<body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
+
+<!-- TOPBAR -->
 <header class="topbar">
   <div class="container row between">
     <a class="brand link" href="dashboard.html" id="appHomeLink">
@@ -15,52 +17,234 @@
       <div><div class="brand-title">POPE Online</div><div class="brand-sub" id="appSubTitle">Génération guidée</div></div>
     </a>
     <div class="row gap wrap">
-      <a class="btn ghost" href="vault.html?space=public&amp;return=app.html" id="appVaultLink">Dépôt sécurisé 48h</a>
-      <span class="badge" data-tickets>Accès sécurisé</span>
-      <a class="btn ghost" href="expert.html" id="appExpertLink">Relecture experte</a>
-      <button class="btn" data-logout>Déconnexion</button>
+      <a class="btn ghost" href="vault.html?space=public&amp;return=app.html" id="appVaultLink">📂 Dépôt sécurisé</a>
+      <span class="badge" data-tickets id="ticketBadge">—</span>
+      <a class="btn ghost" href="expert.html" id="appExpertLink">✍️ Relecture experte</a>
+      <button class="btn ghost" data-logout>Déconnexion</button>
     </div>
   </div>
 </header>
-<main class="container public-space-v10">
-  <section class="card public-hero-v10">
-    <div class="public-hero-v10-copy">
-      <span class="badge" id="spaceBadge">Génération guidée</span>
-      <h1 id="heroTitle">Produire un livrable sécurisé</h1>
-      <p class="muted" id="heroCopy">Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.</p>
+
+<!-- BARRE DE WORKFLOW -->
+<div class="v36-workflow-bar">
+  <div class="v36-workflow-inner">
+    <div class="v36-wf-step active" id="wfStep1">
+      <span class="v36-wf-num">1</span> Préparer
     </div>
-    <div class="public-hero-v10-status">
-      <div class="status-card-v10"><span class="status-label-v10">Statut</span><strong id="status">Prêt</strong></div>
-      <div class="status-card-v10"><span class="status-label-v10">Archivage</span><strong id="archiveModeLabel">Disponible</strong></div>
+    <div class="v36-wf-step" id="wfStep2">
+      <span class="v36-wf-num">2</span> Générer
     </div>
-  </section>
-  <section class="public-layout-v12">
-    <section class="card public-form-v10 public-form-v11 public-form-v12">
-      <div class="section-heading-v10"><h2>Préparer votre demande</h2><p class="muted" id="formCopy">Cadrez votre besoin, précisez l'objectif attendu et rassemblez les éléments utiles avant la génération.</p></div>
-      <label class="label" id="usecaseLabel">Type de livrable</label>
-      <select class="input" id="usecase"></select>
-      <section class="usecase-insight-v15" id="usecaseInsight" aria-live="polite"></section>
-      <div class="grid2 grid2-v24"><div><label class="label" id="contextLabel">Contexte</label><textarea class="input" id="context" rows="8"></textarea></div><div><label class="label" id="objectiveLabel">Objectif du livrable</label><textarea class="input" id="objective" rows="8"></textarea></div></div>
-      <label class="label" id="factsLabel">Éléments factuels utiles</label><textarea class="input" id="facts" rows="7"></textarea>
-      <section class="vault-inline-v14">
-        <div class="row between wrap" style="align-items:flex-start;gap:12px">
-          <div><h3 id="vaultInlineTitle">Pièces temporaires 48h</h3><p class="muted" id="vaultInlineCopy">Ajoutez des pièces utiles à la génération. Les formats texte alimentent l'IA directement ; les autres formats restent disponibles en dépôt sécurisé.</p></div>
-          <a class="btn ghost" href="vault.html?space=public&amp;return=app.html">Ouvrir le dépôt sécurisé</a>
+    <div class="v36-wf-step" id="wfStep3">
+      <span class="v36-wf-num">3</span> Exploiter
+    </div>
+  </div>
+</div>
+
+<main class="v36-gen-layout">
+
+  <!-- ═══ COLONNE GAUCHE : FORMULAIRE ═══ -->
+  <div class="v36-form-col">
+
+    <!-- Sélecteur type de livrable -->
+    <div class="v36-usecase-selector">
+      <label for="usecase" id="usecaseLabel">Quel type de livrable ?</label>
+      <select id="usecase" aria-label="Type de livrable"></select>
+      <div class="v36-usecase-hint" id="usecaseInsight"></div>
+    </div>
+
+    <!-- Contexte + Objectif -->
+    <div class="v36-form-card">
+      <div class="v36-form-card-head">
+        <div class="v36-form-icon blue">📋</div>
+        <div>
+          <h3 id="contextLabel">Contexte &amp; Objectif</h3>
+          <p>Cadrez la situation et le résultat attendu</p>
         </div>
-        <div id="vaultInlineList" class="vault-inline-list"><div class="muted">Aucune pièce temporaire disponible pour le moment.</div></div>
-      </section>
-      <div class="public-cta-v10"><button class="btn primary public-generate-v10" id="btnGenerate" type="button">Produire un livrable sécurisé</button></div>
-      <div class="generation-indicator generation-indicator-v10" id="generationIndicator" aria-live="polite" hidden><span class="generation-spinner" aria-hidden="true"></span><div><strong>Génération en cours…</strong><div class="muted">Votre draft est en préparation. Un seul clic suffit.</div></div></div>
-      <div class="fineprint" id="safeNote">🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.</div>
-    </section>
-    <section class="card public-result-v10 public-result-v11 public-result-v12">
-      <div class="result-head-v10 result-head-v11"><div><h2>Résultat généré</h2><p class="muted">Le livrable s'affiche ici avec une mise en forme lisible pour la lecture, la copie, l'export et la relecture experte.</p></div><div class="row gap wrap"><button class="btn ghost icon-only" id="btnCopy" title="Copier le résultat" aria-label="Copier le résultat">📋</button><select class="input export-select" id="exportFormat" aria-label="Format d’export"><option value="">Exporter…</option><option value="txt">TXT</option><option value="csv">CSV</option><option value="doc">DOC</option><option value="pdf">PDF</option></select><button class="btn ghost" id="btnExport" type="button">Exporter</button></div></div>
-      <section class="dossier-intel-panel" id="dossierIntel" hidden></section><div class="output-shell output-shell-v10 output-shell-v11"><div class="output output-rich-v11" id="output" data-raw=""><div class="muted">Cliquez sur « Produire un livrable sécurisé » pour générer un premier draft structuré.</div></div></div>
-      <div class="result-actions-v10"><a class="btn ghost" href="expert.html" id="resultExpertLink">Demander une relecture experte</a><a class="btn ghost" href="mission.html" id="resultMissionLink">Accompagnement sur mesure</a></div>
-    </section>
-    <section class="card archive-v10 archive-v11 archive-v12" id="archivePanel"><div class="archive-v10-head"><div><h2>Archivage local</h2><p class="muted">Conservez sur cet appareil les générations que vous souhaitez retrouver, réouvrir ou transmettre ensuite.</p></div><label class="archive-auto-v10"><input type="checkbox" id="archiveAutoSave" /><span>Archiver automatiquement les prochaines générations</span></label></div><div class="archive-v10-toolbar archive-v11-toolbar"><button class="btn ghost" id="btnArchiveCurrent" type="button">Archiver ce résultat</button><button class="btn ghost" id="btnExportArchive" type="button">Exporter</button><label class="btn ghost archive-import-v10" for="archiveImportInput">Importer</label><input id="archiveImportInput" type="file" accept=".txt,.csv,.doc,text/plain,text/csv,application/msword" hidden /><button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button">Vider</button></div><input class="input archive-search-input-v10 archive-search-input-v11" id="archiveSearch" type="search" placeholder="Rechercher dans les archives" /><div class="archive-v10-summary" id="archiveSummary"></div><div class="archive-v10-list" id="archiveList"><div class="muted">Aucune génération archivée pour le moment.</div></div></section>
-  </section>
+      </div>
+      <label class="label" id="contextLabelFull">Contexte</label>
+      <textarea class="input" id="context" rows="5" style="margin-bottom:14px"></textarea>
+      <label class="label" id="objectiveLabel">Objectif du livrable</label>
+      <textarea class="input" id="objective" rows="4"></textarea>
+    </div>
+
+    <!-- Éléments factuels -->
+    <div class="v36-form-card">
+      <div class="v36-form-card-head">
+        <div class="v36-form-icon teal">🔍</div>
+        <div>
+          <h3 id="factsLabelHead">Éléments factuels</h3>
+          <p>Données, chiffres, acteurs, dates clés</p>
+        </div>
+      </div>
+      <textarea class="input" id="facts" rows="5" id="facts"></textarea>
+    </div>
+
+    <!-- Pièces vault -->
+    <div class="v36-form-card" id="vaultCard">
+      <div class="v36-form-card-head">
+        <div class="v36-form-icon amber">📎</div>
+        <div>
+          <h3 id="vaultInlineTitle">Pièces temporaires 48h</h3>
+          <p id="vaultInlineCopy">Les fichiers texte alimentent directement l'IA</p>
+        </div>
+      </div>
+      <div id="vaultInlineList" class="vault-inline-list">
+        <div class="muted" style="font-size:13px">Aucune pièce disponible.</div>
+      </div>
+      <a class="btn ghost" href="vault.html?space=public&return=app.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
+    </div>
+
+    <!-- Note sécurité -->
+    <div style="font-size:12px;color:#50627a;background:#f8fafc;border-radius:12px;padding:12px 14px;border:1px solid #e4edf6">
+      🔒 N'insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés.
+    </div>
+
+    <!-- Bouton générer -->
+    <button class="v36-generate-btn" id="btnGenerate" type="button">
+      <span>⚡</span> <span id="btnGenerateLabel">Produire un livrable sécurisé</span>
+    </button>
+
+    <!-- Indicateur de chargement -->
+    <div class="v36-loading" id="generationIndicator">
+      <div class="v36-spinner"></div>
+      <div>
+        <strong style="font-size:14px;color:#0b2440">Génération en cours…</strong>
+        <div style="font-size:12px;color:#50627a;margin-top:3px">Analyse du contexte, structuration, rédaction.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ COLONNE DROITE : RÉSULTAT ═══ -->
+  <div class="v36-result-col">
+
+    <!-- État vide -->
+    <div class="v36-result-empty" id="resultEmpty">
+      <div class="v36-result-empty-icon">📄</div>
+      <h3>Votre livrable apparaît ici</h3>
+      <p>Sélectionnez un type de document, complétez le contexte et cliquez sur Produire.</p>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+        <span style="background:#eef7ff;color:#0079c1;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Structuré</span>
+        <span style="background:#f0fdf4;color:#059669;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Professionnel</span>
+        <span style="background:#fffbeb;color:#d97706;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Exploitable</span>
+      </div>
+    </div>
+
+    <!-- Résultat généré (caché au départ) -->
+    <div class="v36-result-card" id="resultCard" hidden>
+      <div class="v36-result-header">
+        <div>
+          <h2>Résultat généré</h2>
+          <div style="font-size:12px;color:#50627a;margin-top:2px" id="resultMeta"></div>
+        </div>
+        <div class="v36-result-actions">
+          <button class="btn ghost icon-only" id="btnCopy" title="Copier" aria-label="Copier le résultat">📋</button>
+          <select class="input" id="exportFormat" style="font-size:13px;padding:7px 10px;width:auto" aria-label="Format d'export">
+            <option value="">Exporter…</option>
+            <option value="txt">TXT</option>
+            <option value="csv">CSV</option>
+            <option value="doc">DOC</option>
+            <option value="pdf">PDF</option>
+          </select>
+          <button class="btn ghost" id="btnExport" type="button">Exporter</button>
+          <button class="btn ghost" id="btnArchiveCurrent" type="button">🗄 Archiver</button>
+        </div>
+      </div>
+      <div class="v36-result-body">
+        <div class="v36-output" id="output" data-raw=""></div>
+        <section class="dossier-intel-panel" id="dossierIntel" hidden></section>
+      </div>
+    </div>
+
+    <!-- Actions suivantes (caché au départ) -->
+    <div class="v36-next-actions" id="nextActions" hidden>
+      <h3>Et maintenant ?</h3>
+      <div class="v36-next-btns">
+        <a class="v36-next-btn" href="expert.html" id="resultExpertLink">
+          <span class="v36-next-btn-icon">✍️</span>
+          <div class="v36-next-btn-text">
+            <strong>Relecture experte</strong>
+            <span>Faire valider par un conseiller</span>
+          </div>
+        </a>
+        <a class="v36-next-btn" href="mission.html" id="resultMissionLink">
+          <span class="v36-next-btn-icon">🎯</span>
+          <div class="v36-next-btn-text">
+            <strong>Sur mesure</strong>
+            <span>Accompagnement approfondi</span>
+          </div>
+        </a>
+        <button class="v36-next-btn" id="btnRefine" type="button" style="border:none;text-align:left;background:#fff;border:1.5px solid var(--v36-line)">
+          <span class="v36-next-btn-icon">✨</span>
+          <div class="v36-next-btn-text">
+            <strong>Affiner</strong>
+            <span>Améliorer la qualité</span>
+          </div>
+        </button>
+        <button class="v36-next-btn" id="btnRiskCheck" type="button" style="border:none;text-align:left;background:#fff;border:1.5px solid var(--v36-line)">
+          <span class="v36-next-btn-icon">⚠️</span>
+          <div class="v36-next-btn-text">
+            <strong>Vérifier les risques</strong>
+            <span>Analyse des points sensibles</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Archivage local -->
+    <div class="v36-archive-card" id="archivePanel">
+      <div class="v36-archive-head">
+        <div>
+          <h3>Archivage local</h3>
+          <p style="margin:2px 0 0;font-size:12px;color:#50627a">Conservez vos générations sur cet appareil</p>
+        </div>
+        <label class="archive-auto-v10" style="font-size:13px">
+          <input type="checkbox" id="archiveAutoSave"/>
+          <span>Auto-archiver</span>
+        </label>
+      </div>
+      <div class="v36-archive-toolbar">
+        <button class="btn ghost" id="btnExportArchive" type="button" style="font-size:13px">Exporter tout</button>
+        <label class="btn ghost archive-import-v10" for="archiveImportInput" style="font-size:13px">Importer</label>
+        <input id="archiveImportInput" type="file" accept=".txt,.csv,.doc,text/plain,text/csv,application/msword" hidden/>
+        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button" style="font-size:13px">Vider</button>
+        <input class="input archive-search-input-v10" id="archiveSearch" type="search" placeholder="Rechercher…" style="font-size:13px"/>
+      </div>
+      <div class="v36-archive-body">
+        <div class="archive-v10-summary" id="archiveSummary"></div>
+        <div class="archive-v10-list" id="archiveList">
+          <div class="muted" style="font-size:13px">Aucune génération archivée.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </main>
+
+<script>
+// Workflow steps UI
+function setWorkflowStep(n) {
+  ['wfStep1','wfStep2','wfStep3'].forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','done');
+    if (i+1 === n) el.classList.add('active');
+    else if (i+1 < n) el.classList.add('done');
+  });
+}
+// Montrer résultat
+function showResult(html, meta) {
+  document.getElementById('resultEmpty').style.display = 'none';
+  var card = document.getElementById('resultCard');
+  card.removeAttribute('hidden');
+  var next = document.getElementById('nextActions');
+  next.removeAttribute('hidden');
+  if (meta) document.getElementById('resultMeta').textContent = meta;
+  setWorkflowStep(3);
+}
+window.setWorkflowStep = setWorkflowStep;
+window.showResult = showResult;
+</script>
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
 <script type="module" src="./app-page.js"></script>

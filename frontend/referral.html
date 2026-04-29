@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Parrainez vos contacts</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style>
+.ref-hero{background:linear-gradient(135deg,#07162a,#0b3060 50%,#0079c1);border-radius:24px;padding:40px;color:#fff;margin-bottom:28px;text-align:center}
+.ref-hero h1{margin:0 0 10px;font-size:clamp(22px,4vw,30px);font-weight:800;hyphens:none}
+.ref-hero p{margin:0;color:rgba(255,255,255,.75);font-size:15px}
+.ref-card{background:#fff;border-radius:20px;box-shadow:0 2px 18px rgba(11,36,64,.07);padding:32px;margin-bottom:16px}
+.ref-url-box{background:#f0f7fc;border:2px solid #b8dcf0;border-radius:12px;padding:14px 18px;font-family:monospace;font-size:14px;color:#0b2440;word-break:break-all;margin:14px 0}
+.ref-stat{text-align:center;background:#f8fafc;border:1px solid #dce9f4;border-radius:16px;padding:20px}
+.ref-stat .n{font-size:36px;font-weight:800;color:#0079c1}
+.ref-stat .l{font-size:13px;color:#50627a;margin-top:4px}
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.ref-step{display:flex;gap:14px;align-items:flex-start;padding:16px;background:#f8fafc;border-radius:14px;margin-bottom:10px}
+.ref-step .num{min-width:32px;height:32px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+.ref-step h3{margin:0 0 4px;font-size:15px;color:#0b2440}
+.ref-step p{margin:0;font-size:13px;color:#50627a}
+@media(max-width:500px){.ref-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" id="homeLink" href="dashboard.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Programme de parrainage</div></div>
+    </a>
+    <div class="row gap">
+      <a class="btn ghost" id="dashLink" href="dashboard.html">Mon espace</a>
+    </div>
+  </div>
+</header>
+<main style="max-width:720px;margin:0 auto;padding:32px 20px 80px">
+
+  <div class="ref-hero">
+    <div style="font-size:40px;margin-bottom:14px">🎁</div>
+    <h1>Parrainez vos contacts</h1>
+    <p>Partagez POPE Online avec vos collègues, partenaires et réseaux professionnels.<br>Chaque filleul bénéficie de l'essai gratuit complet dès son inscription.</p>
+  </div>
+
+  <div class="ref-card">
+    <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;color:#0b2440">Votre lien de parrainage</h2>
+    <p style="color:#50627a;font-size:14px;margin:0 0 12px">Partagez ce lien — vos filleuls sont automatiquement associés à votre compte.</p>
+    <div class="ref-url-box" id="refUrl">Chargement...</div>
+    <div class="row gap wrap">
+      <button class="btn" id="btnCopy" type="button">📋 Copier le lien</button>
+      <a class="btn ghost" id="btnEmail" href="#" target="_blank">✉️ Envoyer par email</a>
+      <a class="btn ghost" id="btnLinkedin" href="#" target="_blank">💼 Partager sur LinkedIn</a>
+    </div>
+    <div id="copyMsg" style="font-size:13px;color:#059669;margin-top:8px;min-height:18px"></div>
+  </div>
+
+  <div class="ref-card">
+    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#0b2440">Vos statistiques</h2>
+    <div class="ref-grid">
+      <div class="ref-stat">
+        <div class="n" id="invitesCount">—</div>
+        <div class="l">Invitations envoyées</div>
+      </div>
+      <div class="ref-stat">
+        <div class="n" id="convertedCount">—</div>
+        <div class="l">Filleuls abonnés</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#7a8fa8;margin:8px 0 0">Les statistiques sont mises à jour en temps réel.</p>
+  </div>
+
+  <div class="ref-card">
+    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#0b2440">Comment ça fonctionne</h2>
+    <div class="ref-step">
+      <div class="num">1</div>
+      <div>
+        <h3>Copiez votre lien unique</h3>
+        <p>Votre code de parrainage est intégré dans le lien — il identifie automatiquement vos filleuls.</p>
+      </div>
+    </div>
+    <div class="ref-step">
+      <div class="num">2</div>
+      <div>
+        <h3>Partagez à votre réseau</h3>
+        <p>Envoyez le lien par email, LinkedIn, WhatsApp ou lors de vos échanges professionnels.</p>
+      </div>
+    </div>
+    <div class="ref-step">
+      <div class="num">3</div>
+      <div>
+        <h3>Vos filleuls bénéficient de l'essai complet</h3>
+        <p>15 jours d'accès gratuit, 2 relectures expertes offertes, clausier documentaire inclus — sans carte bancaire.</p>
+      </div>
+    </div>
+    <div class="ref-step">
+      <div class="num">4</div>
+      <div>
+        <h3>Suivi en temps réel</h3>
+        <p>Consultez vos statistiques ici : nombre d'invitations et de filleuls convertis en abonnés.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ref-card" style="background:linear-gradient(135deg,#eef7ff,#f5fbff);border:1.5px solid #b8dcf0">
+    <h2 style="margin:0 0 10px;font-size:16px;font-weight:700;color:#0b2440">💡 Suggestions de message</h2>
+    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#50627a;line-height:1.7;margin-bottom:12px">
+      <strong style="color:#0b2440">Pour un collègue :</strong><br>
+      "Tu connais POPE Online ? C'est une plateforme qui génère des livrables professionnels par IA (courriers, délibérations, réponses aux marchés) et les fait relire par un expert humain. J'utilise ça pour [cas d'usage]. Tu peux essayer gratuitement pendant 15 jours : [ton lien]"
+    </div>
+    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#50627a;line-height:1.7">
+      <strong style="color:#0b2440">Pour un réseau professionnel :</strong><br>
+      "Je teste POPE Online depuis quelques semaines — outil très pratique pour accélérer la production documentaire et sécuriser les livrables avec un conseiller expert. Essai gratuit 15 jours, pas de CB : [ton lien]"
+    </div>
+  </div>
+
+</main>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout } from './app.js';
+
+if (!requireLogin('referral.html')) {}
+wireLogout();
+
+async function init() {
+  try {
+    const me = await apiFetch('/auth/me');
+    const space = me?.user?.accountSpace || 'public';
+    const dashUrl = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+    document.getElementById('homeLink').href = dashUrl;
+    document.getElementById('dashLink').href  = dashUrl;
+
+    const data = await apiFetch('/auth/referral');
+    const url  = data.referral_url;
+
+    document.getElementById('refUrl').textContent         = url;
+    document.getElementById('invitesCount').textContent   = data.invites_count;
+    document.getElementById('convertedCount').textContent = data.converted_count;
+
+    // Bouton copier
+    document.getElementById('btnCopy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        document.getElementById('copyMsg').textContent = '✓ Lien copié dans le presse-papiers';
+        setTimeout(() => { document.getElementById('copyMsg').textContent = ''; }, 3000);
+      } catch { document.getElementById('copyMsg').textContent = 'Copiez manuellement le lien ci-dessus'; }
+    });
+
+    // Email
+    const subject = encodeURIComponent('Essaie POPE Online — 15 jours gratuits');
+    const body = encodeURIComponent(`Bonjour,\n\nJe te recommande POPE Online, une plateforme qui génère des livrables professionnels par IA et les fait relire par un conseiller expert.\n\nEssai gratuit 15 jours, sans carte bancaire :\n${url}\n\nBonne découverte !`);
+    document.getElementById('btnEmail').href = `mailto:?subject=${subject}&body=${body}`;
+
+    // LinkedIn
+    document.getElementById('btnLinkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+
+  } catch(e) {
+    document.getElementById('refUrl').textContent = 'Impossible de charger votre lien. Rechargez la page.';
+    console.error(e);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
