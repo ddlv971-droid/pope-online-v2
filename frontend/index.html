@@ -3,250 +3,609 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>POPE Online — Privé & Public</title>
-  <meta name="description" content="POPE Online relie un espace privé et un espace public dans une expérience premium, structurée et opérationnelle." />
-  <link rel="icon" href="./assets/favicon.png" type="image/png">
+  <title>POPE Online — IA &amp; expertise humaine pour vos livrables professionnels</title>
+  <meta name="description" content="POPE Online produit, sécurise et fait relire vos livrables professionnels par des conseillers experts. Deux espaces : collectivités et entreprises privées."/>
+  <link rel="icon" href="./assets/favicon.png" type="image/png"/>
+  <link rel="shortcut icon" href="./favicon.png"/>
+  <link rel="apple-touch-icon" href="./favicon.png"/>
   <link rel="stylesheet" href="app.css"/>
-<link rel="shortcut icon" href="./favicon.png">
-<link rel="apple-touch-icon" href="./favicon.png">
+<style>
+/* ── Index V39 styles supplémentaires ── */
+.v39-body {
+  background: #07162a;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* NAV */
+.v39-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 62px;
+  background: rgba(7,22,42,.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center;
+}
+.v39-nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 24px;
+  width: 100%; display: flex; align-items: center; gap: 8px;
+}
+.v39-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.v39-brand img { height: 32px; }
+.v39-brand strong { font-size: 15px; font-weight: 800; color: #fff; }
+.v39-brand small  { font-size: 11px; color: rgba(255,255,255,.45); margin-left: 2px; }
+.v39-nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.v39-nav-links a {
+  color: rgba(255,255,255,.65); text-decoration: none; font-size: 13px;
+  font-weight: 500; padding: 7px 12px; border-radius: 8px; transition: .15s;
+}
+.v39-nav-links a:hover { color: #fff; background: rgba(255,255,255,.07); }
+.v39-nav-sep { width: 1px; height: 20px; background: rgba(255,255,255,.1); margin: 0 6px; }
+.v39-nav-cta-priv {
+  background: rgba(0,121,193,.25) !important; color: #7dcfff !important;
+  border: 1px solid rgba(0,121,193,.35) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+.v39-nav-cta-pub {
+  background: rgba(194,46,131,.2) !important; color: #ffaad8 !important;
+  border: 1px solid rgba(194,46,131,.3) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+.v39-nav-cta-login {
+  background: rgba(255,255,255,.1) !important; color: #fff !important;
+  border: 1px solid rgba(255,255,255,.15) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+
+/* HERO — bandeau animé amplifié */
+.v39-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  padding-top: 62px; /* nav height */
+}
+
+/* Bandeau animé plein écran */
+.v39-band {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #02111f;
+}
+
+.v39-band-bg {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(0,121,193,.18), transparent 40%),
+    radial-gradient(circle at 85% 45%, rgba(194,46,131,.1), transparent 38%),
+    radial-gradient(circle at 50% 90%, rgba(3,160,215,.06), transparent 35%),
+    linear-gradient(160deg, #030e1c 0%, #06243e 50%, #020d19 100%);
+}
+
+/* Mosaïque panels */
+.v39-panels {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; width: 100%; height: 100%;
+}
+.v39-panel {
+  flex: 1 1 20%; height: 100%; overflow: hidden; position: relative;
+  will-change: opacity, transform, filter;
+  transition: opacity 1.2s cubic-bezier(.22,.61,.36,1),
+              transform 1.2s cubic-bezier(.22,.61,.36,1),
+              filter 1.2s cubic-bezier(.22,.61,.36,1);
+}
+.v39-panel img {
+  position: absolute; top: 0; left: calc(var(--i) * -100%);
+  width: 500%; height: 100%; object-fit: cover;
+  pointer-events: none; transform: scale(1.02);
+}
+.v39-panel.hide {
+  opacity: 0; transform: translateY(-3%) scale(.99); filter: blur(8px);
+}
+/* Vignette sur la mosaïque */
+.v39-panels::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(2,17,31,.4) 0%, transparent 25%, transparent 60%, rgba(2,17,31,.85) 100%),
+    linear-gradient(90deg, rgba(2,17,31,.2), transparent 15%, transparent 85%, rgba(2,17,31,.15));
+}
+
+/* Filigrane logo sur la mosaïque */
+.v39-watermark {
+  position: absolute; inset: 0; z-index: 4;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; mix-blend-mode: screen;
+}
+.v39-watermark img {
+  width: min(68vw, 860px); opacity: .1; filter: blur(.5px);
+}
+
+/* Contenu centré sur le bandeau */
+.v39-band-content {
+  position: absolute; inset: 0; z-index: 6;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 0 24px; text-align: center;
+  pointer-events: none;
+}
+.v39-band-logo { height: clamp(32px, 5vw, 54px); margin-bottom: 20px; }
+
+.v39-slogan-wrap { min-height: 60px; display: flex; align-items: center; justify-content: center; }
+.v39-slogan {
+  font-size: clamp(22px, 3.5vw, 42px);
+  font-weight: 800; letter-spacing: -.03em;
+  color: #fff; line-height: 1.1;
+  animation: v39fadeIn .7s ease;
+}
+@keyframes v39fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.v39-band-sub {
+  color: rgba(255,255,255,.55); font-size: clamp(13px, 1.8vw, 17px);
+  margin-top: 14px; font-weight: 400;
+}
+
+/* Ticker texte défilant en bas du bandeau */
+.v39-ticker {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 7;
+  height: 38px; background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
+  display: flex; align-items: center; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.v39-ticker-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: v39ticker 28s linear infinite;
+}
+@keyframes v39ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.v39-ticker-item {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 0 28px; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,.55); letter-spacing: .04em;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.v39-ticker-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.v39-ticker-dot.blue  { background: #0079c1; }
+.v39-ticker-dot.pink  { background: #c22e83; }
+.v39-ticker-dot.cyan  { background: #03a0d7; }
+
+/* CTA overlay en bas du hero */
+.v39-cta-zone {
+  background: linear-gradient(to top, #07162a 0%, transparent 100%);
+  padding: 0 24px 40px;
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+  position: relative; z-index: 8; pointer-events: all;
+  margin-top: -120px;
+}
+
+/* Cartes espaces */
+.v39-spaces {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; max-width: 1100px; margin: 0 auto;
+  padding: 0 24px 60px; position: relative; z-index: 2;
+}
+
+.v39-space-card {
+  border-radius: 24px; padding: 32px;
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(4px);
+  transition: .25s; cursor: default;
+  position: relative; overflow: hidden;
+}
+.v39-space-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 24px;
+  opacity: 0; transition: .3s;
+}
+.v39-space-card:hover::before { opacity: 1; }
+
+.v39-space-card.priv {
+  background: linear-gradient(135deg, rgba(0,121,193,.15), rgba(7,22,42,.8) 60%);
+}
+.v39-space-card.priv::before {
+  background: linear-gradient(135deg, rgba(0,121,193,.22), rgba(7,22,42,.85) 60%);
+}
+.v39-space-card.priv:hover { border-color: rgba(0,121,193,.35); transform: translateY(-3px); box-shadow: 0 20px 50px rgba(0,121,193,.2); }
+
+.v39-space-card.pub {
+  background: linear-gradient(135deg, rgba(194,46,131,.12), rgba(7,22,42,.8) 60%);
+}
+.v39-space-card.pub::before {
+  background: linear-gradient(135deg, rgba(194,46,131,.2), rgba(7,22,42,.85) 60%);
+}
+.v39-space-card.pub:hover { border-color: rgba(194,46,131,.3); transform: translateY(-3px); box-shadow: 0 20px 50px rgba(194,46,131,.15); }
+
+.v39-space-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  border-radius: 999px; padding: 4px 12px; margin-bottom: 14px; position: relative; z-index: 1;
+}
+.v39-space-card.priv .v39-space-tag { background: rgba(0,121,193,.2); color: #7dcfff; }
+.v39-space-card.pub  .v39-space-tag { background: rgba(194,46,131,.18); color: #ffaad8; }
+
+.v39-space-card h2 {
+  margin: 0 0 12px; font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 800; color: #fff; letter-spacing: -.02em;
+  hyphens: none; word-break: normal;
+  position: relative; z-index: 1;
+}
+.v39-space-card p {
+  margin: 0 0 20px; font-size: 14px; color: rgba(255,255,255,.65);
+  line-height: 1.65; max-width: 40ch; position: relative; z-index: 1;
+}
+.v39-space-list {
+  list-style: none; margin: 0 0 24px; padding: 0;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative; z-index: 1;
+}
+.v39-space-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: rgba(255,255,255,.75);
+}
+.v39-space-list li::before { content: '✓'; font-weight: 700; flex-shrink: 0; }
+.v39-space-card.priv .v39-space-list li::before { color: #0099e6; }
+.v39-space-card.pub  .v39-space-list li::before { color: #e060a8; }
+
+.v39-space-actions { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+.v39-space-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 14px; font-weight: 700; text-decoration: none; transition: .2s;
+}
+.v39-space-card.priv .v39-space-btn.main {
+  background: #0079c1; color: #fff;
+  box-shadow: 0 6px 20px rgba(0,121,193,.35);
+}
+.v39-space-card.priv .v39-space-btn.main:hover { background: #0088d4; }
+.v39-space-card.pub  .v39-space-btn.main {
+  background: #b9227c; color: #fff;
+  box-shadow: 0 6px 20px rgba(185,34,124,.3);
+}
+.v39-space-card.pub  .v39-space-btn.main:hover { background: #cc2a8a; }
+.v39-space-btn.ghost {
+  background: rgba(255,255,255,.07); color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.v39-space-btn.ghost:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+/* Section pitch */
+.v39-pitch {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px 60px;
+}
+.v39-pitch-inner {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 24px; padding: 40px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
+}
+.v39-pitch-item { text-align: center; }
+.v39-pitch-num  { font-size: 40px; font-weight: 800; color: #0099e6; margin-bottom: 8px; }
+.v39-pitch-item h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #fff; }
+.v39-pitch-item p  { margin: 0; font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.6; }
+
+/* Footer */
+.v39-footer {
+  background: rgba(0,0,0,.3); border-top: 1px solid rgba(255,255,255,.06);
+  padding: 20px 24px; text-align: center;
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+}
+.v39-footer a { color: rgba(255,255,255,.38); font-size: 12px; text-decoration: none; transition: .15s; }
+.v39-footer a:hover { color: rgba(255,255,255,.7); }
+.v39-footer span { color: rgba(255,255,255,.15); }
+
+/* Burger mobile */
+.v39-burger {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 6px; margin-left: auto; flex-direction: column; gap: 5px;
+}
+.v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; }
+
+/* Cookie (conservé tel quel) */
+.cookie-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,.5); }
+.cookie-modal {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 901;
+  background: #0d2035; border: 1px solid rgba(255,255,255,.1);
+  border-radius: 18px; padding: 24px 28px; max-width: 560px; width: calc(100% - 40px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.cookie-header { margin-bottom: 14px; }
+.cookie-badge {
+  display: inline-block; background: #0079c1; color: #fff;
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+}
+.cookie-header h2 { margin: 0; font-size: 16px; font-weight: 700; color: #fff; }
+.cookie-content p { margin: 0 0 8px; font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.6; }
+.cookie-content label { display: flex; gap: 10px; align-items: center; font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 8px; }
+.cookie-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.cookie-btn { padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: .15s; }
+.cookie-btn.primary { background: #0079c1; color: #fff; }
+.cookie-btn.primary:hover { background: #0088d4; }
+.cookie-btn.secondary { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); }
+.cookie-btn.secondary:hover { background: rgba(255,255,255,.16); }
+
+@media(max-width: 860px) {
+  .v39-spaces { grid-template-columns: 1fr; }
+  .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
+  .v39-nav-links { display: none; }
+  .v39-burger { display: flex; }
+  .v39-nav-links.open {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    position: fixed; top: 62px; left: 0; right: 0;
+    background: #07162a; padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,.08); z-index: 99;
+  }
+  .v39-cta-zone { margin-top: -60px; }
+  .v39-ticker { display: none; }
+}
+@media(max-width: 500px) {
+  .v39-space-card { padding: 22px 18px; }
+  .v39-pitch-inner { padding: 24px 20px; }
+}
+</style>
 </head>
-<body class="po-home-v5 po-home-v5-2">
-  <div class="po-page-bg" aria-hidden="true"></div>
-  <div class="po-tree-filigrane-v5" aria-hidden="true">
-    <img src="./assets/pope-tree-filigrane.png" alt="">
+<body class="v39-body">
+
+<!-- NAV -->
+<nav class="v39-nav">
+  <div class="v39-nav-inner">
+    <a class="v39-brand" href="index.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <span><strong>POPE Online</strong> <small>IA + Expertise</small></span>
+    </a>
+    <button class="v39-burger" id="burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="v39-nav-links" id="navLinks">
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">▶ Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="v39-nav-sep"></div>
+      <a href="private.html" class="v39-nav-cta-priv">🔒 Espace privé</a>
+      <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
+      <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
+<section class="v39-hero">
+  <div class="v39-band">
+    <div class="v39-band-bg"></div>
+
+    <!-- Mosaïque animée -->
+    <div class="v39-panels" id="panels">
+      <div class="v39-panel" style="--i:0"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:1"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:2"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:3"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:4"><img src="./assets/mosaic.png" alt=""/></div>
+    </div>
+
+    <!-- Filigrane logo -->
+    <div class="v39-watermark">
+      <img src="./assets/popeonline-logo2.png" alt=""/>
+    </div>
+
+    <!-- Contenu central -->
+    <div class="v39-band-content">
+      <img class="v39-band-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <div class="v39-slogan-wrap">
+        <div class="v39-slogan" id="slogan">Deux univers, une même exigence</div>
+      </div>
+      <div class="v39-band-sub">Intelligence artificielle · Expertise humaine · Livrables professionnels</div>
+    </div>
+
+    <!-- Ticker défilant -->
+    <div class="v39-ticker" aria-hidden="true">
+      <div class="v39-ticker-track">
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Génération IA guidée</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Relecture experte 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations municipales</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+        <!-- duplicate pour boucle infinie -->
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Génération IA guidée</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Relecture experte 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations municipales</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+      </div>
+    </div>
   </div>
 
-  <header class="po-nav po-nav-home">
-    <a class="po-brand" href="index.html" aria-label="Accueil POPE Online">
-      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <span>
-        <strong>POPE Online</strong>
-        <small>Privé &amp; Public</small>
-      </span>	
+  <!-- CTA overlay -->
+  <div class="v39-cta-zone">
+    <a href="signup.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(0,121,193,.4)">
+      Démarrer l'essai gratuit →
     </a>
-    <nav class="po-menu po-menu-extended" aria-label="Navigation principale">
-	<a href="about.html">Qui sommes-nous</a>
-      <a href="private.html" class="po-link-private">Espace privé</a>
-      <a href="public.html" class="po-link-public">Espace public</a>
-      <a href="tutoriel.html" class="po-menu-tuto">▶ Tutoriel</a>
-      <a href="pricing.html">Tarifs</a>
-      <a class="po-menu-contact po-menu-contact-mail" href="mailto:contact@pope-online.com">✉️ Contact mail</a>
-      <a class="po-menu-contact po-menu-contact-phone" href="tel:0970703055">📞 09 70 70 30 55</a>      
-      <a class="po-menu-cta" href="login.html">Connexion</a>
-<a class="po-menu-cta" href="signup.html">Créer un compte</a>
-    </nav>
-  </header>
+    <a href="login.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 22px;font-size:14px;font-weight:600;text-decoration:none">
+      Se connecter
+    </a>
+  </div>
+</section>
 
-  <main class="po-home-v5-main">
-    <section class="po-intro-band" aria-label="Animation d’introduction">
-      <div class="po-intro-shell">
-        <div class="po-intro-scene">
-          <div class="po-intro-final-bg"></div>
+<!-- CARTES ESPACES -->
+<section class="v39-spaces">
 
-          <div class="po-intro-final-logo-wrap">
-            <img id="finalLogo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online">
-            <div class="po-intro-slogan-line" id="introSlogan" aria-live="polite"></div>
-          </div>
-
-          <div class="po-intro-mosaic-stage" id="mosaicStage">
-            <div class="po-intro-panels">
-              <div class="po-intro-panel" style="--i:0"><img src="./assets/mosaic.png" alt=""></div>
-              <div class="po-intro-panel" style="--i:1"><img src="./assets/mosaic.png" alt=""></div>
-              <div class="po-intro-panel" style="--i:2"><img src="./assets/mosaic.png" alt=""></div>
-              <div class="po-intro-panel" style="--i:3"><img src="./assets/mosaic.png" alt=""></div>
-              <div class="po-intro-panel" style="--i:4"><img src="./assets/mosaic.png" alt=""></div>
-            </div>
-            <div class="po-intro-mosaic-watermark">
-              <img src="./assets/popeonline-logo2.png" alt="">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="po-split-v5 po-split-v5-2" aria-label="Choix d’univers">
-      <article class="po-card-v5 po-card-private po-card-v5-rich">
-        <div class="po-card-v5-topline">Espace privé</div>
-        <p class="po-card-intro">Pour les artisans, TPE, indépendants, commerçants et petites structures qui veulent déléguer leur administratif et rester concentrés sur leur activité.</p>
-        <ul class="po-card-list">
-          <li>Réponses aux marchés publics</li>
-          <li>Aide administrative sur mesure</li>
-          <li>Formalités, dossiers et suivi</li>
-          <li>Contact rapide et guidé</li>
-        </ul>
-        <div class="po-home-card-actions">
-          <a class="po-btn po-btn-solid" href="private.html">Accéder à l’espace privé</a>
-          <a class="po-btn po-btn-ghost po-btn-gift" href="offre-gratuite.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
-        </div>
-      </article>
-
-      <article class="po-card-v5 po-card-public po-card-v5-rich">
-        <div class="po-card-v5-topline">Espace public</div>
-        <p class="po-card-intro">Pour les collectivités, établissements et organisations qui doivent produire vite, sécuriser leurs livrables et mieux cadrer leurs arbitrages.</p>
-        <ul class="po-card-list po-card-list-public">
-          <li>Livrables administratifs sécurisés</li>
-          <li>IA guidée + expertise métier</li>
-          <li>Cadre responsable et traçable</li>
-          <li>Accès à l'expertise publique</li>
-        </ul>
-        <div class="po-home-card-actions">
-          <a class="po-btn po-btn-solid po-btn-solid-public" href="public.html">Accéder à l’espace public</a>
-          <a class="po-btn po-btn-ghost po-btn-gift" href="offre-gratuite.html"><img src="./assets/gift-premium.png" class="gift-premium" alt="" aria-hidden="true">Démarrer l’offre gratuite</a>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <footer class="po-footer-v5">
-    <div class="po-footer-v5-inner">
-      <span>© POPE ONLINE by Pope Consulting</span>
-      <span class="po-footer-sep">|</span>
-      <a href="tutoriel.html">▶ Tutoriel</a>
-      <span class="po-footer-sep">|</span>
-      <a href="legal.html">Mentions légales</a>
-      <span class="po-footer-sep">|</span>
-      <a href="cgu.html">CGU</a>
-      <span class="po-footer-sep">|</span>
-      <a href="cgv.html">CGV</a>
-      <span class="po-footer-sep">|</span>
-      <a href="privacy.html">Confidentialité</a>
-      <span class="po-footer-sep">|</span>
-      <a href="mailto:contact@pope-online.com">Contact</a>
+  <div class="v39-space-card priv">
+    <div class="v39-space-tag">🔒 Espace privé</div>
+    <h2>Artisans, indépendants &amp; TPE</h2>
+    <p>Déléguez votre administratif. Produisez des courriers, formalités et réponses aux marchés publics — vite et bien.</p>
+    <ul class="v39-space-list">
+      <li>Courriers URSSAF, banque, clients, fournisseurs</li>
+      <li>Formalités de création, modification, RH</li>
+      <li>Réponses aux marchés publics (MAPA)</li>
+      <li>Devis et propositions commerciales</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="private.html">Découvrir l'espace privé →</a>
+      <a class="v39-space-btn ghost" href="signup-private.html">Essai gratuit</a>
     </div>
-  </footer>
+  </div>
 
-  <div class="cookie-overlay" id="cookieOverlay" hidden></div>
-  <section class="cookie-modal" id="cookieModal" hidden aria-labelledby="cookieTitle" aria-modal="true" role="dialog">
-    <div class="cookie-header">
-      <div class="cookie-badge">POPE Online</div>
-      <h2 id="cookieTitle">La protection de vos données est notre priorité</h2>
+  <div class="v39-space-card pub">
+    <div class="v39-space-tag">🏛️ Espace public</div>
+    <h2>Collectivités &amp; organisations</h2>
+    <p>Produisez vite, décidez mieux. Notes stratégiques, délibérations, réponses aux marchés — sécurisés et validés.</p>
+    <ul class="v39-space-list">
+      <li>Notes stratégiques et arbitrages</li>
+      <li>Délibérations et synthèses de réunion</li>
+      <li>Réponses aux marchés publics (MAPA)</li>
+      <li>Cadrages projet / PMO</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="public.html">Découvrir l'espace public →</a>
+      <a class="v39-space-btn ghost" href="signup-public.html">Essai gratuit</a>
     </div>
+  </div>
 
-    <div class="cookie-content">
-      <p>POPE Online utilise des cookies strictement nécessaires au fonctionnement de la plateforme SaaS, à la sécurité des accès et à l’amélioration de l’expérience utilisateur.</p>
-      <p>Vous pouvez accepter tous les cookies, continuer sans accepter ou personnaliser vos choix. Votre décision est enregistrée et la fenêtre se ferme immédiatement après votre sélection.</p>
+</section>
+
+<!-- PITCH CHIFFRES -->
+<section class="v39-pitch">
+  <div class="v39-pitch-inner">
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">18</div>
+      <h3>Cas d'usage IA</h3>
+      <p>Documents calibrés pour le secteur public et privé — bien au-delà d'un chatbot généraliste.</p>
     </div>
-
-    <div class="cookie-buttons">
-      <button id="cookieDecline" class="cookie-btn secondary" type="button">Continuer sans accepter</button>
-      <button id="cookieSettings" class="cookie-btn secondary" type="button">Paramétrer vos choix</button>
-      <button id="cookieAccept" class="cookie-btn primary" type="button">Tout accepter</button>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">48h</div>
+      <h3>Délai de relecture</h3>
+      <p>Un conseiller expert humain analyse et valide votre document sous 48h ouvrées garanties.</p>
     </div>
-  </section>
-  <section class="cookie-modal" id="cookiePrefsModal" hidden aria-labelledby="cookiePrefsTitle" aria-modal="true" role="dialog">
-    <div class="cookie-header"><div class="cookie-badge">Préférences</div><h2 id="cookiePrefsTitle">Paramétrer vos cookies</h2></div>
-    <div class="cookie-content">
-      <label class="row gap wrap"><input type="checkbox" checked disabled/> Cookies essentiels (obligatoires)</label>
-      <label class="row gap wrap"><input type="checkbox" id="cookieAnalytics"/> Cookies analytiques</label>
-      <label class="row gap wrap"><input type="checkbox" id="cookieFunctional"/> Cookies fonctionnels</label>
-      <label class="row gap wrap"><input type="checkbox" id="cookieMarketing"/> Cookies marketing</label>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">15j</div>
+      <h3>Essai gratuit</h3>
+      <p>Production illimitée, 2 relectures expertes offertes. Sans carte bancaire, sans engagement.</p>
     </div>
-    <div class="cookie-buttons">
-      <button id="cookieSavePrefs" class="cookie-btn primary" type="button">Enregistrer mes préférences</button>
-      <button id="cookieBackMain" class="cookie-btn secondary" type="button">Retour</button>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const overlay = document.getElementById("cookieOverlay");
-    const modal = document.getElementById("cookieModal");
-    const accept = document.getElementById("cookieAccept");
-    const decline = document.getElementById("cookieDecline");
-    const settings = document.getElementById("cookieSettings");
-    const prefsModal = document.getElementById("cookiePrefsModal");
-    const analytics = document.getElementById("cookieAnalytics");
-    const functional = document.getElementById("cookieFunctional");
-    const marketing = document.getElementById("cookieMarketing");
-    const savePrefs = document.getElementById("cookieSavePrefs");
-    const backMain = document.getElementById("cookieBackMain");
-    const STORAGE_KEY = "pope_cookie_choice";
+<!-- FOOTER -->
+<footer class="v39-footer">
+  <span style="color:rgba(255,255,255,.25);font-size:12px">© Pope Consulting SAS</span>
+  <span>·</span><a href="legal.html">Mentions légales</a>
+  <span>·</span><a href="cgu.html">CGU</a>
+  <span>·</span><a href="cgv.html">CGV</a>
+  <span>·</span><a href="privacy.html">Confidentialité</a>
+  <span>·</span><a href="pricing.html">Tarifs</a>
+  <span>·</span><a href="about.html">À propos</a>
+  <span>·</span><a href="mailto:contact@pope-online.com">Contact</a>
+</footer>
 
-    if (!overlay || !modal || !accept || !decline || !settings) return;
+<!-- Cookie modal conservé -->
+<div class="cookie-overlay" id="cookieOverlay" hidden></div>
+<section class="cookie-modal" id="cookieModal" hidden aria-modal="true" role="dialog">
+  <div class="cookie-header">
+    <div class="cookie-badge">POPE Online</div>
+    <h2>La protection de vos données est notre priorité</h2>
+  </div>
+  <div class="cookie-content">
+    <p>POPE Online utilise des cookies strictement nécessaires au fonctionnement de la plateforme, à la sécurité des accès et à l'amélioration de l'expérience utilisateur.</p>
+  </div>
+  <div class="cookie-buttons">
+    <button id="cookieDecline" class="cookie-btn secondary" type="button">Continuer sans accepter</button>
+    <button id="cookieSettings" class="cookie-btn secondary" type="button">Paramétrer</button>
+    <button id="cookieAccept"  class="cookie-btn primary"   type="button">Tout accepter</button>
+  </div>
+</section>
+<section class="cookie-modal" id="cookiePrefsModal" hidden aria-modal="true" role="dialog">
+  <div class="cookie-header"><div class="cookie-badge">Préférences</div><h2>Paramétrer vos cookies</h2></div>
+  <div class="cookie-content">
+    <label><input type="checkbox" checked disabled/> Cookies essentiels (obligatoires)</label>
+    <label><input type="checkbox" id="cookieAnalytics"/> Cookies analytiques</label>
+    <label><input type="checkbox" id="cookieFunctional"/> Cookies fonctionnels</label>
+    <label><input type="checkbox" id="cookieMarketing"/> Cookies marketing</label>
+  </div>
+  <div class="cookie-buttons">
+    <button id="cookieSavePrefs" class="cookie-btn primary"    type="button">Enregistrer</button>
+    <button id="cookieBackMain"  class="cookie-btn secondary"  type="button">Retour</button>
+  </div>
+</section>
 
-    function openCookies() {
-      overlay.hidden = false;
-      modal.hidden = false;
-      if (prefsModal) prefsModal.hidden = true;
-      document.body.style.overflow = "hidden";
-    }
+<script>
+// Burger
+document.getElementById('burger').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('open');
+});
 
-    function openPrefs() {
-      overlay.hidden = false;
-      modal.hidden = true;
-      if (prefsModal) prefsModal.hidden = false;
-      document.body.style.overflow = "hidden";
-    }
+// Slogans rotatifs
+(function() {
+  var slogans = [
+    "Deux univers, une même exigence",
+    "La fluidité d'un outil pensé pour l'action",
+    "Décuplez votre efficacité métier",
+    "IA guidée. Expertise humaine. Résultat garanti.",
+    "Accélérez vos décisions stratégiques"
+  ];
+  var el = document.getElementById('slogan');
+  var i = 0;
+  function rotate() {
+    i = (i + 1) % slogans.length;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(function() {
+      el.textContent = slogans[i];
+      el.style.transition = 'opacity .6s ease, transform .6s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 400);
+  }
+  setInterval(rotate, 4000);
+})();
 
-    function closeCookies(choice, prefs) {
-      try {
-        localStorage.setItem(STORAGE_KEY, choice);
-        if (prefs) localStorage.setItem('pope_cookie_prefs', JSON.stringify(prefs));
-      } catch (e) {}
-      modal.hidden = true;
-      if (prefsModal) prefsModal.hidden = true;
-      overlay.hidden = true;
-      document.body.style.overflow = "";
-    }
+// Mosaïque
+(function() {
+  var panels = document.querySelectorAll('.v39-panel');
+  if (!panels.length) return;
+  function restart() {
+    panels.forEach(function(p) { p.classList.remove('hide'); });
+    setTimeout(function() {
+      panels.forEach(function(p, i) {
+        setTimeout(function() { p.classList.add('hide'); }, i * 200);
+      });
+    }, 6000);
+  }
+  setTimeout(restart, 500);
+  setInterval(restart, 16000);
+})();
 
-    let existingChoice = null;
-    try {
-      existingChoice = localStorage.getItem(STORAGE_KEY);
-    } catch (e) {}
-
-    if (!existingChoice) openCookies();
-    accept.addEventListener("click", function () { closeCookies("accepted"); });
-    decline.addEventListener("click", function () { closeCookies("declined"); });
-    settings.addEventListener("click", function () { openPrefs(); });
-    if (savePrefs) savePrefs.addEventListener("click", function () { closeCookies("customized", { analytics: !!analytics.checked, functional: !!functional.checked, marketing: !!marketing.checked }); });
-    if (backMain) backMain.addEventListener("click", function () { openCookies(); });
-    overlay.addEventListener("click", function () { closeCookies("dismissed"); });
-  });
-  </script>
-
-  <script>
-  window.addEventListener("load", function () {
-    const panels = document.querySelectorAll('.po-intro-panel');
-    if (!panels.length) return;
-
-    function restart() {
-      panels.forEach((panel) => panel.classList.remove('hide'));
-      setTimeout(() => {
-        panels.forEach((panel, index) => {
-          setTimeout(() => panel.classList.add('hide'), index * 200);
-        });
-      }, 5000);
-    }
-
-    restart();
-    setInterval(restart, 15000);
-  });
-  </script>
-
-  <script>
-  (function(){
-    const slogans = [
-      "Deux univers, une même exigence",
-      "La fluidité d'un outil pensé pour l'action",
-      "Décuplez votre efficacité métier",
-      "Transformez vos idées en actions",
-      "Accélérez vos décisions stratégiques"
-    ];
-
-    const slogan = document.getElementById("introSlogan");
-    if (!slogan) return;
-
-    let i = 0;
-
-    function rotate(){
-      slogan.replaceChildren(); const title = document.createElement('h1'); title.className = 'slogan'; title.textContent = slogans[i]; slogan.appendChild(title);
-      slogan.classList.add('is-visible');
-      i = (i + 1) % slogans.length;
-    }
-
-    rotate();
-    setInterval(rotate, 4000);
-  })();
-  </script>
+// Cookies
+(function() {
+  var KEY = 'pope_cookie_choice';
+  var overlay = document.getElementById('cookieOverlay');
+  var modal   = document.getElementById('cookieModal');
+  var prefs   = document.getElementById('cookiePrefsModal');
+  function close(choice) {
+    try { localStorage.setItem(KEY, choice); } catch(e) {}
+    overlay.hidden = modal.hidden = true;
+    if (prefs) prefs.hidden = true;
+  }
+  try { if (localStorage.getItem(KEY)) return; } catch(e) {}
+  overlay.hidden = modal.hidden = false;
+  document.getElementById('cookieAccept').onclick  = function() { close('accepted'); };
+  document.getElementById('cookieDecline').onclick = function() { close('declined'); };
+  document.getElementById('cookieSettings').onclick = function() { modal.hidden=true; prefs.hidden=false; };
+  if (document.getElementById('cookieSavePrefs'))
+    document.getElementById('cookieSavePrefs').onclick = function() { close('customized'); };
+  if (document.getElementById('cookieBackMain'))
+    document.getElementById('cookieBackMain').onclick  = function() { prefs.hidden=true; modal.hidden=false; };
+  overlay.onclick = function() { close('dismissed'); };
+})();
+</script>
+<script src="./auth-links.js"></script>
 </body>
 </html>

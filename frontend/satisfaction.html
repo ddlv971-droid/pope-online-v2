@@ -90,7 +90,7 @@ document.getElementById('btnSubmit').addEventListener('click', async function() 
   var btn = this;
   var msg = document.getElementById('satisfactionMsg');
   var criteria = CRITERIA.filter(function(c) { return ratings[c.key]; })
-                         .map(function(c) { return { key: c.key, label: c.label, score: ratings[c.key] }; });
+                         .map(function(c) { var s = ratings[c.key]; return { key: c.key, label: c.label, value: LABELS[s-1], score: s }; });
   if (!criteria.length) {
     msg.textContent = 'Veuillez noter au moins un critère.';
     msg.style.color = '#b91c1c';

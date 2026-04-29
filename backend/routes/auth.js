@@ -758,6 +758,14 @@ router.get('/referral', requireAuth, async (req, res) => {
       );
       return r.rows[0] || null;
     });
+    // Générer un code si l'utilisateur n'en a pas (comptes créés avant V35)
+    if (row && !row.referral_code) {
+      const newCode = Math.random().toString(36).slice(2,8).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
+      await withClient(async (client) => {
+        await client.query('update users set referral_code=$2 where id=$1', [userId, newCode]);
+      });
+      row.referral_code = newCode;
+    }
     if (!row) return res.status(404).json({ error: 'not_found' });
     return res.json({
       referral_code:   row.referral_code,
