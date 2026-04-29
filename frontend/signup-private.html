@@ -153,7 +153,7 @@ $('btnSignup').addEventListener('click', async function() {
   } catch(err) {
     resetTurnstile();
     var code = getApiMessage(err);
-    var MSGS = { email_exists:'Cette adresse email est déjà utilisée.', invalid_email:'Format d'email invalide.' };
+    var MSGS = { email_exists:'Cette adresse email est déjà utilisée.', invalid_email:'Format d\'email invalide.' };
     msg.textContent = MSGS[code] || ('Erreur : ' + code);
     btn.disabled = false;
     btn.textContent = 'Créer mon compte privé →';
