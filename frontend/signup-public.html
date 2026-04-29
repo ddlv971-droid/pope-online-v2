@@ -101,34 +101,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
 <script type="module">
-import {{ apiFetch, getApiMessage }} from './api.js';
-import {{ showToast, getFingerprint }} from './app.js';
-import {{ attachIntlPhone }} from './phone.js';
-import {{ mountTurnstile, getTurnstileToken, resetTurnstile }} from './turnstile.js';
+import { apiFetch, getApiMessage } from './api.js';
+import { showToast, getFingerprint } from './app.js';
+import { attachIntlPhone } from './phone.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
-function $(id) {{ return document.getElementById(id); }}
+function $(id) { return document.getElementById(id); }
 var SPACE = 'public';
 
-mountTurnstile('turnstileBox').catch(function(){{}});
-attachIntlPhone({{ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' }});
+mountTurnstile('turnstileBox').catch(function(){});
+attachIntlPhone({ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' });
 
-try {{ localStorage.setItem('pope_account_space', SPACE); }} catch(e) {{}}
+try { localStorage.setItem('pope_account_space', SPACE); } catch(e) {}
 
-$('togglePw').addEventListener('click', function() {{
+$('togglePw').addEventListener('click', function() {
   var i = $('password'); var h = i.type === 'password';
   i.type = h ? 'text' : 'password';
   this.textContent = h ? String.fromCodePoint(0x1F648) : String.fromCodePoint(0x1F441);
-}});
+});
 
-$('btnSignup').addEventListener('click', async function() {{
+$('btnSignup').addEventListener('click', async function() {
   var btn = $('btnSignup');
   var msg = $('signupMsg');
-  if (!$('cgu').checked) {{ showToast('Acceptez les conditions d'utilisation.', 'warn'); return; }}
+  if (!$('cgu').checked) { showToast('Acceptez les conditions d'utilisation.', 'warn'); return; }
   btn.disabled = true; btn.textContent = 'Cr&eacute;ation en cours...';
   msg.textContent = ''; msg.className = 'v40-msg';
-  try {{
+  try {
     var fp = await getFingerprint();
-    var data = await apiFetch('/auth/signup', {{ method:'POST', body:{{
+    var data = await apiFetch('/auth/signup', { method:'POST', body:{
       email: $('email').value.trim(),
       password: $('password').value,
       fullName: $('fullName').value.trim(),
@@ -140,25 +140,25 @@ $('btnSignup').addEventListener('click', async function() {{
       accountSpace: SPACE,
       turnstileToken: getTurnstileToken(),
       ref: (new URLSearchParams(window.location.search).get('ref') || '')
-    }}}});
-    if (data && data.mailFailed) {{
+    }});
+    if (data && data.mailFailed) {
       msg.textContent = 'Compte cr&eacute;&eacute; mais email non envoy&eacute;. Contactez-nous.';
       msg.className = 'v40-msg';
-    }} else {{
+    } else {
       msg.className = 'v40-msg ok';
       msg.textContent = 'Compte cr&eacute;&eacute; ! V&eacute;rifiez votre email pour activer votre compte.';
       showToast('Compte cr&eacute;&eacute; !', 'ok');
-    }}
+    }
     btn.textContent = 'Compte cr&eacute;&eacute; !';
-  }} catch(err) {{
+  } catch(err) {
     resetTurnstile();
     var code = getApiMessage(err);
-    var MSGS = {{ email_exists:'Cette adresse email est d&eacute;j&agrave; utilis&eacute;e.', invalid_email:'Format d'email invalide.' }};
+    var MSGS = { email_exists:'Cette adresse email est d&eacute;j&agrave; utilis&eacute;e.', invalid_email:'Format d'email invalide.' };
     msg.textContent = MSGS[code] || ('Erreur : ' + code);
     btn.disabled = false;
     btn.textContent = 'Cr&eacute;er mon compte public &rarr;';
-  }}
-}});
+  }
+});
 </script>
 </body>
 </html>
