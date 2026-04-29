@@ -96,7 +96,12 @@ async function requireTurnstile(req, res) {
     const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
     const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
     if (outcome.success) return true;
-    res.status(403).json({ error: 'bot_protection_failed' });
+    // Fail-open si widget pas encore rendu côté client ou pas configuré
+    if (outcome.code === 'missing_turnstile_token' || outcome.code === 'turnstile_not_configured') {
+      console.warn('[turnstile] fail-open:', outcome.code);
+      return true;
+    }
+    res.status(403).json({ error: 'bot_protection_failed', detail: outcome.code });
     return false;
   } catch (e) {
     console.error('[turnstile] error, fail-open:', e.message);

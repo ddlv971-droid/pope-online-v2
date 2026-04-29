@@ -12,8 +12,9 @@
 <main class="auth-wrap"><section class="auth-card" style="max-width:700px;margin:0 auto">
 <h2>Connexion</h2><p class="muted">Connexion commune aux espaces public et privé via les identifiants autorisés.</p>
 <label class="label">Email ou identifiant</label><input class="input" id="identifier" placeholder="xxxx@..." autocomplete="off">
-<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe">👁</button></div>
-<div id="turnstileBox" style="margin-top:14px" hidden></div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
+<label class="label">Mot de passe</label><div class="password-wrap"><input class="input" id="password" placeholder="••••••••" type="password" autocomplete="new-password"><button class="password-toggle visible" id="togglePassword" type="button" aria-label="Afficher le mot de passe" onclick="(function(){var i=document.getElementById('password');var s=i.type==='text';i.type=s?'password':'text';this.textContent=s?'👁':'🙈';}).call(this)">👁</button></div>
+<div id="turnstileBox" style="margin-top:14px" hidden></div>
+<div id="turnstileStatus" style="font-size:12px;color:#50627a;margin-top:6px;display:none">🔄 Vérification de sécurité en cours…</div><div class="row gap wrap" style="margin-top:14px"><button class="btn" id="btn">Se connecter</button><a class="btn ghost" href="forgot-password.html">Mot de passe oublié ?</a></div>
 <div class="fineprint" id="msg"></div></section></main>
 <script type="module">
 import { apiFetch, getApiMessage, setSession } from './api.js';
@@ -22,7 +23,18 @@ import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.j
 const el = (id) => document.getElementById(id);
 const params = new URLSearchParams(window.location.search || '');
 const requestedNext = (params.get('next') || '').trim();
-mountTurnstile('turnstileBox').catch(() => {});
+const tsBox = el('turnstileBox');
+const tsStatus = el('turnstileStatus');
+mountTurnstile('turnstileBox').then(mounted => {
+  if (mounted && tsBox && !tsBox.hidden) {
+    if (tsStatus) tsStatus.style.display = 'block';
+    // Masquer le statut quand le widget est rendu
+    const observer = new MutationObserver(() => {
+      if (tsBox.querySelector('iframe')) { if (tsStatus) tsStatus.style.display = 'none'; observer.disconnect(); }
+    });
+    observer.observe(tsBox, { childList: true, subtree: true });
+  }
+}).catch(() => {});
 function getDefaultNext(user) { if (user?.role === 'admin') return 'dashboard-admin.html'; return user?.accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html'; }
 function normalizeNext(target, user) {
   if (!target) return getDefaultNext(user);
@@ -38,13 +50,41 @@ function normalizeNext(target, user) {
   return route || getDefaultNext(user);
 }
 el('togglePassword').addEventListener('click', () => { const i=el('password'); const s=i.type==='text'; i.type=s?'password':'text'; el('togglePassword').textContent=s?'👁':'🙈'; });
-el('btn').addEventListener('click', async () => { try { const fp=await getFingerprint(); const identifier=el('identifier').value.trim(); const data=await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken:getTurnstileToken() } }); setSession(data.user || {}, data?.token || ''); localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public'); showToast('Connecté ✓','ok'); const nextTarget = normalizeNext(requestedNext, data.user); setTimeout(() => window.location.href=nextTarget, 250); } catch(e) { resetTurnstile(); el('msg').textContent='Erreur : '+getApiMessage(e); showToast('Connexion impossible','err'); } });
-</script>
-<script>
-window.addEventListener("load",function(){
-  document.querySelectorAll("input").forEach(i=>{
-    if(i.type!=="hidden"){ i.value=""; }
-  });
+el('btn').addEventListener('click', async () => {
+  const btn = el('btn');
+  const msg = el('msg');
+  btn.disabled = true;
+  btn.textContent = 'Connexion…';
+  msg.textContent = '';
+  try {
+    const fp = await getFingerprint();
+    const identifier = el('identifier').value.trim();
+    if (!identifier) { msg.textContent = 'Veuillez renseigner votre email.'; btn.disabled=false; btn.textContent='Se connecter'; return; }
+    if (!el('password').value) { msg.textContent = 'Veuillez renseigner votre mot de passe.'; btn.disabled=false; btn.textContent='Se connecter'; return; }
+    const turnstileToken = getTurnstileToken();
+    const data = await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier, password:el('password').value, fp, turnstileToken } });
+    setSession(data.user || {}, data?.token || '');
+    localStorage.setItem('pope_account_space', data?.user?.accountSpace || 'public');
+    showToast('Connecté ✓','ok');
+    const nextTarget = normalizeNext(requestedNext, data.user);
+    setTimeout(() => window.location.href=nextTarget, 250);
+  } catch(e) {
+    resetTurnstile();
+    const raw = getApiMessage(e);
+    const friendly = {
+      'bot_protection_failed': 'Vérification de sécurité échouée. Patientez quelques secondes et réessayez.',
+      'missing_turnstile_token': 'Vérification de sécurité en cours. Patientez puis réessayez.',
+      'invalid_credentials': 'Email ou mot de passe incorrect.',
+      'missing_fp': 'Erreur de configuration navigateur. Essayez sans mode privé.',
+      'invalid_email': 'Format d'email invalide.',
+      'too_many_requests': 'Trop de tentatives. Attendez quelques minutes.',
+    }[raw] || ('Erreur : ' + raw);
+    msg.textContent = friendly;
+    msg.style.color = '#b91c1c';
+    showToast('Connexion impossible','err');
+    btn.disabled = false;
+    btn.textContent = 'Se connecter';
+  }
 });
 </script>
 
