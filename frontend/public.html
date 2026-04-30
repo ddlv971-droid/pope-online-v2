@@ -276,6 +276,30 @@ if (burger && links) {
   });
 }
 </script>
-<script src="./auth-links.js"></script>
+<script>
+(function(){
+  var protectedTargets={'app.html':1,'expert.html':1,'mission.html':1,'dashboard.html':1,
+    'app-private.html':1,'expert-private.html':1,'mission-private.html':1,
+    'dashboard-private.html':1,'vault.html':1,'referral.html':1,'profile.html':1};
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
+  }
+  document.addEventListener('click',function(e){
+    var link=e.target.closest('a[href]');
+    if(!link) return;
+    var href=link.getAttribute('href')||'';
+    if(!href||href.startsWith('http')||href.startsWith('mailto:')||
+       href.startsWith('tel:')||href.startsWith('#')) return;
+    var clean=href.replace(/^\.\//,'');
+    var pathname=clean.split('?')[0];
+    if(!protectedTargets[pathname]) return;
+    if(hasSession()) return;
+    e.preventDefault();
+    window.location.href='login.html?next='+encodeURIComponent(clean);
+  },true);
+})();
+</script>
 </body>
 </html>
