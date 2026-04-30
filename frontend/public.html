@@ -45,7 +45,7 @@
       <div class="v38-hero-actions">
         <a class="v38-btn-primary" href="signup-public.html">Démarrer l'essai gratuit →</a>
         <a class="v38-btn-secondary" href="login.html">Se connecter</a>
-        <a class="v38-btn-free" href="mailto:contact@pope-online.com">✉️ Nous contacter</a>
+        <a class="v38-btn-free" href="tel:0970703055">📞 09 70 70 30 55</a>
       </div>
     </div>
     <div class="v38-hero-card">
@@ -258,7 +258,21 @@ var burger = document.getElementById('burger');
 var links  = document.getElementById('navLinks');
 if (burger && links) {
   burger.addEventListener('click', function() {
-    links.classList.toggle('open');
+    var open = links.classList.toggle('open');
+    var sp = burger.querySelectorAll('span');
+    if (open) {
+      sp[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+      sp[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+      sp[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+    } else {
+      sp[0].style.cssText = sp[1].style.cssText = sp[2].style.cssText = '';
+    }
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      links.classList.remove('open');
+      burger.querySelectorAll('span').forEach(function(s) { s.style.cssText=''; });
+    });
   });
 }
 </script>
