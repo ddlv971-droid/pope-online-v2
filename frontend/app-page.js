@@ -834,7 +834,7 @@ function firstPrivateUsecase() {
 }
 
 function setFieldPlaceholders(config = {}) {
-  el('context').placeholder = config.contextPlaceholder || "Votre activité, votre situation, l'organisme ou l"interlocuteur concerné, les contraintes et l'échéance…';
+  el('context').placeholder = config.contextPlaceholder || "Votre activité, votre situation, l'organisme ou l'interlocuteur concerné, les contraintes et l'échéance…";
   el('objective').placeholder = config.objectivePlaceholder || 'Ce que vous voulez obtenir : courrier, trame de réponse, message à adresser, formalité à préparer…';
   el('facts').placeholder = config.factsPlaceholder || 'Dates, chiffres, clauses du marché, références client, éléments URSSAF ou fiscaux, banque, RC, DCE, etc.';
 }
