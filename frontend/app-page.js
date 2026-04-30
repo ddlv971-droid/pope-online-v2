@@ -870,7 +870,7 @@ function renderUsecaseInsight(space = currentSpace) {
 function applySpaceConfig(space) {
   const isPrivate = space === 'private';
   currentSpace = isPrivate ? 'private' : 'public';
-  document.getElementById('appHomeLink').href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
+  var _hl = document.getElementById('appHomeLink') || document.getElementById('topbarHomeLink'); if (_hl) _hl.href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
   updateCrossLinks(space);
   el('appSubTitle').textContent = isPrivate ? 'Génération IA privée' : 'Mon espace public';
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
