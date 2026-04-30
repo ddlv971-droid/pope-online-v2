@@ -354,14 +354,19 @@
   .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
   .v39-nav-links { display: none; }
   .v39-burger { display: flex; }
-  .v39-nav-links.open {
-    display: flex; flex-direction: column; align-items: stretch; gap: 2px;
-    position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
-    background: rgba(7,22,42,.98); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 20px 20px 40px; z-index: 200;
-    overflow-y: auto; pointer-events: all;
+  /* Retirer backdrop-filter du nav en mobile pour libérer le stacking context */
+  .v39-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .v39-nav-links.open,
+  #navLinks.open {
+    display: flex !important; flex-direction: column; align-items: stretch; gap: 2px;
+    position: fixed !important; top: 62px !important; left: 0 !important;
+    right: 0 !important; bottom: 0 !important;
+    background: rgba(7,22,42,.99) !important;
+    padding: 20px 20px 40px; z-index: 999999 !important;
+    overflow-y: auto !important; pointer-events: all !important;
   }
+  #navLinks { display: none; }
+  #navLinksDesktop { display: none !important; }
   .v39-nav-links.open a {
     padding: 14px 18px; border-radius: 12px; font-size: 15px;
     font-weight: 600; color: rgba(255,255,255,.85);
@@ -422,6 +427,8 @@
   .v39-band-sub { font-size: 12px; }
   .v39-band-tagline { font-size: 11px; }
 }
+
+@media (min-width: 861px) { #navLinks { display: none !important; } }
 </style>
 </head>
 <body class="v39-body">
@@ -433,10 +440,29 @@
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v39-brand-text"><strong>POPE Online</strong><small>IA + Expertise</small></div>
     </a>
+    <div class="v39-nav-links" id="navLinksDesktop">
+
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">▶ Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="v39-nav-sep">
+    </div>
     <button class="v39-burger" id="burger" type="button" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="v39-nav-links" id="navLinks">
+  </div>
+</nav>
+<div class="v39-nav-links" id="navLinks">
+
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">▶ Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="v39-nav-sep">
+</div>
+<!-- Overlay mobile iOS fix -->
+<div class="v39-nav-links" id="navLinks">
       <a href="about.html">Qui sommes-nous</a>
       <a href="pricing.html">Tarifs</a>
       <a href="tutoriel.html">▶ Tutoriel</a>
@@ -446,8 +472,6 @@
       <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
       <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
     </div>
-  </div>
-</nav>
 
 <!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
 <section class="v39-hero">
