@@ -208,7 +208,7 @@
 .v39-spaces {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 20px; max-width: 1100px; margin: 0 auto;
-  padding: 0 24px 60px; position: relative; z-index: 2;
+  padding: 32px 24px 60px; position: relative; z-index: 2;
 }
 
 .v39-space-card {
@@ -324,7 +324,7 @@
   padding: 6px; margin-left: auto; flex-direction: column; gap: 5px;
   flex-shrink: 0;
 }
-.v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; }
+.v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; transition: transform .25s ease, opacity .25s ease; }
 
 /* Cookie (conservé tel quel) */
 .cookie-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,.5); }
@@ -603,9 +603,34 @@
 
 <script>
 // Burger
-document.getElementById('burger').addEventListener('click', function() {
-  document.getElementById('navLinks').classList.toggle('open');
+var burgerBtn = document.getElementById('burger');
+var navLinksEl = document.getElementById('navLinks');
+burgerBtn.addEventListener('click', function() {
+  var isOpen = navLinksEl.classList.toggle('open');
+  // Transformer en croix quand ouvert
+  var spans = burgerBtn.querySelectorAll('span');
+  if (isOpen) {
+    spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+    spans[1].style.cssText = 'opacity:0; transform:scaleX(0)';
+    spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans[0].style.cssText = '';
+    spans[1].style.cssText = '';
+    spans[2].style.cssText = '';
+  }
 });
+// Fermer le menu en cliquant sur un lien
+if (navLinksEl) {
+  navLinksEl.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinksEl.classList.remove('open');
+      var spans = burgerBtn.querySelectorAll('span');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
+    });
+  });
+}
 
 // Slogans rotatifs
 (function() {
