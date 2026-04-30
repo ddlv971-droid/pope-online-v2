@@ -49,10 +49,10 @@ const PRIVATE_USECASE_GROUPS = [
     ]
   },
   {
-    label: 'Formalités d’entreprise',
+    label: 'Formalités d'entreprise',
     options: [
-      ['formalites_creation', 'Création d’entreprise / lancement d’activité'],
-      ['formalites_modification', 'Modification d’entreprise / siège / activité / dirigeants'],
+      ['formalites_creation', 'Création d'entreprise / lancement d'activité'],
+      ['formalites_modification', 'Modification d'entreprise / siège / activité / dirigeants'],
       ['formalites_sociales', 'Formalités sociales / embauche / documents / affiliation'],
       ['synthese_dossier_prive', 'Synthèse / cadrage / check-list de dossier'],
       ['trame_reponse_marche_public', 'Trame de réponse à un marché public (DCE / RC / BPU / pièces jointes)'],
@@ -66,27 +66,27 @@ const PRIVATE_USECASE_HELP = {
     title: 'Aide à la réponse à un marché public',
     intro: 'Préparez une réponse à partir du DCE, du règlement de consultation et de vos pièces internes déposées 48h. La génération peut produire une trame de réponse, une note de cadrage ou une check-list de remise.',
     bullets: [
-      'Pièces recommandées : DCE, RC, BPU, DPGF, acte d’engagement, trame de mémoire technique.',
-      'Résultats utiles : synthèse du besoin, points différenciants, questions à l’acheteur, structure de réponse et points de vigilance.',
-      'Repère benchmark : les ressources commande publique mettent l’accent sur la candidature, les pièces du dossier et la lisibilité de l’offre.'
+      'Pièces recommandées : DCE, RC, BPU, DPGF, acte d'engagement, trame de mémoire technique.',
+      'Résultats utiles : synthèse du besoin, points différenciants, questions à l'acheteur, structure de réponse et points de vigilance.',
+      'Repère benchmark : les ressources commande publique mettent l'accent sur la candidature, les pièces du dossier et la lisibilité de l'offre.'
     ],
     source: 'Repères : commande publique / économie.gouv.fr',
-    contextPlaceholder: 'Votre activité, la consultation visée, le besoin exprimé par l’acheteur, vos atouts et vos contraintes de réponse…',
-    objectivePlaceholder: 'Ex : obtenir une trame de réponse, une synthèse du RC, une liste des pièces manquantes ou une note pour préparer l’offre.',
+    contextPlaceholder: 'Votre activité, la consultation visée, le besoin exprimé par l'acheteur, vos atouts et vos contraintes de réponse…',
+    objectivePlaceholder: 'Ex : obtenir une trame de réponse, une synthèse du RC, une liste des pièces manquantes ou une note pour préparer l'offre.',
     factsPlaceholder: 'Références du marché, échéance, allotissement, exigences du RC, points techniques, références client, pièces déjà prêtes…',
     vaultTitle: 'Pièces temporaires 48h — marché public',
-    vaultCopy: 'Sélectionnez par exemple le DCE, le règlement de consultation, une trame d’offre ou vos justificatifs utiles à la préparation de la réponse.'
+    vaultCopy: 'Sélectionnez par exemple le DCE, le règlement de consultation, une trame d'offre ou vos justificatifs utiles à la préparation de la réponse.'
   },
   trame_reponse_marche_public: {
     title: 'Trame de réponse à un marché public',
     intro: 'Produisez une trame de réponse structurée à partir du DCE, du RC, du BPU et de vos pièces jointes pour sécuriser votre compréhension du marché et organiser votre offre.',
     bullets: [
-      'Pièces recommandées : DCE, règlement de consultation, BPU, DPGF, acte d’engagement, mémoire technique, pièces administratives.',
+      'Pièces recommandées : DCE, règlement de consultation, BPU, DPGF, acte d'engagement, mémoire technique, pièces administratives.',
       'Résultats utiles : architecture de réponse, trame du mémoire, check-list des pièces, angles de différenciation, points de vigilance et questions éventuelles.',
-      'Repère benchmark : les meilleures réponses mettent en avant la compréhension du besoin, la méthode, les moyens, les engagements et la lisibilité de l’offre.'
+      'Repère benchmark : les meilleures réponses mettent en avant la compréhension du besoin, la méthode, les moyens, les engagements et la lisibilité de l'offre.'
     ],
     source: 'Repères : commande publique / benchmark mémoire technique',
-    contextPlaceholder: 'Votre activité, le marché visé, les attentes perçues de l’acheteur, vos atouts, vos références et vos contraintes de remise…',
+    contextPlaceholder: 'Votre activité, le marché visé, les attentes perçues de l'acheteur, vos atouts, vos références et vos contraintes de remise…',
     objectivePlaceholder: 'Ex : obtenir une trame de mémoire technique, une structure de réponse, une check-list des pièces et des points de vigilance.',
     factsPlaceholder: 'Références du marché, échéance, allotissement, critères, exigences du RC, pièces disponibles, références internes, organisation de réponse…',
     vaultTitle: 'Pièces temporaires 48h — trame réponse marché public',
@@ -94,11 +94,11 @@ const PRIVATE_USECASE_HELP = {
   },
   rapport_synthese_argumente_public: {
     title: 'Rapport de synthèse argumenté',
-    intro: 'Produisez un rapport de synthèse argumenté à partir des pièces jointes et d’un benchmarking utile pour éclairer une décision, une orientation ou un arbitrage.',
+    intro: 'Produisez un rapport de synthèse argumenté à partir des pièces jointes et d'un benchmarking utile pour éclairer une décision, une orientation ou un arbitrage.',
     bullets: [
       'Le rapport vise une lecture cabinet : contexte, constats, analyse, benchmark, options, recommandation et suites.',
       'Les pièces jointes servent à asseoir les faits et à faire ressortir les enjeux opérationnels, financiers et organisationnels.',
-      'Le benchmarking aide à situer le dossier, comparer des approches et renforcer l’argumentation.'
+      'Le benchmarking aide à situer le dossier, comparer des approches et renforcer l'argumentation.'
     ],
     source: 'Repères : rapport décisionnel / benchmark sectoriel',
     contextPlaceholder: 'Objet du dossier, environnement institutionnel, destinataire du rapport, niveau de décision attendu, points de comparaison utiles…',
@@ -109,7 +109,7 @@ const PRIVATE_USECASE_HELP = {
   },
   rapport_synthese_argumente_prive: {
     title: 'Rapport de synthèse argumenté',
-    intro: 'Préparez un rapport de synthèse argumenté à partir de vos pièces jointes et d’un benchmarking utile pour cadrer un dossier, défendre une position ou préparer une décision.',
+    intro: 'Préparez un rapport de synthèse argumenté à partir de vos pièces jointes et d'un benchmarking utile pour cadrer un dossier, défendre une position ou préparer une décision.',
     bullets: [
       'Le rapport met en évidence les faits, les enjeux, les constats, les comparaisons utiles, les options et la recommandation.',
       'Il est particulièrement adapté à un dossier complexe, à une préparation de rendez-vous, à une décision de dirigeant ou à une restitution client.',
@@ -124,14 +124,14 @@ const PRIVATE_USECASE_HELP = {
   },
   courrier_urssaf: {
     title: 'Courrier URSSAF / cotisations / délai / contestation',
-    intro: 'Préparez un courrier administratif clair et contextualisé à destination de l’URSSAF : demande de délai, réponse à une relance, demande d’explication, transmission de justificatifs ou contestation argumentée.',
+    intro: 'Préparez un courrier administratif clair et contextualisé à destination de l'URSSAF : demande de délai, réponse à une relance, demande d'explication, transmission de justificatifs ou contestation argumentée.',
     bullets: [
-      'Cas représentatifs : demande d’échéancier, réponse à mise en demeure, demande de régularisation, transmission de pièces.',
+      'Cas représentatifs : demande d'échéancier, réponse à mise en demeure, demande de régularisation, transmission de pièces.',
       'Le courrier est structuré pour reprendre les références dossier, le contexte, la demande et les suites attendues.',
-      'Repère benchmark : l’Urssaf publie des démarches et modèles de documents utiles pour les créateurs, indépendants et employeurs.'
+      'Repère benchmark : l'Urssaf publie des démarches et modèles de documents utiles pour les créateurs, indépendants et employeurs.'
     ],
     source: 'Repères : Urssaf / formulaires et démarches',
-    contextPlaceholder: 'Votre situation, le courrier reçu, le compte concerné, le délai, la relation avec l’URSSAF et les éléments déjà transmis…',
+    contextPlaceholder: 'Votre situation, le courrier reçu, le compte concerné, le délai, la relation avec l'URSSAF et les éléments déjà transmis…',
     objectivePlaceholder: 'Ex : demander un délai, contester une régularisation, répondre à une relance ou transmettre des justificatifs.',
     factsPlaceholder: 'Numéro de dossier anonymisé, périodes concernées, montants, échéances, échanges précédents, pièces disponibles…',
     vaultTitle: 'Pièces temporaires 48h — courrier URSSAF',
@@ -141,12 +141,12 @@ const PRIVATE_USECASE_HELP = {
     title: 'Courrier impôts / TVA / SIE / réclamation',
     intro: 'Préparez un courrier à destination des impôts ou du SIE pour une demande de délai, une réclamation, une précision sur la TVA ou une réponse à une sollicitation administrative.',
     bullets: [
-      'Cas représentatifs : demande d’échéancier, réponse à proposition, clarification TVA, réclamation ou transmission de justificatifs.',
+      'Cas représentatifs : demande d'échéancier, réponse à proposition, clarification TVA, réclamation ou transmission de justificatifs.',
       'Le draft reprend le contexte, la demande précise, les références utiles et un ton administratif maîtrisé.',
       'Repère benchmark : les besoins TPE sur la relation administrative portent souvent sur les délais, les justificatifs et la sécurisation des échanges.'
     ],
     source: 'Repères : impôts / gestion administrative TPE',
-    contextPlaceholder: 'Votre situation, le service concerné, la nature de la demande fiscale, l’échéance et les contraintes de trésorerie…',
+    contextPlaceholder: 'Votre situation, le service concerné, la nature de la demande fiscale, l'échéance et les contraintes de trésorerie…',
     objectivePlaceholder: 'Ex : demander un délai de paiement, rédiger une réclamation, répondre à un courrier du SIE ou préparer un mail structuré.',
     factsPlaceholder: 'Périodes, montants, références anonymisées, échanges déjà reçus, justificatifs, situation de TVA ou de trésorerie…',
     vaultTitle: 'Pièces temporaires 48h — fiscal / impôts',
@@ -156,7 +156,7 @@ const PRIVATE_USECASE_HELP = {
     title: 'Courrier banque / trésorerie / justificatifs',
     intro: 'Préparez un courrier ou un mail pour votre banque : demande de rendez-vous, transmission de justificatifs, explication de situation, point de trésorerie ou sollicitation sur un financement.',
     bullets: [
-      'Cas représentatifs : demande de rendez-vous, justificatifs pour dossier, point sur la trésorerie, demande d’appui bancaire.',
+      'Cas représentatifs : demande de rendez-vous, justificatifs pour dossier, point sur la trésorerie, demande d'appui bancaire.',
       'Le résultat met en avant la clarté, le ton professionnel et la hiérarchie des informations utiles.',
       'Repère benchmark : les petites entreprises ont souvent besoin de formaliser rapidement des échanges structurés avec leur banque.'
     ],
@@ -169,14 +169,14 @@ const PRIVATE_USECASE_HELP = {
   },
   courrier_client_fournisseur: {
     title: 'Courrier client / fournisseur / relance / mise au point',
-    intro: 'Rédigez un courrier ou un mail professionnel pour clarifier une situation avec un client ou un fournisseur : relance, demande de régularisation, réponse à un litige ou cadrage d’un échange sensible.',
+    intro: 'Rédigez un courrier ou un mail professionnel pour clarifier une situation avec un client ou un fournisseur : relance, demande de régularisation, réponse à un litige ou cadrage d'un échange sensible.',
     bullets: [
       'Cas représentatifs : relance de paiement, mise au point contractuelle, réponse à une réclamation, demande de justificatifs.',
       'Le brouillon vise un ton ferme mais mesuré, avec des demandes explicites et une traçabilité des échanges.',
       'Repère benchmark : ce besoin revient fréquemment dans les TPE quand la gestion administrative doit rester rapide et cadrée.'
     ],
     source: 'Repères : gestion quotidienne artisans / TPE',
-    contextPlaceholder: 'La relation concernée, le problème rencontré, les échanges déjà passés, le ton à adopter et l’enjeu commercial…',
+    contextPlaceholder: 'La relation concernée, le problème rencontré, les échanges déjà passés, le ton à adopter et l'enjeu commercial…',
     objectivePlaceholder: 'Ex : relancer un règlement, demander une régularisation, répondre à un client ou formaliser une position.',
     factsPlaceholder: 'Dates, montants, prestations, commande, incidents, références et pièces utiles…',
     vaultTitle: 'Pièces temporaires 48h — client / fournisseur',
@@ -184,59 +184,59 @@ const PRIVATE_USECASE_HELP = {
   },
   courrier_formalites: {
     title: 'Courrier formalités / greffe / CCI / INPI',
-    intro: 'Préparez un courrier ou un message lié à une formalité d’entreprise : précision à demander, pièce à transmettre, relance sur un dossier ou réponse à un organisme de formalité.',
+    intro: 'Préparez un courrier ou un message lié à une formalité d'entreprise : précision à demander, pièce à transmettre, relance sur un dossier ou réponse à un organisme de formalité.',
     bullets: [
       'Cas représentatifs : demande de précision, envoi de pièces, relance de formalité, réponse à une demande de complément.',
-      'Le brouillon met en avant les références du dossier, les documents joints et l’action attendue.',
+      'Le brouillon met en avant les références du dossier, les documents joints et l'action attendue.',
       'Repère benchmark : les CCI et les formalités en ligne structurent de nombreuses démarches de création et de modification.'
     ],
     source: 'Repères : CCI / formalités entreprises',
-    contextPlaceholder: 'Le dossier concerné, l’organisme, la formalité en cours, la pièce attendue ou le blocage rencontré…',
+    contextPlaceholder: 'Le dossier concerné, l'organisme, la formalité en cours, la pièce attendue ou le blocage rencontré…',
     objectivePlaceholder: 'Ex : demander une précision, répondre à une demande de complément ou relancer un dossier.',
     factsPlaceholder: 'Références de dossier, date de dépôt, pièces manquantes, interlocuteurs, échéances…',
     vaultTitle: 'Pièces temporaires 48h — formalités',
     vaultCopy: 'Ajoutez la demande reçue, votre dossier ou la pièce concernée pour mieux cadrer la réponse.'
   },
   formalites_creation: {
-    title: 'Création d’entreprise / lancement d’activité',
+    title: 'Création d'entreprise / lancement d'activité',
     intro: 'Préparez un cadrage opérationnel de création : étapes, pièces, choix structurants, questions à traiter et documents à préparer avant immatriculation.',
     bullets: [
-      'Cas représentatifs : choisir un statut, préparer l’immatriculation, rassembler les pièces, planifier les démarches de lancement.',
-      'Résultats utiles : check-list, plan d’action, synthèse des pièces, note d’arbitrage ou message à adresser à un organisme.',
-      'Repère benchmark : Bpifrance Création, l’Urssaf et les CCI structurent fortement les parcours de création et de formalités.'
+      'Cas représentatifs : choisir un statut, préparer l'immatriculation, rassembler les pièces, planifier les démarches de lancement.',
+      'Résultats utiles : check-list, plan d'action, synthèse des pièces, note d'arbitrage ou message à adresser à un organisme.',
+      'Repère benchmark : Bpifrance Création, l'Urssaf et les CCI structurent fortement les parcours de création et de formalités.'
     ],
     source: 'Repères : Bpifrance Création / Urssaf / CCI',
-    contextPlaceholder: 'Votre projet, l’activité visée, le calendrier de lancement, vos contraintes et les démarches déjà réalisées…',
-    objectivePlaceholder: 'Ex : obtenir une check-list de création, un plan d’action, un courrier à un organisme ou une synthèse des étapes.',
+    contextPlaceholder: 'Votre projet, l'activité visée, le calendrier de lancement, vos contraintes et les démarches déjà réalisées…',
+    objectivePlaceholder: 'Ex : obtenir une check-list de création, un plan d'action, un courrier à un organisme ou une synthèse des étapes.',
     factsPlaceholder: 'Forme juridique envisagée, associés, siège, activité, calendrier, besoins documentaires, interlocuteurs…',
-    vaultTitle: 'Pièces temporaires 48h — création d’entreprise',
-    vaultCopy: 'Déposez un projet de statuts, une trame de business, des pièces d’identité ou tout document préparatoire utile.'
+    vaultTitle: 'Pièces temporaires 48h — création d'entreprise',
+    vaultCopy: 'Déposez un projet de statuts, une trame de business, des pièces d'identité ou tout document préparatoire utile.'
   },
   formalites_modification: {
-    title: 'Modification d’entreprise / siège / activité / dirigeants',
-    intro: 'Préparez une formalité de modification : changement d’adresse, d’activité, de dirigeant, mise à jour de statuts ou cadrage des pièces à déposer.',
+    title: 'Modification d'entreprise / siège / activité / dirigeants',
+    intro: 'Préparez une formalité de modification : changement d'adresse, d'activité, de dirigeant, mise à jour de statuts ou cadrage des pièces à déposer.',
     bullets: [
-      'Cas représentatifs : transfert de siège, modification d’activité, changement de dirigeant, actualisation de pièces.',
-      'Résultats utiles : check-list de formalité, chronologie des actions, courrier d’accompagnement ou synthèse du dossier.',
+      'Cas représentatifs : transfert de siège, modification d'activité, changement de dirigeant, actualisation de pièces.',
+      'Résultats utiles : check-list de formalité, chronologie des actions, courrier d'accompagnement ou synthèse du dossier.',
       'Repère benchmark : les formalités de société et les démarches en ligne nécessitent une préparation documentaire rigoureuse.'
     ],
     source: 'Repères : CCI / formalités entreprises / guichet unique',
-    contextPlaceholder: 'La modification envisagée, le calendrier, l’état des pièces et les organismes concernés…',
-    objectivePlaceholder: 'Ex : obtenir la liste des étapes, un courrier d’accompagnement ou une check-list des pièces à produire.',
+    contextPlaceholder: 'La modification envisagée, le calendrier, l'état des pièces et les organismes concernés…',
+    objectivePlaceholder: 'Ex : obtenir la liste des étapes, un courrier d'accompagnement ou une check-list des pièces à produire.',
     factsPlaceholder: 'Forme sociale, siège, activité, personnes concernées, date souhaitée, documents déjà disponibles…',
-    vaultTitle: 'Pièces temporaires 48h — modification d’entreprise',
+    vaultTitle: 'Pièces temporaires 48h — modification d'entreprise',
     vaultCopy: 'Ajoutez vos statuts, un PV, une pièce de justificatif ou tout document utile à la préparation du dossier.'
   },
   formalites_sociales: {
     title: 'Formalités sociales / embauche / documents / affiliation',
     intro: 'Préparez un dossier ou un courrier lié à une formalité sociale : embauche, affiliation, régularisation, réponse documentaire ou organisation des pièces à fournir.',
     bullets: [
-      'Cas représentatifs : préparation d’embauche, régularisation sociale, justificatifs, organisation documentaire.',
-      'Le résultat peut prendre la forme d’une check-list, d’un courrier ou d’un cadrage de démarche.',
+      'Cas représentatifs : préparation d'embauche, régularisation sociale, justificatifs, organisation documentaire.',
+      'Le résultat peut prendre la forme d'une check-list, d'un courrier ou d'un cadrage de démarche.',
       'Repère benchmark : les parcours Urssaf distinguent fortement les besoins des indépendants et des employeurs.'
     ],
     source: 'Repères : Urssaf / indépendants / employeurs',
-    contextPlaceholder: 'Le dossier social concerné, le salarié ou l’activité visée, l’échéance et les documents à réunir…',
+    contextPlaceholder: 'Le dossier social concerné, le salarié ou l'activité visée, l'échéance et les documents à réunir…',
     objectivePlaceholder: 'Ex : obtenir une check-list, préparer un courrier ou structurer les étapes de la formalité.',
     factsPlaceholder: 'Dates, statuts, pièces disponibles, références anonymisées, obligations connues…',
     vaultTitle: 'Pièces temporaires 48h — formalités sociales',
@@ -244,36 +244,36 @@ const PRIVATE_USECASE_HELP = {
   },
   synthese_dossier_prive: {
     title: 'Synthèse / cadrage / check-list de dossier',
-    intro: 'Structurez rapidement un dossier privé ou administratif pour clarifier les pièces, les actions à mener et l’ordre de traitement avant relecture experte ou accompagnement.',
+    intro: 'Structurez rapidement un dossier privé ou administratif pour clarifier les pièces, les actions à mener et l'ordre de traitement avant relecture experte ou accompagnement.',
     bullets: [
-      'Cas représentatifs : synthèse de dossier, check-list de pièces, chronologie d’actions, répartition des tâches.',
-      'Pratique quand plusieurs documents ont été déposés 48h et qu’il faut les exploiter dans un ordre cohérent.',
-      'Repère benchmark : utile pour passer d’un besoin flou à un plan d’action opérationnel.'
+      'Cas représentatifs : synthèse de dossier, check-list de pièces, chronologie d'actions, répartition des tâches.',
+      'Pratique quand plusieurs documents ont été déposés 48h et qu'il faut les exploiter dans un ordre cohérent.',
+      'Repère benchmark : utile pour passer d'un besoin flou à un plan d'action opérationnel.'
     ],
     source: 'Repères : besoins transverses artisans / TPE',
-    contextPlaceholder: 'Le dossier à structurer, les parties prenantes, l’urgence, les pièces disponibles et les points à arbitrer…',
+    contextPlaceholder: 'Le dossier à structurer, les parties prenantes, l'urgence, les pièces disponibles et les points à arbitrer…',
     objectivePlaceholder: 'Ex : obtenir une synthèse, une check-list, une chronologie ou un cadrage de dossier.',
     factsPlaceholder: 'Documents disponibles, contraintes, échéances, interlocuteurs et points de vigilance…',
     vaultTitle: 'Pièces temporaires 48h — cadrage de dossier',
     vaultCopy: 'Sélectionnez les pièces utiles pour produire une synthèse ou une check-list opérationnelle.'
   },
   devis_prive: {
-    title: 'Réalisation d’un devis ou d’une proposition commerciale',
-    intro: 'Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. L’assistant peut structurer l’offre, reformuler les prestations et clarifier les conditions commerciales.',
+    title: 'Réalisation d'un devis ou d'une proposition commerciale',
+    intro: 'Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. L'assistant peut structurer l'offre, reformuler les prestations et clarifier les conditions commerciales.',
     bullets: [
-      'Utile pour partir de notes brutes, d’un message client, d’un relevé de besoin ou d’un ancien devis.',
-      'Résultats possibles : devis structuré, proposition d’accompagnement, mail d’envoi du devis, check-list des pièces ou informations manquantes.',
+      'Utile pour partir de notes brutes, d'un message client, d'un relevé de besoin ou d'un ancien devis.',
+      'Résultats possibles : devis structuré, proposition d'accompagnement, mail d'envoi du devis, check-list des pièces ou informations manquantes.',
       'Repère métier : aide particulièrement utile quand il faut répondre vite tout en gardant une présentation professionnelle et cohérente.'
     ],
     source: 'Repères : usages fréquents artisans / TPE',
-    contextPlaceholder: 'Activité concernée, client, besoin exprimé, contexte de la demande et niveau d’urgence…',
-    objectivePlaceholder: 'Ex : obtenir un devis prêt à relire, une proposition commerciale ou un mail d’accompagnement du devis.',
-    factsPlaceholder: 'Prestations, quantités, prix, délais, options, conditions d’intervention, hypothèses et éléments à confirmer…',
+    contextPlaceholder: 'Activité concernée, client, besoin exprimé, contexte de la demande et niveau d'urgence…',
+    objectivePlaceholder: 'Ex : obtenir un devis prêt à relire, une proposition commerciale ou un mail d'accompagnement du devis.',
+    factsPlaceholder: 'Prestations, quantités, prix, délais, options, conditions d'intervention, hypothèses et éléments à confirmer…',
     vaultTitle: 'Pièces temporaires 48h — devis / proposition',
     vaultCopy: 'Ajoutez vos notes, ancien devis, cahier des charges ou échange client pour produire un document plus propre et plus complet.'
   },
   design_document_public: {
-    title: 'Mise en forme d’un document brut',
+    title: 'Mise en forme d'un document brut',
     intro: 'Transformez des notes, un relevé ou un texte non finalisé en document plus lisible, plus hiérarchisé et plus présentable pour un usage public ou interne.',
     bullets: [
       'Utile pour remettre en forme une note, une synthèse, un compte rendu ou un document interne avant validation.',
@@ -282,7 +282,7 @@ const PRIVATE_USECASE_HELP = {
     ],
     source: 'Repères : usages fréquents collectivités',
     contextPlaceholder: 'Nature du document, destinataire, niveau de formalité, contexte administratif et tonalité attendue…',
-    objectivePlaceholder: 'Ex : obtenir une version plus claire, plus lisible et plus présentable d’un document déjà rédigé.',
+    objectivePlaceholder: 'Ex : obtenir une version plus claire, plus lisible et plus présentable d'un document déjà rédigé.',
     factsPlaceholder: 'Texte brut, notes, décisions, titres souhaités, ordre logique des parties et points à conserver…',
     vaultTitle: 'Pièces temporaires 48h — document brut',
     vaultCopy: 'Ajoutez un document brut, un relevé ou des notes à remettre en forme avant validation ou diffusion.'
@@ -720,7 +720,7 @@ function buildExportContent(format) {
     return { filename: 'pope-online-livrable.doc', mime: 'application/msword', content: html };
   }
   if (format === 'pdf') {
-    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A;line-height:1.5}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}small{color:#51606f}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section><small>Utilisez la fonction d’impression du navigateur puis « Enregistrer au format PDF » pour finaliser le document.</small></body></html>`;
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Livrable POPE Online</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#07162A;line-height:1.5}h1,h2{color:#0c5ea8}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}section{margin:0 0 24px}small{color:#51606f}</style></head><body><h1>Livrable POPE Online</h1><p><strong>Date :</strong> ${stamp}<br><strong>Type :</strong> ${currentUsecaseLabel()}</p><section><h2>Contexte</h2><pre>${escapeHtml(payload.context || '-')}</pre></section><section><h2>Objectif</h2><pre>${escapeHtml(payload.objective || '-')}</pre></section><section><h2>Éléments factuels utiles</h2><pre>${escapeHtml(payload.facts || '-')}</pre></section><section><h2>Génération IA</h2><pre>${escapeHtml(result)}</pre></section><small>Utilisez la fonction d'impression du navigateur puis « Enregistrer au format PDF » pour finaliser le document.</small></body></html>`;
     return { filename: 'pope-online-livrable.pdf', mime: 'text/html;charset=utf-8', content: html, printable: true };
   }
   if (format === 'csv') {
@@ -762,7 +762,7 @@ function setArchiveAvailability(enabled) {
   });
   if (!enabled) {
     el('archiveSummary').innerHTML = '';
-    el('archiveList').innerHTML = '<div class="muted">L’archivage local est indisponible sur cet appareil.</div>';
+    el('archiveList').innerHTML = '<div class="muted">L'archivage local est indisponible sur cet appareil.</div>';
   }
 }
 
@@ -799,7 +799,7 @@ function renderArchive() {
   const host = el('archiveList');
   if (!host) return;
   if (!archiveStore) {
-    host.innerHTML = '<div class="muted">L’archivage local est indisponible.</div>';
+    host.innerHTML = '<div class="muted">L'archivage local est indisponible.</div>';
     return;
   }
   const term = (el('archiveSearch').value || '').trim().toLowerCase();
@@ -834,7 +834,7 @@ function firstPrivateUsecase() {
 }
 
 function setFieldPlaceholders(config = {}) {
-  el('context').placeholder = config.contextPlaceholder || 'Votre activité, votre situation, l’organisme ou l’interlocuteur concerné, les contraintes et l’échéance…';
+  el('context').placeholder = config.contextPlaceholder || 'Votre activité, votre situation, l'organisme ou l'interlocuteur concerné, les contraintes et l'échéance…';
   el('objective').placeholder = config.objectivePlaceholder || 'Ce que vous voulez obtenir : courrier, trame de réponse, message à adresser, formalité à préparer…';
   el('facts').placeholder = config.factsPlaceholder || 'Dates, chiffres, clauses du marché, références client, éléments URSSAF ou fiscaux, banque, RC, DCE, etc.';
 }
@@ -846,7 +846,7 @@ function renderUsecaseInsight(space = currentSpace) {
     host.innerHTML = `<div class="usecase-insight-card-v15"><strong>Cadre public</strong><p>Choisissez un format de livrable pour cadrer un besoin de collectivité, préparer un arbitrage ou produire un draft sécurisé avant relecture humaine si nécessaire.</p></div>`;
     el('vaultInlineTitle').textContent = 'Pièces temporaires 48h';
     el('vaultInlineCopy').textContent = 'Ajoutez des pièces utiles à la génération. Les formats TXT, DOC, CSV et PDF sélectionnés depuis le dépôt sécurisé 48h peuvent être analysés pour nourrir la génération.';
-    el('safeNote').textContent = '🔒 N’insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.';
+    el('safeNote').textContent = '🔒 N'insérez pas de données personnelles ou sensibles. Travaillez sur des éléments anonymisés ou génériques.';
     el('context').placeholder = 'Collectivité, enjeu, contraintes, échéance, destinataires…';
     el('objective').placeholder = 'Décision attendue, arbitrage, message clé, finalité…';
     el('facts').placeholder = 'Dates, chiffres, options, risques, contraintes, éléments de contexte…';
@@ -876,11 +876,11 @@ function applySpaceConfig(space) {
   el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
   el('heroTitle').textContent = isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';
   el('heroCopy').textContent = isPrivate
-    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d’entreprise à préparer à partir de vos pièces 48h.'
+    ? 'Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d'entreprise à préparer à partir de vos pièces 48h.'
     : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
   el('formCopy').textContent = isPrivate
     ? 'Sélectionnez un assistant métier privé, décrivez votre situation et ajoutez vos pièces temporaires si besoin pour produire un draft immédiatement exploitable.'
-    : 'Cadrez votre besoin, précisez l’objectif attendu et rassemblez les éléments utiles avant la génération.';
+    : 'Cadrez votre besoin, précisez l'objectif attendu et rassemblez les éléments utiles avant la génération.';
   if (el('usecaseLabel')) el('usecaseLabel').textContent = isPrivate ? 'Assistant privé' : 'Type de livrable';
   if (el('contextLabel')) el('contextLabel').textContent = isPrivate ? 'Votre situation' : 'Contexte';
   if (el('objectiveLabel')) el('objectiveLabel').textContent = isPrivate ? 'Ce que vous voulez obtenir' : 'Objectif du livrable';
@@ -988,13 +988,13 @@ async function callAI() {
     console.error(e);
     status('Erreur');
     if (e.status === 403 && e.data?.error === 'wallet_missing') {
-      setOutput('⚠️ Votre compte n'a pas encore d'accès configuré. Contactez le support à contact@pope-online.com.');
+      setOutput("⚠️ Votre compte n'a pas encore d'acc\u00e8s configur\u00e9. Contactez le support \u00e0 contact@pope-online.com.");
       setDossierIntel(null);
       showToast('Accès non configuré', 'warn');
       return;
     }
     if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
-      setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
+      setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l'offre adaptée à votre besoin.');
       setDossierIntel(null);
       showToast('Accès temporairement limité', 'warn');
       return;
@@ -1038,7 +1038,7 @@ el('btnExport').addEventListener('click', () => {
   const file = buildExportContent(format);
   if (file.printable) {
     const opened = openPrintableDocument(file.content);
-    showToast(opened ? 'Préparation du PDF lancée' : 'Veuillez autoriser l’ouverture ou l’impression du PDF', opened ? 'ok' : 'warn');
+    showToast(opened ? 'Préparation du PDF lancée' : 'Veuillez autoriser l'ouverture ou l'impression du PDF', opened ? 'ok' : 'warn');
     return;
   }
   downloadFile(file.filename, file.content, file.mime);
