@@ -870,34 +870,34 @@ function renderUsecaseInsight(space = currentSpace) {
 function applySpaceConfig(space) {
   const isPrivate = space === 'private';
   currentSpace = isPrivate ? 'private' : 'public';
-  var _hl = document.getElementById('appHomeLink') || document.getElementById('topbarHomeLink'); if (_hl) _hl.href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
+  document.getElementById('appHomeLink').href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
   updateCrossLinks(space);
-  (function(){var _n=el('appSubTitle');if(_n)_n.textContent=isPrivate ? 'Génération IA privée' : 'Mon espace public';})();
-  (function(){var _n=el('spaceBadge');if(_n)_n.textContent=isPrivate ? 'Génération IA privée' : 'Génération guidée';})();
-  (function(){var _n=el('heroTitle');if(_n)_n.textContent=isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';})();
-  (function(){var _n=el('heroCopy');if(_n)_n.textContent=isPrivate
+  el('appSubTitle').textContent = isPrivate ? 'Génération IA privée' : 'Mon espace public';
+  el('spaceBadge').textContent = isPrivate ? 'Génération IA privée' : 'Génération guidée';
+  el('heroTitle').textContent = isPrivate ? 'Produire un livrable privé sécurisé' : 'Produire un livrable sécurisé';
+  el('heroCopy').textContent = isPrivate
     ? "Choisissez un assistant privé pensé pour les artisans, indépendants et TPE : trame de réponse à un marché public, rapport de synthèse argumenté, courrier administratif contextualisé ou formalité d'entreprise à préparer à partir de vos pièces 48h."
-    : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';})();
-  (function(){var _n=el('formCopy');if(_n)_n.textContent=isPrivate
+    : 'Préparez votre demande, lancez la génération et conservez les résultats utiles dans un archivage local simple, lisible et fiable.';
+  el('formCopy').textContent = isPrivate
     ? 'Sélectionnez un assistant métier privé, décrivez votre situation et ajoutez vos pièces temporaires si besoin pour produire un draft immédiatement exploitable.'
-    : "Cadrez votre besoin, précisez l'objectif attendu et rassemblez les éléments utiles avant la génération.";})();
-  if (el('usecaseLabel')) (function(){var _n=el('usecaseLabel');if(_n)_n.textContent=isPrivate ? 'Assistant privé' : 'Type de livrable';})();
-  if (el('contextLabel')) (function(){var _n=el('contextLabel');if(_n)_n.textContent=isPrivate ? 'Votre situation' : 'Contexte';})();
-  if (el('objectiveLabel')) (function(){var _n=el('objectiveLabel');if(_n)_n.textContent=isPrivate ? 'Ce que vous voulez obtenir' : 'Objectif du livrable';})();
-  if (el('factsLabel')) (function(){var _n=el('factsLabel');if(_n)_n.textContent=isPrivate ? 'Pièces, références et éléments utiles' : 'Éléments factuels utiles';})();
+    : "Cadrez votre besoin, précisez l'objectif attendu et rassemblez les éléments utiles avant la génération.";
+  if (el('usecaseLabel')) el('usecaseLabel').textContent = isPrivate ? 'Assistant privé' : 'Type de livrable';
+  if (el('contextLabel')) el('contextLabel').textContent = isPrivate ? 'Votre situation' : 'Contexte';
+  if (el('objectiveLabel')) el('objectiveLabel').textContent = isPrivate ? 'Ce que vous voulez obtenir' : 'Objectif du livrable';
+  if (el('factsLabel')) el('factsLabel').textContent = isPrivate ? 'Pièces, références et éléments utiles' : 'Éléments factuels utiles';
   const generateBtn = el('btnGenerate');
   if (generateBtn && !generationInFlight) generateBtn.textContent = isPrivate ? 'Générer un draft privé sécurisé' : 'Produire un livrable sécurisé';
   const exportBtn = el('btnExport');
   if (exportBtn) exportBtn.textContent = isPrivate ? 'Exporter le draft' : 'Exporter';
   if (isPrivate) {
-    (function(){var _n=el('usecase');if(_n)_n.innerHTML=PRIVATE_USECASE_GROUPS.map((group) => `
+    el('usecase').innerHTML = PRIVATE_USECASE_GROUPS.map((group) => `
       <optgroup label="${group.label}">
         ${group.options.map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}
-      </optgroup>`).join('');})();
-    (function(){var _n=el('usecase');if(_n)_n.value=firstPrivateUsecase();})();
+      </optgroup>`).join('');
+    el('usecase').value = firstPrivateUsecase();
   } else {
-    (function(){var _n=el('usecase');if(_n)_n.innerHTML=PUBLIC_USECASES.map(([v, l]) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`).join('');})();
-    if (el('usecase').options.length) (function(){var _n=el('usecase');if(_n)_n.value=el('usecase').options[0].value;})();
+    el('usecase').innerHTML = PUBLIC_USECASES.map(([v, l]) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`).join('');
+    if (el('usecase').options.length) el('usecase').value = el('usecase').options[0].value;
   }
   restoreFormState(currentSpace);
   renderUsecaseInsight(currentSpace);

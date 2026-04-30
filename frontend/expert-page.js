@@ -48,7 +48,7 @@ async function refreshWallet(){
     currentUser=me.user||null;
     setTicketsBadge(me.wallet);
   }catch{}
-  var _ehl=document.getElementById('expertHomeLink')||document.getElementById('topbarHomeLink'); if(_ehl) _ehl.href = isPrivate() ? 'dashboard-private.html' : 'dashboard.html';
+  document.getElementById('expertHomeLink').href = isPrivate() ? 'dashboard-private.html' : 'dashboard.html';
   const gen = document.getElementById('spaceGenerateLink'); if (gen) gen.href = isPrivate() ? 'app-private.html' : 'app.html';
   const crossMission = document.getElementById('crossMissionLink'); if (crossMission) crossMission.href = isPrivate() ? 'mission-private.html' : 'mission.html';
   applySpaceLabels();

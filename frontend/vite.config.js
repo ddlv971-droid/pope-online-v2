@@ -28,18 +28,13 @@ export default defineConfig(({ mode }) => ({
         // Eviter que api.js soit extrait en chunk separe
         // qui peut etre bloque par certains proxies/firewalls
         manualChunks: (id) => {
-          // Chunk partagé stable pour éviter que app.js finisse dans cgu
-          if (id.includes('/app.js') || id.includes('/api.js') ||
-              id.includes('/archive.js') || id.includes('/turnstile.js') ||
-              id.includes('/phone.js')) {
-            return 'shared';
+          // Garder api.js, turnstile.js, app.js inline dans chaque bundle
+          if (id.includes('/api.js') || id.includes('/turnstile.js')) {
+            return undefined; // inline dans le bundle appelant
           }
-          // Pages légales uniquement (exclure referral, vault, profile, app-page)
-          if ((id.includes('cgu') || id.includes('cgv') ||
-               id.includes('privacy') || id.includes('resiliation') ||
-               id.includes('legal')) &&
-              !id.includes('referral') && !id.includes('vault') &&
-              !id.includes('profile') && !id.includes('app-page')) {
+          // Regrouper les pages legales ensemble
+          if (id.includes('legal') || id.includes('cgu') || id.includes('cgv') ||
+              id.includes('privacy') || id.includes('resiliation')) {
             return 'legal-pages';
           }
         }
