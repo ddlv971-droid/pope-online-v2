@@ -7124,7 +7124,11 @@ h1, h2, h3 {
   .v38-grid-3        { grid-template-columns: 1fr; }
   .v38-nav-links     { display: none; }
   .v38-burger        { display: flex; }
-  .v38-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  /* Désactiver backdrop-filter du nav pour libérer le stacking context */
+  .v38-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
   .v38-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
