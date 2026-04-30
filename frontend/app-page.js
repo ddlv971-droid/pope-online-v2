@@ -762,7 +762,7 @@ function setArchiveAvailability(enabled) {
   });
   if (!enabled) {
     el('archiveSummary').innerHTML = '';
-    el('archiveList').innerHTML = '<div class="muted">L'archivage local est indisponible sur cet appareil.</div>';
+    el('archiveList').innerHTML = '<div class="muted">L\'archivage local est indisponible sur cet appareil.</div>';
   }
 }
 
@@ -799,7 +799,7 @@ function renderArchive() {
   const host = el('archiveList');
   if (!host) return;
   if (!archiveStore) {
-    host.innerHTML = '<div class="muted">L'archivage local est indisponible.</div>';
+    host.innerHTML = '<div class="muted">L\'archivage local est indisponible.</div>';
     return;
   }
   const term = (el('archiveSearch').value || '').trim().toLowerCase();
