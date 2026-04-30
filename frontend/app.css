@@ -7424,37 +7424,48 @@ h1, h2, h3 {
    ═══════════════════════════════════════════════════════════════ */
 
 .v40-topbar {
-  position: sticky; top: 0; z-index: 100;
-  height: 58px;
-  background: rgba(7,22,42,.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,.07);
-  display: flex; align-items: center;
+  position: sticky !important; top: 0 !important; z-index: 200 !important;
+  height: 58px !important; min-height: 58px !important; max-height: 58px !important;
+  background: rgba(7,22,42,.97) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255,255,255,.07) !important;
+  display: flex !important; align-items: center !important;
+  overflow: visible !important;
 }
 
 .v40-topbar-inner {
-  width: 100%; max-width: 1280px; margin: 0 auto;
-  padding: 0 20px;
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: nowrap; overflow: hidden;
+  width: 100% !important; max-width: 1280px !important;
+  margin: 0 auto !important; padding: 0 20px !important;
+  display: flex !important; align-items: center !important;
+  gap: 10px !important; flex-wrap: nowrap !important;
+  flex-direction: row !important; overflow: visible !important;
+  height: 58px !important;
 }
 
 /* Brand */
 .v40-topbar-brand {
-  display: flex; align-items: center; gap: 9px;
-  text-decoration: none; flex-shrink: 0;
+  display: flex !important; align-items: center !important;
+  gap: 9px !important; text-decoration: none !important;
+  flex-shrink: 0 !important; flex-direction: row !important;
 }
-.v40-topbar-brand img { height: 28px; flex-shrink: 0; }
+.v40-topbar-brand img {
+  height: 28px !important; width: auto !important;
+  flex-shrink: 0 !important;
+}
 .v40-topbar-brand-text {
-  display: flex; align-items: baseline; gap: 5px;
-  white-space: nowrap;
+  display: flex !important; align-items: baseline !important;
+  gap: 5px !important; white-space: nowrap !important;
+  flex-direction: row !important;
 }
 .v40-topbar-brand-text strong {
-  font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap;
+  font-size: 14px !important; font-weight: 800 !important;
+  color: #fff !important; white-space: nowrap !important;
+  line-height: 1 !important;
 }
 .v40-topbar-brand-text small {
-  font-size: 11px; color: rgba(255,255,255,.4); white-space: nowrap;
+  font-size: 11px !important; color: rgba(255,255,255,.4) !important;
+  white-space: nowrap !important; line-height: 1 !important;
 }
 
 /* Séparateur */
