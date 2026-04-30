@@ -27,13 +27,15 @@
   display: flex; align-items: center;
 }
 .v39-nav-inner {
-  max-width: 1280px; margin: 0 auto; padding: 0 24px;
+  max-width: 1280px; margin: 0 auto; padding: 0 16px;
   width: 100%; display: flex; align-items: center; gap: 8px;
+  flex-wrap: nowrap; overflow: hidden;
 }
-.v39-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.v39-brand img { height: 32px; }
-.v39-brand strong { font-size: 15px; font-weight: 800; color: #fff; }
-.v39-brand small  { font-size: 11px; color: rgba(255,255,255,.45); margin-left: 2px; }
+.v39-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.v39-brand img { height: 32px; flex-shrink: 0; }
+.v39-brand-text { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.v39-brand strong { font-size: 15px; font-weight: 800; color: #fff; white-space: nowrap; }
+.v39-brand small  { font-size: 11px; color: rgba(255,255,255,.45); white-space: nowrap; }
 .v39-nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
 .v39-nav-links a {
   color: rgba(255,255,255,.65); text-decoration: none; font-size: 13px;
@@ -68,6 +70,8 @@
   flex: 1;
   overflow: hidden;
   background: #02111f;
+  /* Hauteur max sur mobile pour éviter trop d'espace vide */
+  max-height: calc(100vh - 62px);
 }
 
 .v39-band-bg {
@@ -94,6 +98,7 @@
 .v39-panel img {
   position: absolute; top: 0; left: calc(var(--i) * -100%);
   width: 500%; height: 100%; object-fit: cover;
+  object-position: center 20%;
   pointer-events: none; transform: scale(1.02);
   filter: saturate(1.2) contrast(1.05) brightness(.92);
 }
@@ -128,12 +133,12 @@
   pointer-events: none;
 }
 .v39-band-logo {
-  height: clamp(80px, 14vw, 190px);
-  max-width: min(85vw, 800px);
+  height: clamp(90px, 21vw, 285px);
+  max-width: min(82vw, 900px);
   width: auto;
   object-fit: contain;
-  margin-bottom: 28px;
-  filter: drop-shadow(0 4px 24px rgba(0,0,0,.4));
+  margin-bottom: 32px;
+  filter: drop-shadow(0 6px 32px rgba(0,0,0,.5));
 }
 
 .v39-slogan-wrap { min-height: 100px; display: flex; align-items: center; justify-content: center; }
@@ -190,11 +195,12 @@
 
 /* CTA overlay en bas du hero */
 .v39-cta-zone {
-  background: linear-gradient(to top, #07162a 0%, transparent 100%);
-  padding: 0 24px 40px;
+  background: linear-gradient(to top, #07162a 60%, transparent 100%);
+  padding: 60px 24px 48px;
   display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
-  position: relative; z-index: 8; pointer-events: all;
-  margin-top: -120px;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 8; pointer-events: all;
 }
 
 /* Cartes espaces */
@@ -315,6 +321,7 @@
 .v39-burger {
   display: none; background: none; border: none; cursor: pointer;
   padding: 6px; margin-left: auto; flex-direction: column; gap: 5px;
+  flex-shrink: 0;
 }
 .v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; }
 
@@ -352,16 +359,45 @@
     background: #07162a; padding: 16px 24px;
     border-bottom: 1px solid rgba(255,255,255,.08); z-index: 99;
   }
-  .v39-cta-zone { margin-top: -60px; }
   .v39-ticker { display: none; }
+
+  /* Hero mobile : plein écran comme desktop */
+  .v39-hero { min-height: 100vh; }
+
+  /* Bandeau plein écran, CTA intégrée dedans via flex */
+  .v39-band { flex: 1; }
+
+  /* Contenu : logo remonté au niveau des cheveux */
+  .v39-band-content {
+    position: absolute;
+    justify-content: flex-start;
+    padding-top: 5%;
+    padding-bottom: 0;
+  }
+
+  .v39-cta-zone {
+    padding: 40px 24px 32px;
+  }
+
+  /* Logo x2 sur mobile */
+  .v39-band-logo {
+    height: clamp(110px, 28vw, 200px);
+    max-width: 80vw;
+    margin-bottom: 12px;
+  }
+  .v39-slogan-wrap { min-height: 50px; }
+  .v39-slogan { font-size: clamp(24px, 6.5vw, 44px); }
+  .v39-band-tagline { font-size: clamp(12px, 3vw, 15px); margin-top: 8px; }
+  .v39-band-sub { font-size: clamp(11px, 2.8vw, 14px); margin-top: 8px; }
 }
 @media(max-width: 500px) {
   .v39-space-card { padding: 22px 18px; }
   .v39-pitch-inner { padding: 24px 20px; }
-  .v39-band-logo { height: clamp(50px, 12vw, 80px); max-width: 78vw; }
-  .v39-slogan { font-size: clamp(24px, 7vw, 40px); }
-  .v39-band-sub { font-size: 13px; }
-  .v39-band-tagline { font-size: 12px; }
+  .v39-band-content { padding-top: 4%; }
+  .v39-band-logo { height: clamp(100px, 26vw, 160px); max-width: 78vw; }
+  .v39-slogan { font-size: clamp(20px, 6.5vw, 30px); }
+  .v39-band-sub { font-size: 12px; }
+  .v39-band-tagline { font-size: 11px; }
 }
 </style>
 </head>
@@ -372,7 +408,7 @@
   <div class="v39-nav-inner">
     <a class="v39-brand" href="index.html">
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <span><strong>POPE Online</strong> <small>IA + Expertise</small></span>
+      <div class="v39-brand-text"><strong>POPE Online</strong><small>IA + Expertise</small></div>
     </a>
     <button class="v39-burger" id="burger" type="button" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -445,9 +481,8 @@
         <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
       </div>
     </div>
-  </div>
 
-  <!-- CTA overlay -->
+  <!-- CTA overlay — à l'intérieur du bandeau -->
   <div class="v39-cta-zone">
     <a href="signup.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(0,121,193,.4)">
       Démarrer l'essai gratuit →
@@ -456,6 +491,8 @@
       Se connecter
     </a>
   </div>
+</div>
+
 </section>
 
 <!-- CARTES ESPACES -->
