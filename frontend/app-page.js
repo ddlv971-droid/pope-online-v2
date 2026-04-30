@@ -68,7 +68,7 @@ const PRIVATE_USECASE_HELP = {
     bullets: [
       "Pièces recommandées : DCE, RC, BPU, DPGF, acte d'engagement, trame de mémoire technique.",
       "Résultats utiles : synthèse du besoin, points différenciants, questions à l'acheteur, structure de réponse et points de vigilance.",
-      'Repère benchmark : les ressources commande publique mettent l'accent sur la candidature, les pièces du dossier et la lisibilité de l'offre.'
+      "Repère benchmark : les ressources commande publique mettent l'accent sur la candidature, les pièces du dossier et la lisibilité de l'offre."
     ],
     source: 'Repères : commande publique / économie.gouv.fr',
     contextPlaceholder: "Votre activité, la consultation visée, le besoin exprimé par l'acheteur, vos atouts et vos contraintes de réponse…",
@@ -79,7 +79,7 @@ const PRIVATE_USECASE_HELP = {
   },
   trame_reponse_marche_public: {
     title: 'Trame de réponse à un marché public',
-    intro: 'Produisez une trame de réponse structurée à partir du DCE, du RC, du BPU et de vos pièces jointes pour sécuriser votre compréhension du marché et organiser votre offre.',
+    intro: "Produisez une trame de réponse structurée à partir du DCE, du RC, du BPU et de vos pièces jointes pour sécuriser votre compréhension du marché et organiser votre offre.",
     bullets: [
       "Pièces recommandées : DCE, règlement de consultation, BPU, DPGF, acte d'engagement, mémoire technique, pièces administratives.",
       'Résultats utiles : architecture de réponse, trame du mémoire, check-list des pièces, angles de différenciation, points de vigilance et questions éventuelles.',
@@ -124,7 +124,7 @@ const PRIVATE_USECASE_HELP = {
   },
   courrier_urssaf: {
     title: 'Courrier URSSAF / cotisations / délai / contestation',
-    intro: 'Préparez un courrier administratif clair et contextualisé à destination de l'URSSAF : demande de délai, réponse à une relance, demande d'explication, transmission de justificatifs ou contestation argumentée.',
+    intro: "Préparez un courrier administratif clair et contextualisé à destination de l'URSSAF : demande de délai, réponse à une relance, demande d'explication, transmission de justificatifs ou contestation argumentée.",
     bullets: [
       "Cas représentatifs : demande d'échéancier, réponse à mise en demeure, demande de régularisation, transmission de pièces.",
       'Le courrier est structuré pour reprendre les références dossier, le contexte, la demande et les suites attendues.',
@@ -198,11 +198,11 @@ const PRIVATE_USECASE_HELP = {
     vaultCopy: 'Ajoutez la demande reçue, votre dossier ou la pièce concernée pour mieux cadrer la réponse.'
   },
   formalites_creation: {
-    title: 'Création d'entreprise / lancement d'activité',
+    title: "Création d'entreprise / lancement d'activité",
     intro: 'Préparez un cadrage opérationnel de création : étapes, pièces, choix structurants, questions à traiter et documents à préparer avant immatriculation.',
     bullets: [
       "Cas représentatifs : choisir un statut, préparer l'immatriculation, rassembler les pièces, planifier les démarches de lancement.",
-      'Résultats utiles : check-list, plan d'action, synthèse des pièces, note d'arbitrage ou message à adresser à un organisme.',
+      "Résultats utiles : check-list, plan d'action, synthèse des pièces, note d'arbitrage ou message à adresser à un organisme.",
       "Repère benchmark : Bpifrance Création, l'Urssaf et les CCI structurent fortement les parcours de création et de formalités."
     ],
     source: 'Repères : Bpifrance Création / Urssaf / CCI',
@@ -214,7 +214,7 @@ const PRIVATE_USECASE_HELP = {
   },
   formalites_modification: {
     title: "Modification d'entreprise / siège / activité / dirigeants",
-    intro: 'Préparez une formalité de modification : changement d'adresse, d'activité, de dirigeant, mise à jour de statuts ou cadrage des pièces à déposer.',
+    intro: "Préparez une formalité de modification : changement d'adresse, d'activité, de dirigeant, mise à jour de statuts ou cadrage des pièces à déposer.",
     bullets: [
       "Cas représentatifs : transfert de siège, modification d'activité, changement de dirigeant, actualisation de pièces.",
       "Résultats utiles : check-list de formalité, chronologie des actions, courrier d'accompagnement ou synthèse du dossier.",
@@ -232,11 +232,11 @@ const PRIVATE_USECASE_HELP = {
     intro: 'Préparez un dossier ou un courrier lié à une formalité sociale : embauche, affiliation, régularisation, réponse documentaire ou organisation des pièces à fournir.',
     bullets: [
       "Cas représentatifs : préparation d'embauche, régularisation sociale, justificatifs, organisation documentaire.",
-      "Le résultat peut prendre la forme d'une check-list, d"un courrier ou d'un cadrage de démarche.',
+      "Le résultat peut prendre la forme d'une check-list, d'un courrier ou d'un cadrage de démarche.',
       'Repère benchmark : les parcours Urssaf distinguent fortement les besoins des indépendants et des employeurs.'
     ],
     source: 'Repères : Urssaf / indépendants / employeurs',
-    contextPlaceholder: 'Le dossier social concerné, le salarié ou l'activité visée, l'échéance et les documents à réunir…',
+    contextPlaceholder: "Le dossier social concerné, le salarié ou l'activité visée, l'échéance et les documents à réunir…",
     objectivePlaceholder: 'Ex : obtenir une check-list, préparer un courrier ou structurer les étapes de la formalité.',
     factsPlaceholder: 'Dates, statuts, pièces disponibles, références anonymisées, obligations connues…',
     vaultTitle: 'Pièces temporaires 48h — formalités sociales',
@@ -248,7 +248,7 @@ const PRIVATE_USECASE_HELP = {
     bullets: [
       "Cas représentatifs : synthèse de dossier, check-list de pièces, chronologie d'actions, répartition des tâches.",
       "Pratique quand plusieurs documents ont été déposés 48h et qu'il faut les exploiter dans un ordre cohérent.",
-      'Repère benchmark : utile pour passer d'un besoin flou à un plan d'action opérationnel.'
+      "Repère benchmark : utile pour passer d'un besoin flou à un plan d'action opérationnel."
     ],
     source: 'Repères : besoins transverses artisans / TPE',
     contextPlaceholder: "Le dossier à structurer, les parties prenantes, l'urgence, les pièces disponibles et les points à arbitrer…",
@@ -258,11 +258,11 @@ const PRIVATE_USECASE_HELP = {
     vaultCopy: 'Sélectionnez les pièces utiles pour produire une synthèse ou une check-list opérationnelle.'
   },
   devis_prive: {
-    title: 'Réalisation d'un devis ou d'une proposition commerciale',
-    intro: 'Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. L'assistant peut structurer l'offre, reformuler les prestations et clarifier les conditions commerciales.',
+    title: "Réalisation d'un devis ou d'une proposition commerciale",
+    intro: "Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. Lassistant peut structurer l'offre, reformuler les prestations et clarifier les conditions commerciales.",
     bullets: [
-      "Utile pour partir de notes brutes, d'un message client, d"un relevé de besoin ou d'un ancien devis.',
-      'Résultats possibles : devis structuré, proposition d'accompagnement, mail d'envoi du devis, check-list des pièces ou informations manquantes.',
+      "Utile pour partir de notes brutes, d'un message client, d'un relevé de besoin ou d'un ancien devis.',
+      "Résultats possibles : devis structuré, proposition d'accompagnement, mail d'envoi du devis, check-list des pièces ou informations manquantes.",
       'Repère métier : aide particulièrement utile quand il faut répondre vite tout en gardant une présentation professionnelle et cohérente.'
     ],
     source: 'Repères : usages fréquents artisans / TPE',
@@ -1038,7 +1038,7 @@ el('btnExport').addEventListener('click', () => {
   const file = buildExportContent(format);
   if (file.printable) {
     const opened = openPrintableDocument(file.content);
-    showToast(opened ? 'Préparation du PDF lancée' : 'Veuillez autoriser l'ouverture ou l'impression du PDF', opened ? 'ok' : 'warn');
+    showToast(opened ? 'Préparation du PDF lancée' : "Veuillez autoriser l'ouverture ou l'impression du PDF", opened ? 'ok' : 'warn');
     return;
   }
   downloadFile(file.filename, file.content, file.mime);
