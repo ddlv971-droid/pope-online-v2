@@ -31,19 +31,20 @@ export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
 export function setSession(user = null, token = '') {
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-  if (token) sessionStorage.setItem(TOKEN_KEY, String(token));
+  if (token) { sessionStorage.setItem(TOKEN_KEY, String(token)); localStorage.setItem(TOKEN_KEY, String(token)); }
 }
 
 export function setToken(token, user = null){
   setSession(user || {}, token || sessionStorage.getItem(TOKEN_KEY) || '');
 }
 export function getToken(){
-  return sessionStorage.getItem(TOKEN_KEY) || (localStorage.getItem(SESSION_KEY) === '1' ? 'cookie-session' : '');
+  return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || (localStorage.getItem(SESSION_KEY) === '1' ? '' : '');
 }
 export function clearToken(){
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
+  localStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
   DRAFT_KEYS.forEach((key)=>sessionStorage.removeItem(key));
 }

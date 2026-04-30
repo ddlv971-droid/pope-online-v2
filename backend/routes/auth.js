@@ -740,56 +740,62 @@ router.post('/logout', requireAuth, async (req, res) => {
 });
 
 
-// ── GET /auth/referral — infos parrainage du client connecté ────────────────
+// ── GET /auth/referral — infos parrainage ────────────────────────────────────
 router.get('/referral', requireAuth, async (req, res) => {
   try {
     const userId = req.user.sub;
 
+    // Créer la colonne si elle n'existe pas encore
+    try {
+      await withClient(async (client) => {
+        await client.query(
+          `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code text UNIQUE`
+        );
+      });
+    } catch (_) { /* colonne déjà existante */ }
+
     const result = await withClient(async (client) => {
-      // Étape 1 : récupérer le code existant
-      let userRes = await client.query(
-        'select referral_code from users where id=$1 limit 1',
-        [userId]
+      // Étape 1 : récupérer le code
+      const userRes = await client.query(
+        'SELECT referral_code FROM users WHERE id=$1 LIMIT 1', [userId]
       );
       if (!userRes.rowCount) return { error: 'not_found' };
 
       let code = userRes.rows[0].referral_code;
 
-      // Étape 2 : générer si absent (anciens comptes)
+      // Étape 2 : générer si absent
       if (!code) {
-        code = Math.random().toString(36).slice(2,8).toUpperCase()
-              + Math.random().toString(36).slice(2,6).toUpperCase();
-        try {
-          await client.query(
-            'update users set referral_code=$2 where id=$1',
-            [userId, code]
-          );
-        } catch (dupErr) {
-          // Collision rare sur UNIQUE — regénérer
-          code = Math.random().toString(36).slice(2,10).toUpperCase()
-                + Math.random().toString(36).slice(2,4).toUpperCase();
-          await client.query(
-            'update users set referral_code=$2 where id=$1',
-            [userId, code]
-          );
+        const attempts = [
+          Math.random().toString(36).slice(2,8).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase(),
+          Math.random().toString(36).slice(2,12).toUpperCase()
+        ];
+        for (const attempt of attempts) {
+          try {
+            await client.query(
+              'UPDATE users SET referral_code=$2 WHERE id=$1', [userId, attempt]
+            );
+            code = attempt;
+            break;
+          } catch (_) { /* collision UNIQUE, essayer suivant */ }
         }
       }
 
-      // Étape 3 : statistiques
-      const statsRes = await client.query(
-        `select count(invited.id) as invites_count,
-                count(invited.id) filter (where w.status='active') as converted_count
-         from users invited
-         left join wallets w on w.user_id = invited.id
-         where invited.referred_by = $1`,
-        [userId]
-      );
-      const stats = statsRes.rows[0] || {};
-      return {
-        code,
-        invites_count:   Number(stats.invites_count   || 0),
-        converted_count: Number(stats.converted_count || 0)
-      };
+      // Étape 3 : statistiques (optionnel, ne bloque pas si referred_by manquant)
+      let invites_count = 0, converted_count = 0;
+      try {
+        const statsRes = await client.query(
+          `SELECT COUNT(invited.id) AS invites_count,
+                  COUNT(invited.id) FILTER (WHERE w.status='active') AS converted_count
+           FROM users invited
+           LEFT JOIN wallets w ON w.user_id = invited.id
+           WHERE invited.referred_by = $1`,
+          [userId]
+        );
+        invites_count   = Number(statsRes.rows[0]?.invites_count   || 0);
+        converted_count = Number(statsRes.rows[0]?.converted_count || 0);
+      } catch (_) { /* colonne referred_by absente - stats non disponibles */ }
+
+      return { code, invites_count, converted_count };
     });
 
     if (result.error) return res.status(404).json({ error: result.error });
@@ -806,5 +812,6 @@ router.get('/referral', requireAuth, async (req, res) => {
     return res.status(500).json({ error: 'server_error', detail: String(e.message) });
   }
 });
+
 
 export default router;

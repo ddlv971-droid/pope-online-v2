@@ -6,6 +6,120 @@
 <title>POPE Online — Tableau de bord</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style id="v40-topbar-fix">
+/* ── Anti-conflits topbar V40 ── */
+html body header.v40-topbar{
+  position:sticky!important;top:0!important;z-index:200!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  display:flex!important;align-items:center!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;
+  background:rgba(7,22,42,.97)!important;
+  backdrop-filter:blur(16px)!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  overflow:visible!important;
+}
+html body header.v40-topbar .v40-topbar-inner{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;height:58px!important;
+  width:100%!important;padding:0 20px!important;gap:10px!important;
+}
+html body header.v40-topbar .v40-topbar-brand{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;gap:9px!important;
+  text-decoration:none!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand img{
+  height:28px!important;width:auto!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:baseline!important;gap:5px!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong,
+html body header.v40-topbar .v40-topbar-brand-text small{
+  white-space:nowrap!important;display:inline!important;width:auto!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong{
+  font-size:14px!important;font-weight:800!important;color:#fff!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text small{
+  font-size:11px!important;color:rgba(255,255,255,.4)!important;
+}
+html body header.v40-topbar .v40-topbar-nav{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+}
+html body header.v40-topbar #v40Burger{
+  display:none;flex-direction:column!important;gap:5px!important;
+  margin-left:auto!important;flex-shrink:0!important;
+  background:none!important;border:none!important;
+  cursor:pointer!important;padding:6px!important;width:auto!important;
+}
+html body header.v40-topbar #v40Burger span{
+  display:block!important;width:22px!important;height:2px!important;
+  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
+  transition:transform .25s ease,opacity .25s ease!important;
+}
+#v40MobileMenu{
+  display:none;position:fixed!important;
+  top:58px!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:201!important;
+  background:rgba(7,22,42,.98)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  padding:20px!important;overflow-y:auto!important;
+  flex-direction:column!important;gap:4px!important;
+}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:14px 18px!important;border-radius:12px!important;
+  font-size:15px!important;font-weight:600!important;
+  color:rgba(255,255,255,.85)!important;
+  text-decoration:none!important;background:none!important;
+  border:none!important;cursor:pointer!important;
+  width:100%!important;
+}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{
+  background:rgba(255,255,255,.07)!important;color:#fff!important;
+}
+.v40-mobile-menu-sep{
+  height:1px!important;background:rgba(255,255,255,.08)!important;
+  margin:8px 0!important;
+}
+@media(max-width:860px){
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
+  html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+</style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
+.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu.open{display:flex!important;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
+@media(max-width:860px){
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
+}
+</style>
 </head>
 <body data-logout-target="public.html" class="bg po-v14-dashboard">
 <header class="v40-topbar">

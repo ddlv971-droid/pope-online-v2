@@ -987,6 +987,12 @@ async function callAI() {
   } catch (e) {
     console.error(e);
     status('Erreur');
+    if (e.status === 403 && e.data?.error === 'wallet_missing') {
+      setOutput('⚠️ Votre compte n'a pas encore d'accès configuré. Contactez le support à contact@pope-online.com.');
+      setDossierIntel(null);
+      showToast('Accès non configuré', 'warn');
+      return;
+    }
     if (e.status === 402 && ['no_tickets','trial_expired','public_dossier_limit_reached','private_dossier_limit_reached'].includes(e.data?.error)) {
       setOutput('🚫 Votre période gratuite est terminée ou votre quota gratuit est atteint. Contactez-nous pour définir l’offre adaptée à votre besoin.');
       setDossierIntel(null);
