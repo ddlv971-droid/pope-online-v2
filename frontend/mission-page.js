@@ -39,7 +39,7 @@ async function refreshWallet(){
     currentUser=me.user||null;
     setTicketsBadge(me.wallet);
   }catch{}
-  document.getElementById('missionHomeLink').href = isPrivate() ? 'dashboard-private.html' : 'dashboard.html';
+  var _mhl=document.getElementById('missionHomeLink')||document.getElementById('topbarHomeLink'); if(_mhl) _mhl.href = isPrivate() ? 'dashboard-private.html' : 'dashboard.html';
   const gen = document.getElementById('spaceGenerateLink'); if (gen) gen.href = isPrivate() ? 'app-private.html' : 'app.html';
   const crossExpert = document.getElementById('crossExpertLink'); if (crossExpert) crossExpert.href = isPrivate() ? 'expert-private.html' : 'expert.html';
   applySpaceLabels();
