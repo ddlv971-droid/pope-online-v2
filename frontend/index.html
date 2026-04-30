@@ -354,8 +354,6 @@
   .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
   .v39-nav-links { display: none; }
   .v39-burger { display: flex; }
-  /* Retirer backdrop-filter du nav en mobile pour libérer le stacking context */
-  .v39-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   .v39-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
@@ -435,29 +433,10 @@
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v39-brand-text"><strong>POPE Online</strong><small>IA + Expertise</small></div>
     </a>
-    <div class="v39-nav-links" id="navLinksDesktop">
-
-      <a href="about.html">Qui sommes-nous</a>
-      <a href="pricing.html">Tarifs</a>
-      <a href="tutoriel.html">▶ Tutoriel</a>
-      <a href="mailto:contact@pope-online.com">Contact</a>
-      <div class="v39-nav-sep">
-    </div>
     <button class="v39-burger" id="burger" type="button" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-  </div>
-</nav>
-<div class="v39-nav-links" id="navLinks">
-
-      <a href="about.html">Qui sommes-nous</a>
-      <a href="pricing.html">Tarifs</a>
-      <a href="tutoriel.html">▶ Tutoriel</a>
-      <a href="mailto:contact@pope-online.com">Contact</a>
-      <div class="v39-nav-sep">
-</div>
-<!-- Overlay mobile iOS fix -->
-<div class="v39-nav-links" id="navLinks">
+    <div class="v39-nav-links" id="navLinks">
       <a href="about.html">Qui sommes-nous</a>
       <a href="pricing.html">Tarifs</a>
       <a href="tutoriel.html">▶ Tutoriel</a>
@@ -467,6 +446,8 @@
       <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
       <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
     </div>
+  </div>
+</nav>
 
 <!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
 <section class="v39-hero">

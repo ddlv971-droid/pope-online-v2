@@ -257,7 +257,7 @@ async function init() {
     const me = await apiFetch('/auth/me');
     const space = me?.user?.accountSpace || 'public';
     const dashUrl = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
-    var _hl=document.getElementById('homeLink')||document.getElementById('topbarHomeLink'); if(_hl) _hl.href=dashUrl;
+    var _hl2=document.getElementById('homeLink')||document.getElementById('topbarHomeLink'); if(_hl2) _hl2.href=dashUrl;
     var _dl=document.getElementById('dashLink'); if(_dl) _dl.href=dashUrl;
 
     const data = await apiFetch('/auth/referral');
