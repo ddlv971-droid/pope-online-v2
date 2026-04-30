@@ -232,7 +232,7 @@ const PRIVATE_USECASE_HELP = {
     intro: 'Préparez un dossier ou un courrier lié à une formalité sociale : embauche, affiliation, régularisation, réponse documentaire ou organisation des pièces à fournir.',
     bullets: [
       "Cas représentatifs : préparation d'embauche, régularisation sociale, justificatifs, organisation documentaire.",
-      "Le résultat peut prendre la forme d'une check-list, d'un courrier ou d'un cadrage de démarche.',
+      "Le résultat peut prendre la forme d'une check-list, d'un courrier ou d'un cadrage de démarche.",
       'Repère benchmark : les parcours Urssaf distinguent fortement les besoins des indépendants et des employeurs.'
     ],
     source: 'Repères : Urssaf / indépendants / employeurs',
@@ -261,7 +261,7 @@ const PRIVATE_USECASE_HELP = {
     title: "Réalisation d'un devis ou d'une proposition commerciale",
     intro: "Préparez un devis clair, rassurant et directement exploitable à partir de vos éléments métier. Lassistant peut structurer l'offre, reformuler les prestations et clarifier les conditions commerciales.",
     bullets: [
-      "Utile pour partir de notes brutes, d'un message client, d'un relevé de besoin ou d'un ancien devis.',
+      "Utile pour partir de notes brutes, d'un message client, d'un relevé de besoin ou d'un ancien devis.",
       "Résultats possibles : devis structuré, proposition d'accompagnement, mail d'envoi du devis, check-list des pièces ou informations manquantes.",
       'Repère métier : aide particulièrement utile quand il faut répondre vite tout en gardant une présentation professionnelle et cohérente.'
     ],
