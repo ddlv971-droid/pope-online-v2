@@ -252,7 +252,23 @@
 var burger = document.getElementById('burger');
 var links  = document.getElementById('navLinks');
 if (burger && links) {
-  burger.addEventListener('click', function() { links.classList.toggle('open'); });
+  burger.addEventListener('click', function() {
+    var open = links.classList.toggle('open');
+    var sp = burger.querySelectorAll('span');
+    if (open) {
+      sp[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+      sp[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+      sp[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+    } else {
+      sp[0].style.cssText = sp[1].style.cssText = sp[2].style.cssText = '';
+    }
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      links.classList.remove('open');
+      burger.querySelectorAll('span').forEach(function(s) { s.style.cssText=''; });
+    });
+  });
 }
 </script>
 <script src="./auth-links.js"></script>

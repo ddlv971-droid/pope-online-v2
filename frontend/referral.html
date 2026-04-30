@@ -24,17 +24,33 @@
 </style>
 </head>
 <body class="bg po-v5-harmony">
-<header class="topbar">
-  <div class="container row between">
-    <a class="brand link" id="homeLink" href="dashboard.html">
-      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Programme de parrainage</div></div>
+<header class="v40-topbar">
+  <div class="v40-topbar-inner">
+    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>IA + Expertise</small>
+      </div>
     </a>
-    <div class="row gap">
-      <a class="btn ghost" id="dashLink" href="dashboard.html">Mon espace</a>
-    </div>
+    <div class="v40-topbar-sep"></div>
+    <span class="v40-topbar-sub">Parrainage</span>
+    <nav class="v40-topbar-nav">
+      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="dashboard.html">🏠 Dashboard</a>
+  <div class="v40-mobile-menu-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+    <button data-logout>🚪 Déconnexion</button>
+</div>
 <main style="max-width:720px;margin:0 auto;padding:32px 20px 80px">
 
   <div class="ref-hero">
@@ -167,5 +183,6 @@ async function init() {
 
 init();
 </script>
+<script src="./topbar-mobile.js"></script>
 </body>
 </html>

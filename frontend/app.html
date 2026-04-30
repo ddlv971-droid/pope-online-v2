@@ -9,23 +9,37 @@
 </head>
 <body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
 
-<header class="topbar">
-  <div class="container row between">
-    <a class="brand link" href="dashboard.html" id="appHomeLink">
-      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div>
-        <div class="brand-title">POPE Online</div>
-        <div class="brand-sub" id="appSubTitle">Génération guidée</div>
+<header class="v40-topbar">
+  <div class="v40-topbar-inner">
+    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>IA + Expertise</small>
       </div>
     </a>
-    <div class="row gap wrap">
-      <a class="btn ghost" href="vault.html?space=public&amp;return=app.html" id="appVaultLink">📂 Dépôt</a>
-      <span class="badge" data-tickets id="ticketBadge">—</span>
-      <a class="btn ghost" href="expert.html" id="appExpertLink">✍️ Relecture</a>
-      <button class="btn ghost" data-logout>Déconnexion</button>
-    </div>
+    <div class="v40-topbar-sep"></div>
+    <span class="v40-topbar-sub">Génération guidée</span>
+    <nav class="v40-topbar-nav">
+      <a class="v40-topbar-btn" href="vault.html?space=public&return=app.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="expert.html">✍️ Relecture</a>
+      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="dashboard.html">🏠 Dashboard</a>
+  <a href="expert.html">✍️ Relecture</a>
+  <a href="mission.html">🎯 Sur mesure</a>
+  <div class="v40-mobile-menu-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+    <button data-logout>🚪 Déconnexion</button>
+</div>
 
 <!-- Barre workflow -->
 <div class="v36-workflow-bar">
@@ -230,5 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="./auth-guard.js"></script>
 <script type="module" src="./protected-topbar.js"></script>
 <script type="module" src="./app-page.js"></script>
+<script src="./topbar-mobile.js"></script>
 </body>
 </html>
