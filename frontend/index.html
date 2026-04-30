@@ -321,139 +321,61 @@
 /* Burger mobile */
 .v39-burger {
   display: none; background: none; border: none; cursor: pointer;
-  padding: 6px; flex-direction: column; gap: 5px;
+  padding: 6px; margin-left: auto; flex-direction: column; gap: 5px;
   flex-shrink: 0;
 }
 .v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; transition: transform .25s ease, opacity .25s ease; }
 
-/* ══════════════════════════════════════════════
-   COOKIE CONSENT — Premium POPE Online
-══════════════════════════════════════════════ */
-.ck-overlay {
-  position: fixed; inset: 0; z-index: 99990;
-  background: rgba(2,10,22,.7);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-.ck-box {
-  position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%);
-  z-index: 99991;
-  width: min(600px, calc(100vw - 24px));
-  background: #060f1e;
-  border: 1px solid rgba(0,121,193,.25);
-  border-radius: 20px;
-  box-shadow: 0 40px 100px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
-  overflow: hidden;
-  animation: ckUp .45s cubic-bezier(.16,1,.3,1);
-}
-@keyframes ckUp {
-  from { opacity:0; transform:translateX(-50%) translateY(28px); }
-  to   { opacity:1; transform:translateX(-50%) translateY(0); }
-}
-.ck-top { padding: 26px 28px 0; }
-.ck-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.ck-brand-icon {
-  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-  background: linear-gradient(135deg,#0062a3,#00b4d8);
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
-  box-shadow: 0 6px 20px rgba(0,100,180,.4);
-}
-.ck-brand-info { flex: 1; min-width: 0; }
-.ck-label {
-  font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-  color: #00b4d8; margin-bottom: 3px;
-}
-.ck-brand-info h2 { margin: 0; font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
-.ck-desc { font-size: 13.5px; color: rgba(255,255,255,.5); line-height: 1.65; margin: 0 0 20px; }
-.ck-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,180,216,.3), transparent); }
-.ck-prefs { padding: 0 28px; }
-.ck-pref-item {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.05);
-}
-.ck-pref-item:last-child { border-bottom: none; }
-.ck-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; margin-top: 2px; }
-.ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-.ck-slider {
-  position: absolute; inset: 0; cursor: pointer;
-  background: rgba(255,255,255,.12); border-radius: 24px; transition: .25s;
-}
-.ck-slider:before {
-  content: ''; position: absolute;
-  width: 18px; height: 18px; left: 3px; bottom: 3px;
-  background: rgba(255,255,255,.5); border-radius: 50%; transition: .25s;
-}
-.ck-toggle input:checked + .ck-slider { background: #0079c1; }
-.ck-toggle input:checked + .ck-slider:before { transform: translateX(18px); background: #fff; }
-.ck-toggle input:disabled + .ck-slider { cursor: not-allowed; }
-.ck-toggle input:disabled:checked + .ck-slider { background: #00b4d8; }
-.ck-toggle input:disabled:checked + .ck-slider:before { background: #fff; }
-.ck-pref-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-.ck-pref-text span { font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.55; }
-.ck-required-badge {
-  font-size: 10px; font-weight: 700; color: #00b4d8;
-  border: 1px solid rgba(0,180,216,.3);
-  padding: 1px 7px; border-radius: 99px; margin-left: 6px; vertical-align: middle;
-}
-/* BOUTONS — clé du débordement : flex-wrap + min-width:0 */
-.ck-actions {
-  display: flex; gap: 8px; padding: 18px 28px 20px;
-  flex-wrap: wrap;
-}
-.ck-btn {
-  flex: 1 1 0; min-width: 0;
-  padding: 11px 10px; border-radius: 11px;
-  font-size: 12.5px; font-weight: 700; border: none; cursor: pointer;
-  transition: all .2s; white-space: nowrap; text-align: center; overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ck-btn-accept {
-  background: linear-gradient(135deg,#0079c1,#00a3e0);
-  color: #fff; box-shadow: 0 4px 16px rgba(0,121,193,.4);
-  flex: 2 1 0;
-}
-.ck-btn-accept:hover { box-shadow: 0 6px 24px rgba(0,121,193,.55); transform: translateY(-1px); }
-.ck-btn-decline {
-  background: rgba(255,255,255,.07); color: rgba(255,255,255,.6);
-  border: 1px solid rgba(255,255,255,.09);
-}
-.ck-btn-decline:hover { background: rgba(255,255,255,.12); color: #fff; }
-.ck-btn-save {
-  background: linear-gradient(135deg,#0079c1,#00a3e0);
-  color: #fff; flex: 2 1 0; box-shadow: 0 4px 16px rgba(0,121,193,.4);
-}
-.ck-btn-save:hover { box-shadow: 0 6px 24px rgba(0,121,193,.55); transform: translateY(-1px); }
-.ck-btn-back {
-  background: rgba(255,255,255,.07); color: rgba(255,255,255,.6);
-  border: 1px solid rgba(255,255,255,.09);
-}
-.ck-btn-back:hover { background: rgba(255,255,255,.12); color: #fff; }
-.ck-btn-prefs {
-  background: none; color: rgba(255,255,255,.45);
-  border: 1px solid rgba(255,255,255,.09);
-}
-.ck-btn-prefs:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); }
-.ck-legal {
-  text-align: center; font-size: 11px; color: rgba(255,255,255,.25);
-  padding: 0 28px 18px; line-height: 1.6;
-}
-.ck-legal a { color: rgba(255,255,255,.38); text-decoration: underline; }
-.ck-legal a:hover { color: rgba(255,255,255,.6); }
-@media(max-width: 460px) {
-  .ck-top, .ck-prefs, .ck-actions, .ck-legal { padding-left: 16px; padding-right: 16px; }
-  .ck-box { border-radius: 14px; bottom: 12px; }
-  .ck-actions { flex-direction: column; }
-  .ck-btn { flex: none; width: 100%; }
-}
-
+/* ══ COOKIE PREMIUM POPE Online ══ */
+.ck-overlay { position:fixed; inset:0; z-index:99990; background:rgba(2,10,22,.7); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+.ck-box { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:99991; width:min(600px,calc(100vw - 24px)); background:#060f1e; border:1px solid rgba(0,121,193,.25); border-radius:20px; box-shadow:0 40px 100px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05); overflow:hidden; animation:ckUp .4s cubic-bezier(.16,1,.3,1); }
+@keyframes ckUp { from{opacity:0;transform:translateX(-50%) translateY(28px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+.ck-top { padding:26px 28px 0; }
+.ck-brand { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.ck-brand-icon { width:40px; height:40px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg,#0062a3,#00b4d8); display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 6px 20px rgba(0,100,180,.4); }
+.ck-brand-info { flex:1; min-width:0; }
+.ck-label { font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#00b4d8; margin-bottom:3px; }
+.ck-brand-info h2 { margin:0; font-size:17px; font-weight:800; color:#fff; letter-spacing:-.02em; }
+.ck-desc { font-size:13.5px; color:rgba(255,255,255,.5); line-height:1.65; margin:0 0 20px; }
+.ck-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(0,180,216,.3),transparent); }
+.ck-prefs { padding:0 28px; }
+.ck-pref-item { display:flex; align-items:flex-start; gap:14px; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.ck-pref-item:last-child { border-bottom:none; }
+.ck-toggle { position:relative; width:42px; height:24px; flex-shrink:0; margin-top:2px; }
+.ck-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.ck-slider { position:absolute; inset:0; cursor:pointer; background:rgba(255,255,255,.12); border-radius:24px; transition:.25s; }
+.ck-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px; background:rgba(255,255,255,.5); border-radius:50%; transition:.25s; }
+.ck-toggle input:checked + .ck-slider { background:#0079c1; }
+.ck-toggle input:checked + .ck-slider:before { transform:translateX(18px); background:#fff; }
+.ck-toggle input:disabled + .ck-slider { cursor:not-allowed; }
+.ck-toggle input:disabled:checked + .ck-slider { background:#00b4d8; }
+.ck-toggle input:disabled:checked + .ck-slider:before { background:#fff; }
+.ck-pref-text strong { display:block; font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
+.ck-pref-text span { font-size:12px; color:rgba(255,255,255,.42); line-height:1.55; }
+.ck-required-badge { font-size:10px; font-weight:700; color:#00b4d8; border:1px solid rgba(0,180,216,.3); padding:1px 7px; border-radius:99px; margin-left:6px; vertical-align:middle; }
+.ck-actions { display:flex; gap:8px; padding:18px 28px 20px; flex-wrap:wrap; }
+.ck-btn { flex:1 1 auto; min-width:0; padding:11px 12px; border-radius:11px; font-size:12.5px; font-weight:700; border:none; cursor:pointer; transition:all .2s; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ck-btn-accept { background:linear-gradient(135deg,#0079c1,#00a3e0); color:#fff; box-shadow:0 4px 16px rgba(0,121,193,.4); flex:2 1 auto; }
+.ck-btn-accept:hover { box-shadow:0 6px 24px rgba(0,121,193,.55); transform:translateY(-1px); }
+.ck-btn-decline { background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.09); }
+.ck-btn-decline:hover { background:rgba(255,255,255,.12); color:#fff; }
+.ck-btn-prefs { background:none; color:rgba(255,255,255,.45); border:1px solid rgba(255,255,255,.09); }
+.ck-btn-prefs:hover { background:rgba(255,255,255,.06); color:rgba(255,255,255,.7); }
+.ck-btn-save { background:linear-gradient(135deg,#0079c1,#00a3e0); color:#fff; flex:2 1 auto; box-shadow:0 4px 16px rgba(0,121,193,.4); }
+.ck-btn-save:hover { box-shadow:0 6px 24px rgba(0,121,193,.55); transform:translateY(-1px); }
+.ck-btn-back { background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.09); }
+.ck-btn-back:hover { background:rgba(255,255,255,.12); color:#fff; }
+.ck-legal { text-align:center; font-size:11px; color:rgba(255,255,255,.25); padding:0 28px 18px; line-height:1.6; }
+.ck-legal a { color:rgba(255,255,255,.38); text-decoration:underline; }
+@media(max-width:460px) { .ck-top,.ck-prefs,.ck-actions,.ck-legal{padding-left:16px;padding-right:16px} .ck-actions{flex-direction:column} .ck-btn{width:100%;flex:none} }
 
 @media(max-width: 860px) {
   .v39-spaces { grid-template-columns: 1fr; }
   .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
   .v39-nav-links { display: none; }
   .v39-burger { display: flex; }
-  .v39-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-  .v39-nav-links.open {
+      .v39-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+    .v39-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
     background: rgba(7,22,42,.98); backdrop-filter: blur(20px);
@@ -689,68 +611,372 @@
 
 <!-- Cookie modal conservé -->
 <div class="ck-overlay" id="ckOverlay" hidden></div>
-
-<!-- Bannière principale -->
-<div class="ck-box" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitle">
+<div class="ck-box" id="ckMain" hidden>
   <div class="ck-top">
     <div class="ck-brand">
       <div class="ck-brand-icon">🍪</div>
-      <div class="ck-brand-info">
-        <div class="ck-label">Confidentialité &amp; Cookies</div>
-        <h2 id="ckTitle">Nous respectons vos choix</h2>
-      </div>
+      <div class="ck-brand-info"><div class="ck-label">Confidentialité &amp; Cookies</div><h2>Nous respectons vos choix</h2></div>
     </div>
     <p class="ck-desc">POPE Online utilise des cookies pour sécuriser votre session, mémoriser vos préférences et mesurer les performances. Aucune donnée n'est revendue à des tiers.</p>
   </div>
   <div class="ck-divider"></div>
   <div class="ck-actions">
-    <button class="ck-btn ck-btn-decline"  id="ckDecline"   type="button">Refuser</button>
-    <button class="ck-btn ck-btn-prefs"    id="ckOpenPrefs" type="button">⚙ Paramétrer</button>
-    <button class="ck-btn ck-btn-accept"   id="ckAccept"    type="button">✓ Tout accepter</button>
+    <button class="ck-btn ck-btn-decline" id="ckDecline"   type="button">Refuser</button>
+    <button class="ck-btn ck-btn-prefs"   id="ckOpenPrefs" type="button">⚙ Paramétrer</button>
+    <button class="ck-btn ck-btn-accept"  id="ckAccept"    type="button">✓ Tout accepter</button>
   </div>
   <p class="ck-legal">En acceptant, vous consentez à notre <a href="privacy.html">Politique de confidentialité</a> et à nos <a href="cgu.html">CGU</a>.</p>
 </div>
-
-<!-- Panneau préférences -->
-<div class="ck-box" id="ckPrefs" hidden role="dialog" aria-modal="true" aria-labelledby="ckPrefsTitle">
+<div class="ck-box" id="ckPrefs" hidden>
   <div class="ck-top">
     <div class="ck-brand">
       <div class="ck-brand-icon">⚙️</div>
-      <div class="ck-brand-info">
-        <div class="ck-label">Personnalisation</div>
-        <h2 id="ckPrefsTitle">Gérer mes cookies</h2>
-      </div>
+      <div class="ck-brand-info"><div class="ck-label">Personnalisation</div><h2>Gérer mes cookies</h2></div>
     </div>
   </div>
   <div class="ck-divider"></div>
   <div class="ck-prefs">
     <div class="ck-pref-item">
       <label class="ck-toggle"><input type="checkbox" checked disabled/><span class="ck-slider"></span></label>
-      <div class="ck-pref-text">
-        <strong>Essentiels <span class="ck-required-badge">Obligatoires</span></strong>
-        <span>Authentification, gestion de session, protection anti-fraude. Indispensables au fonctionnement.</span>
-      </div>
+      <div class="ck-pref-text"><strong>Essentiels <span class="ck-required-badge">Obligatoires</span></strong><span>Authentification, session, protection anti-fraude. Indispensables au fonctionnement.</span></div>
     </div>
     <div class="ck-pref-item">
       <label class="ck-toggle"><input type="checkbox" id="ckChkAnalytics"/><span class="ck-slider"></span></label>
-      <div class="ck-pref-text">
-        <strong>Analytiques</strong>
-        <span>Mesure d'audience anonymisée pour améliorer le service (pages vues, temps passé, erreurs).</span>
-      </div>
+      <div class="ck-pref-text"><strong>Analytiques</strong><span>Mesure d'audience anonymisée pour améliorer le service (pages vues, temps passé, erreurs).</span></div>
     </div>
     <div class="ck-pref-item">
       <label class="ck-toggle"><input type="checkbox" id="ckChkFunctional"/><span class="ck-slider"></span></label>
-      <div class="ck-pref-text">
-        <strong>Fonctionnels</strong>
-        <span>Mémorisation de vos préférences d'affichage et de configuration à chaque connexion.</span>
-      </div>
+      <div class="ck-pref-text"><strong>Fonctionnels</strong><span>Mémorisation de vos préférences d'affichage et de configuration à chaque connexion.</span></div>
     </div>
     <div class="ck-pref-item">
       <label class="ck-toggle"><input type="checkbox" id="ckChkMarketing"/><span class="ck-slider"></span></label>
-      <div class="ck-pref-text">
-        <strong>Marketing</strong>
-        <span>Contenus adaptés à votre profil. Utilisés uniquement en interne, jamais partagés avec des annonceurs.</span>
+      <div class="ck-pref-text"><strong>Marketing</strong><span>Contenus adaptés à votre profil. Jamais partagés avec des annonceurs extérieurs.</span></div>
+    </div>
+  </div>
+  <div class="ck-actions">
+    <button class="ck-btn ck-btn-back" id="ckBackMain"  type="button">← Retour</button>
+    <button class="ck-btn ck-btn-save" id="ckSavePrefs" type="button">Enregistrer mes choix</button>
+  </div>
+  <p class="ck-legal">Vos choix sont sauvegardés localement et respectent le RGPD. <a href="privacy.html">En savoir plus</a></p>
+</div>
+
+<script>
+// Burger
+var burgerBtn = document.getElementById('burger');
+var navLinksEl = document.getElementById('navLinks');
+burgerBtn.addEventListener('click', function() {
+  var isOpen = navLinksEl.classList.toggle('open');
+  // Transformer en croix quand ouvert
+  var spans = burgerBtn.querySelectorAll('span');
+  if (isOpen) {
+    spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+    spans[1].style.cssText = 'opacity:0; transform:scaleX(0)';
+    spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans[0].style.cssText = '';
+    spans[1].style.cssText = '';
+    spans[2].style.cssText = '';
+  }
+});
+// Fermer le menu en cliquant sur un lien
+if (navLinksEl) {
+  navLinksEl.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinksEl.classList.remove('open');
+      var spans = burgerBtn.querySelectorAll('span');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
+    });
+  });
+}
+
+// Slogans rotatifs
+(function() {
+  var slogans = [
+    "Deux univers, une même exigence",
+    "La fluidité d'un outil pensé pour l'action",
+    "Décuplez votre efficacité métier",
+    "IA guidée. Expertise humaine. Résultat garanti.",
+    "Accélérez vos décisions stratégiques"
+  ];
+  var el = document.getElementById('slogan');
+  var i = 0;
+  function rotate() {
+    i = (i + 1) % slogans.length;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(function() {
+      el.textContent = slogans[i];
+      el.style.transition = 'opacity .6s ease, transform .6s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 400);
+  }
+  setInterval(rotate, 4000);
+})();
+
+// Mosaïque
+(function() {
+  var panels = document.querySelectorAll('.v39-panel');
+  if (!panels.length) return;
+  function restart() {
+    panels.forEach(function(p) { p.classList.remove('hide'); });
+    setTimeout(function() {
+      panels.forEach(function(p, i) {
+        setTimeout(function() { p.classList.add('hide'); }, i * 200);
+      });
+    }, 6000);
+  }
+  setTimeout(restart, 500);
+  setInterval(restart, 16000);
+})();
+
+// Cookies
+(function() {
+  var KEY='pope_cookie_choice';
+  var overlay=document.getElementById('ckOverlay');
+  var mainBox=document.getElementById('ckMain');
+  var prefsBox=document.getElementById('ckPrefs');
+  function closeCk(choice){
+    try{localStorage.setItem(KEY,JSON.stringify({choice:choice,
+      analytics: choice==='accepted'||(document.getElementById('ckChkAnalytics')&&document.getElementById('ckChkAnalytics').checked),
+      functional:choice==='accepted'||(document.getElementById('ckChkFunctional')&&document.getElementById('ckChkFunctional').checked),
+      marketing: choice==='accepted'||(document.getElementById('ckChkMarketing')&&document.getElementById('ckChkMarketing').checked)
+    }));}catch(e){}
+    if(overlay)overlay.hidden=true;
+    if(mainBox)mainBox.hidden=true;
+    if(prefsBox)prefsBox.hidden=true;
+  }
+  try{if(localStorage.getItem(KEY))return;}catch(e){}
+  if(overlay)overlay.hidden=false;
+  if(mainBox)mainBox.hidden=false;
+  document.getElementById('ckAccept').onclick   =function(){closeCk('accepted');};
+  document.getElementById('ckDecline').onclick  =function(){closeCk('declined');};
+  document.getElementById('ckOpenPrefs').onclick=function(){mainBox.hidden=true;prefsBox.hidden=false;};
+  document.getElementById('ckBackMain').onclick =function(){prefsBox.hidden=true;mainBox.hidden=false;};
+  document.getElementById('ckSavePrefs').onclick=function(){closeCk('custom');};
+})();
+
+ctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>POPE Online — IA &amp; expertise humaine pour vos livrables professionnels</title>
+  <meta name="description" content="POPE Online produit, sécurise et fait relire vos livrables professionnels par des conseillers experts. Deux espaces : collectivités et entreprises privées."/>
+  <link rel="icon" href="./assets/favicon.png" type="image/png"/>
+  <link rel="shortcut icon" href="./favicon.png"/>
+  <link rel="apple-touch-icon" href="./favicon.png"/>
+  <link rel="stylesheet" href="app.css"/>
+
+</head>
+<body class="v39-body">
+
+<!-- NAV -->
+<nav class="v39-nav">
+  <div class="v39-nav-inner">
+    <a class="v39-brand" href="index.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v39-brand-text"><strong>POPE Online</strong><small>IA + Expertise</small></div>
+    </a>
+    <button class="v39-burger" id="burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="v39-nav-links" id="navLinks">
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">▶ Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="v39-nav-sep"></div>
+      <a href="private.html" class="v39-nav-cta-priv">🔒 Espace privé</a>
+      <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
+      <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
+<section class="v39-hero">
+  <div class="v39-band">
+    <div class="v39-band-bg"></div>
+
+    <!-- Mosaïque animée -->
+    <div class="v39-panels" id="panels">
+      <div class="v39-panel" style="--i:0"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:1"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:2"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:3"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:4"><img src="./assets/mosaic.png" alt=""/></div>
+    </div>
+
+    <!-- Filigrane logo -->
+    <div class="v39-watermark">
+      <img src="./assets/popeonline-logo2.png" alt=""/>
+    </div>
+
+    <!-- Contenu central -->
+    <div class="v39-band-content">
+      <img class="v39-band-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <div class="v39-slogan-wrap">
+        <div class="v39-slogan" id="slogan">Deux univers, une même exigence</div>
       </div>
+      <div class="v39-band-tagline">Là où l'expertise humaine fait toute la différence</div>
+      <div class="v39-band-sub">Conseillers experts · Production sécurisée · Résultats fiables</div>
+    </div>
+
+    <!-- Ticker défilant -->
+    <div class="v39-ticker" aria-hidden="true">
+      <div class="v39-ticker-track">
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Génération IA guidée</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Relecture experte 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations municipales</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+        <!-- duplicate pour boucle infinie -->
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Génération IA guidée</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Relecture experte 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations municipales</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+      </div>
+    </div>
+
+  <!-- CTA overlay — à l'intérieur du bandeau -->
+  <div class="v39-cta-zone">
+    <a href="signup.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(0,121,193,.4)">
+      Démarrer l'essai gratuit →
+    </a>
+    <a href="login.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 22px;font-size:14px;font-weight:600;text-decoration:none">
+      Se connecter
+    </a>
+  </div>
+</div>
+
+</section>
+
+<!-- CARTES ESPACES -->
+<section class="v39-spaces">
+
+  <div class="v39-space-card priv">
+    <div class="v39-space-tag">🔒 Espace privé</div>
+    <h2>Artisans, indépendants &amp; TPE</h2>
+    <p>Déléguez votre administratif. Produisez des courriers, formalités et réponses aux marchés publics — vite et bien.</p>
+    <ul class="v39-space-list">
+      <li>Courriers URSSAF, banque, clients, fournisseurs</li>
+      <li>Formalités de création, modification, RH</li>
+      <li>Réponses aux marchés publics (MAPA)</li>
+      <li>Devis et propositions commerciales</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="private.html">Découvrir l'espace privé →</a>
+      <a class="v39-space-btn ghost" href="signup-private.html">Essai gratuit</a>
+    </div>
+  </div>
+
+  <div class="v39-space-card pub">
+    <div class="v39-space-tag">🏛️ Espace public</div>
+    <h2>Collectivités &amp; organisations</h2>
+    <p>Produisez vite, décidez mieux. Notes stratégiques, délibérations, réponses aux marchés — sécurisés et validés.</p>
+    <ul class="v39-space-list">
+      <li>Notes stratégiques et arbitrages</li>
+      <li>Délibérations et synthèses de réunion</li>
+      <li>Réponses aux marchés publics (MAPA)</li>
+      <li>Cadrages projet / PMO</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="public.html">Découvrir l'espace public →</a>
+      <a class="v39-space-btn ghost" href="signup-public.html">Essai gratuit</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- PITCH CHIFFRES -->
+<section class="v39-pitch">
+  <div class="v39-pitch-inner">
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">18</div>
+      <h3>Cas d'usage IA</h3>
+      <p>Documents calibrés pour le secteur public et privé — bien au-delà d'un chatbot généraliste.</p>
+    </div>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">48h</div>
+      <h3>Délai de relecture</h3>
+      <p>Un conseiller expert humain analyse et valide votre document sous 48h ouvrées garanties.</p>
+    </div>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">15j</div>
+      <h3>Essai gratuit</h3>
+      <p>Production illimitée, 2 relectures expertes offertes. Sans carte bancaire, sans engagement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="v39-footer">
+  <span style="color:rgba(255,255,255,.25);font-size:12px">© Pope Consulting SAS</span>
+  <span>·</span><a href="legal.html">Mentions légales</a>
+  <span>·</span><a href="cgu.html">CGU</a>
+  <span>·</span><a href="cgv.html">CGV</a>
+  <span>·</span><a href="privacy.html">Confidentialité</a>
+  <span>·</span><a href="pricing.html">Tarifs</a>
+  <span>·</span><a href="about.html">À propos</a>
+  <span>·</span><a href="mailto:contact@pope-online.com">Contact</a>
+</footer>
+
+<!-- Cookie modal conservé -->
+<div class="ck-overlay" id="ckOverlay" hidden></div>
+<div class="ck-box" id="ckMain" hidden>
+  <div class="ck-top">
+    <div class="ck-brand">
+      <div class="ck-brand-icon">🍪</div>
+      <div class="ck-brand-info"><div class="ck-label">Confidentialité &amp; Cookies</div><h2>Nous respectons vos choix</h2></div>
+    </div>
+    <p class="ck-desc">POPE Online utilise des cookies pour sécuriser votre session, mémoriser vos préférences et mesurer les performances. Aucune donnée n'est revendue à des tiers.</p>
+  </div>
+  <div class="ck-divider"></div>
+  <div class="ck-actions">
+    <button class="ck-btn ck-btn-decline" id="ckDecline"   type="button">Refuser</button>
+    <button class="ck-btn ck-btn-prefs"   id="ckOpenPrefs" type="button">⚙ Paramétrer</button>
+    <button class="ck-btn ck-btn-accept"  id="ckAccept"    type="button">✓ Tout accepter</button>
+  </div>
+  <p class="ck-legal">En acceptant, vous consentez à notre <a href="privacy.html">Politique de confidentialité</a> et à nos <a href="cgu.html">CGU</a>.</p>
+</div>
+<div class="ck-box" id="ckPrefs" hidden>
+  <div class="ck-top">
+    <div class="ck-brand">
+      <div class="ck-brand-icon">⚙️</div>
+      <div class="ck-brand-info"><div class="ck-label">Personnalisation</div><h2>Gérer mes cookies</h2></div>
+    </div>
+  </div>
+  <div class="ck-divider"></div>
+  <div class="ck-prefs">
+    <div class="ck-pref-item">
+      <label class="ck-toggle"><input type="checkbox" checked disabled/><span class="ck-slider"></span></label>
+      <div class="ck-pref-text"><strong>Essentiels <span class="ck-required-badge">Obligatoires</span></strong><span>Authentification, session, protection anti-fraude. Indispensables au fonctionnement.</span></div>
+    </div>
+    <div class="ck-pref-item">
+      <label class="ck-toggle"><input type="checkbox" id="ckChkAnalytics"/><span class="ck-slider"></span></label>
+      <div class="ck-pref-text"><strong>Analytiques</strong><span>Mesure d'audience anonymisée pour améliorer le service (pages vues, temps passé, erreurs).</span></div>
+    </div>
+    <div class="ck-pref-item">
+      <label class="ck-toggle"><input type="checkbox" id="ckChkFunctional"/><span class="ck-slider"></span></label>
+      <div class="ck-pref-text"><strong>Fonctionnels</strong><span>Mémorisation de vos préférences d'affichage et de configuration à chaque connexion.</span></div>
+    </div>
+    <div class="ck-pref-item">
+      <label class="ck-toggle"><input type="checkbox" id="ckChkMarketing"/><span class="ck-slider"></span></label>
+      <div class="ck-pref-text"><strong>Marketing</strong><span>Contenus adaptés à votre profil. Jamais partagés avec des annonceurs extérieurs.</span></div>
     </div>
   </div>
   <div class="ck-actions">
@@ -835,49 +1061,6 @@ if (navLinksEl) {
 // Cookies
 (function() {
   var KEY = 'pope_cookie_choice';
-  var overlay  = document.getElementById('ckOverlay');
-  var mainBox  = document.getElementById('ckMain');
-  var prefsBox = document.getElementById('ckPrefs');
-  function closeCk(choice) {
-    try { localStorage.setItem(KEY, JSON.stringify({
-      choice: choice,
-      analytics:  choice==='accepted'||(document.getElementById('ckChkAnalytics')&&document.getElementById('ckChkAnalytics').checked),
-      functional: choice==='accepted'||(document.getElementById('ckChkFunctional')&&document.getElementById('ckChkFunctional').checked),
-      marketing:  choice==='accepted'||(document.getElementById('ckChkMarketing')&&document.getElementById('ckChkMarketing').checked)
-    })); } catch(e) {}
-    if(overlay)  overlay.hidden  = true;
-    if(mainBox)  mainBox.hidden  = true;
-    if(prefsBox) prefsBox.hidden = true;
-  }
-  try { if (localStorage.getItem(KEY)) return; } catch(e) {}
-  if(overlay)  overlay.hidden  = false;
-  if(mainBox)  mainBox.hidden  = false;
-  document.getElementById('ckAccept').onclick    = function() { closeCk('accepted'); };
-  document.getElementById('ckDecline').onclick   = function() { closeCk('declined'); };
-  document.getElementById('ckOpenPrefs').onclick = function() { mainBox.hidden=true; prefsBox.hidden=false; };
-  document.getElementById('ckBackMain').onclick  = function() { prefsBox.hidden=true; mainBox.hidden=false; };
-  document.getElementById('ckSavePrefs').onclick = function() { closeCk('custom'); };
-})();
-
-// Mosaïque
-(function() {
-  var panels = document.querySelectorAll('.v39-panel');
-  if (!panels.length) return;
-  function restart() {
-    panels.forEach(function(p) { p.classList.remove('hide'); });
-    setTimeout(function() {
-      panels.forEach(function(p, i) {
-        setTimeout(function() { p.classList.add('hide'); }, i * 200);
-      });
-    }, 6000);
-  }
-  setTimeout(restart, 500);
-  setInterval(restart, 16000);
-})();
-
-// Cookies
-(function() {
-  var KEY = 'pope_cookie_choice';
   var overlay = document.getElementById('cookieOverlay');
   var modal   = document.getElementById('cookieModal');
   var prefs   = document.getElementById('cookiePrefsModal');
@@ -886,6 +1069,17 @@ if (navLinksEl) {
     overlay.hidden = modal.hidden = true;
     if (prefs) prefs.hidden = true;
   }
+  try { if (localStorage.getItem(KEY)) return; } catch(e) {}
+  overlay.hidden = modal.hidden = false;
+  document.getElementById('cookieAccept').onclick  = function() { close('accepted'); };
+  document.getElementById('cookieDecline').onclick = function() { close('declined'); };
+  document.getElementById('cookieSettings').onclick = function() { modal.hidden=true; prefs.hidden=false; };
+  if (document.getElementById('cookieSavePrefs'))
+    document.getElementById('cookieSavePrefs').onclick = function() { close('customized'); };
+  if (document.getElementById('cookieBackMain'))
+    document.getElementById('cookieBackMain').onclick  = function() { prefs.hidden=true; modal.hidden=false; };
+  overlay.onclick = function() { close('dismissed'); };
+})();
 </script>
 <script>
 (function(){
