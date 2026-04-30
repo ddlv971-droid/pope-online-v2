@@ -37,6 +37,8 @@
 .v39-brand strong { font-size: 15px; font-weight: 800; color: #fff; white-space: nowrap; }
 .v39-brand small  { font-size: 11px; color: rgba(255,255,255,.45); white-space: nowrap; }
 .v39-nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+@media(max-width:860px){#navLinks:not(.open){display:none!important}}
+@media(min-width:861px){#navLinks{display:flex!important}}
 .v39-nav-links a {
   color: rgba(255,255,255,.65); text-decoration: none; font-size: 13px;
   font-weight: 500; padding: 7px 12px; border-radius: 8px; transition: .15s;
@@ -332,134 +334,99 @@
 .ck-overlay {
   position: fixed; inset: 0; z-index: 99990;
   background: rgba(2,10,22,.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: opacity .3s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 .ck-box {
   position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%);
   z-index: 99991;
-  width: min(640px, calc(100vw - 24px));
+  width: min(600px, calc(100vw - 24px));
   background: #060f1e;
   border: 1px solid rgba(0,121,193,.25);
   border-radius: 20px;
-  box-shadow:
-    0 40px 100px rgba(0,0,0,.8),
-    0 0 0 1px rgba(255,255,255,.04),
-    inset 0 1px 0 rgba(255,255,255,.05);
+  box-shadow: 0 40px 100px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
   overflow: hidden;
   animation: ckUp .45s cubic-bezier(.16,1,.3,1);
 }
 @keyframes ckUp {
-  from { opacity:0; transform:translateX(-50%) translateY(32px); }
+  from { opacity:0; transform:translateX(-50%) translateY(28px); }
   to   { opacity:1; transform:translateX(-50%) translateY(0); }
 }
-.ck-top {
-  padding: 28px 32px 0;
-}
-.ck-brand {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
-}
+.ck-top { padding: 26px 28px 0; }
+.ck-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .ck-brand-icon {
   width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
   background: linear-gradient(135deg,#0062a3,#00b4d8);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 6px 20px rgba(0,100,180,.45);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  box-shadow: 0 6px 20px rgba(0,100,180,.4);
 }
-.ck-brand-info { flex: 1; }
+.ck-brand-info { flex: 1; min-width: 0; }
 .ck-label {
   font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-  color: #00b4d8; margin-bottom: 2px;
+  color: #00b4d8; margin-bottom: 3px;
 }
-.ck-brand-info h2 {
-  margin: 0; font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.02em;
-}
-.ck-desc {
-  font-size: 13.5px; color: rgba(255,255,255,.5); line-height: 1.65;
-  margin: 0 0 22px;
-}
-/* Barre de séparation lumineuse */
-.ck-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0,180,216,.3) 40%, rgba(0,180,216,.3) 60%, transparent 100%);
-  margin: 0 -0px;
-}
-/* Panneau préférences */
-.ck-prefs { padding: 0 32px; }
+.ck-brand-info h2 { margin: 0; font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+.ck-desc { font-size: 13.5px; color: rgba(255,255,255,.5); line-height: 1.65; margin: 0 0 20px; }
+.ck-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,180,216,.3), transparent); }
+.ck-prefs { padding: 0 28px; }
 .ck-pref-item {
   display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.05);
 }
 .ck-pref-item:last-child { border-bottom: none; }
-/* Toggle switch */
-.ck-toggle {
-  position: relative; width: 42px; height: 24px; flex-shrink: 0; margin-top: 2px;
-}
-.ck-toggle input { opacity: 0; width: 0; height: 0; }
+.ck-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; margin-top: 2px; }
+.ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
 .ck-slider {
   position: absolute; inset: 0; cursor: pointer;
-  background: rgba(255,255,255,.12);
-  border-radius: 24px; transition: .2s;
+  background: rgba(255,255,255,.12); border-radius: 24px; transition: .25s;
 }
 .ck-slider:before {
   content: ''; position: absolute;
   width: 18px; height: 18px; left: 3px; bottom: 3px;
-  background: rgba(255,255,255,.5); border-radius: 50%;
-  transition: .2s;
+  background: rgba(255,255,255,.5); border-radius: 50%; transition: .25s;
 }
 .ck-toggle input:checked + .ck-slider { background: #0079c1; }
-.ck-toggle input:checked + .ck-slider:before {
-  transform: translateX(18px); background: #fff;
-}
-.ck-toggle input:disabled + .ck-slider { opacity: .7; cursor: not-allowed; }
-.ck-toggle input:disabled + .ck-slider:before { background: #fff; }
+.ck-toggle input:checked + .ck-slider:before { transform: translateX(18px); background: #fff; }
+.ck-toggle input:disabled + .ck-slider { cursor: not-allowed; }
 .ck-toggle input:disabled:checked + .ck-slider { background: #00b4d8; }
-.ck-pref-text strong {
-  display: block; font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 3px;
-}
-.ck-pref-text span {
-  font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.5;
-}
+.ck-toggle input:disabled:checked + .ck-slider:before { background: #fff; }
+.ck-pref-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.ck-pref-text span { font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.55; }
 .ck-required-badge {
-  display: inline-block; font-size: 10px; font-weight: 700;
-  color: #00b4d8; border: 1px solid rgba(0,180,216,.3);
+  font-size: 10px; font-weight: 700; color: #00b4d8;
+  border: 1px solid rgba(0,180,216,.3);
   padding: 1px 7px; border-radius: 99px; margin-left: 6px; vertical-align: middle;
 }
-/* Boutons */
+/* BOUTONS — clé du débordement : flex-wrap + min-width:0 */
 .ck-actions {
-  display: flex; gap: 10px; padding: 20px 32px 24px; flex-wrap: wrap;
+  display: flex; gap: 8px; padding: 18px 28px 20px;
+  flex-wrap: wrap;
 }
 .ck-btn {
-  flex: 1; min-width: 0; padding: 12px 16px; border-radius: 12px;
-  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
-  transition: all .2s; white-space: nowrap; text-align: center;
+  flex: 1 1 0; min-width: 0;
+  padding: 11px 10px; border-radius: 11px;
+  font-size: 12.5px; font-weight: 700; border: none; cursor: pointer;
+  transition: all .2s; white-space: nowrap; text-align: center; overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ck-btn-accept {
-  background: linear-gradient(135deg,#0079c1 0%,#00a3e0 100%);
-  color: #fff; box-shadow: 0 4px 18px rgba(0,121,193,.45);
-  flex: 2;
+  background: linear-gradient(135deg,#0079c1,#00a3e0);
+  color: #fff; box-shadow: 0 4px 16px rgba(0,121,193,.4);
+  flex: 2 1 0;
 }
-.ck-btn-accept:hover {
-  box-shadow: 0 6px 28px rgba(0,121,193,.6);
-  transform: translateY(-1px);
-}
+.ck-btn-accept:hover { box-shadow: 0 6px 24px rgba(0,121,193,.55); transform: translateY(-1px); }
 .ck-btn-decline {
-  background: rgba(255,255,255,.07);
-  color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.07); color: rgba(255,255,255,.6);
   border: 1px solid rgba(255,255,255,.09);
 }
 .ck-btn-decline:hover { background: rgba(255,255,255,.12); color: #fff; }
 .ck-btn-save {
-  background: linear-gradient(135deg,#0079c1 0%,#00a3e0 100%);
-  color: #fff; flex: 2; box-shadow: 0 4px 18px rgba(0,121,193,.45);
+  background: linear-gradient(135deg,#0079c1,#00a3e0);
+  color: #fff; flex: 2 1 0; box-shadow: 0 4px 16px rgba(0,121,193,.4);
 }
-.ck-btn-save:hover { box-shadow: 0 6px 28px rgba(0,121,193,.6); transform: translateY(-1px); }
+.ck-btn-save:hover { box-shadow: 0 6px 24px rgba(0,121,193,.55); transform: translateY(-1px); }
 .ck-btn-back {
-  background: rgba(255,255,255,.07);
-  color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.07); color: rgba(255,255,255,.6);
   border: 1px solid rgba(255,255,255,.09);
 }
 .ck-btn-back:hover { background: rgba(255,255,255,.12); color: #fff; }
@@ -470,14 +437,15 @@
 .ck-btn-prefs:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); }
 .ck-legal {
   text-align: center; font-size: 11px; color: rgba(255,255,255,.25);
-  padding: 0 32px 20px; line-height: 1.6;
+  padding: 0 28px 18px; line-height: 1.6;
 }
 .ck-legal a { color: rgba(255,255,255,.38); text-decoration: underline; }
 .ck-legal a:hover { color: rgba(255,255,255,.6); }
-@media(max-width: 480px) {
-  .ck-top, .ck-prefs, .ck-actions, .ck-legal { padding-left: 20px; padding-right: 20px; }
-  .ck-box { border-radius: 16px; }
-  .ck-btn { font-size: 12px; padding: 11px 12px; }
+@media(max-width: 460px) {
+  .ck-top, .ck-prefs, .ck-actions, .ck-legal { padding-left: 16px; padding-right: 16px; }
+  .ck-box { border-radius: 14px; bottom: 12px; }
+  .ck-actions { flex-direction: column; }
+  .ck-btn { flex: none; width: 100%; }
 }
 
 
@@ -486,11 +454,6 @@
   .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
   .v39-nav-links { display: none; }
   .v39-burger { display: flex; }
-  /* Désactiver backdrop-filter du nav pour libérer le stacking context */
-  .v39-nav {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
   .v39-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
@@ -573,18 +536,18 @@
     <button class="v39-burger" id="burger" type="button" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="v39-nav-links" id="navLinks">
-      <a href="about.html">Qui sommes-nous</a>
-      <a href="pricing.html">Tarifs</a>
-      <a href="tutoriel.html">▶ Tutoriel</a>
-      <a href="mailto:contact@pope-online.com">Contact</a>
-      <div class="v39-nav-sep"></div>
-      <a href="private.html" class="v39-nav-cta-priv">🔒 Espace privé</a>
-      <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
-      <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
-    </div>
   </div>
 </nav>
+<div class="v39-nav-links" id="navLinks">
+  <a href="about.html">Qui sommes-nous</a>
+  <a href="pricing.html">Tarifs</a>
+  <a href="tutoriel.html">▶ Tutoriel</a>
+  <a href="mailto:contact@pope-online.com">Contact</a>
+  <div class="v39-nav-sep"></div>
+  <a href="private.html" class="v39-nav-cta-priv">🔒 Espace privé</a>
+  <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
+  <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
+</div>
 
 <!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
 <section class="v39-hero">
@@ -729,94 +692,73 @@
 <div class="ck-overlay" id="ckOverlay" hidden></div>
 
 <!-- Bannière principale -->
-<div class="ck-box" id="ckMain" hidden>
+<div class="ck-box" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitle">
   <div class="ck-top">
     <div class="ck-brand">
       <div class="ck-brand-icon">🍪</div>
       <div class="ck-brand-info">
         <div class="ck-label">Confidentialité &amp; Cookies</div>
-        <h2>Nous respectons vos choix</h2>
+        <h2 id="ckTitle">Nous respectons vos choix</h2>
       </div>
     </div>
-    <p class="ck-desc">
-      POPE Online utilise des cookies pour sécuriser votre connexion, mémoriser vos préférences
-      et mesurer les performances du service. Aucune donnée n'est revendue à des tiers.
-    </p>
+    <p class="ck-desc">POPE Online utilise des cookies pour sécuriser votre session, mémoriser vos préférences et mesurer les performances. Aucune donnée n'est revendue à des tiers.</p>
   </div>
   <div class="ck-divider"></div>
   <div class="ck-actions">
-    <button class="ck-btn ck-btn-decline" id="ckDecline" type="button">Refuser</button>
-    <button class="ck-btn ck-btn-prefs"   id="ckOpenPrefs" type="button">⚙ Personnaliser</button>
-    <button class="ck-btn ck-btn-accept"  id="ckAccept"  type="button">✓ Tout accepter</button>
+    <button class="ck-btn ck-btn-decline"  id="ckDecline"   type="button">Refuser</button>
+    <button class="ck-btn ck-btn-prefs"    id="ckOpenPrefs" type="button">⚙ Paramétrer</button>
+    <button class="ck-btn ck-btn-accept"   id="ckAccept"    type="button">✓ Tout accepter</button>
   </div>
-  <p class="ck-legal">
-    En acceptant, vous consentez à notre <a href="privacy.html">Politique de confidentialité</a>
-    et à nos <a href="cgu.html">CGU</a>. Vous pouvez modifier vos choix à tout moment.
-  </p>
+  <p class="ck-legal">En acceptant, vous consentez à notre <a href="privacy.html">Politique de confidentialité</a> et à nos <a href="cgu.html">CGU</a>.</p>
 </div>
 
-<!-- Panneau préférences détaillées -->
-<div class="ck-box" id="ckPrefs" hidden>
+<!-- Panneau préférences -->
+<div class="ck-box" id="ckPrefs" hidden role="dialog" aria-modal="true" aria-labelledby="ckPrefsTitle">
   <div class="ck-top">
     <div class="ck-brand">
       <div class="ck-brand-icon">⚙️</div>
       <div class="ck-brand-info">
         <div class="ck-label">Personnalisation</div>
-        <h2>Gérer mes préférences</h2>
+        <h2 id="ckPrefsTitle">Gérer mes cookies</h2>
       </div>
     </div>
   </div>
   <div class="ck-divider"></div>
   <div class="ck-prefs">
     <div class="ck-pref-item">
-      <label class="ck-toggle">
-        <input type="checkbox" checked disabled/>
-        <span class="ck-slider"></span>
-      </label>
+      <label class="ck-toggle"><input type="checkbox" checked disabled/><span class="ck-slider"></span></label>
       <div class="ck-pref-text">
         <strong>Essentiels <span class="ck-required-badge">Obligatoires</span></strong>
-        <span>Authentification sécurisée, gestion de session, protection anti-fraude et stabilité de la plateforme. Ces cookies sont indispensables au fonctionnement du service.</span>
+        <span>Authentification, gestion de session, protection anti-fraude. Indispensables au fonctionnement.</span>
       </div>
     </div>
     <div class="ck-pref-item">
-      <label class="ck-toggle">
-        <input type="checkbox" id="ckChkAnalytics"/>
-        <span class="ck-slider"></span>
-      </label>
+      <label class="ck-toggle"><input type="checkbox" id="ckChkAnalytics"/><span class="ck-slider"></span></label>
       <div class="ck-pref-text">
         <strong>Analytiques</strong>
-        <span>Mesure d'audience anonymisée pour comprendre comment les utilisateurs naviguent sur POPE Online et améliorer l'expérience (ex. : pages vues, temps passé, erreurs).</span>
+        <span>Mesure d'audience anonymisée pour améliorer le service (pages vues, temps passé, erreurs).</span>
       </div>
     </div>
     <div class="ck-pref-item">
-      <label class="ck-toggle">
-        <input type="checkbox" id="ckChkFunctional"/>
-        <span class="ck-slider"></span>
-      </label>
+      <label class="ck-toggle"><input type="checkbox" id="ckChkFunctional"/><span class="ck-slider"></span></label>
       <div class="ck-pref-text">
         <strong>Fonctionnels</strong>
-        <span>Mémorisation de vos préférences d'affichage, de langue et de configuration pour personnaliser votre espace de travail à chaque connexion.</span>
+        <span>Mémorisation de vos préférences d'affichage et de configuration à chaque connexion.</span>
       </div>
     </div>
     <div class="ck-pref-item">
-      <label class="ck-toggle">
-        <input type="checkbox" id="ckChkMarketing"/>
-        <span class="ck-slider"></span>
-      </label>
+      <label class="ck-toggle"><input type="checkbox" id="ckChkMarketing"/><span class="ck-slider"></span></label>
       <div class="ck-pref-text">
         <strong>Marketing</strong>
-        <span>Contenus et communications adaptés à votre profil (espace public ou privé, secteur d'activité). Utilisés uniquement en interne, jamais partagés avec des annonceurs.</span>
+        <span>Contenus adaptés à votre profil. Utilisés uniquement en interne, jamais partagés avec des annonceurs.</span>
       </div>
     </div>
   </div>
   <div class="ck-actions">
-    <button class="ck-btn ck-btn-back" id="ckBackMain" type="button">← Retour</button>
+    <button class="ck-btn ck-btn-back" id="ckBackMain"  type="button">← Retour</button>
     <button class="ck-btn ck-btn-save" id="ckSavePrefs" type="button">Enregistrer mes choix</button>
   </div>
-  <p class="ck-legal">
-    Vos choix sont sauvegardés localement et respectent le RGPD.
-    <a href="privacy.html">En savoir plus</a>
-  </p>
+  <p class="ck-legal">Vos choix sont sauvegardés localement et respectent le RGPD. <a href="privacy.html">En savoir plus</a></p>
 </div>
 
 <script>
@@ -900,22 +842,51 @@ if (navLinksEl) {
   function closeCk(choice) {
     try { localStorage.setItem(KEY, JSON.stringify({
       choice: choice,
-      analytics:  choice==='accepted' || (document.getElementById('ckChkAnalytics')  && document.getElementById('ckChkAnalytics').checked),
-      functional: choice==='accepted' || (document.getElementById('ckChkFunctional') && document.getElementById('ckChkFunctional').checked),
-      marketing:  choice==='accepted' || (document.getElementById('ckChkMarketing')  && document.getElementById('ckChkMarketing').checked)
+      analytics:  choice==='accepted'||(document.getElementById('ckChkAnalytics')&&document.getElementById('ckChkAnalytics').checked),
+      functional: choice==='accepted'||(document.getElementById('ckChkFunctional')&&document.getElementById('ckChkFunctional').checked),
+      marketing:  choice==='accepted'||(document.getElementById('ckChkMarketing')&&document.getElementById('ckChkMarketing').checked)
     })); } catch(e) {}
-    overlay.hidden = mainBox.hidden = true;
-    if (prefsBox) prefsBox.hidden = true;
+    if(overlay)  overlay.hidden  = true;
+    if(mainBox)  mainBox.hidden  = true;
+    if(prefsBox) prefsBox.hidden = true;
   }
   try { if (localStorage.getItem(KEY)) return; } catch(e) {}
-  overlay.hidden = mainBox.hidden = false;
+  if(overlay)  overlay.hidden  = false;
+  if(mainBox)  mainBox.hidden  = false;
   document.getElementById('ckAccept').onclick    = function() { closeCk('accepted'); };
   document.getElementById('ckDecline').onclick   = function() { closeCk('declined'); };
   document.getElementById('ckOpenPrefs').onclick = function() { mainBox.hidden=true; prefsBox.hidden=false; };
   document.getElementById('ckBackMain').onclick  = function() { prefsBox.hidden=true; mainBox.hidden=false; };
-  if (document.getElementById('ckSavePrefs'))
-  overlay.onclick = function() { close('dismissed'); };
+  document.getElementById('ckSavePrefs').onclick = function() { closeCk('custom'); };
 })();
+
+// Mosaïque
+(function() {
+  var panels = document.querySelectorAll('.v39-panel');
+  if (!panels.length) return;
+  function restart() {
+    panels.forEach(function(p) { p.classList.remove('hide'); });
+    setTimeout(function() {
+      panels.forEach(function(p, i) {
+        setTimeout(function() { p.classList.add('hide'); }, i * 200);
+      });
+    }, 6000);
+  }
+  setTimeout(restart, 500);
+  setInterval(restart, 16000);
+})();
+
+// Cookies
+(function() {
+  var KEY = 'pope_cookie_choice';
+  var overlay = document.getElementById('cookieOverlay');
+  var modal   = document.getElementById('cookieModal');
+  var prefs   = document.getElementById('cookiePrefsModal');
+  function close(choice) {
+    try { localStorage.setItem(KEY, choice); } catch(e) {}
+    overlay.hidden = modal.hidden = true;
+    if (prefs) prefs.hidden = true;
+  }
 </script>
 <script>
 (function(){

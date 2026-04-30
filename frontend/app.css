@@ -6934,6 +6934,12 @@ h1, h2, h3 {
 .v38-nav-brand-text strong { display: block; font-size: 15px; font-weight: 800; color: #fff; }
 .v38-nav-brand-text small  { font-size: 11px; color: rgba(255,255,255,.5); }
 .v38-nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+@media(min-width: 981px) {
+  #navLinks.v38-nav-links { display: flex !important; }
+}
+@media(max-width: 980px) {
+  #navLinks.v38-nav-links:not(.open) { display: none !important; }
+}
 .v38-nav-links a {
   color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px;
   font-weight: 500; padding: 7px 12px; border-radius: 8px; transition: .15s; white-space: nowrap;
@@ -7123,12 +7129,8 @@ h1, h2, h3 {
   .v38-grid-4        { grid-template-columns: 1fr 1fr; }
   .v38-grid-3        { grid-template-columns: 1fr; }
   .v38-nav-links     { display: none; }
+  /* Menu sorti du nav : pas de stacking context, z-index libre */
   .v38-burger        { display: flex; }
-  /* Désactiver backdrop-filter du nav pour libérer le stacking context */
-  .v38-nav {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
   .v38-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
