@@ -4482,17 +4482,21 @@ input, select, textarea{
 
 /* V5 responsive fix */
 @media (max-width:768px){
-header:not(.v40-topbar),nav,.topbar:not(.v40-topbar){
+header:not(.v40-topbar):not(.v39-nav):not(.v38-nav),
+nav:not(.v39-nav):not(.v38-nav),
+.topbar:not(.v40-topbar){
 display:flex;
 flex-wrap:wrap;
 }
-/* v40-topbar : jamais de wrap */
-.v40-topbar {
+/* v40-topbar / v39-nav / v38-nav : jamais de wrap */
+.v40-topbar,
+.v39-nav,
+.v38-nav {
 display:flex !important;
 flex-wrap:nowrap !important;
 flex-direction:row !important;
 }
-button:not(.v40-topbar-btn):not(.v40-burger):not(.v40-mobile-menu button),.btn{
+button:not(.v40-topbar-btn):not(.v40-burger):not(.v39-burger):not(.v38-burger):not(.v40-mobile-menu button),.btn{
 width:100%;
 }
 .consent-text{
