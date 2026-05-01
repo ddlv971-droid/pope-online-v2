@@ -282,18 +282,102 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-tab.active { background: var(--accent); color: #fff !important; box-shadow: 0 2px 8px rgba(0,121,193,.3); }
 
 /* Responsive */
+/* ── Responsive Admin ─────────────────────────────────────── */
+
+/* Bouton hamburger (masqué desktop) */
+.adm-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 6px 8px; color: rgba(255,255,255,.85); font-size: 22px; line-height:1;
+}
+
+/* Overlay sidebar mobile */
+.adm-sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 99; backdrop-filter: blur(2px);
+}
+.adm-sidebar-overlay.open { display: block; }
+
 @media(max-width: 900px) {
-  .adm-sidebar { display: none; }
-  .adm-content { padding: 16px; }
+  /* Topbar */
+  .adm-bar { padding: 0 12px; gap: 8px; }
+  .adm-bar-brand-text { display: none; }
+  .adm-bar-pill { display: none; }
+  .adm-bar-btn { font-size: 12px; padding: 6px 10px; }
+  .adm-hamburger { display: flex; align-items: center; justify-content: center; }
+
+  /* Layout principal */
+  .adm-main { position: relative; }
+
+  /* Sidebar : tiroir latéral sur mobile */
+  .adm-sidebar {
+    position: fixed; left: 0; top: 60px; bottom: 0; z-index: 100;
+    width: 260px; transform: translateX(-100%);
+    transition: transform .3s cubic-bezier(.16,1,.3,1);
+    overflow-y: auto; box-shadow: 4px 0 24px rgba(0,0,0,.3);
+  }
+  .adm-sidebar.open { transform: translateX(0); }
+
+  /* Contenu */
+  .adm-content { padding: 16px 12px; }
+
+  /* KPIs : 2 colonnes */
+  .adm-kpis { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .adm-kpi-value { font-size: 22px; }
+
+  /* Grilles de formulaires */
   .adm-form-grid { grid-template-columns: 1fr; }
-  .adm-user-panel { width: 100%; }
-  .adm-kpis { grid-template-columns: repeat(2, 1fr); }
+
+  /* Tables : scroll horizontal */
+  .adm-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .adm-table { min-width: 520px; }
+  .adm-table th, .adm-table td { padding: 10px 10px; font-size: 12px; }
+
+  /* Panneau détail utilisateur : plein écran mobile */
+  .adm-user-panel {
+    width: 100%; top: 0; right: 0;
+    z-index: 200;
+  }
+  .adm-user-panel-body { padding: 14px; }
+
+  /* Cards */
+  .adm-card { border-radius: 14px; }
+  .adm-card-head { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+  .adm-card-body { padding: 14px 16px; }
+
+  /* Hero */
+  .adm-hero { padding: 16px; border-radius: 14px; }
+  .adm-hero-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .adm-hero-title { font-size: 17px; }
+
+  /* Filtres */
+  .adm-filters { flex-direction: column; gap: 8px; }
+  .adm-search-wrap, .adm-search { width: 100%; min-width: unset; }
+  .adm-filters > select, .adm-filters > button { width: 100%; }
+
+  /* Boutons actions dans les panels */
+  .adm-actions-row { flex-direction: column; }
+  .adm-actions-row .adm-btn { width: 100%; justify-content: center; }
+
+  /* Tabs dans le panneau */
+  .adm-tab { font-size: 11px; padding: 7px 4px; }
+
+  /* Portefeuille */
+  #portfolioCard .adm-table { min-width: 480px; }
+}
+
+@media(max-width: 480px) {
+  .adm-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .adm-kpi { padding: 12px; }
+  .adm-kpi-value { font-size: 20px; }
+  .adm-bar-btn { padding: 5px 8px; font-size: 11px; }
+  .adm-login { margin: 20px 12px; padding: 24px 16px; border-radius: 18px; }
 }
 </style>
 </head>
 <body>
 
 <header class="adm-bar" id="adminBar" hidden>
+  <button class="adm-hamburger" id="adminHamburger" aria-label="Menu">☰</button>
   <a class="adm-bar-brand" href="index.html">
     <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
     <div class="adm-bar-brand-text">
@@ -333,6 +417,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 <!-- APP ADMIN -->
 <div id="adminApp" hidden style="display:none;flex:1;overflow:hidden">
+  <div class="adm-sidebar-overlay" id="sidebarOverlay"></div>
   <div class="adm-main">
     <!-- Sidebar -->
     <nav class="adm-sidebar">
@@ -639,12 +724,12 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
             <div style="margin-bottom:20px;padding:16px;background:rgba(0,121,193,.06);border:1px solid rgba(0,121,193,.15);border-radius:12px">
               <div style="font-size:12px;font-weight:700;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">Assigner un client</div>
               <div style="display:flex;gap:8px">
-                <select class="adm-input adm-select" id="assignClientSelect" style="flex:1">
+                <select class="adm-input adm-select" id="expertTabClientSelect" style="flex:1">
                   <option value="">— Sélectionner un client —</option>
                 </select>
-                <button class="adm-btn adm-btn-primary adm-btn-sm" id="assignClientBtn">Assigner</button>
+                <button class="adm-btn adm-btn-primary adm-btn-sm" id="expertTabAssignBtn">Assigner</button>
               </div>
-              <div class="adm-msg" id="assignMsg"></div>
+              <div class="adm-msg" id="expertTabAssignMsg"></div>
             </div>
             <!-- Liste des clients assignés -->
             <div id="portfolioClientsList">
@@ -746,7 +831,6 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
         <div class="adm-detail-row"><span class="adm-detail-key">Statut</span><span class="adm-detail-val" id="dStatus">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Tickets IA</span><span class="adm-detail-val" id="dTickets">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Organisation</span><span class="adm-detail-val" id="dOrg">—</span></div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Rôle</span><span class="adm-detail-val" id="dRole">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Inscription</span><span class="adm-detail-val" id="dCreated">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Fin essai</span><span class="adm-detail-val" id="dTrial">—</span></div>
       </div>
@@ -765,17 +849,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
           <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveRole">Appliquer</button>
         </div>
       </div>
-      <div class="adm-detail-section">
-        <div class="adm-detail-section-title">Rôle utilisateur</div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-          <select class="adm-input adm-select" id="panelRole" style="flex:1">
-            <option value="client">Client</option>
-            <option value="expert">Expert conseiller</option>
-            <option value="admin">Administrateur</option>
-          </select>
-          <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveRole">Appliquer</button>
-        </div>
-      </div>
+
       <div class="adm-detail-section">
         <div class="adm-detail-section-title">Tickets & Accès</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
@@ -1302,6 +1376,19 @@ el('portfolioCloseBtn').onclick = () => {
 };
 
 el('refreshExpertsBtn').onclick = loadExperts;
+
+// ── Navigation mobile : hamburger sidebar ──────────────────────────────────
+const hamburger = el('adminHamburger');
+const sidebar    = document.querySelector('.adm-sidebar');
+const sideOverlay = el('sidebarOverlay');
+if (hamburger && sidebar && sideOverlay) {
+  function openSidebar()  { sidebar.classList.add('open'); sideOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeSidebar() { sidebar.classList.remove('open'); sideOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+  hamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+  sideOverlay.addEventListener('click', closeSidebar);
+  // Fermer la sidebar quand on clique sur un item de nav
+  sidebar.querySelectorAll('.adm-nav-item').forEach(btn => btn.addEventListener('click', closeSidebar));
+}
 
 // ═══ FIN EXPERTS ═══
 window.sendSat = async (id) => {

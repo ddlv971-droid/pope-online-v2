@@ -158,10 +158,19 @@ router.put('/users/:id', async (req, res) => {
       await client.query('begin');
       if (req.body.user) {
         const u = req.body.user;
-        await client.query(
-          `update users set full_name=$2, organization=$3, email=$4, phone_full=$5, account_space=$6 where id=$1`,
-          [id, u.fullName || null, u.organization || null, String(u.email || '').trim().toLowerCase(), u.phoneFull || null, u.accountSpace || 'public']
-        );
+        const allowedRoles = ['client', 'expert', 'admin'];
+        const role = allowedRoles.includes(u.role) ? u.role : null;
+        if (role) {
+          await client.query(
+            `update users set full_name=$2, organization=$3, email=$4, phone_full=$5, account_space=$6, role=$7 where id=$1`,
+            [id, u.fullName || null, u.organization || null, String(u.email || '').trim().toLowerCase(), u.phoneFull || null, u.accountSpace || 'public', role]
+          );
+        } else {
+          await client.query(
+            `update users set full_name=$2, organization=$3, email=$4, phone_full=$5, account_space=$6 where id=$1`,
+            [id, u.fullName || null, u.organization || null, String(u.email || '').trim().toLowerCase(), u.phoneFull || null, u.accountSpace || 'public']
+          );
+        }
       }
       if (req.body.wallet) {
         const w = req.body.wallet;
@@ -321,4 +330,93 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
+// ── GET /admin/experts — liste des comptes experts avec count portefeuille ───
+router.get('/experts', async (_req, res) => {
+  try {
+    const result = await withClient(async (client) => {
+      const q = await client.query(`
+        select u.id, u.full_name, u.email, u.organization, u.created_at,
+               count(ea.client_id)::int as portfolio_count
+          from users u
+          left join expert_assignments ea on ea.expert_id = u.id
+         where u.role = 'expert'
+         group by u.id, u.full_name, u.email, u.organization, u.created_at
+         order by u.full_name asc
+      `);
+      return q.rows;
+    });
+    return res.json({ experts: result });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ── GET /admin/expert-assignments/:expertId — portefeuille d'un expert ───────
+router.get('/expert-assignments/:expertId', async (req, res) => {
+  try {
+    const result = await withClient(async (client) => {
+      const q = await client.query(`
+        select u.id, u.full_name, u.email, u.organization, ea.assigned_at,
+               (select count(*) from expert_requests er
+                 where er.user_id = u.id and er.status not in ('replied','closed'))::int as pending_count,
+               (select count(*) from expert_requests er
+                 where er.user_id = u.id and er.status in ('replied','closed'))::int as done_count
+          from expert_assignments ea
+          join users u on u.id = ea.client_id
+         where ea.expert_id = $1
+         order by ea.assigned_at desc
+      `, [req.params.expertId]);
+      return q.rows;
+    });
+    return res.json({ clients: result });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ── POST /admin/expert-assignments — assigner un client à un expert ──────────
+router.post('/expert-assignments', async (req, res) => {
+  const { expertId, clientId } = req.body || {};
+  if (!expertId || !clientId) return res.status(400).json({ error: 'missing_ids' });
+  try {
+    await withClient(async (client) => {
+      // Vérifier que l'expert existe avec le bon rôle
+      const exp = await client.query(`select id from users where id=$1 and role='expert' limit 1`, [expertId]);
+      if (!exp.rowCount) throw Object.assign(new Error('expert_not_found'), { status: 404 });
+      await client.query(
+        `insert into expert_assignments(expert_id, client_id) values($1,$2) on conflict do nothing`,
+        [expertId, clientId]
+      );
+    });
+    logAdminEvent(req, 'assign_client', { expertId, clientId });
+    return res.json({ ok: true });
+  } catch (e) {
+    if (e.status) return res.status(e.status).json({ error: e.message });
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ── DELETE /admin/expert-assignments — retirer un client d'un expert ─────────
+router.delete('/expert-assignments', async (req, res) => {
+  const { expertId, clientId } = req.body || {};
+  if (!expertId || !clientId) return res.status(400).json({ error: 'missing_ids' });
+  try {
+    await withClient(async (client) => {
+      await client.query(
+        `delete from expert_assignments where expert_id=$1 and client_id=$2`,
+        [expertId, clientId]
+      );
+    });
+    logAdminEvent(req, 'remove_assignment', { expertId, clientId });
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
 export default router;
+

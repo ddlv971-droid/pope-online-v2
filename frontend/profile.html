@@ -167,12 +167,68 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
 .pf-danger-desc { font-size: 12.5px; color: #64748b; margin-bottom: 14px; line-height: 1.6; }
 
 /* Responsive */
+/* ── Responsive Profile ───────────────────────────────────── */
+
+/* Navigation mobile en bas d'écran (tab bar) */
+.pf-mobile-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 80;
+  background: var(--pf-surface);
+  border-top: 1px solid var(--pf-border);
+  padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  flex-direction: row;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+}
+.pf-mobile-nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 4px; border: none; background: none; cursor: pointer;
+  font-size: 10px; font-weight: 600; color: var(--pf-muted);
+  transition: color .15s;
+}
+.pf-mobile-nav-item .pf-nav-icon { font-size: 20px; line-height: 1; }
+.pf-mobile-nav-item.active { color: var(--pf-accent2); }
+
 @media(max-width: 700px) {
+  /* Layout : une seule colonne */
+  .pf-wrap { max-width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
   .pf-grid { grid-template-columns: 1fr; }
-  .pf-sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
-  .pf-profile-card { display: none; }
-  .pf-form-grid { grid-template-columns: 1fr; }
-  .pf-stat-row { grid-template-columns: 1fr 1fr; }
+
+  /* Sidebar : masquée (remplacée par tab bar en bas) */
+  .pf-sidebar { display: none; }
+
+  /* Navigation mobile visible */
+  .pf-mobile-nav { display: flex; }
+
+  /* Contenu principal : espace en bas pour la tab bar */
+  .pf-content { padding-bottom: 80px; }
+
+  /* Cards */
+  .pf-card-head { padding: 16px 16px 0; flex-wrap: wrap; gap: 8px; }
+  .pf-card-body { padding: 16px; }
+
+  /* Formulaires */
+  .pf-form-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Stats abonnement */
+  .pf-stat-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pf-sub-hero { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .pf-sub-plan { font-size: 20px; }
+
+  /* Table factures : scroll horizontal */
+  .pf-invoice-table { min-width: 480px; display: table; }
+  .pf-invoice-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Topbar */
+  .topbar .container { padding: 0 12px; }
+
+  /* Boutons */
+  .pf-btn { font-size: 13px; padding: 10px 16px; }
+}
+
+@media(max-width: 400px) {
+  .pf-stat-row { grid-template-columns: 1fr; }
+  .pf-mobile-nav-item { font-size: 9px; }
+  .pf-mobile-nav-item .pf-nav-icon { font-size: 18px; }
 }
 </style>
 </head>
@@ -315,7 +371,7 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
             <div id="invoiceLoading" style="text-align:center;padding:32px;color:var(--pf-muted)">Chargement de l'historique…</div>
             <div id="invoiceContent" hidden>
               <div style="overflow-x:auto">
-                <table class="pf-invoice-table">
+                <div class="pf-invoice-wrap"><table class="pf-invoice-table">
                   <thead>
                     <tr>
                       <th>Date</th>
@@ -407,6 +463,21 @@ wireLogout();
 const el = (id) => document.getElementById(id);
 
 // Navigation
+// Sync mobile nav tab bar avec la navigation de la sidebar
+document.querySelectorAll('#pfMobileNav [data-sec]').forEach(mBtn => {
+  mBtn.addEventListener('click', () => {
+    // Mettre à jour active sur tous les [data-sec]
+    document.querySelectorAll('[data-sec]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll(`[data-sec="${mBtn.dataset.sec}"]`).forEach(b => b.classList.add('active'));
+    // Afficher la section
+    document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById('sec-' + mBtn.dataset.sec);
+    if (target) target.classList.add('active');
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
 document.querySelectorAll('[data-sec]').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('[data-sec]').forEach(b => b.classList.remove('active'));
@@ -534,5 +605,28 @@ el('btnDeleteAccount').onclick = async function() {
 
 load();
 </script>
+<!-- Navigation mobile bas d'écran -->
+<nav class="pf-mobile-nav" id="pfMobileNav">
+  <button class="pf-mobile-nav-item active" data-sec="infos">
+    <span class="pf-nav-icon">👤</span>
+    Infos
+  </button>
+  <button class="pf-mobile-nav-item" data-sec="abonnement">
+    <span class="pf-nav-icon">💎</span>
+    Abonnement
+  </button>
+  <button class="pf-mobile-nav-item" data-sec="paiements">
+    <span class="pf-nav-icon">🧾</span>
+    Factures
+  </button>
+  <button class="pf-mobile-nav-item" data-sec="securite">
+    <span class="pf-nav-icon">🔐</span>
+    Sécurité
+  </button>
+  <button class="pf-mobile-nav-item" data-sec="donnees">
+    <span class="pf-nav-icon">🛡️</span>
+    Données
+  </button>
+</nav>
 </body>
 </html>
