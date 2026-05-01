@@ -883,7 +883,7 @@ function updateKpis() {
   el('riskCount').textContent = risk.length;
   el('sideRiskCount').textContent = risk.length;
   const sent = usersCache.filter(u => u.satisfaction_mail_sent_at).length;
-  const replied = usersCache.filter(u => (u.satisfaction_score_10 || u.satisfaction_score)).length;
+  const replied = usersCache.filter(u => u.satisfaction_mail_sent_at && (u.satisfaction_score_10 || u.satisfaction_score)).length;
   el('sentCount').textContent = sent;
   el('satSent').textContent = sent;
   el('activeCount').textContent = usersCache.filter(u => u.wallet?.status === 'active').length;
@@ -1065,7 +1065,8 @@ el('panelSaveRole').onclick = async () => {
       accountSpace: selectedUser.account_space || 'public'
     } } });
     showToast('Rôle mis à jour', 'ok');
-    el('panelMsg').textContent = '✓ Rôle : ' + role;
+    const roleLabel = { client:'Client', expert:'Expert conseiller', admin:'Administrateur' }[role] || role;
+    el('panelMsg').textContent = '✓ Rôle changé : ' + roleLabel + (role==='expert' ? ' — allez dans l\'onglet Experts pour lui assigner des clients' : '');
     el('panelMsg').className = 'adm-msg ok';
     await loadUsers();
     openPanel(selectedUser.id);
@@ -1370,6 +1371,8 @@ let selectedExpertId = null;
 
 async function loadExperts() {
   try {
+    // S'assurer que usersCache est peuplé
+    if (!usersCache.length) await loadUsers();
     const data = await apiFetch('/admin/experts');
     expertsCache = data.experts || [];
     renderExpertsTable();

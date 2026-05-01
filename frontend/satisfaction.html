@@ -117,7 +117,10 @@ document.getElementById('btnSubmit').addEventListener('click', async function() 
             if (payload.accountSpace === 'private') dashUrl = 'dashboard-private.html';
           }
         } catch(e) {}
-        return '<a href="' + dashUrl + '" style="display:inline-block;margin-top:20px;background:#0079c1;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Retour à mon espace →</a>';
+        // Effacer toute session admin pour que l'utilisateur se reconnecte avec son propre compte
+        try { ['pope_session_token','pope_token','pope_user','pope_session'].forEach(function(k){ localStorage.removeItem(k); sessionStorage.removeItem(k); }); } catch(e2) {}
+        var loginUrl = 'login.html?next=' + encodeURIComponent(dashUrl);
+        return '<a href="' + loginUrl + '" style="display:inline-block;margin-top:20px;background:#0079c1;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Se connecter à mon espace →</a>';
       }()) +
       '</div>';
   } catch(e) {
