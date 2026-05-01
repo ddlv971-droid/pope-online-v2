@@ -1174,49 +1174,54 @@ async function loadExpert() {
       new:         { label:'En attente',  bg:'rgba(245,158,11,.12)',  color:'#f59e0b', border:'rgba(245,158,11,.25)' },
       pending:     { label:'En attente',  bg:'rgba(245,158,11,.12)',  color:'#f59e0b', border:'rgba(245,158,11,.25)' },
       in_progress: { label:'En cours',    bg:'rgba(0,121,193,.12)',   color:'#60a5fa', border:'rgba(0,121,193,.25)'  },
-      replied:     { label:'Répondu ✓',   bg:'rgba(34,197,94,.1)',    color:'#22c55e', border:'rgba(34,197,94,.2)'   },
-      closed:      { label:'Clôturé',     bg:'rgba(255,255,255,.07)', color:'#94a3b8', border:'rgba(255,255,255,.1)' }
+      replied:     { label:'Repondu \u2713',   bg:'rgba(34,197,94,.1)',    color:'#22c55e', border:'rgba(34,197,94,.2)'   },
+      closed:      { label:'Cloture',     bg:'rgba(255,255,255,.07)', color:'#94a3b8', border:'rgba(255,255,255,.1)' }
     };
-    el('expertList').innerHTML = missions.map(m => {
-      const sc = statusCfg[m.status] || statusCfg.new;
-      const hasReply = m.reply_text && m.reply_text.trim();
-      return \`
-      <div style="border:1px solid ${hasReply ? 'rgba(34,197,94,.25)' : 'rgba(0,121,193,.15)'};border-radius:14px;padding:18px;margin-bottom:14px;background:#162032">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">
-          <div>
-            <div style="font-weight:700;color:#edf2f8;font-size:14px">\${esc(m.full_name||m.email||'—')}</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">\${esc(m.email||m.user_email||'')}</div>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:\${sc.bg};color:\${sc.color};border:1px solid \${sc.border}">\${sc.label}</span>
-            <span style="font-size:11px;color:rgba(255,255,255,.4)">\${fmtDate(m.created_at)}</span>
-          </div>
-        </div>
-        <div style="margin-bottom:10px">
-          <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Objectif</span>
-          <p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55">\${esc((m.objective||'—').substring(0,200))}\${m.objective&&m.objective.length>200?'…':''}</p>
-        </div>
-        \${m.expectations ? \`<div style="margin-bottom:10px">
-          <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Attentes client</span>
-          <p style="font-size:13px;color:rgba(255,255,255,.65);margin:5px 0 0;line-height:1.55">\${esc(m.expectations.substring(0,200))}\${m.expectations.length>200?'…':''}</p>
-        </div>\` : ''}
-        \${hasReply ? \`
-        <div style="margin:14px 0;padding:14px 16px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px">
-          <div style="font-size:10px;font-weight:700;color:#22c55e;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">
-            ✓ Réponse de l'expert · \${fmtDate(m.replied_at)}
-            \${m.reply_by ? '<span style="font-weight:400;color:rgba(34,197,94,.7)"> · par '+esc(m.reply_by)+'</span>' : ''}
-          </div>
-          <p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.65;white-space:pre-wrap">\${esc(m.reply_text)}</p>
-        </div>
-        \` : ''}
-        <div style="margin-top:12px;display:flex;gap:8px">
-          \${!hasReply ? \`<button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply('\${esc(m.id)}')">✍️ Rédiger la réponse</button>\` : \`<button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="startReply('\${esc(m.id)}')">✏️ Modifier la réponse</button>\`}
-        </div>
-      </div>\`;
+    el('expertList').innerHTML = missions.map(function(m) {
+      var sc = statusCfg[m.status] || statusCfg.new;
+      var hasReply = !!(m.reply_text && m.reply_text.trim());
+      var borderColor = hasReply ? 'rgba(34,197,94,.25)' : 'rgba(0,121,193,.15)';
+      var replyHtml = '';
+      if (hasReply) {
+        var byStr = m.reply_by ? ' &middot; par ' + esc(m.reply_by) : '';
+        replyHtml =
+          '<div style="margin:14px 0;padding:14px 16px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px">' +
+            '<div style="font-size:10px;font-weight:700;color:#22c55e;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">' +
+              '\u2713 R\u00e9ponse de l\'expert &middot; ' + fmtDate(m.replied_at) + byStr +
+            '</div>' +
+            '<p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.65;white-space:pre-wrap">' + esc(m.reply_text) + '</p>' +
+          '</div>';
+      }
+      var expectHtml = m.expectations ?
+        '<div style="margin-bottom:10px">' +
+          '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Attentes client</span>' +
+          '<p style="font-size:13px;color:rgba(255,255,255,.65);margin:5px 0 0;line-height:1.55">' + esc(m.expectations.substring(0,200)) + (m.expectations.length > 200 ? '&hellip;' : '') + '</p>' +
+        '</div>' : '';
+      var btnLabel = hasReply ? '\u270f\ufe0f Modifier la r\u00e9ponse' : '\u270d\ufe0f R\u00e9diger la r\u00e9ponse';
+      return '<div style="border:1px solid ' + borderColor + ';border-radius:14px;padding:18px;margin-bottom:14px;background:#162032">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
+          '<div>' +
+            '<div style="font-weight:700;color:#edf2f8;font-size:14px">' + esc(m.full_name || m.email || '\u2014') + '</div>' +
+            '<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">' + esc(m.email || m.user_email || '') + '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+            '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:' + sc.bg + ';color:' + sc.color + ';border:1px solid ' + sc.border + '">' + sc.label + '</span>' +
+            '<span style="font-size:11px;color:rgba(255,255,255,.4)">' + fmtDate(m.created_at) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:10px">' +
+          '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Objectif</span>' +
+          '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55">' + esc((m.objective || '\u2014').substring(0, 200)) + (m.objective && m.objective.length > 200 ? '&hellip;' : '') + '</p>' +
+        '</div>' +
+        expectHtml +
+        replyHtml +
+        '<div style="margin-top:12px">' +
+          '<button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply(\'' + esc(m.id) + '\')">' + btnLabel + '</button>' +
+        '</div>' +
+      '</div>';
     }).join('');
   } catch(e) { el('expertList').innerHTML = '<p style="color:var(--red);padding:16px">Erreur: '+esc(getApiMessage(e))+'</p>'; }
 }
-
 let currentMissionId = null;
 window.startReply = (id) => {
   currentMissionId = id;
