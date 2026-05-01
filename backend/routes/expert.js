@@ -60,6 +60,22 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         }
       }
 
+      // ── Vérification quota relectures expertes ─────────────────
+      if (userId) {
+        const wCheck = await client.query('select * from wallets where user_id=$1', [userId]);
+        const wRow = wCheck.rows[0];
+        if (wRow) {
+          const expertUsed  = Number(wRow.expert_used  ?? 0);
+          const expertLimit = Number(wRow.expert_limit ?? 2);
+          const expertTickets = Number(wRow.tickets_expert ?? 0);
+          // Pas de tickets payants ET quota gratuit épuisé → bloquer
+          if (expertTickets <= 0 && expertUsed >= expertLimit) {
+            await client.query('rollback');
+            return { ok: false, status: 402, body: { error: 'expert_limit_reached' } };
+          }
+        }
+      }
+
       const ins = await client.query(
         `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status)
          values($1,$2,$3,$4,$5,$6,'new') returning id`,
