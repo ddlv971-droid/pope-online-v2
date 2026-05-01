@@ -37,17 +37,17 @@ function applySpaceLabels(){
   el('attachmentLead').textContent = 'Choisissez la génération archivée à joindre. Le prompt et le résultat correspondants seront transmis à l’équipe.';
   el('expertVaultLead').textContent = 'Ajoutez si besoin des pièces du dépôt sécurisé 48h : DCE, RC, courrier reçu, pièces de formalité ou justificatifs.';
 }
-function renderAttachmentCard(){ const card=el('generationAttachmentCard'), status=el('attachmentStatus'), preview=el('attachmentPreview'), select=el('archiveAttachmentSelect'); if(!card||!status||!preview||!select) return; if(!archiveStore){ 
+function renderAttachmentCard(){ const _appLnk=isPrivate()?'app-private.html':'app.html'; const card=el('generationAttachmentCard'), status=el('attachmentStatus'), preview=el('attachmentPreview'), select=el('archiveAttachmentSelect'); if(!card||!status||!preview||!select) return; if(!archiveStore){ 
     card.style.display='block'; 
     select.innerHTML='<option value="">Aucune génération archivée disponible</option>';
     if(status) status.textContent='Pas encore d\'archive locale';
-    if(preview) preview.innerHTML='<span style="color:#50627a">Générez et archivez un document depuis l\'<a href="app.html" style="color:#0079c1">espace génération</a> pour pouvoir le joindre ici.</span>';
+    if(preview) preview.innerHTML='<span style="color:#50627a">Générez et archivez un document depuis l\'<a href='"+_appLnk+"' style="color:#0079c1">espace génération</a> pour pouvoir le joindre ici.</span>';
     return; 
   } const items=archiveStore.list(); if(!items.length){ 
     card.style.display='block';
     select.innerHTML='<option value="">Aucune génération archivée disponible</option>';
     if(status) status.textContent='Pas encore d\'archive locale';
-    if(preview) preview.innerHTML='<span style="color:#50627a">Générez et archivez un document depuis l\'<a href="app.html" style="color:#0079c1">espace génération</a> pour pouvoir le joindre ici.</span>';
+    if(preview) preview.innerHTML='<span style="color:#50627a">Générez et archivez un document depuis l\'<a href='"+_appLnk+"' style="color:#0079c1">espace génération</a> pour pouvoir le joindre ici.</span>';
     return; 
   } card.style.display='block'; const currentValue=select.value || select.dataset.restoreValue || '';  select.innerHTML='<option value="">Ne pas joindre de génération archivée</option>'+items.map((item)=>`<option value="${encodeURIComponent(item.id)}">${escapeHtml(archiveLabel(item))}</option>`).join(''); if(currentValue && items.some((item)=>item.id===currentValue)) select.value=currentValue; select.dataset.restoreValue=''; selectedArchive=select.value ? archiveStore.get(select.value) : null; updateAttachmentPreview(); }
 function updateAttachmentPreview(){ const status=el('attachmentStatus'), preview=el('attachmentPreview'), select=el('archiveAttachmentSelect'); selectedArchive=select.value && archiveStore ? archiveStore.get(select.value) : null; if(!selectedArchive?.result){ status.textContent='Aucune archive sélectionnée'; preview.innerHTML='Vous pouvez envoyer votre demande sans pièce jointe, ou sélectionner une génération archivée pour transmettre le prompt et le résultat associés.'; return; } status.textContent='Archive jointe'; const objective=selectedArchive?.prompt?.objective || selectedArchive.title || '—'; const result=String(selectedArchive.result || '').replace(/\s+/g,' ').slice(0,260); preview.innerHTML=`<strong>Archive sélectionnée :</strong> ${archiveLabel(selectedArchive)}<br><strong>Objet suggéré :</strong> ${escapeHtml(objective)}<br><strong>Aperçu du résultat joint :</strong> ${escapeHtml(result)}${String(selectedArchive.result || '').length>260?'…':''}`; if(!el('subject').value.trim()) el('subject').value = `Relecture experte — ${String(objective).slice(0,90) || 'livrable généré'}`; }
