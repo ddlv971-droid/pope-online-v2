@@ -329,11 +329,14 @@ router.get('/my-assigned-requests', requireAuth, async (req, res) => {
     const rows = await withClient(async (client) => {
       const r = await client.query(
         `select er.id, er.objective, er.expectations, er.context, er.status,
-                er.reply_text, er.reply_by, er.replied_at, er.created_at, er.updated_at,
+                er.reply_text, er.reply_by, er.replied_at,
+                er.created_at, er.updated_at,
+                er.generation_attachment,
                 u.email, u.full_name, u.organization, u.id as user_id
            from expert_requests er
            join users u on u.id = er.user_id
-           join expert_assignments ea on ea.client_id = er.user_id AND ea.expert_id = $1
+           join expert_assignments ea on ea.client_id = er.user_id
+                                     AND ea.expert_id = $1
           order by er.created_at desc
           limit 100`,
         [expertId]
@@ -347,7 +350,7 @@ router.get('/my-assigned-requests', requireAuth, async (req, res) => {
   }
 });
 
-// ── GET /expert/my-clients — clients assignés à cet expert ───────────────────
+// ── GET /expert/my-clients — portefeuille de l'expert connecté ───────────────
 router.get('/my-clients', requireAuth, async (req, res) => {
   if (!['expert','admin'].includes(req.user?.role)) {
     return res.status(403).json({ error: 'forbidden' });
@@ -358,9 +361,11 @@ router.get('/my-clients', requireAuth, async (req, res) => {
       const r = await client.query(
         `select u.id, u.full_name, u.email, u.organization, ea.assigned_at,
                 (select count(*) from expert_requests er
-                  where er.user_id = u.id and er.status not in ('replied','closed'))::int as pending_count,
+                  where er.user_id = u.id
+                    and er.status not in ('replied','closed'))::int as pending_count,
                 (select count(*) from expert_requests er
-                  where er.user_id = u.id and er.status in ('replied','closed'))::int as done_count
+                  where er.user_id = u.id
+                    and er.status in ('replied','closed'))::int as done_count
            from expert_assignments ea
            join users u on u.id = ea.client_id
           where ea.expert_id = $1
