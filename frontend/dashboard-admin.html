@@ -1478,7 +1478,7 @@ el('btnAssignExpert').onclick = async () => {
   if (!expertId || !clientId) { msg.textContent = 'Sélectionnez un expert et un client.'; msg.className = 'adm-msg err'; return; }
   try {
     await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId, clientId } });
-    msg.textContent = '✓ Client assigné à l'expert avec succès.'; msg.className = 'adm-msg ok';
+    msg.textContent = '✓ Client assigné avec succès.'; msg.className = 'adm-msg ok';
     showToast('Assignation effectuée', 'ok');
     await loadExperts();
     if (currentExpertId === expertId) await viewPortfolio(expertId, el('portfolioExpertName').textContent);
