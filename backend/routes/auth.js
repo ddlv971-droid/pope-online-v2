@@ -39,12 +39,9 @@ function walletPayload(row = {}) {
     ? Math.max(0, Math.ceil((trialExpires.getTime() - now) / 86400000))
     : null;
   const isTrialExpired = trialExpires ? trialExpires.getTime() < now : false;
-  const expertLimit   = Number(row.expert_limit   ?? 2);
-  const expertUsed    = Number(row.expert_used    ?? 0);
-  const expertTickets = Number(row.tickets_expert ?? 0);
-  // expert_left = quota gratuit restant + tickets payants achetés
-  const expertLeftFree    = Math.max(0, expertLimit - expertUsed);
-  const expertLeft        = expertLeftFree + expertTickets;
+  const expertLimit = Number(row.expert_limit ?? 2);
+  const expertUsed  = Number(row.expert_used  ?? 0);
+  const expertLeft  = Math.max(0, expertLimit - expertUsed);
   return {
     plan_code:             row.plan_code   || 'FREE',
     plan_label:            row.plan_label  || 'Free',
@@ -53,7 +50,6 @@ function walletPayload(row = {}) {
     expert_limit:          expertLimit,
     expert_used:           expertUsed,
     expert_left:           expertLeft,
-    expert_left_free:      expertLeftFree,
     // Champs techniques internes (admin uniquement)
     tickets_ai:            Number(row.tickets_ai    || 0),
     tickets_expert:        Number(row.tickets_expert || 0),
