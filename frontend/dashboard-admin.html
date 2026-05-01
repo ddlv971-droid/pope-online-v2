@@ -11,12 +11,12 @@
   --surface: #08152a;
   --surface2: #0d1f3a;
   --border: rgba(0,121,193,.15);
-  --border2: rgba(255,255,255,.06);
+  --border2: rgba(255,255,255,.08);
   --accent: #0079c1;
   --accent2: #00b4d8;
-  --text: #f0f4f8;
-  --muted: rgba(255,255,255,.45);
-  --muted2: rgba(255,255,255,.25);
+  --text: #edf2f8;
+  --muted: rgba(255,255,255,.65);
+  --muted2: rgba(255,255,255,.4);
   --green: #22c55e;
   --red: #ef4444;
   --yellow: #f59e0b;
@@ -68,7 +68,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 12px; border-radius: 10px;
-  font-size: 13px; font-weight: 500; color: var(--muted);
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,.7);
   cursor: pointer; border: none; background: none; width: 100%; text-align: left;
   text-decoration: none; transition: all .15s;
 }
@@ -106,7 +106,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .adm-kpi:hover { background: rgba(255,255,255,.05); border-color: var(--border); }
 .adm-kpi.clickable { cursor: pointer; }
-.adm-kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+.adm-kpi-label { font-size: 11px; color: rgba(255,255,255,.7); font-weight: 600; margin-bottom: 8px; }
 .adm-kpi-value { font-size: 28px; font-weight: 900; letter-spacing: -.04em; color: #fff; }
 .adm-kpi-value.red { color: var(--red); }
 .adm-kpi-value.green { color: var(--green); }
@@ -160,7 +160,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-table th {
   text-align: left; padding: 10px 14px;
   font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--muted2); border-bottom: 1px solid var(--border2);
+  color: rgba(255,255,255,.55); border-bottom: 1px solid var(--border2);
   white-space: nowrap;
 }
 .adm-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.03); vertical-align: middle; }
@@ -696,13 +696,13 @@ function updateKpis() {
   el('riskCount').textContent = risk.length;
   el('sideRiskCount').textContent = risk.length;
   const sent = usersCache.filter(u => u.satisfaction_mail_sent_at).length;
-  const replied = usersCache.filter(u => u.satisfaction_score).length;
+  const replied = usersCache.filter(u => (u.satisfaction_score_10 || u.satisfaction_score)).length;
   el('sentCount').textContent = sent;
   el('satSent').textContent = sent;
   el('activeCount').textContent = usersCache.filter(u => u.wallet?.status === 'active').length;
   el('responseRate').textContent = sent > 0 ? Math.round(replied/sent*100)+'%' : '—';
   el('satRate').textContent = sent > 0 ? Math.round(replied/sent*100)+'%' : '—';
-  const scores = usersCache.filter(u => u.satisfaction_score).map(u => Number(u.satisfaction_score));
+  const scores = usersCache.filter(u => (u.satisfaction_score_10 || u.satisfaction_score)).map(u => Number((u.satisfaction_score_10 || u.satisfaction_score)));
   const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
   el('avgScore').textContent = avg === '—' ? '—' : '⭐ '+avg;
   el('satAvg').textContent = avg;
@@ -738,7 +738,7 @@ function renderTable(users) {
   tbody.innerHTML = users.map(u => {
     const w = u.wallet || {};
     const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
-    const score = u.satisfaction_score ? '⭐ '+u.satisfaction_score : '—';
+    const score = (u.satisfaction_score_10 || u.satisfaction_score) ? '⭐ '+(u.satisfaction_score_10 || u.satisfaction_score) : '—';
     return `<tr style="cursor:pointer" onclick="openPanel('${esc(u.id)}')">
       <td>
         <div style="display:flex;align-items:center;gap:10px">
@@ -782,7 +782,7 @@ function openPanel(id) {
   el('panelPlan').value = (w.plan || 'free').toLowerCase();
   el('dSatSent').textContent = u.satisfaction_mail_sent_at ? fmtDate(u.satisfaction_mail_sent_at) : 'Non envoyé';
   el('dSatDate').textContent = u.satisfaction_responded_at ? fmtDate(u.satisfaction_responded_at) : '—';
-  el('dSatScore').textContent = u.satisfaction_score ? '⭐ '+u.satisfaction_score : '—';
+  el('dSatScore').textContent = (u.satisfaction_score_10 || u.satisfaction_score) ? '⭐ '+(u.satisfaction_score_10 || u.satisfaction_score) : '—';
   el('panelMsg').textContent = '';
   el('panelSatMsg').textContent = '';
   switchPtab('info');

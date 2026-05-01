@@ -47,7 +47,8 @@ function buildSatisfactionLink(user) {
       sub: user.id,
       email: user.email,
       fullName: user.full_name || '',
-      organization: user.organization || ''
+      organization: user.organization || '',
+      accountSpace: user.account_space || 'public'
     },
     process.env.JWT_SECRET,
     { expiresIn: '30d' }

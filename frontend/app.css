@@ -7124,8 +7124,14 @@ h1, h2, h3 {
   .v38-grid-3        { grid-template-columns: 1fr; }
   .v38-nav-links     { display: none; }
   .v38-burger        { display: flex; }
-  /* Retirer backdrop-filter pour libérer le stacking context → menu fixed fonctionne */
-  .v38-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  /* Supprimer le stacking context du nav en mobile = position:fixed + z-index:auto */
+  .v38-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    position: fixed !important;
+    z-index: 200 !important;
+    isolation: auto !important;
+  }
   .v38-nav-links.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: fixed; top: 62px; left: 0; right: 0;
