@@ -84,14 +84,16 @@ async function run(){
   try{
     const fp=await getFingerprint();
     const data=await apiFetch('/auth/verify-email',{method:'POST',body:{token,fp}});
-    setSession(data?.user||{},data?.token||'');
+    // SECURITE : effacer toute session pour forcer reconnexion propre
+    try{['pope_session_token','pope_session_active','pope_session_user','pope_token'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});}catch(_){}
     const sp=data?.user?.accountSpace==='private'?'private':'public';
-        const base=origin();
-    const dashUrl=`${base}/${sp==='private'?'dashboard-private.html':'dashboard.html'}`;
+    const base=origin();
+    const loginUrl=`${base}/login.html?next=${encodeURIComponent(sp==='private'?'dashboard-private.html':'dashboard.html')}`;
     const spaceUrl=`${base}/${sp==='private'?'private.html':'public.html'}`;
     document.getElementById('welcomeTitle').textContent=sp==='private'?'Bienvenue dans votre espace privé !':'Bienvenue dans votre espace public !';
-    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé. Votre compte est actif. Production illimitée et <strong>2 relectures expertes</strong> vous attendent.`;
-    document.getElementById('ctaDashboard').href=dashUrl;
+    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé — connectez-vous pour accéder à votre espace.`;
+    document.getElementById('ctaDashboard').href=loginUrl;
+    document.getElementById('ctaDashboard').textContent='Se connecter à mon espace →';
     document.getElementById('ctaSpace').href=spaceUrl;
     document.getElementById('ctaSpace').textContent=sp==='private'?"Découvrir l'espace privé":"Découvrir l'espace public";
     document.getElementById('featureGrid').innerHTML=features(sp).map(f=>`<div class="verify-feature"><span class="feat-icon">${f.i}</span><strong>${f.t}</strong>${f.d}</div>`).join('');

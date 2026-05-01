@@ -60,6 +60,22 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         }
       }
 
+      // ── Vérification quota relectures expertes ─────────────────
+      if (userId) {
+        const wCheck = await client.query('select * from wallets where user_id=$1', [userId]);
+        const wRow = wCheck.rows[0];
+        if (wRow) {
+          const expertUsed  = Number(wRow.expert_used  ?? 0);
+          const expertLimit = Number(wRow.expert_limit ?? 2);
+          const expertTickets = Number(wRow.tickets_expert ?? 0);
+          // Pas de tickets payants ET quota gratuit épuisé → bloquer
+          if (expertTickets <= 0 && expertUsed >= expertLimit) {
+            await client.query('rollback');
+            return { ok: false, status: 402, body: { error: 'expert_limit_reached' } };
+          }
+        }
+      }
+
       const ins = await client.query(
         `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status)
          values($1,$2,$3,$4,$5,$6,'new') returning id`,
@@ -76,7 +92,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         const t = Number(wallet?.tickets_expert ?? 0);
         if (t > 0) {
           usedTicket = true;
-          await client.query('update wallets set tickets_expert=tickets_expert-1, updated_at=now() where user_id=$1', [userId]);
+          await client.query('update wallets set tickets_expert=tickets_expert-1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
         } else {
           const used  = Number(wallet?.public_dossiers_used  ?? 0);
           const limit = Number(wallet?.public_dossiers_limit ?? 1);
@@ -84,7 +100,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
             await client.query('rollback');
             return { ok: false, status: 402, body: { error: 'public_dossier_limit_reached' } };
           }
-          await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, updated_at=now() where user_id=$1', [userId]);
+          await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
         }
         await client.query(
           'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
@@ -275,6 +291,108 @@ router.post('/notifications/read', requireAuth, async (req, res) => {
     ));
     return res.json({ ok: true });
   } catch (e) {
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+
+// Route pour que l'expert envoie sa réponse (accessible avec rôle 'expert')
+router.post('/:id/expert-reply', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const replyText = String(req.body?.reply_text || '').trim();
+    const replyBy   = String(req.user?.email || '');
+    if (!replyText) return res.status(400).json({ error: 'missing_reply' });
+    if (!['expert','admin'].includes(req.user?.role)) return res.status(403).json({ error: 'forbidden' });
+
+    const result = await withClient(async (client) => {
+      const upd = await client.query(
+        `update expert_requests
+         set reply_text=$2, reply_by=$3, replied_at=now(), status='replied', updated_at=now()
+         where id=$1
+         returning user_id, email, objective`,
+        [id, replyText, replyBy]
+      );
+      if (!upd.rowCount) return { ok: false };
+      const row = upd.rows[0];
+      if (row.user_id) {
+        try {
+          await client.query(
+            `insert into notifications(user_id, kind, title, body, link)
+             values($1,'expert_replied','Votre relecture experte est prête',$2,'/dashboard.html')
+             on conflict do nothing`,
+            [row.user_id, 'Votre conseiller expert a répondu à votre demande de relecture.']
+          );
+        } catch(_) {}
+      }
+      return { ok: true, row };
+    });
+    return res.json(result);
+  } catch(e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+
+// ── GET /expert/my-assigned-requests — relectures des clients assignés ───────
+router.get('/my-assigned-requests', requireAuth, async (req, res) => {
+  if (!['expert','admin'].includes(req.user?.role)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  try {
+    const expertId = req.user.sub;
+    const rows = await withClient(async (client) => {
+      const r = await client.query(
+        `select er.id, er.objective, er.expectations, er.context, er.status,
+                er.reply_text, er.reply_by, er.replied_at,
+                er.created_at, er.updated_at,
+                er.generation_attachment,
+                u.email, u.full_name, u.organization, u.id as user_id
+           from expert_requests er
+           join users u on u.id = er.user_id
+           join expert_assignments ea on ea.client_id = er.user_id
+                                     AND ea.expert_id = $1
+          order by er.created_at desc
+          limit 100`,
+        [expertId]
+      );
+      return r.rows;
+    });
+    return res.json({ requests: rows });
+  } catch(e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ── GET /expert/my-clients — portefeuille de l'expert connecté ───────────────
+router.get('/my-clients', requireAuth, async (req, res) => {
+  if (!['expert','admin'].includes(req.user?.role)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  try {
+    const expertId = req.user.sub;
+    const rows = await withClient(async (client) => {
+      const r = await client.query(
+        `select u.id, u.full_name, u.email, u.organization, ea.assigned_at,
+                (select count(*) from expert_requests er
+                  where er.user_id = u.id
+                    and er.status not in ('replied','closed'))::int as pending_count,
+                (select count(*) from expert_requests er
+                  where er.user_id = u.id
+                    and er.status in ('replied','closed'))::int as done_count
+           from expert_assignments ea
+           join users u on u.id = ea.client_id
+          where ea.expert_id = $1
+          order by ea.assigned_at desc`,
+        [expertId]
+      );
+      return r.rows;
+    });
+    return res.json({ clients: rows });
+  } catch(e) {
+    console.error(e);
     return res.status(500).json({ error: 'server_error' });
   }
 });

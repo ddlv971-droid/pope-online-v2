@@ -254,7 +254,8 @@ wireLogout();
 
 async function init() {
   try {
-    const me = await apiFetch('/auth/me');
+    let me;
+    try { me = await apiFetch('/auth/me'); } catch(e) { if(e.status===401){window.location.href='login.html?next=referral.html';return;} throw e; }
     const space = me?.user?.accountSpace || 'public';
     const dashUrl = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
     var _hl=document.getElementById('homeLink')||document.getElementById('topbarHomeLink'); if(_hl) _hl.href=dashUrl;

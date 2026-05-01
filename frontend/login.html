@@ -92,7 +92,8 @@ $('togglePw').addEventListener('click', function() {
 });
 
 function getDefaultNext(user) {
-  if (user && user.role === 'admin') return 'dashboard-admin.html';
+  if (user && user.role === 'admin')  return 'dashboard-admin.html';
+  if (user && user.role === 'expert') return 'dashboard-expert.html';
   return (user && user.accountSpace === 'private') ? 'dashboard-private.html' : 'dashboard.html';
 }
 

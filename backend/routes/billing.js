@@ -2,6 +2,7 @@ import express from 'express';
 import crypto from 'crypto';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -89,10 +90,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           }
           const userId = userRes.rows[0].id;
 
-          // Activer le wallet
+          // Activer le wallet et sauvegarder stripe_customer_id
+          const stripeCustomerId = session.customer || null;
           await client.query(
-            `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert)
-             values($1,$2,$3,'active',true,$4,0,9999,$4)
+            `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert, stripe_customer_id)
+             values($1,$2,$3,'active',true,$4,0,9999,$4,$5)
              on conflict(user_id) do update set
                plan_code    = excluded.plan_code,
                plan_label   = excluded.plan_label,
@@ -102,8 +104,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                expert_used  = 0,
                tickets_ai   = 9999,
                tickets_expert = excluded.expert_limit,
+               stripe_customer_id = coalesce(excluded.stripe_customer_id, wallets.stripe_customer_id),
                updated_at   = now()`,
-            [userId, plan.code, plan.label, plan.expertLimit]
+            [userId, plan.code, plan.label, plan.expertLimit, stripeCustomerId]
           );
 
           // Notification in-app
@@ -136,6 +139,61 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   }
 
   res.json({ received: true });
+});
+
+// ── GET /billing/invoices — historique des paiements Stripe ─────────────────
+router.get('/invoices', requireAuth, async (req, res) => {
+  const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY;
+  if (!STRIPE_SECRET) return res.json({ invoices: [] });
+
+  try {
+    const userId = req.user.sub;
+
+    // Récupérer le stripe_customer_id depuis le wallet
+    const walletRes = await withClient(async (client) => {
+      return client.query(
+        `select stripe_customer_id from wallets where user_id=$1 limit 1`,
+        [userId]
+      );
+    });
+
+    const customerId = walletRes.rows[0]?.stripe_customer_id;
+    if (!customerId) return res.json({ invoices: [] });
+
+    // Appel API Stripe pour lister les invoices
+    const stripeRes = await fetch(
+      `https://api.stripe.com/v1/invoices?customer=${encodeURIComponent(customerId)}&limit=24&status=paid`,
+      {
+        headers: {
+          Authorization: `Bearer ${STRIPE_SECRET}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    );
+    if (!stripeRes.ok) {
+      console.error('[billing/invoices] Stripe error', stripeRes.status);
+      return res.json({ invoices: [] });
+    }
+    const stripeData = await stripeRes.json();
+    const invoices = (stripeData.data || []).map(inv => ({
+      id: inv.id,
+      number: inv.number,
+      amount_paid: inv.amount_paid,
+      currency: inv.currency,
+      status: inv.status,
+      created: inv.created,
+      period_start: inv.period_start,
+      period_end: inv.period_end,
+      invoice_pdf: inv.invoice_pdf,
+      hosted_invoice_url: inv.hosted_invoice_url,
+      description: inv.lines?.data?.[0]?.description || null
+    }));
+
+    return res.json({ invoices });
+  } catch (e) {
+    console.error('[billing/invoices] error:', e.message);
+    return res.json({ invoices: [] });
+  }
 });
 
 export default router;
