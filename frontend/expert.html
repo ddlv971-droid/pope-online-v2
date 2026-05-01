@@ -358,14 +358,32 @@ async function updateQuota() {
     const limit = w.expert_limit ?? 2;
     document.getElementById('quotaN').textContent = left;
     document.getElementById('quotaDetail').textContent =
-      `${left} relecture${left > 1 ? 's' : ''} disponible${left > 1 ? 's' : ''} sur ${limit} ce mois`;
+      left > 0
+        ? left + ' relecture' + (left > 1 ? 's' : '') + ' disponible' + (left > 1 ? 's' : '') + ' sur ' + limit + ' ce mois'
+        : 'Quota épuisé — passez à un abonnement';
     // Arc SVG
     const pct = limit > 0 ? left / limit : 0;
     const arc = document.getElementById('quotaArc');
     if (arc) arc.style.strokeDashoffset = String(264 * (1 - pct));
-    // Couleur selon niveau
-    if (arc) {
-      arc.style.stroke = left === 0 ? '#ef4444' : left <= 2 ? '#f59e0b' : '#fff';
+    if (arc) arc.style.stroke = left === 0 ? '#ef4444' : left <= 2 ? '#f59e0b' : '#fff';
+    // Bloquer le bouton si quota épuisé
+    const btnSend = document.getElementById('btnSend');
+    const msgEl   = document.getElementById('msg');
+    if (left <= 0) {
+      if (btnSend) {
+        btnSend.disabled = true;
+        btnSend.style.opacity = '0.5';
+        btnSend.style.cursor  = 'not-allowed';
+      }
+      if (msgEl) {
+        msgEl.innerHTML = '⚠️ Vous avez utilisé toutes vos relectures expertes gratuites. '
+          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Passez à un abonnement</a> '
+          + 'pour continuer à bénéficier de l’expertise de nos conseillers.';
+        msgEl.style.display = 'block';
+      }
+    } else {
+      if (btnSend) { btnSend.disabled = false; btnSend.style.opacity = ''; btnSend.style.cursor = ''; }
+      if (msgEl && msgEl.innerHTML.includes('relectures expertes gratuites')) { msgEl.innerHTML = ''; }
     }
   } catch(e) {}
 }
