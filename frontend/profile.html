@@ -464,29 +464,41 @@ const el = (id) => document.getElementById(id);
 
 // Navigation
 // Sync mobile nav tab bar avec la navigation de la sidebar
-document.querySelectorAll('#pfMobileNav [data-sec]').forEach(mBtn => {
-  mBtn.addEventListener('click', () => {
-    // Mettre à jour active sur tous les [data-sec]
-    document.querySelectorAll('[data-sec]').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll(`[data-sec="${mBtn.dataset.sec}"]`).forEach(b => b.classList.add('active'));
-    // Afficher la section
-    document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
-    const target = document.getElementById('sec-' + mBtn.dataset.sec);
-    if (target) target.classList.add('active');
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-});
 
-document.querySelectorAll('[data-sec]').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('[data-sec]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
-    const sec = el('sec'+btn.dataset.sec.charAt(0).toUpperCase()+btn.dataset.sec.slice(1));
-    if (sec) sec.classList.add('active');
-    if (btn.dataset.sec === 'paiements') loadInvoices();
-  };
+
+// ── Navigation sections profil ───────────────────────────────────────
+// Table de correspondance clé → ID de la carte (camelCase)
+const SEC_MAP = {
+  infos:      'secInfos',
+  abonnement: 'secAbonnement',
+  paiements:  'secPaiements',
+  securite:   'secSecurite',
+  donnees:    'secDonnees'
+};
+
+function navigateTo(secKey) {
+  // Sync état actif sur TOUS les boutons [data-sec] (sidebar + barre mobile)
+  document.querySelectorAll('[data-sec]').forEach(b => {
+    b.classList.toggle('active', b.dataset.sec === secKey);
+  });
+  // Afficher la bonne carte, masquer les autres
+  document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
+  const cardId = SEC_MAP[secKey];
+  if (cardId) {
+    const card = document.getElementById(cardId);
+    if (card) card.classList.add('active');
+  }
+  if (secKey === 'paiements') loadInvoices();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Sidebar
+document.querySelectorAll('.pf-sidebar .pf-nav-item[data-sec]').forEach(btn => {
+  btn.onclick = () => navigateTo(btn.dataset.sec);
+});
+// Barre mobile
+document.querySelectorAll('#pfMobileNav [data-sec]').forEach(btn => {
+  btn.onclick = () => navigateTo(btn.dataset.sec);
 });
 
 async function load() {
