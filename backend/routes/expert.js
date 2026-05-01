@@ -76,7 +76,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
         const t = Number(wallet?.tickets_expert ?? 0);
         if (t > 0) {
           usedTicket = true;
-          await client.query('update wallets set tickets_expert=tickets_expert-1, updated_at=now() where user_id=$1', [userId]);
+          await client.query('update wallets set tickets_expert=tickets_expert-1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
         } else {
           const used  = Number(wallet?.public_dossiers_used  ?? 0);
           const limit = Number(wallet?.public_dossiers_limit ?? 1);
@@ -84,7 +84,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
             await client.query('rollback');
             return { ok: false, status: 402, body: { error: 'public_dossier_limit_reached' } };
           }
-          await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, updated_at=now() where user_id=$1', [userId]);
+          await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
         }
         await client.query(
           'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
