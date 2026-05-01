@@ -8,233 +8,271 @@
 <link rel="stylesheet" href="./app.css"/>
 <style>
 :root {
-    --pf-bg: #f8fafc;
-  --pf-surface: #ffffff;
-  --pf-surface2: #f1f5f9;
-  --pf-border: rgba(0,0,0,.08);
-  --pf-border2: rgba(0,0,0,.06);
-  --pf-accent: #0079c1;
-  --pf-accent2: #0099e0;
-  --pf-text: #0f172a;
-  --pf-muted: #64748b;
-  --pf-muted2: #94a3b8;
-  --pf-green: #16a34a;
-  --pf-red: #dc2626;
-  --pf-yellow: #d97706;
-  --pf-radius: 18px;
+  --pf-bg:#f0f4f8;
+  --pf-surface:#ffffff;
+  --pf-sidebar-bg:linear-gradient(180deg,#0b2440 0%,#0d2d52 100%);
+  --pf-border:rgba(0,0,0,.08);
+  --pf-border2:rgba(0,0,0,.05);
+  --pf-accent:#0079c1;
+  --pf-accent2:#00b4d8;
+  --pf-text:#0f172a;
+  --pf-muted:#64748b;
+  --pf-muted2:#94a3b8;
+  --pf-green:#16a34a;
+  --pf-red:#dc2626;
+  --pf-yellow:#d97706;
+  --pf-radius:18px;
 }
-html { background: #f8fafc !important; }
-body { background: #f8fafc !important; color: #0f172a !important; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
-* { color: inherit; }
-/* Surcharge app.css gradient blanc */
-body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !important; }
+html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
+  min-height:100vh; font-family:'Segoe UI',system-ui,sans-serif; }
+* { box-sizing:border-box; color:inherit; }
 
-/* Layout */
-.pf-wrap { max-width: 1000px; margin: 0 auto; padding: 0; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
-.pf-grid { display: grid; grid-template-columns: 260px 1fr; gap: 0; align-items: start; }
+/* Layout principal */
+.pf-shell { max-width:1060px; margin:0 auto; padding:28px 16px 60px; }
+.pf-grid  { display:grid; grid-template-columns:270px 1fr; gap:24px; align-items:start; }
 
-/* Sidebar */
+/* ─── Sidebar ───────────────────────────────────────────── */
 .pf-sidebar {
-  position: sticky; top: 0;
-  display: flex; flex-direction: column; gap: 4px;
-  background: #0f172a;
-  min-height: 100vh;
-  padding: 24px 12px;
-  border-right: 1px solid rgba(255,255,255,.08);
+  position:sticky; top:80px;
+  background:linear-gradient(180deg,#0b2440 0%,#0d2d52 100%);
+  border-radius:20px; overflow:hidden;
+  box-shadow:0 8px 32px rgba(11,36,64,.18);
 }
 .pf-profile-card {
-  background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 100%);
-  border: 1px solid rgba(0,121,193,.2);
-  border-radius: var(--pf-radius);
-  padding: 24px; text-align: center; margin-bottom: 16px;
-  position: relative; overflow: hidden;
+  padding:28px 20px 20px;
+  text-align:center; position:relative;
+  border-bottom:1px solid rgba(255,255,255,.07);
 }
-.pf-profile-card * { color: #fff !important; }
 .pf-profile-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,180,216,.6), transparent);
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,#00b4d8,transparent);
 }
 .pf-avatar {
-  width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 12px;
-  background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent2) 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 900; color: #0f172a;
-  box-shadow: 0 8px 24px rgba(0,121,193,.4);
+  width:68px; height:68px; border-radius:20px; margin:0 auto 12px;
+  background:linear-gradient(135deg,#0079c1,#00b4d8);
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; font-weight:900; color:#fff;
+  box-shadow:0 8px 24px rgba(0,121,193,.4);
 }
-.pf-name { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
-.pf-email { font-size: 12px; color: var(--pf-muted); margin-top: 4px; }
+.pf-name  { font-size:16px; font-weight:800; letter-spacing:-.02em; color:#fff; }
+.pf-email { font-size:11.5px; color:rgba(255,255,255,.5); margin-top:3px; }
 .pf-plan-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 12px; padding: 5px 14px; border-radius: 99px;
-  font-size: 12px; font-weight: 700;
-  background: rgba(0,121,193,.12); color: var(--pf-accent2);
-  border: 1px solid rgba(0,121,193,.2);
+  display:inline-flex; align-items:center; gap:5px;
+  margin-top:12px; padding:4px 14px; border-radius:99px;
+  font-size:11.5px; font-weight:700;
+  background:rgba(0,180,216,.15); color:#00d4ff;
+  border:1px solid rgba(0,180,216,.25);
+}
+
+/* Nav items sidebar */
+.pf-nav-section-label {
+  font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.3); padding:14px 18px 4px;
 }
 .pf-nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; border-radius: 12px;
-  font-size: 13px; font-weight: 500; color: rgba(255,255,255,.65);
-  cursor: pointer; border: none; background: none; width: 100%;
-  text-align: left; text-decoration: none; transition: all .15s;
+  display:flex; align-items:center; gap:11px;
+  padding:10px 18px; margin:2px 8px; border-radius:12px;
+  font-size:13px; font-weight:500; color:rgba(255,255,255,.7);
+  cursor:pointer; border:none; background:none; width:calc(100% - 16px);
+  text-align:left; transition:all .15s;
 }
-.pf-nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
-.pf-nav-item.active { background: rgba(255,255,255,.1); color: #fff; font-weight: 700; border-left: 3px solid #00b4d8; padding-left: 11px; }
-.pf-nav-icon { font-size: 16px; width: 22px; text-align: center; }
-.pf-nav-sep { height: 1px; background: rgba(255,255,255,.1); margin: 8px 0; }
+.pf-nav-item:hover { background:rgba(255,255,255,.08); color:#fff; }
+.pf-nav-item.active {
+  background:rgba(0,180,216,.15); color:#00d4ff;
+  font-weight:700; border-left:3px solid #00b4d8; margin-left:5px;
+  padding-left:15px;
+}
+.pf-nav-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
+.pf-nav-sep  { height:1px; background:rgba(255,255,255,.07); margin:8px 16px; }
+.pf-sidebar-foot {
+  padding:14px 18px 18px;
+  border-top:1px solid rgba(255,255,255,.07);
+  margin-top:8px;
+}
+.pf-sidebar-foot a {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; color:rgba(255,255,255,.4);
+  text-decoration:none; transition:color .15s;
+}
+.pf-sidebar-foot a:hover { color:rgba(255,255,255,.7); }
 
-/* Cards */
+/* ─── Cards de contenu ──────────────────────────────────── */
 .pf-card {
-  background: #ffffff; border: 1px solid rgba(0,121,193,.12);
-  border-radius: var(--pf-radius); overflow: hidden; margin-bottom: 20px;
-  display: none;
+  background:#fff; border:1px solid var(--pf-border);
+  border-radius:var(--pf-radius); overflow:hidden; margin-bottom:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+  display:none;
 }
-.pf-card.active { display: block; }
+.pf-card.active { display:block; }
 .pf-card-head {
-  display: flex; align-items: center; gap: 12px;
-  padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,.07);
-  background: #f8fafc; border-radius: var(--pf-radius) var(--pf-radius) 0 0;
+  display:flex; align-items:center; gap:14px;
+  padding:20px 26px; background:#f8fafc;
+  border-bottom:1px solid var(--pf-border);
 }
-.pf-card-icon { font-size: 20px; }
-.pf-card-title { font-size: 15px; font-weight: 800; letter-spacing: -.02em; }
-.pf-card-sub { font-size: 12px; color: var(--pf-muted); margin-top: 2px; }
-.pf-card-body { padding: 24px; }
+.pf-card-icon { font-size:22px; flex-shrink:0; }
+.pf-card-title { font-size:15px; font-weight:800; letter-spacing:-.02em; }
+.pf-card-sub   { font-size:12px; color:var(--pf-muted); margin-top:2px; }
+.pf-card-body  { padding:26px; }
 
 /* Form */
-.pf-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.pf-form-full { grid-column: 1/-1; }
-.pf-field { display: flex; flex-direction: column; gap: 6px; }
-.pf-label { font-size: 11.5px; font-weight: 700; color: #64748b; letter-spacing: .03em; }
-.pf-input {
-  padding: 11px 16px; border-radius: 12px;
-  background: #f8fafc; border: 1px solid rgba(0,0,0,.1);
-  color: #0f172a; font-size: 13.5px; outline: none; font-family: inherit;
-  transition: all .15s;
+.pf-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.pf-form-full { grid-column:1/-1; }
+.pf-field  { display:flex; flex-direction:column; gap:6px; }
+.pf-label  { font-size:11px; font-weight:700; color:var(--pf-muted); letter-spacing:.04em; text-transform:uppercase; }
+.pf-input  {
+  padding:11px 16px; border-radius:12px;
+  background:#f8fafc; border:1.5px solid rgba(0,0,0,.09);
+  color:var(--pf-text); font-size:13.5px; outline:none; font-family:inherit;
+  transition:all .15s;
 }
-.pf-input:focus { border-color: var(--pf-accent); background: #eff6ff; box-shadow: 0 0 0 3px rgba(0,121,193,.1); }
+.pf-input:focus { border-color:var(--pf-accent); background:#eff6ff; box-shadow:0 0 0 3px rgba(0,121,193,.09); }
+.pf-input[readonly] { background:#f1f5f9; color:var(--pf-muted); cursor:default; }
 
 /* Buttons */
 .pf-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 11px 20px; border-radius: 12px;
-  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
-  transition: all .2s; text-decoration: none;
+  display:inline-flex; align-items:center; gap:7px;
+  padding:11px 22px; border-radius:12px;
+  font-size:13px; font-weight:700; border:none; cursor:pointer;
+  transition:all .2s; text-decoration:none; white-space:nowrap;
 }
-.pf-btn-primary { background: var(--pf-accent); color: #0f172a; box-shadow: 0 4px 14px rgba(0,121,193,.35); }
-.pf-btn-primary:hover { box-shadow: 0 6px 22px rgba(0,121,193,.5); transform: translateY(-1px); }
-.pf-btn-ghost { background: rgba(255,255,255,.07); color: var(--pf-text); border: 1px solid var(--pf-border2); }
-.pf-btn-ghost:hover { background: rgba(255,255,255,.12); }
-.pf-btn-danger { background: rgba(239,68,68,.1); color: var(--pf-red); border: 1px solid rgba(239,68,68,.2); }
-.pf-btn-danger:hover { background: rgba(239,68,68,.18); }
+.pf-btn:disabled { opacity:.6; cursor:not-allowed; transform:none!important; }
+.pf-btn-primary { background:linear-gradient(135deg,#0079c1,#00a8e8); color:#fff; box-shadow:0 4px 14px rgba(0,121,193,.3); }
+.pf-btn-primary:hover { box-shadow:0 6px 22px rgba(0,121,193,.45); transform:translateY(-1px); }
+.pf-btn-ghost { background:#f1f5f9; color:var(--pf-text); border:1.5px solid rgba(0,0,0,.08); }
+.pf-btn-ghost:hover { background:#e2e8f0; }
+.pf-btn-outline { background:transparent; color:var(--pf-accent); border:1.5px solid var(--pf-accent); }
+.pf-btn-outline:hover { background:rgba(0,121,193,.06); }
+.pf-btn-danger { background:rgba(220,38,38,.08); color:var(--pf-red); border:1.5px solid rgba(220,38,38,.2); }
+.pf-btn-danger:hover { background:rgba(220,38,38,.14); }
+.pf-btn-sm { padding:8px 16px; font-size:12px; border-radius:10px; }
 
-.pf-msg { font-size: 12.5px; margin-top: 12px; min-height: 20px; }
-.pf-msg.ok { color: #16a34a; }
-.pf-msg.err { color: #dc2626; }
+.pf-msg { font-size:12.5px; margin-top:12px; min-height:20px; line-height:1.5; }
+.pf-msg.ok  { color:#16a34a; }
+.pf-msg.err { color:#dc2626; }
 
-/* Abonnement */
-.pf-sub-hero {
-  background: linear-gradient(135deg, #eff6ff, #e0f2fe);
-  border: 1px solid rgba(0,121,193,.15); border-radius: 14px;
-  padding: 20px 24px; margin-bottom: 20px;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+/* ─── Section Abonnement ─────────────────────────────────── */
+.pf-plan-hero {
+  background:linear-gradient(135deg,#eff6ff,#e0f7ff);
+  border:1.5px solid rgba(0,121,193,.15); border-radius:16px;
+  padding:22px 24px; margin-bottom:20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
 }
-.pf-sub-plan { font-size: 22px; font-weight: 900; letter-spacing: -.04em; color: #0f172a; }
-.pf-sub-detail { font-size: 13px; color: #64748b; margin-top: 4px; }
-.pf-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.pf-plan-name  { font-size:24px; font-weight:900; letter-spacing:-.04em; }
+.pf-plan-detail{ font-size:13px; color:var(--pf-muted); margin-top:4px; }
+.pf-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
 .pf-stat {
-  background: rgba(255,255,255,.03); border: 1px solid var(--pf-border2);
-  border-radius: 12px; padding: 14px 16px; color: #0f172a;
+  background:#f8fafc; border:1.5px solid rgba(0,121,193,.08);
+  border-radius:14px; padding:14px 16px; text-align:center;
 }
-.pf-stat-label { font-size: 11px; color: rgba(255,255,255,.55); margin-bottom: 6px; font-weight: 500; }
-.pf-stat-val { font-size: 22px; font-weight: 900; letter-spacing: -.04em; color: #0f172a; }
+.pf-stat-val   { font-size:24px; font-weight:900; letter-spacing:-.04em; color:var(--pf-accent); }
+.pf-stat-label { font-size:11px; color:var(--pf-muted); margin-top:4px; font-weight:600; }
+.pf-info-box {
+  background:rgba(0,121,193,.04); border:1px solid rgba(0,121,193,.12);
+  border-radius:12px; padding:16px 18px;
+  font-size:13px; color:var(--pf-muted); line-height:1.7;
+}
+.pf-info-box a { color:var(--pf-accent); text-decoration:none; font-weight:600; }
 
-/* Paiements */
-.pf-invoice-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.pf-invoice-table th { text-align: left; padding: 9px 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #94a3b8; border-bottom: 1px solid rgba(0,0,0,.07); }
-.pf-invoice-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.03); }
-.pf-invoice-table tr:last-child td { border-bottom: none; }
-.pf-badge { display: inline-flex; padding: 3px 9px; border-radius: 99px; font-size: 10.5px; font-weight: 700; }
-.pf-badge-green { background: rgba(34,197,94,.1); color: var(--pf-green); border: 1px solid rgba(34,197,94,.2); }
-.pf-badge-grey  { background: rgba(255,255,255,.07); color: var(--pf-muted); border: 1px solid var(--pf-border2); }
-.pf-dl-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 600; background: rgba(0,121,193,.1); color: var(--pf-accent2); border: 1px solid rgba(0,121,193,.2); cursor: pointer; text-decoration: none; transition: all .15s; }
-.pf-dl-btn:hover { background: rgba(0,121,193,.18); }
+/* ─── Section Paiements ──────────────────────────────────── */
+.pf-invoice-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--pf-border); }
+.pf-invoice-table { width:100%; border-collapse:collapse; font-size:13px; min-width:560px; }
+.pf-invoice-table th {
+  text-align:left; padding:10px 16px; font-size:10px; font-weight:700;
+  letter-spacing:.07em; text-transform:uppercase; color:var(--pf-muted2);
+  background:#f8fafc; border-bottom:1px solid var(--pf-border);
+}
+.pf-invoice-table td { padding:13px 16px; border-bottom:1px solid rgba(0,0,0,.04); }
+.pf-invoice-table tr:last-child td { border-bottom:none; }
+.pf-invoice-table tr:hover td { background:#fafbff; }
+.pf-badge { display:inline-flex; padding:3px 10px; border-radius:99px; font-size:10.5px; font-weight:700; }
+.pf-badge-green { background:rgba(22,163,74,.1); color:#16a34a; border:1px solid rgba(22,163,74,.2); }
+.pf-badge-grey  { background:#f1f5f9; color:var(--pf-muted); border:1px solid rgba(0,0,0,.07); }
+.pf-dl-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:8px; font-size:11.5px; font-weight:600;
+  background:rgba(0,121,193,.08); color:var(--pf-accent); border:1px solid rgba(0,121,193,.18);
+  cursor:pointer; text-decoration:none; transition:all .15s;
+}
+.pf-dl-btn:hover { background:rgba(0,121,193,.15); }
 
-/* Danger zone */
+/* ─── Section Sécurité ───────────────────────────────────── */
+.pf-pw-strength { height:4px; border-radius:99px; background:#e2e8f0; margin-top:8px; overflow:hidden; }
+.pf-pw-strength-bar { height:100%; border-radius:99px; transition:all .3s; width:0; }
+.pf-pw-hint { font-size:11px; color:var(--pf-muted); margin-top:4px; }
+.pf-security-sessions {
+  background:#f8fafc; border:1px solid var(--pf-border);
+  border-radius:14px; padding:18px 20px; margin-top:24px;
+}
+.pf-security-sessions h4 { font-size:13px; font-weight:700; margin-bottom:12px; }
+.pf-session-row {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 0; border-bottom:1px solid var(--pf-border2);
+  font-size:12.5px;
+}
+.pf-session-row:last-child { border-bottom:none; }
+.pf-session-icon { font-size:20px; flex-shrink:0; }
+.pf-session-current { font-size:10px; font-weight:700; color:var(--pf-green);
+  background:rgba(22,163,74,.08); border:1px solid rgba(22,163,74,.2);
+  padding:2px 8px; border-radius:99px; margin-left:auto; }
+
+/* ─── Section Données & Résiliation ─────────────────────── */
+.pf-rgpd-info {
+  background:rgba(0,180,216,.04); border:1px solid rgba(0,180,216,.15);
+  border-radius:14px; padding:18px 20px; margin-bottom:20px;
+}
+.pf-rgpd-info p { font-size:13px; color:var(--pf-muted); line-height:1.75; }
+.pf-data-actions { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:28px; }
+.pf-divider { height:1px; background:var(--pf-border); margin:24px 0; }
+.pf-resiliation-box {
+  background:linear-gradient(135deg,#fffbeb,#fff7ed);
+  border:1.5px solid rgba(217,119,6,.2); border-radius:16px; padding:22px 24px;
+  margin-bottom:24px;
+}
+.pf-resiliation-box h4 { font-size:14px; font-weight:700; color:#b45309; margin-bottom:6px; }
+.pf-resiliation-box p  { font-size:13px; color:#78716c; line-height:1.6; margin-bottom:14px; }
 .pf-danger-box {
-  background: #fff5f5; border: 1px solid rgba(220,38,38,.15);
-  border-radius: 14px; padding: 18px 20px;
+  background:#fff5f5; border:1.5px solid rgba(220,38,38,.18);
+  border-radius:16px; padding:22px 24px;
 }
-.pf-danger-title { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
-.pf-danger-desc { font-size: 12.5px; color: #64748b; margin-bottom: 14px; line-height: 1.6; }
+.pf-danger-box h4  { font-size:14px; font-weight:700; color:var(--pf-red); margin-bottom:6px; }
+.pf-danger-box p   { font-size:13px; color:#6b7280; line-height:1.6; margin-bottom:14px; }
 
-/* Responsive */
-/* ── Responsive Profile ───────────────────────────────────── */
-
-/* Navigation mobile en bas d'écran (tab bar) */
+/* ─── Responsive ─────────────────────────────────────────── */
 .pf-mobile-nav {
-  display: none;
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 80;
-  background: var(--pf-surface);
-  border-top: 1px solid var(--pf-border);
-  padding: 6px 0 env(safe-area-inset-bottom, 6px);
-  flex-direction: row;
-  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+  display:none;
+  position:fixed; bottom:0; left:0; right:0; z-index:80;
+  background:#fff; border-top:1px solid var(--pf-border);
+  padding:6px 0 env(safe-area-inset-bottom,6px);
+  box-shadow:0 -4px 20px rgba(0,0,0,.08);
 }
+.pf-mobile-nav-items { display:flex; }
 .pf-mobile-nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 4px; border: none; background: none; cursor: pointer;
-  font-size: 10px; font-weight: 600; color: var(--pf-muted);
-  transition: color .15s;
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:6px 4px; border:none; background:none; cursor:pointer;
+  font-size:10px; font-weight:600; color:var(--pf-muted); transition:color .15s;
 }
-.pf-mobile-nav-item .pf-nav-icon { font-size: 20px; line-height: 1; }
-.pf-mobile-nav-item.active { color: var(--pf-accent2); }
+.pf-mobile-nav-item .pf-nav-icon { font-size:20px; line-height:1; }
+.pf-mobile-nav-item.active { color:var(--pf-accent); }
 
-@media(max-width: 700px) {
-  /* Layout : une seule colonne */
-  .pf-wrap { max-width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
-  .pf-grid { grid-template-columns: 1fr; }
-
-  /* Sidebar : masquée (remplacée par tab bar en bas) */
-  .pf-sidebar { display: none; }
-
-  /* Navigation mobile visible */
-  .pf-mobile-nav { display: flex; }
-
-  /* Contenu principal : espace en bas pour la tab bar */
-  .pf-content { padding-bottom: 80px; }
-
-  /* Cards */
-  .pf-card-head { padding: 16px 16px 0; flex-wrap: wrap; gap: 8px; }
-  .pf-card-body { padding: 16px; }
-
-  /* Formulaires */
-  .pf-form-grid { grid-template-columns: 1fr; gap: 12px; }
-
-  /* Stats abonnement */
-  .pf-stat-row { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .pf-sub-hero { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .pf-sub-plan { font-size: 20px; }
-
-  /* Table factures : scroll horizontal */
-  .pf-invoice-table { min-width: 480px; display: table; }
-  .pf-invoice-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-  /* Topbar */
-  .topbar .container { padding: 0 12px; }
-
-  /* Boutons */
-  .pf-btn { font-size: 13px; padding: 10px 16px; }
+@media(max-width:760px) {
+  .pf-shell { padding:16px 0 80px; }
+  .pf-grid  { grid-template-columns:1fr; gap:0; }
+  .pf-sidebar { display:none; }
+  .pf-mobile-nav { display:block; }
+  .pf-card-body { padding:16px; }
+  .pf-form-grid { grid-template-columns:1fr; gap:12px; }
+  .pf-stats-grid { grid-template-columns:1fr 1fr; gap:10px; }
+  .pf-plan-hero  { flex-direction:column; align-items:flex-start; gap:12px; }
+  .pf-data-actions { flex-direction:column; }
+  .pf-data-actions .pf-btn { justify-content:center; }
 }
-
-@media(max-width: 400px) {
-  .pf-stat-row { grid-template-columns: 1fr; }
-  .pf-mobile-nav-item { font-size: 9px; }
-  .pf-mobile-nav-item .pf-nav-icon { font-size: 18px; }
+@media(max-width:400px) {
+  .pf-stats-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- Topbar héritée de app.css -->
 <header class="topbar">
   <div class="container row between">
     <a class="brand link" href="#" id="profileHomeLink">
@@ -250,18 +288,19 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
   </div>
 </header>
 
-<div class="pf-wrap">
+<div class="pf-shell">
   <div class="pf-grid">
 
-    <!-- Sidebar -->
-    <div class="pf-sidebar">
+    <!-- ── Sidebar ───────────────────────────────────────── -->
+    <aside class="pf-sidebar">
       <div class="pf-profile-card">
         <div class="pf-avatar" id="pfAvatar">?</div>
-        <div class="pf-name" id="profileName">Mon compte</div>
+        <div class="pf-name"  id="profileName">Mon compte</div>
         <div class="pf-email" id="profileEmail"></div>
         <div class="pf-plan-badge">⚡ <span id="profilePlan">Free</span></div>
       </div>
 
+      <div class="pf-nav-section-label">Mon compte</div>
       <button class="pf-nav-item active" data-sec="infos">
         <span class="pf-nav-icon">👤</span> Informations
       </button>
@@ -271,19 +310,30 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
       <button class="pf-nav-item" data-sec="paiements">
         <span class="pf-nav-icon">🧾</span> Paiements & Factures
       </button>
+
+      <div class="pf-nav-sep"></div>
+      <div class="pf-nav-section-label">Paramètres</div>
       <button class="pf-nav-item" data-sec="securite">
         <span class="pf-nav-icon">🔐</span> Sécurité
       </button>
-      <div class="pf-nav-sep"></div>
+      <button class="pf-nav-item" data-sec="resiliation">
+        <span class="pf-nav-icon">📋</span> Résiliation
+      </button>
       <button class="pf-nav-item" data-sec="donnees">
         <span class="pf-nav-icon">🛡️</span> Mes données
       </button>
-    </div>
 
-    <!-- Content -->
-    <div id="pfContent" style="padding:32px 36px;background:#f8fafc;min-height:100vh">
+      <div class="pf-sidebar-foot">
+        <a href="mailto:contact@pope-online.com">
+          <span>✉️</span> contact@pope-online.com
+        </a>
+      </div>
+    </aside>
 
-      <!-- Infos -->
+    <!-- ── Contenu ────────────────────────────────────────── -->
+    <div id="pfContent">
+
+      <!-- Infos personnelles -->
       <div class="pf-card active" id="secInfos">
         <div class="pf-card-head">
           <span class="pf-card-icon">👤</span>
@@ -296,19 +346,23 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
           <div class="pf-form-grid">
             <div class="pf-field pf-form-full">
               <label class="pf-label">Prénom & Nom</label>
-              <input class="pf-input" id="fullName" placeholder="Jean Dupont"/>
+              <input class="pf-input" id="fullName" placeholder="Jean Dupont" autocomplete="name"/>
             </div>
             <div class="pf-field pf-form-full">
+              <label class="pf-label">Email</label>
+              <input class="pf-input" id="userEmail" type="email" readonly/>
+            </div>
+            <div class="pf-field">
               <label class="pf-label">Organisation</label>
-              <input class="pf-input" id="organization" placeholder="Entreprise, cabinet, association…"/>
+              <input class="pf-input" id="organization" placeholder="Entreprise, cabinet…"/>
             </div>
-            <div class="pf-field pf-form-full">
+            <div class="pf-field">
               <label class="pf-label">Téléphone</label>
-              <input class="pf-input" id="phoneFull" placeholder="+33 6 00 00 00 00" type="tel"/>
+              <input class="pf-input" id="phoneFull" placeholder="+33 6 00 00 00 00" type="tel" autocomplete="tel"/>
             </div>
           </div>
           <div style="margin-top:20px;display:flex;gap:10px;align-items:center">
-            <button class="pf-btn pf-btn-primary" id="btnSaveProfil">Enregistrer</button>
+            <button class="pf-btn pf-btn-primary" id="btnSaveProfil">💾 Enregistrer</button>
           </div>
           <div class="pf-msg" id="profileMsg"></div>
         </div>
@@ -320,77 +374,69 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
           <span class="pf-card-icon">💎</span>
           <div>
             <div class="pf-card-title">Mon abonnement</div>
-            <div class="pf-card-sub">Votre offre et vos crédits actuels</div>
+            <div class="pf-card-sub">Votre offre actuelle et vos crédits</div>
           </div>
         </div>
         <div class="pf-card-body">
-          <div class="pf-sub-hero">
+          <div class="pf-plan-hero">
             <div>
-              <div class="pf-sub-plan" id="subPlan">Free</div>
-              <div class="pf-sub-detail" id="subDetails">Chargement…</div>
+              <div class="pf-plan-name" id="subPlan">Free</div>
+              <div class="pf-plan-detail" id="subDetails">Chargement…</div>
             </div>
-            <a class="pf-btn pf-btn-ghost" href="mailto:contact@pope-online.com">Évoluer mon offre</a>
+            <a class="pf-btn pf-btn-primary pf-btn-sm" href="pricing.html">Évoluer mon offre →</a>
           </div>
-          <div class="pf-stat-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="pf-stats-grid">
             <div class="pf-stat">
-              <div class="pf-stat-label">Tickets IA restants</div>
               <div class="pf-stat-val" id="statTickets">—</div>
+              <div class="pf-stat-label">Tickets IA</div>
             </div>
             <div class="pf-stat">
-              <div class="pf-stat-label">Relectures restantes</div>
               <div class="pf-stat-val" id="statExpert">—</div>
+              <div class="pf-stat-label">Relectures expertes</div>
             </div>
             <div class="pf-stat">
+              <div class="pf-stat-val" id="statStatus" style="font-size:15px;margin-top:4px">—</div>
               <div class="pf-stat-label">Statut du compte</div>
-              <div class="pf-stat-val" id="statStatus" style="font-size:14px;font-weight:700">—</div>
             </div>
             <div class="pf-stat">
+              <div class="pf-stat-val" id="statTrialEnd" style="font-size:14px;margin-top:4px">—</div>
               <div class="pf-stat-label">Fin période gratuite</div>
-              <div class="pf-stat-val" id="statTrialEnd" style="font-size:13px;font-weight:700">—</div>
             </div>
           </div>
-          <div style="background:rgba(0,121,193,.06);border:1px solid var(--pf-border);border-radius:12px;padding:16px">
-            <p style="font-size:13px;color:var(--pf-muted);line-height:1.7">
-              Pour modifier votre abonnement, ajouter des crédits ou accéder aux offres Pro et Premium, contactez notre équipe : <a href="mailto:contact@pope-online.com" style="color:var(--pf-accent2)">contact@pope-online.com</a> ou <a href="tel:0970703055" style="color:var(--pf-accent2)">09 70 70 30 55</a>.
-            </p>
+          <div class="pf-info-box">
+            Pour ajouter des crédits, passer en Pro ou Premium, ou toute question sur votre offre :<br>
+            <a href="mailto:contact@pope-online.com">contact@pope-online.com</a> · <a href="tel:0970703055">09 70 70 30 55</a>
           </div>
         </div>
       </div>
 
-      <!-- Paiements -->
+      <!-- Paiements & Factures -->
       <div class="pf-card" id="secPaiements">
         <div class="pf-card-head">
           <span class="pf-card-icon">🧾</span>
           <div>
             <div class="pf-card-title">Paiements & Factures</div>
-            <div class="pf-card-sub">Historique de vos transactions</div>
+            <div class="pf-card-sub">Historique de vos transactions et téléchargement des factures</div>
           </div>
         </div>
         <div class="pf-card-body">
-          <div id="invoiceArea">
-            <div id="invoiceLoading" style="text-align:center;padding:32px;color:var(--pf-muted)">Chargement de l'historique…</div>
-            <div id="invoiceContent" hidden>
-              <div style="overflow-x:auto">
-                <div class="pf-invoice-wrap"><table class="pf-invoice-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Référence</th>
-                      <th>Description</th>
-                      <th>Montant</th>
-                      <th>Statut</th>
-                      <th>Facture</th>
-                    </tr>
-                  </thead>
-                  <tbody id="invoiceBody"></tbody>
-                </table>
-              </div>
+          <div id="invoiceLoading" style="text-align:center;padding:40px;color:var(--pf-muted)">
+            <div style="font-size:32px;margin-bottom:8px">⏳</div>Chargement de l'historique…
+          </div>
+          <div id="invoiceContent" hidden>
+            <div class="pf-invoice-wrap">
+              <table class="pf-invoice-table">
+                <thead>
+                  <tr><th>Date</th><th>Référence</th><th>Description</th><th>Montant</th><th>Statut</th><th>Facture</th></tr>
+                </thead>
+                <tbody id="invoiceBody"></tbody>
+              </table>
             </div>
-            <div id="invoiceEmpty" hidden style="text-align:center;padding:32px;color:var(--pf-muted)">
-              <div style="font-size:32px;margin-bottom:8px">🧾</div>
-              <div>Aucune transaction pour le moment.</div>
-              <div style="font-size:12px;margin-top:6px">Vos paiements apparaîtront ici.</div>
-            </div>
+          </div>
+          <div id="invoiceEmpty" hidden style="text-align:center;padding:40px;color:var(--pf-muted)">
+            <div style="font-size:40px;margin-bottom:10px">🧾</div>
+            <div style="font-weight:600">Aucune transaction pour le moment.</div>
+            <div style="font-size:12px;margin-top:6px;color:var(--pf-muted2)">Vos paiements apparaîtront ici après votre premier abonnement.</div>
           </div>
         </div>
       </div>
@@ -400,59 +446,136 @@ body.po-v5-harmony, body { background: #f8fafc !important; color: #0f172a !impor
         <div class="pf-card-head">
           <span class="pf-card-icon">🔐</span>
           <div>
-            <div class="pf-card-title">Sécurité</div>
-            <div class="pf-card-sub">Mot de passe et accès à votre compte</div>
+            <div class="pf-card-title">Sécurité du compte</div>
+            <div class="pf-card-sub">Changez votre mot de passe et sécurisez votre accès</div>
           </div>
         </div>
         <div class="pf-card-body">
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:16px;color:var(--pf-text)">Modifier le mot de passe</h4>
           <div class="pf-form-grid">
             <div class="pf-field">
               <label class="pf-label">Nouveau mot de passe</label>
-              <input class="pf-input" id="newPassword" type="password" placeholder="Min. 8 caractères" autocomplete="new-password"/>
+              <input class="pf-input" id="newPassword" type="password" placeholder="Minimum 8 caractères" autocomplete="new-password"/>
+              <div class="pf-pw-strength" id="pwStrengthBar">
+                <div class="pf-pw-strength-bar" id="pwStrengthFill"></div>
+              </div>
+              <div class="pf-pw-hint" id="pwHint"></div>
             </div>
             <div class="pf-field">
               <label class="pf-label">Confirmer le mot de passe</label>
-              <input class="pf-input" id="confirmPassword" type="password" placeholder="Répétez le mot de passe" autocomplete="new-password"/>
+              <input class="pf-input" id="confirmPassword" type="password" placeholder="Répétez votre mot de passe" autocomplete="new-password"/>
             </div>
           </div>
-          <div style="margin-top:16px">
-            <button class="pf-btn pf-btn-primary" id="btnChangePassword">Changer le mot de passe</button>
+          <div style="margin-top:20px;display:flex;gap:10px">
+            <button class="pf-btn pf-btn-primary" id="btnChangePassword">🔑 Changer le mot de passe</button>
           </div>
           <div class="pf-msg" id="pwMsg"></div>
+
+          <div class="pf-divider"></div>
+
+          <div class="pf-security-sessions">
+            <h4>Session actuelle</h4>
+            <div class="pf-session-row">
+              <span class="pf-session-icon">💻</span>
+              <div>
+                <div style="font-weight:600;font-size:13px">Navigateur web</div>
+                <div style="font-size:11.5px;color:var(--pf-muted)" id="sessionInfo">Session active</div>
+              </div>
+              <span class="pf-session-current">● Actuelle</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Données -->
+      <!-- Résiliation -->
+      <div class="pf-card" id="secResiliation">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">📋</span>
+          <div>
+            <div class="pf-card-title">Résiliation de l'abonnement</div>
+            <div class="pf-card-sub">Gérez ou résiliez votre abonnement POPE Online</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div class="pf-resiliation-box">
+            <h4>⚠️ Avant de résilier</h4>
+            <p>La résiliation met fin à votre abonnement à la prochaine échéance. Vous conservez l'accès à toutes les fonctionnalités jusqu'à la fin de la période en cours. Vos données restent accessibles pendant 30 jours après la résiliation.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <button class="pf-btn pf-btn-outline pf-btn-sm" id="btnContactResiliation">
+                ✉️ Demander une résiliation par email
+              </button>
+            </div>
+          </div>
+
+          <div class="pf-info-box">
+            <strong>Comment résilier&nbsp;?</strong><br>
+            Pour toute demande de résiliation, contactez notre équipe par email à <a href="mailto:contact@pope-online.com">contact@pope-online.com</a> en précisant votre email de compte et la mention «&nbsp;Résiliation abonnement&nbsp;».<br><br>
+            Votre demande sera traitée dans un délai de 48h ouvrées.
+          </div>
+
+          <div id="resiliationMsg" class="pf-msg" style="margin-top:16px"></div>
+        </div>
+      </div>
+
+      <!-- Mes données -->
       <div class="pf-card" id="secDonnees">
         <div class="pf-card-head">
           <span class="pf-card-icon">🛡️</span>
           <div>
             <div class="pf-card-title">Mes données personnelles</div>
-            <div class="pf-card-sub">Conformité RGPD — vos droits sur vos données</div>
+            <div class="pf-card-sub">Vos droits RGPD — export, consultation et suppression</div>
           </div>
         </div>
         <div class="pf-card-body">
-          <div style="background:rgba(0,180,216,.05);border:1px solid rgba(0,180,216,.15);border-radius:12px;padding:16px;margin-bottom:20px">
-            <p style="font-size:13px;color:var(--pf-muted);line-height:1.7">
-              Conformément au RGPD, vous pouvez télécharger l'intégralité des données que nous détenons sur votre compte. Cet export contient vos informations personnelles, vos productions et votre historique d'utilisation au format JSON.
-            </p>
+          <div class="pf-rgpd-info">
+            <p>Conformément au <strong>Règlement Général sur la Protection des Données (RGPD)</strong>, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez télécharger l'intégralité des données que nous détenons sur votre compte au format JSON.</p>
           </div>
-          <div style="display:flex;gap:10px;margin-bottom:24px">
-            <button class="pf-btn pf-btn-ghost" id="btnExportData">📥 Télécharger mes données</button>
+          <div class="pf-data-actions">
+            <button class="pf-btn pf-btn-ghost" id="btnExportData">
+              📥 Télécharger mes données (JSON)
+            </button>
+            <a class="pf-btn pf-btn-ghost" href="privacy.html" target="_blank">
+              📄 Politique de confidentialité
+            </a>
           </div>
           <div class="pf-msg" id="rgpdMsg"></div>
 
+          <div class="pf-divider"></div>
+
           <div class="pf-danger-box">
-            <div class="pf-danger-title">⚠️ Zone dangereuse</div>
-            <div class="pf-danger-desc">La suppression de votre compte est définitive et irréversible. Toutes vos données, productions et historique seront effacés sans possibilité de récupération.</div>
-            <button class="pf-btn pf-btn-danger" id="btnDeleteAccount">Supprimer mon compte</button>
+            <h4>⛔ Suppression définitive du compte</h4>
+            <p>Cette action est <strong>irréversible</strong>. Toutes vos données, productions, historique et accès seront définitivement supprimés. Aucune récupération ne sera possible après confirmation.</p>
+            <button class="pf-btn pf-btn-danger pf-btn-sm" id="btnDeleteAccount">
+              🗑️ Supprimer mon compte définitivement
+            </button>
           </div>
         </div>
       </div>
 
-    </div>
+    </div><!-- /pfContent -->
   </div>
 </div>
+
+<!-- ── Barre de navigation mobile ──── -->
+<nav class="pf-mobile-nav" id="pfMobileNav">
+  <div class="pf-mobile-nav-items">
+    <button class="pf-mobile-nav-item active" data-sec="infos">
+      <span class="pf-nav-icon">👤</span>Infos
+    </button>
+    <button class="pf-mobile-nav-item" data-sec="abonnement">
+      <span class="pf-nav-icon">💎</span>Offre
+    </button>
+    <button class="pf-mobile-nav-item" data-sec="paiements">
+      <span class="pf-nav-icon">🧾</span>Factures
+    </button>
+    <button class="pf-mobile-nav-item" data-sec="securite">
+      <span class="pf-nav-icon">🔐</span>Sécurité
+    </button>
+    <button class="pf-mobile-nav-item" data-sec="donnees">
+      <span class="pf-nav-icon">🛡️</span>Données
+    </button>
+  </div>
+</nav>
 
 <script type="module">
 import { apiFetch, getApiMessage, clearSession } from './api.js';
@@ -460,178 +583,244 @@ import { requireLogin, wireLogout, showToast } from './app.js';
 if (!requireLogin('profile.html')) {}
 wireLogout();
 
-const el = (id) => document.getElementById(id);
+const el = id => document.getElementById(id);
+function esc(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// Navigation
-// Sync mobile nav tab bar avec la navigation de la sidebar
-
-
-// Navigation sections profil
+// ── Table de correspondance section → ID carte ────────────
 const SEC_MAP = {
-  infos:      'secInfos',
-  abonnement: 'secAbonnement',
-  paiements:  'secPaiements',
-  securite:   'secSecurite',
-  donnees:    'secDonnees'
+  infos:       'secInfos',
+  abonnement:  'secAbonnement',
+  paiements:   'secPaiements',
+  securite:    'secSecurite',
+  resiliation: 'secResiliation',
+  donnees:     'secDonnees'
 };
+
+// ── Fonction centrale de navigation ───────────────────────
 function navigateTo(secKey) {
+  // Mettre à jour les boutons actifs (sidebar + barre mobile)
   document.querySelectorAll('[data-sec]').forEach(b => {
     b.classList.toggle('active', b.dataset.sec === secKey);
   });
+  // Afficher la bonne carte, masquer les autres
   document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
-  var cardId = SEC_MAP[secKey];
+  const cardId = SEC_MAP[secKey];
   if (cardId) {
-    var card = document.getElementById(cardId);
+    const card = el(cardId);
     if (card) card.classList.add('active');
   }
+  // Actions spécifiques par section
   if (secKey === 'paiements') loadInvoices();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-document.querySelectorAll('.pf-sidebar .pf-nav-item[data-sec]').forEach(function(btn) {
-  btn.onclick = function() { navigateTo(btn.dataset.sec); };
-});
-document.querySelectorAll('#pfMobileNav [data-sec]').forEach(function(btn) {
-  btn.onclick = function() { navigateTo(btn.dataset.sec); };
+
+// ── Attacher les listeners sur sidebar et barre mobile ────
+document.querySelectorAll('.pf-sidebar [data-sec], #pfMobileNav [data-sec]').forEach(btn => {
+  btn.onclick = () => navigateTo(btn.dataset.sec);
 });
 
+// ── Chargement initial : afficher secInfos ────────────────
+// (CORRECTION du bug: appeler navigateTo au lieu de compter sur la classe HTML
+//  qui est supprimée lors du bundling Vite)
+navigateTo('infos');
+
+// ── Chargement des données utilisateur ───────────────────
 async function load() {
   try {
     const me = await apiFetch('/auth/me');
-    const u = me.user || {};
-    const w = me.wallet || {};
+    const u  = me.user   || {};
+    const w  = me.wallet || {};
 
-    // Avatar initials
-    const initials = (u.full_name || u.email || '?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
-    el('pfAvatar').textContent = initials;
-    el('profileName').textContent = u.full_name || 'Mon compte';
-    el('profileEmail').textContent = u.email || '';
-    el('profilePlan').textContent = w.plan_label || w.plan || 'Free';
-    el('subPlan').textContent = w.plan_label || w.plan || 'Free';
-    el('fullName').value = u.full_name || '';
-    el('organization').value = u.organization || '';
-    el('phoneFull').value = u.phone_full || '';
+    // Avatar & entête sidebar
+    const ini = (u.full_name || u.email || '?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+    el('pfAvatar').textContent      = ini;
+    el('profileName').textContent   = u.full_name || 'Mon compte';
+    el('profileEmail').textContent  = u.email || '';
+    el('profilePlan').textContent   = w.plan_label || 'Free';
 
+    // Formulaire infos
+    el('fullName').value    = u.full_name    || '';
+    el('userEmail').value   = u.email        || '';
+    el('organization').value= u.organization || '';
+    el('phoneFull').value   = u.phone_full   || '';
+
+    // Lien retour
     const space = u.accountSpace || u.account_space || 'public';
     el('profileHomeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
 
-    const left = w.expert_left ?? 0;
-    const statusMap = { active: '✅ Actif', trial_active: '🟡 Essai actif', trial_expired: '🔴 Essai expiré' };
-    el('subDetails').textContent = (w.plan_label || 'Free') + ' · Statut : ' + (statusMap[w.status] || w.status || '—');
-    el('statTickets').textContent = w.tickets_ai ?? '—';
-    el('statExpert').textContent = left;
-    el('statStatus').textContent = statusMap[w.status] || w.status || '—';
-    // Date de fin d'essai
+    // Abonnement
+    el('subPlan').textContent = w.plan_label || 'Free';
+    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente' };
+    const statusLabel  = statusLabels[w.status] || w.status || '—';
+    el('subDetails').textContent = (w.plan_label || 'Free') + ' · ' + statusLabel;
+
+    el('statTickets').textContent = w.ai_unlimited ? '∞' : (w.tickets_ai ?? '—');
+    el('statExpert').textContent  = w.expert_left   ?? (w.expert_limit ?? '—');
+    el('statStatus').textContent  = statusLabel;
+
     if (w.trial_expires_at) {
-      const exp = new Date(w.trial_expires_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'});
-      el('subDetails').textContent += ' · Fin essai : ' + exp;
-      const statTE = document.getElementById('statTrialEnd');
-      if (statTE) statTE.textContent = exp;
+      const exp = new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+      el('statTrialEnd').textContent = exp;
     } else {
-      const statTE = document.getElementById('statTrialEnd');
-      if (statTE) statTE.textContent = 'N/A';
+      el('statTrialEnd').textContent = 'N/A';
     }
-  } catch(e) {}
+
+    // Infos session sécurité
+    const now = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    el('sessionInfo').textContent = 'Connecté le ' + now;
+
+  } catch(e) { /* silencieux */ }
 }
 
+// ── Chargement factures ───────────────────────────────────
+let invoicesLoaded = false;
 async function loadInvoices() {
+  if (invoicesLoaded) return;
   el('invoiceLoading').hidden = false;
   el('invoiceContent').hidden = true;
-  el('invoiceEmpty').hidden = true;
+  el('invoiceEmpty').hidden   = true;
   try {
-    // Tenter de charger l'historique des paiements
-    let invoices = [];
-    try { const data = await apiFetch('/billing/invoices'); invoices = Array.isArray(data) ? data : (data.invoices || []); } catch(e2) {}
+    const data     = await apiFetch('/billing/invoices').catch(() => ({ invoices: [] }));
+    const invoices = Array.isArray(data) ? data : (data.invoices || []);
     el('invoiceLoading').hidden = true;
     if (!invoices.length) { el('invoiceEmpty').hidden = false; return; }
     const tbody = el('invoiceBody');
     tbody.innerHTML = invoices.map(inv => {
-      const date = inv.created_at || inv.date ? new Date(inv.created_at || inv.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) : '—';
-      const amount = inv.amount ? (inv.amount/100).toLocaleString('fr-FR',{style:'currency',currency:inv.currency||'EUR'}) : '—';
-      const badge = inv.status === 'paid' ? '<span class="pf-badge pf-badge-green">Payé</span>' : '<span class="pf-badge pf-badge-grey">'+esc(inv.status||'—')+'</span>';
-      const dlBtn = inv.invoice_pdf || inv.hosted_invoice_url ? `<a class="pf-dl-btn" href="${inv.invoice_pdf||inv.hosted_invoice_url}" target="_blank">📥 PDF</a>` : '—';
-      return `<tr><td>${date}</td><td style="font-family:monospace;font-size:12px;color:var(--pf-muted)">${esc(inv.id||'—').substring(0,16)}</td><td>${esc(inv.description||'Abonnement POPE Online')}</td><td style="font-weight:700">${amount}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
+      const date    = inv.created ? new Date(inv.created*1000).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : (inv.created_at ? new Date(inv.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—');
+      const amount  = inv.amount_paid != null ? (inv.amount_paid/100).toLocaleString('fr-FR',{style:'currency',currency:(inv.currency||'eur').toUpperCase()}) : (inv.amount ? (inv.amount/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}) : '—');
+      const badge   = inv.status === 'paid' ? '<span class="pf-badge pf-badge-green">Payé</span>' : '<span class="pf-badge pf-badge-grey">'+esc(inv.status||'—')+'</span>';
+      const dlUrl   = inv.invoice_pdf || inv.hosted_invoice_url;
+      const dlBtn   = dlUrl ? `<a class="pf-dl-btn" href="${esc(dlUrl)}" target="_blank" rel="noopener">📥 PDF</a>` : '—';
+      return `<tr><td>${date}</td><td style="font-family:monospace;font-size:11.5px;color:var(--pf-muted)">${esc((inv.number||inv.id||'—').substring(0,18))}</td><td>${esc(inv.description||'Abonnement POPE Online')}</td><td style="font-weight:700">${amount}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
     }).join('');
     el('invoiceContent').hidden = false;
+    invoicesLoaded = true;
   } catch(e) {
     el('invoiceLoading').hidden = true;
-    el('invoiceEmpty').hidden = false;
+    el('invoiceEmpty').hidden   = false;
   }
 }
 
-function esc(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// ── Jauge force mot de passe ──────────────────────────────
+el('newPassword').addEventListener('input', function() {
+  const pw   = this.value;
+  const len  = pw.length;
+  const fill = el('pwStrengthFill');
+  const hint = el('pwHint');
+  if (!len) { fill.style.width='0'; fill.style.background=''; hint.textContent=''; return; }
+  let score = 0;
+  if (len >= 8)  score++;
+  if (len >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors  = ['#ef4444','#f59e0b','#eab308','#22c55e','#16a34a'];
+  const labels  = ['Très faible','Faible','Moyen','Fort','Très fort'];
+  const pct     = Math.min(100, score * 20);
+  fill.style.width      = pct + '%';
+  fill.style.background = colors[score - 1] || '#ef4444';
+  hint.textContent      = labels[score - 1] || 'Très faible';
+  hint.style.color      = colors[score - 1] || '#ef4444';
+});
 
+// ── Handlers ──────────────────────────────────────────────
+
+// Enregistrer les informations
 el('btnSaveProfil').onclick = async function() {
   this.disabled = true;
   const msg = el('profileMsg');
+  msg.textContent = '';
   try {
     await apiFetch('/auth/me', { method:'PUT', body:{
-      full_name: el('fullName').value.trim(),
+      full_name:    el('fullName').value.trim(),
       organization: el('organization').value.trim(),
-      phone_full: el('phoneFull').value.trim()
+      phone_full:   el('phoneFull').value.trim()
     }});
-    msg.textContent = '✓ Informations enregistrées'; msg.className = 'pf-msg ok';
+    msg.textContent = '✓ Informations enregistrées avec succès.';
+    msg.className   = 'pf-msg ok';
     showToast('Profil mis à jour', 'ok');
-  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
-  finally { this.disabled = false; }
+  } catch(e) {
+    msg.textContent = getApiMessage(e);
+    msg.className   = 'pf-msg err';
+  } finally { this.disabled = false; }
 };
 
+// Changer le mot de passe
 el('btnChangePassword').onclick = async function() {
-  const pw = el('newPassword').value;
+  const pw  = el('newPassword').value;
   const cpw = el('confirmPassword').value;
   const msg = el('pwMsg');
-  if (!pw) { msg.textContent = 'Renseignez un nouveau mot de passe.'; msg.className = 'pf-msg err'; return; }
-  if (pw !== cpw) { msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.className = 'pf-msg err'; return; }
+  msg.textContent = '';
+  if (!pw)       { msg.textContent = 'Renseignez un nouveau mot de passe.'; msg.className = 'pf-msg err'; return; }
+  if (pw.length < 8) { msg.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; msg.className = 'pf-msg err'; return; }
+  if (pw !== cpw){ msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.className = 'pf-msg err'; return; }
+  this.disabled = true;
   try {
-    await apiFetch('/auth/change-password', { method:'PUT', body:{ password:pw } });
-    msg.textContent = '✓ Mot de passe modifié'; msg.className = 'pf-msg ok';
-    el('newPassword').value = ''; el('confirmPassword').value = '';
+    await apiFetch('/auth/change-password', { method:'PUT', body:{ password: pw } });
+    msg.textContent = '✓ Mot de passe modifié avec succès.';
+    msg.className   = 'pf-msg ok';
+    el('newPassword').value = '';
+    el('confirmPassword').value = '';
+    el('pwStrengthFill').style.width = '0';
+    el('pwHint').textContent = '';
     showToast('Mot de passe changé', 'ok');
-  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
+  } catch(e) {
+    msg.textContent = getApiMessage(e);
+    msg.className   = 'pf-msg err';
+  } finally { this.disabled = false; }
 };
 
+// Demande de résiliation par email
+el('btnContactResiliation').onclick = function() {
+  const email   = el('profileEmail').textContent || '';
+  const subject = encodeURIComponent('Demande de résiliation abonnement POPE Online');
+  const body    = encodeURIComponent(`Bonjour,\n\nJe souhaite résilier mon abonnement POPE Online.\n\nEmail du compte : ${email}\n\nCordialement.`);
+  window.open(`mailto:contact@pope-online.com?subject=${subject}&body=${body}`);
+  el('resiliationMsg').textContent = '✓ Votre client mail s\'est ouvert. Envoyez l\'email pour finaliser la demande.';
+  el('resiliationMsg').className = 'pf-msg ok';
+};
+
+// Export des données
 el('btnExportData').onclick = async function() {
   const msg = el('rgpdMsg');
+  this.disabled = true;
+  this.textContent = '⏳ Export en cours…';
   try {
     const data = await apiFetch('/auth/me/export');
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'pope-online-mes-donnees.json'; a.click();
-    msg.textContent = '✓ Export téléchargé'; msg.className = 'pf-msg ok';
-  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'pope-online-mes-donnees.json';
+    a.click();
+    msg.textContent = '✓ Export téléchargé avec succès.';
+    msg.className   = 'pf-msg ok';
+  } catch(e) {
+    msg.textContent = getApiMessage(e);
+    msg.className   = 'pf-msg err';
+  } finally {
+    this.disabled    = false;
+    this.textContent = '📥 Télécharger mes données (JSON)';
+  }
 };
 
+// Suppression du compte
 el('btnDeleteAccount').onclick = async function() {
-  if (!confirm('Supprimer définitivement votre compte ? Cette action est irréversible.')) return;
+  const confirm1 = window.confirm('Supprimer définitivement votre compte ?\n\nCette action est irréversible — toutes vos données seront effacées.');
+  if (!confirm1) return;
+  const confirm2 = window.confirm('Dernière confirmation : êtes-vous certain de vouloir supprimer votre compte POPE Online ?');
+  if (!confirm2) return;
   try {
-    await apiFetch('/auth/me', { method:'DELETE' });
-    clearSession(); window.location.href = 'index.html';
-  } catch(e) { el('rgpdMsg').textContent = getApiMessage(e); el('rgpdMsg').className = 'pf-msg err'; }
+    await apiFetch('/auth/me', { method: 'DELETE' });
+    clearSession();
+    window.location.href = 'index.html';
+  } catch(e) {
+    el('rgpdMsg').textContent = getApiMessage(e);
+    el('rgpdMsg').className   = 'pf-msg err';
+  }
 };
 
+// Lancement
 load();
 </script>
-<!-- Navigation mobile bas d'écran -->
-<nav class="pf-mobile-nav" id="pfMobileNav">
-  <button class="pf-mobile-nav-item active" data-sec="infos">
-    <span class="pf-nav-icon">👤</span>
-    Infos
-  </button>
-  <button class="pf-mobile-nav-item" data-sec="abonnement">
-    <span class="pf-nav-icon">💎</span>
-    Abonnement
-  </button>
-  <button class="pf-mobile-nav-item" data-sec="paiements">
-    <span class="pf-nav-icon">🧾</span>
-    Factures
-  </button>
-  <button class="pf-mobile-nav-item" data-sec="securite">
-    <span class="pf-nav-icon">🔐</span>
-    Sécurité
-  </button>
-  <button class="pf-mobile-nav-item" data-sec="donnees">
-    <span class="pf-nav-icon">🛡️</span>
-    Données
-  </button>
-</nav>
 </body>
 </html>
