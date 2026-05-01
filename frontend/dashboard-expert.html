@@ -421,86 +421,93 @@ async function loadRequests() {
 
 function renderRequests(statusFilter) {
   var filtered = allRequests.filter(function(r) {
-    return statusFilter === 'replied' ? r.status === 'replied' : (r.status === 'new' || r.status === 'pending');
+    return statusFilter === 'replied'
+      ? r.status === 'replied'
+      : (r.status === 'new' || r.status === 'pending');
   });
   var container = statusFilter === 'replied' ? el('doneList') : el('pendingList');
   if (!filtered.length) {
-    var emptyMsg = statusFilter === 'replied' ? '✅ Aucune relecture traitée.' : '🎉 Aucune relecture en attente !';
-    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px">'+emptyMsg+'</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px">'
+      + (statusFilter === 'replied' ? '\u2705 Aucune relecture trait\u00e9e.' : '\U0001f389 Aucune relecture en attente !')
+      + '</div>';
     return;
   }
   container.innerHTML = filtered.map(function(req) {
-    var clientName = req.full_name || req.email || '—';
+    var clientName = req.full_name || req.email || '\u2014';
     var ini = initials(clientName);
     var isReplied = req.status === 'replied';
     var statusCls = isReplied ? 'exp-status-replied' : 'exp-status-new';
-    var statusLbl = isReplied ? '✅ Traité' : '⏳ En attente';
+    var statusLbl = isReplied ? '\u2705 Trait\u00e9' : '\u23f3 En attente';
+    var rid = esc(req.id);
+
     var expectHtml = req.expectations
-      ? '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">Demande du client</div>'
-        + '<div class="exp-req-text" style="color:var(--muted)">'+esc(req.expectations)+'</div>'
-        + '</div>'
+      ? ('<div style="margin-bottom:10px">'
+          + '<div class="exp-req-section-label">Demande du client</div>'
+          + '<div class="exp-req-text" style="color:var(--muted)">' + esc(req.expectations) + '</div>'
+          + '</div>')
       : '';
+
     var contextHtml = req.context
-      ? '<div class="exp-req-separator"></div>'
-        + '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">Contexte &amp; enjeux</div>'
-        + '<div class="exp-req-text" style="color:var(--muted);font-size:12px">'+esc(req.context)+'</div>'
-        + '</div>'
+      ? ('<div class="exp-req-separator"></div>'
+          + '<div style="margin-bottom:10px">'
+          + '<div class="exp-req-section-label">Contexte &amp; enjeux</div>'
+          + '<div class="exp-req-text" style="color:var(--muted);font-size:12px">' + esc(req.context) + '</div>'
+          + '</div>')
       : '';
+
     var genHtml = '';
     if (req.generation_attachment && req.generation_attachment.result) {
-      var genLabel = esc(req.generation_attachment.usecaseLabel || 'Génération IA');
+      var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration IA');
       var genText  = esc((req.generation_attachment.result || '').substring(0, 1500));
-      var genMore  = (req.generation_attachment.result || '').length > 1500 ? '…' : '';
+      var genMore  = (req.generation_attachment.result || '').length > 1500 ? '\u2026' : '';
       genHtml = '<div class="exp-req-separator"></div>'
         + '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">📎 Génération IA jointe</div>'
+        + '<div class="exp-req-section-label">\U0001f4ce G\u00e9n\u00e9ration IA jointe</div>'
         + '<div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;margin-top:6px">'
-        + '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:6px">'+genLabel+'</div>'
-        + '<div class="exp-req-text" style="font-size:12px;color:var(--muted);max-height:280px;overflow-y:auto;white-space:pre-wrap">'+genText+genMore+'</div>'
-        + '</div></div>';
+        + '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:6px">' + genLabel + '</div>'
+        + '<div class="exp-req-text" style="font-size:12px;color:var(--muted);max-height:280px;overflow-y:auto;white-space:pre-wrap">'
+        + genText + genMore + '</div></div></div>';
     }
+
     var replyOrForm = '';
     if (isReplied) {
       replyOrForm = '<div class="exp-req-separator"></div>'
-        + '<div><div class="exp-req-section-label">Votre réponse ('+fmtDate(req.replied_at)+')</div>'
-        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">'+esc(req.reply_text||'')+'</div></div>';
+        + '<div><div class="exp-req-section-label">Votre r\u00e9ponse (' + fmtDate(req.replied_at) + ')</div>'
+        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">' + esc(req.reply_text || '') + '</div></div>';
     } else {
-      var rid = esc(req.id);
-      replyOrForm = '<div class="exp-reply-zone" id="replyZone-'+rid+'">'
-        + '<div class="exp-req-section-label" style="margin-bottom:8px">Rédiger votre réponse experte</div>'
-        + '<textarea class="exp-textarea" id="replyText-'+rid+'" placeholder="Rédigez votre analyse fond &amp; forme."></textarea>'
+      replyOrForm = '<div class="exp-reply-zone" id="replyZone-' + rid + '">'
+        + '<div class="exp-req-section-label" style="margin-bottom:8px">R\u00e9diger votre r\u00e9ponse experte</div>'
+        + '<textarea class="exp-textarea" id="replyText-' + rid + '" placeholder="R\u00e9digez votre analyse fond &amp; forme."></textarea>'
         + '<div class="exp-btn-row">'
-        + '<button class="exp-action-btn exp-btn-primary" onclick="submitReply(\'' + rid + \')">\u2713 Envoyer ma réponse</button>'
-        + '<button class="exp-action-btn exp-btn-secondary" onclick="cancelReply(\'' + rid + \')">Annuler</button>'
+        + '<button class="exp-action-btn exp-btn-primary" onclick="submitReply(&quot;' + rid + '&quot;)">\u2713 Envoyer</button>'
+        + '<button class="exp-action-btn exp-btn-secondary" onclick="cancelReply(&quot;' + rid + '&quot;)">Annuler</button>'
         + '</div>'
-        + '<div class="exp-msg" id="replyMsg-'+rid+'"></div>'
+        + '<div class="exp-msg" id="replyMsg-' + rid + '"></div>'
         + '</div>'
-        + '<div class="exp-btn-row" id="replyActions-'+rid+'" style="margin-top:12px">'
-        + '<button class="exp-action-btn exp-btn-primary" onclick="openReply(\'' + rid + \')">\u270d\ufe0f Rédiger ma réponse</button>'
+        + '<div class="exp-btn-row" id="replyActions-' + rid + '" style="margin-top:12px">'
+        + '<button class="exp-action-btn exp-btn-primary" onclick="openReply(&quot;' + rid + '&quot;)">\u270d\ufe0f R\u00e9diger ma r\u00e9ponse</button>'
         + '</div>';
     }
-    return '<div class="exp-req" id="req-'+esc(req.id)+'">'
+
+    return '<div class="exp-req" id="req-' + rid + '">'
       + '<div class="exp-req-header">'
       + '<div class="exp-req-client">'
-      + '<div class="exp-req-avatar">'+ini+'</div>'
-      + '<div><div class="exp-req-name">'+esc(clientName)+'</div>'
-      + '<div class="exp-req-email">'+esc(req.email||'')+'</div></div>'
+      + '<div class="exp-req-avatar">' + ini + '</div>'
+      + '<div><div class="exp-req-name">' + esc(clientName) + '</div>'
+      + '<div class="exp-req-email">' + esc(req.email || '') + '</div></div>'
       + '</div>'
       + '<div class="exp-req-meta">'
-      + '<span class="exp-status '+statusCls+'">'+statusLbl+'</span>'
-      + '<span style="font-size:11px;color:var(--muted2)">'+fmtDate(req.created_at)+'</span>'
+      + '<span class="exp-status ' + statusCls + '">' + statusLbl + '</span>'
+      + '<span style="font-size:11px;color:var(--muted2)">' + fmtDate(req.created_at) + '</span>'
       + '</div></div>'
       + '<div style="margin-bottom:10px">'
       + '<div class="exp-req-section-label">Objectif</div>'
-      + '<div class="exp-req-text">'+esc(req.objective||'—')+'</div>'
+      + '<div class="exp-req-text">' + esc(req.objective || '\u2014') + '</div>'
       + '</div>'
       + expectHtml + contextHtml + genHtml + replyOrForm
       + '</div>';
   }).join('');
 }
-
 
 window.openReply = (id) => {
   if (openReplyId && openReplyId !== id) cancelReply(openReplyId);
@@ -534,34 +541,38 @@ window.submitReply = async (id) => {
 };
 
 async function loadClients() {
-  const container = el('clientsList');
-  container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px">Chargement…</div>';
+  var container = el('clientsList');
+  container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:24px">Chargement\u2026</div>';
   try {
-    const data = await apiFetch('/expert/my-clients');
-    const clients = data.clients || [];
+    var data = await apiFetch('/expert/my-clients');
+    var clients = data.clients || [];
     el('kpiClients').textContent = clients.length;
     if (!clients.length) {
-      container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px"><div style="font-size:36px;margin-bottom:12px">👥</div><div style="font-weight:600;margin-bottom:6px">Aucun client assigné</div><div style="font-size:13px;color:var(--muted2)">Votre responsable vous assignera des clients depuis le tableau de bord administrateur.</div></div>';
+      container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px">'
+        + '<div style="font-size:36px;margin-bottom:12px">\U0001f465</div>'
+        + '<div style="font-weight:600;margin-bottom:6px">Aucun client assign\u00e9</div>'
+        + '<div style="font-size:13px;color:var(--muted2)">Votre responsable vous assignera des clients depuis le tableau de bord administrateur.</div>'
+        + '</div>';
       return;
     }
     container.innerHTML = clients.map(function(c) {
-      var ini = initials(c.full_name||c.email||'?');
-      var org = c.organization ? ' · '+esc(c.organization) : '';
+      var ini = initials(c.full_name || c.email || '?');
+      var org = c.organization ? ' \u00b7 ' + esc(c.organization) : '';
       return '<div class="exp-client-row">'
-        + '<div class="exp-client-avatar">'+esc(ini)+'</div>'
+        + '<div class="exp-client-avatar">' + esc(ini) + '</div>'
         + '<div style="flex:1;min-width:0">'
-          + '<div style="font-weight:700;font-size:13.5px">'+esc(c.full_name||'—')+'</div>'
-          + '<div style="font-size:12px;color:var(--muted)">'+esc(c.email)+org+'</div>'
-          + '<div style="font-size:11px;color:var(--muted2);margin-top:2px">Assigné le '+fmtDate(c.assigned_at)+'</div>'
+        + '<div style="font-weight:700;font-size:13.5px">' + esc(c.full_name || '\u2014') + '</div>'
+        + '<div style="font-size:12px;color:var(--muted)">' + esc(c.email) + org + '</div>'
+        + '<div style="font-size:11px;color:var(--muted2);margin-top:2px">Assign\u00e9 le ' + fmtDate(c.assigned_at) + '</div>'
         + '</div>'
         + '<div style="display:flex;gap:16px;flex-shrink:0;text-align:center">'
-          + '<div><div style="font-size:20px;font-weight:800;color:var(--yellow)">'+(c.pending_count||0)+'</div><div style="font-size:10px;color:var(--muted)">En attente</div></div>'
-          + '<div><div style="font-size:20px;font-weight:800;color:var(--green)">'+(c.done_count||0)+'</div><div style="font-size:10px;color:var(--muted)">Traités</div></div>'
+        + '<div><div style="font-size:20px;font-weight:800;color:var(--yellow)">' + (c.pending_count || 0) + '</div><div style="font-size:10px;color:var(--muted)">En attente</div></div>'
+        + '<div><div style="font-size:20px;font-weight:800;color:var(--green)">' + (c.done_count || 0) + '</div><div style="font-size:10px;color:var(--muted)">Trait\u00e9s</div></div>'
         + '</div>'
-      + '</div>';
+        + '</div>';
     }).join('');
   } catch(e) {
-    container.innerHTML = '<div style="color:var(--red);padding:24px;text-align:center">Erreur : '+esc(getApiMessage(e))+'</div>';
+    container.innerHTML = '<div style="color:var(--red);padding:24px;text-align:center">Erreur : ' + esc(getApiMessage(e)) + '</div>';
   }
 }
 
