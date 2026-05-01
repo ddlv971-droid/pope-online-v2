@@ -7,16 +7,16 @@
 <link rel="icon" href="./favicon.png"/>
 <style>
 :root {
-  --bg: #030b16;
-  --surface: #08152a;
-  --surface2: #0d1f3a;
-  --border: rgba(0,121,193,.15);
-  --border2: rgba(255,255,255,.08);
+  --bg: #0f1923;
+  --surface: #162032;
+  --surface2: #1c2d42;
+  --border: rgba(0,121,193,.18);
+  --border2: rgba(255,255,255,.1);
   --accent: #0079c1;
   --accent2: #00b4d8;
   --text: #edf2f8;
-  --muted: rgba(255,255,255,.65);
-  --muted2: rgba(255,255,255,.4);
+  --muted: rgba(255,255,255,.7);
+  --muted2: rgba(255,255,255,.45);
   --green: #22c55e;
   --red: #ef4444;
   --yellow: #f59e0b;
@@ -62,7 +62,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-main { display: flex; flex: 1; }
 .adm-sidebar {
   width: 220px; flex-shrink: 0; padding: 20px 12px;
-  background: #06111f; border-right: 1px solid rgba(255,255,255,.06);
+  background: #131e2d; border-right: 1px solid rgba(255,255,255,.06);
   display: flex; flex-direction: column; gap: 4px;
 }
 .adm-nav-label { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); padding: 12px 10px 6px; }
@@ -115,7 +115,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* Cards */
 .adm-card {
-  background: #0a1828; border: 1px solid rgba(0,121,193,.12);
+  background: #162032; border: 1px solid rgba(0,121,193,.12);
   border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
 }
 .adm-card-head {
@@ -136,7 +136,15 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   font-family: inherit;
 }
 .adm-input:focus { border-color: var(--accent); background: rgba(0,121,193,.07); }
-.adm-select { appearance: none; }
+.adm-select {
+  appearance: none;
+  background: #162032 !important;
+  color: #edf2f8 !important;
+}
+.adm-select option {
+  background: #162032;
+  color: #edf2f8;
+}
 .adm-form-full { grid-column: 1 / -1; }
 
 /* Boutons */
@@ -210,7 +218,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   padding: 20px; border-bottom: 1px solid var(--border2);
   display: flex; align-items: center; gap: 12px;
 }
-.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; background: #06111f; color: #edf2f8; }
+.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; background: #131e2d; color: #edf2f8; }
 .adm-user-avatar {
   width: 44px; height: 44px; border-radius: 12px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -242,7 +250,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-login {
   max-width: 440px; margin: 80px auto;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 24px; padding: 40px; text-align: center;
+  border-radius: 24px; padding: 40px; text-align: center; color: var(--text);
 }
 .adm-login-icon { font-size: 40px; margin-bottom: 16px; }
 .adm-login h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.04em; }
@@ -265,9 +273,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(255,255,255,.04); border-radius: 12px; padding: 4px; }
 .adm-tab {
   flex: 1; padding: 9px; border-radius: 9px; font-size: 12.5px; font-weight: 600;
-  border: none; cursor: pointer; background: none; color: var(--muted); transition: all .15s;
+  border: none; cursor: pointer; background: none; color: rgba(255,255,255,.65); transition: all .15s;
 }
-.adm-tab.active { background: var(--surface2); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.adm-tab:hover { background: rgba(255,255,255,.06); color: #fff; }
+.adm-tab.active { background: var(--accent); color: #fff !important; box-shadow: 0 2px 8px rgba(0,121,193,.3); }
 
 /* Responsive */
 @media(max-width: 900px) {
@@ -939,7 +948,7 @@ async function loadExpert() {
     const missions = Array.isArray(data) ? data : (data.requests || data.missions || []);
     if (!missions.length) { el('expertList').innerHTML = '<p style="color:var(--muted)">Aucune relecture en attente.</p>'; return; }
     el('expertList').innerHTML = missions.map(m => `
-      <div style="border:1px solid rgba(0,121,193,.15);border-radius:14px;padding:18px;margin-bottom:14px;background:#0a1828">
+      <div style="border:1px solid rgba(0,121,193,.15);border-radius:14px;padding:18px;margin-bottom:14px;background:#162032">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
           <div>
             <div style="font-weight:700;color:#edf2f8;font-size:14px">${esc(m.full_name||m.email||'—')}</div>

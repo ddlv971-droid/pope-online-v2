@@ -7121,7 +7121,7 @@ h1, h2, h3 {
 .v38-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.8); border-radius: 2px; transition: transform .25s ease, opacity .25s ease; }
 
 @media(max-width: 980px) {
-  .v38-hero { padding-top: calc(80px + 62px) !important; }
+  .v38-hero { padding-top: calc(24px + 62px) !important; }
   .v38-hero-inner    { grid-template-columns: 1fr; }
   .v38-hero-card     { display: none; }
   .v38-grid-4        { grid-template-columns: 1fr 1fr; }
@@ -7381,6 +7381,20 @@ h1, h2, h3 {
 .v40-cgu {
   display: flex; align-items: flex-start; gap: 10px;
   font-size: 13px; color: #50627a; margin-bottom: 16px;
+  flex-wrap: nowrap;
+}
+.v40-cgu input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px; height: 16px;
+  margin-top: 2px; cursor: pointer;
+  accent-color: #0079c1;
+}
+.v40-cgu span {
+  min-width: 0; flex: 1;
+  line-height: 1.6;
+}
+@media(max-width: 600px) {
+  .v40-cgu { font-size: 12px; }
 }
 .v40-cgu input { margin-top: 3px; flex-shrink: 0; }
 .v40-cgu a { color: #0079c1; }
