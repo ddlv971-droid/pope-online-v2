@@ -1344,25 +1344,6 @@ if (getToken()) {
 
 // ══ ONGLET EXPERTS ══════════════════════════════════════
 
-// Tab routing update
-document.querySelectorAll('[data-tab]').forEach(btn => {
-  const origOnclick = btn.onclick;
-  btn.onclick = () => {
-    document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    ['Clients','Relectures','Creer','Satisfaction','Experts'].forEach(t => {
-      const el2 = document.getElementById('tab'+t);
-      if (el2) el2.hidden = true;
-    });
-    const target = btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1);
-    const tabEl = document.getElementById('tab'+target);
-    if (tabEl) tabEl.hidden = false;
-    if (btn.dataset.tab === 'relectures') loadExpert();
-    if (btn.dataset.tab === 'experts') loadExperts();
-    if (btn.dataset.tab === 'satisfaction') renderSatTable();
-    if (btn.dataset.tab === 'experts') loadExperts();
-  };
-});
 
 let expertsCache = [];
 let currentExpertId = null;
