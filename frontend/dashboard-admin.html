@@ -24,6 +24,7 @@
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+html, body { background: var(--bg) !important; color: var(--text) !important; }
 body { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* Topbar */
@@ -61,7 +62,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-main { display: flex; flex: 1; }
 .adm-sidebar {
   width: 220px; flex-shrink: 0; padding: 20px 12px;
-  background: var(--surface); border-right: 1px solid var(--border2);
+  background: #06111f; border-right: 1px solid rgba(255,255,255,.06);
   display: flex; flex-direction: column; gap: 4px;
 }
 .adm-nav-label { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); padding: 12px 10px 6px; }
@@ -114,7 +115,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* Cards */
 .adm-card {
-  background: var(--surface); border: 1px solid var(--border2);
+  background: #0a1828; border: 1px solid rgba(0,121,193,.12);
   border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
 }
 .adm-card-head {
@@ -130,8 +131,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-label { font-size: 11.5px; font-weight: 600; color: var(--muted); }
 .adm-input {
   padding: 10px 14px; border-radius: 10px; font-size: 13px;
-  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
-  color: var(--text); transition: all .15s; outline: none;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  color: #edf2f8; transition: all .15s; outline: none;
   font-family: inherit;
 }
 .adm-input:focus { border-color: var(--accent); background: rgba(0,121,193,.07); }
@@ -209,7 +210,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   padding: 20px; border-bottom: 1px solid var(--border2);
   display: flex; align-items: center; gap: 12px;
 }
-.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; background: #06111f; color: #edf2f8; }
 .adm-user-avatar {
   width: 44px; height: 44px; border-radius: 12px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -223,7 +224,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-close-btn:hover { color: #fff; }
 .adm-detail-section { margin-bottom: 20px; }
 .adm-detail-section-title { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 10px; }
-.adm-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: 13px; }
+.adm-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; color: #edf2f8; }
 .adm-detail-row:last-child { border-bottom: none; }
 .adm-detail-key { color: var(--muted); }
 .adm-detail-val { font-weight: 600; text-align: right; }
@@ -232,8 +233,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 /* Textarea */
 .adm-textarea {
   width: 100%; padding: 10px 14px; border-radius: 10px; font-size: 13px; min-height: 100px;
-  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
-  color: var(--text); resize: vertical; font-family: inherit; outline: none;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  color: #edf2f8; resize: vertical; font-family: inherit; outline: none;
 }
 .adm-textarea:focus { border-color: var(--accent); }
 
@@ -935,16 +936,29 @@ el('createUserBtn').onclick = async () => {
 async function loadExpert() {
   try {
     const data = await apiFetch('/expert/all');
-    const missions = Array.isArray(data) ? data : (data.missions || []);
+    const missions = Array.isArray(data) ? data : (data.requests || data.missions || []);
     if (!missions.length) { el('expertList').innerHTML = '<p style="color:var(--muted)">Aucune relecture en attente.</p>'; return; }
     el('expertList').innerHTML = missions.map(m => `
-      <div style="border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong>${esc(m.usecase_label||m.usecase||'Mission')}</strong>
-          <span style="font-size:11px;color:var(--muted)">${fmtDate(m.created_at)}</span>
+      <div style="border:1px solid rgba(0,121,193,.15);border-radius:14px;padding:18px;margin-bottom:14px;background:#0a1828">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
+          <div>
+            <div style="font-weight:700;color:#edf2f8;font-size:14px">${esc(m.full_name||m.email||'—')}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">${esc(m.email||m.user_email||'')}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+            <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)">${esc(m.status||'new').toUpperCase()}</span>
+            <span style="font-size:11px;color:rgba(255,255,255,.4)">${fmtDate(m.created_at)}</span>
+          </div>
         </div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:10px;white-space:pre-wrap">${esc((m.result_text||'').substring(0,200))}…</p>
-        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="startReply('${esc(m.id)}')">Répondre</button>
+        <div style="margin-bottom:8px">
+          <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase">Objectif</span>
+          <p style="font-size:13px;color:rgba(255,255,255,.75);margin:4px 0 0;line-height:1.5">${esc((m.objective||'—').substring(0,180))}${m.objective&&m.objective.length>180?'…':''}</p>
+        </div>
+        <div style="margin-bottom:14px">
+          <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase">Attentes</span>
+          <p style="font-size:13px;color:rgba(255,255,255,.65);margin:4px 0 0;line-height:1.5">${esc((m.expectations||'—').substring(0,200))}${m.expectations&&m.expectations.length>200?'…':''}</p>
+        </div>
+        <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply('${esc(m.id)}')">✍️ Répondre</button>
       </div>
     `).join('');
   } catch(e) { el('expertList').innerHTML = '<p style="color:var(--red)">Erreur: '+esc(getApiMessage(e))+'</p>'; }
@@ -962,7 +976,7 @@ window.startReply = (id) => {
 el('expertSendBtn').onclick = async () => {
   if (!currentMissionId) return;
   try {
-    await apiFetch('/expert/', { method:'POST', body:{ missionId:currentMissionId, expertText:el('expertReply').value.trim() } });
+    await apiFetch(`/expert/${currentMissionId}/reply`, { method:'POST', body:{ reply_text: el('expertReply').value.trim() } });
     showToast('Réponse envoyée', 'ok');
     el('expertReplyBox').hidden = true;
     await loadExpert();
