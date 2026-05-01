@@ -1056,7 +1056,14 @@ el('panelSaveRole').onclick = async () => {
   const role = el('panelRole').value;
   if (role === 'admin' && !confirm('Accorder les droits administrateur ? Cette action est irréversible sans accès direct à la base.')) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ user:{ role, email: selectedUser.email, accountSpace: selectedUser.account_space || 'public' } } });
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ user:{
+      role,
+      email:        selectedUser.email,
+      fullName:     selectedUser.full_name    || null,
+      organization: selectedUser.organization || null,
+      phoneFull:    selectedUser.phone_full   || null,
+      accountSpace: selectedUser.account_space || 'public'
+    } } });
     showToast('Rôle mis à jour', 'ok');
     el('panelMsg').textContent = '✓ Rôle : ' + role;
     el('panelMsg').className = 'adm-msg ok';
@@ -1188,7 +1195,7 @@ el('expertSendBtn').onclick = async () => {
 };
 
 el('expertCancelBtn').onclick = () => { el('expertReplyBox').hidden = true; currentMissionId = null; };
-el('refreshExpertBtn').onclick = loadExpert;
+el('refreshExpertsBtn').onclick = loadExpert;
 
 function renderSatTable() {
   const pending = usersCache.filter(u => !u.satisfaction_mail_sent_at);
@@ -1210,8 +1217,8 @@ function renderSatTable() {
 
 async function openPortfolio(expertId, expertName) {
   selectedExpertId = expertId;
-  el('expertPortfolioTitle').textContent = '📋 Portefeuille de ' + expertName;
-  el('expertPortfolioCard').hidden = false;
+  el('portfolioExpertName').textContent = '📋 Portefeuille de ' + expertName;
+  el('portfolioCard').hidden = false;
   el('expertRequestsCard').hidden = false;
   el('expertRequestsTitle').textContent = '✍️ Relectures de ' + expertName;
   // Peupler le select de clients
@@ -1228,7 +1235,7 @@ async function loadPortfolioClients(expertId) {
   try {
     const data = await apiFetch(`/admin/expert-assignments/${expertId}`);
     const clients = data.clients || [];
-    const container = el('portfolioClientsList');
+    const container = el('portfolioBody');
     if (!clients.length) { container.innerHTML = '<p style="color:var(--muted)">Aucun client assigné à cet expert.</p>'; return; }
     container.innerHTML = '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Client</th><th>Email</th><th>Assigné le</th><th></th></tr></thead><tbody>' +
       clients.map(c => `<tr>
@@ -1237,7 +1244,7 @@ async function loadPortfolioClients(expertId) {
         <td style="font-size:12px;color:var(--muted)">${fmtDate(c.assigned_at)}</td>
         <td><button class="adm-btn adm-btn-danger adm-btn-xs" onclick="unassignClient('${expertId}','${esc(c.client_id)}')">Retirer</button></td>
       </tr>`).join('') + '</tbody></table></div>';
-  } catch(e) { el('portfolioClientsList').innerHTML = '<p style="color:var(--red)">Erreur chargement</p>'; }
+  } catch(e) { el('portfolioBody').innerHTML = '<p style="color:var(--red)">Erreur chargement</p>'; }
 }
 
 async function loadExpertRequests(expertId) {
@@ -1270,21 +1277,25 @@ window.unassignClient = async (expertId, clientId) => {
   } catch(e) { showToast(getApiMessage(e), 'err'); }
 };
 
-el('assignClientBtn').onclick = async () => {
+el('btnAssignExpert').onclick = async () => {
+  const expertId = el('assignExpertSelect').value;
   const clientId = el('assignClientSelect').value;
-  if (!clientId || !selectedExpertId) return;
+  const msg = el('assignMsg');
+  if (!expertId) { msg.textContent = 'Sélectionnez un expert.'; msg.className = 'adm-msg err'; return; }
+  if (!clientId) { msg.textContent = 'Sélectionnez un client.'; msg.className = 'adm-msg err'; return; }
   try {
-    await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId: selectedExpertId, clientId } });
-    showToast('Client assigné', 'ok');
-    el('assignMsg').textContent = '✓ Client assigné au portefeuille';
-    el('assignMsg').className = 'adm-msg ok';
-    await loadPortfolioClients(selectedExpertId);
+    await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId, clientId } });
+    showToast('Client assigné avec succès', 'ok');
+    msg.textContent = '✓ Client assigné au portefeuille expert';
+    msg.className = 'adm-msg ok';
+    el('assignExpertSelect').value = '';
+    el('assignClientSelect').value = '';
     await loadExperts();
-  } catch(e) { el('assignMsg').textContent = getApiMessage(e); el('assignMsg').className = 'adm-msg err'; }
+  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'adm-msg err'; }
 };
 
-el('closePortfolioBtn').onclick = () => {
-  el('expertPortfolioCard').hidden = true;
+el('portfolioCloseBtn').onclick = () => {
+  el('portfolioCard').hidden = true;
   el('expertRequestsCard').hidden = true;
   selectedExpertId = null;
 };
