@@ -371,6 +371,69 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   .adm-kpi-value { font-size: 20px; }
   .adm-bar-btn { padding: 5px 8px; font-size: 11px; }
   .adm-login { margin: 20px 12px; padding: 24px 16px; border-radius: 18px; }
+
+  /* Panneau utilisateur plein écran sur très petit mobile */
+  .adm-user-panel { width: 100vw; }
+  .adm-user-panel-head { padding: 14px; }
+
+  /* Cacher les colonnes secondaires du tableau clients sur très petit écran */
+  .adm-table th:nth-child(3),
+  .adm-table td:nth-child(3),
+  .adm-table th:nth-child(4),
+  .adm-table td:nth-child(4) { display: none; }
+
+  /* Tabs panel utilisateur : 3 items, texte plus petit */
+  .adm-tab { font-size: 10px; padding: 6px 2px; }
+
+  /* Form assign expert : empiler les selects */
+  .adm-form-grid { grid-template-columns: 1fr; }
+
+  /* Boutons expert/assign pleine largeur */
+  #btnAssignExpert,
+  #expertTabAssignBtn { width: 100%; justify-content: center; margin-top: 6px; }
+
+  /* Expert tab : select + bouton en colonne */
+  #expertPortfolioCard .adm-card-body > div > div[style*="flex"] {
+    flex-direction: column;
+  }
+}
+
+/* ── Correctifs additionnels responsive 900px ─────────── */
+@media(max-width: 900px) {
+  /* Panneau user : s'assure qu'il prend toute la hauteur depuis le haut */
+  .adm-user-panel { top: 0; height: 100dvh; overflow-y: auto; }
+
+  /* Header du panneau user : sticky */
+  .adm-user-panel-head {
+    position: sticky; top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    z-index: 10;
+  }
+
+  /* Overlay derrière le panneau user */
+  .adm-overlay { z-index: 150; }
+  .adm-user-panel { z-index: 200; }
+
+  /* KPI sub-label : masquer pour gagner de la place */
+  .adm-kpi-sub { display: none; }
+
+  /* Action buttons panel : toujours pleine largeur */
+  #ptabActions .adm-btn { width: 100% !important; justify-content: center; }
+  #ptabActions .adm-detail-section > div[style*="flex"] { flex-wrap: wrap; }
+
+  /* Tables experts : colonnes moins larges */
+  #expertsTableBody .adm-btn { padding: 3px 7px; font-size: 10px; }
+
+  /* Hero : pas de padding excessif */
+  .adm-hero { padding: 14px; margin-bottom: 14px !important; }
+
+  /* Filtres recherche */
+  .adm-filters { gap: 8px; }
+  .adm-filters select { width: 100%; }
+
+  /* Login centré */
+  .adm-login { margin: 40px 16px; }
 }
 </style>
 </head>
@@ -439,9 +502,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <button class="adm-nav-item" data-tab="satisfaction">
         <span class="adm-nav-icon">📊</span> Satisfaction
       </button>
-      <button class="adm-nav-item" data-tab="experts">
-        <span class="adm-nav-icon">🎓</span> Experts
-      </button>
+
     </nav>
 
     <!-- Content -->
@@ -612,36 +673,23 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </div>
 
       <!-- ════ ONGLET EXPERTS ════ -->
+
       <div id="tabExperts" hidden>
+        <!-- Hero -->
         <div class="adm-hero" style="margin-bottom:20px">
           <div class="adm-hero-header">
             <div>
-              <div class="adm-hero-title">🎓 Gestion des experts</div>
-              <div class="adm-hero-sub">Portefeuilles clients, relectures en cours et assignations</div>
+              <div class="adm-hero-title">🎓 Experts & Portefeuilles</div>
+              <div class="adm-hero-sub">Gestion des conseillers experts et de leurs clients assignés</div>
             </div>
             <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertsBtn">🔄 Actualiser</button>
           </div>
         </div>
 
-        <!-- Liste des experts -->
-        <div class="adm-card">
+        <!-- Formulaire d'assignation rapide -->
+        <div class="adm-card" style="margin-bottom:20px">
           <div class="adm-card-head">
-            <div class="adm-card-title">Comptes experts actifs</div>
-          </div>
-          <div class="adm-table-wrap">
-            <table class="adm-table">
-              <thead><tr><th>Expert</th><th>Email</th><th>Clients assignés</th><th>Relectures en attente</th><th>Actions</th></tr></thead>
-              <tbody id="expertsTableBody">
-                <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Chargement…</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Assignation client → expert -->
-        <div class="adm-card">
-          <div class="adm-card-head">
-            <div class="adm-card-title">Assigner un client à un expert</div>
+            <div class="adm-card-title">➕ Assigner un client à un expert</div>
           </div>
           <div class="adm-card-body">
             <div class="adm-form-grid">
@@ -658,43 +706,17 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
                 </select>
               </div>
             </div>
-            <div style="margin-top:14px;display:flex;gap:10px">
+            <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
               <button class="adm-btn adm-btn-primary" id="btnAssignExpert">Assigner</button>
+              <div class="adm-msg" id="assignMsg" style="margin:0"></div>
             </div>
-            <div class="adm-msg" id="assignMsg"></div>
           </div>
         </div>
 
-        <!-- Portefeuille de l'expert sélectionné -->
-        <div class="adm-card" id="portfolioCard" hidden>
-          <div class="adm-card-head">
-            <div class="adm-card-title">📋 Portefeuille de <span id="portfolioExpertName">—</span></div>
-            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="portfolioCloseBtn">Fermer</button>
-          </div>
-          <div class="adm-table-wrap">
-            <table class="adm-table">
-              <thead><tr><th>Client</th><th>Email</th><th>En attente</th><th>Traités</th><th>Assigné le</th><th>Action</th></tr></thead>
-              <tbody id="portfolioBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════ ONGLET EXPERTS & PORTEFEUILLES ════ -->
-      <div id="tabExperts" hidden>
-        <div class="adm-hero" style="margin-bottom:20px">
-          <div class="adm-hero-header">
-            <div>
-              <div class="adm-hero-title">🎓 Experts & Portefeuilles</div>
-              <div class="adm-hero-sub">Gestion des conseillers experts et de leurs clients assignés</div>
-            </div>
-            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertsBtn">🔄 Actualiser</button>
-          </div>
-        </div>
         <!-- Liste des experts -->
         <div class="adm-card" style="margin-bottom:20px">
           <div class="adm-card-head">
-            <div class="adm-card-title">Conseillers experts</div>
+            <div class="adm-card-title">Conseillers experts actifs</div>
             <div style="font-size:12px;color:var(--muted)">Comptes avec rôle "expert"</div>
           </div>
           <div class="adm-table-wrap">
@@ -702,45 +724,46 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
               <thead>
                 <tr>
                   <th>Expert</th>
-                  <th>Organisation</th>
-                  <th>Clients en portefeuille</th>
+                  <th>Email</th>
+                  <th>Clients assignés</th>
+                  <th>Relectures en attente</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="expertsTableBody">
-                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Chargement…</td></tr>
+                <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Chargement…</td></tr>
               </tbody>
             </table>
           </div>
         </div>
+
         <!-- Portefeuille de l'expert sélectionné -->
-        <div class="adm-card" id="expertPortfolioCard" hidden>
+        <div class="adm-card" id="expertPortfolioCard" hidden style="margin-bottom:20px">
           <div class="adm-card-head">
-            <div class="adm-card-title" id="expertPortfolioTitle">Portefeuille</div>
+            <div class="adm-card-title" id="expertPortfolioTitle">📋 Portefeuille</div>
             <button class="adm-btn adm-btn-ghost adm-btn-sm" id="closePortfolioBtn">✕ Fermer</button>
           </div>
           <div class="adm-card-body">
-            <!-- Assigner un client -->
             <div style="margin-bottom:20px;padding:16px;background:rgba(0,121,193,.06);border:1px solid rgba(0,121,193,.15);border-radius:12px">
-              <div style="font-size:12px;font-weight:700;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">Assigner un client</div>
-              <div style="display:flex;gap:8px">
-                <select class="adm-input adm-select" id="expertTabClientSelect" style="flex:1">
+              <div style="font-size:12px;font-weight:700;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">Assigner un client supplémentaire</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <select class="adm-input adm-select" id="expertTabClientSelect" style="flex:1;min-width:180px">
                   <option value="">— Sélectionner un client —</option>
                 </select>
                 <button class="adm-btn adm-btn-primary adm-btn-sm" id="expertTabAssignBtn">Assigner</button>
               </div>
               <div class="adm-msg" id="expertTabAssignMsg"></div>
             </div>
-            <!-- Liste des clients assignés -->
             <div id="portfolioClientsList">
-              <p style="color:var(--muted)">Aucun client assigné.</p>
+              <p style="color:var(--muted);text-align:center;padding:16px">Aucun client assigné.</p>
             </div>
           </div>
         </div>
+
         <!-- Relectures de l'expert sélectionné -->
         <div class="adm-card" id="expertRequestsCard" hidden>
           <div class="adm-card-head">
-            <div class="adm-card-title" id="expertRequestsTitle">Relectures en cours</div>
+            <div class="adm-card-title" id="expertRequestsTitle">✍️ Relectures en cours</div>
           </div>
           <div class="adm-table-wrap">
             <table class="adm-table">
@@ -1288,61 +1311,152 @@ function renderSatTable() {
   `).join('');
 }
 
-// ═══ EXPERTS & PORTEFEUILLES ═══
+// ══════════════════════════════════════════════════════════════
+// EXPERTS & PORTEFEUILLES — bloc unique
+// ══════════════════════════════════════════════════════════════
 
-async function openPortfolio(expertId, expertName) {
-  selectedExpertId = expertId;
-  el('portfolioExpertName').textContent = '📋 Portefeuille de ' + expertName;
-  el('portfolioCard').hidden = false;
-  el('expertRequestsCard').hidden = false;
-  el('expertRequestsTitle').textContent = '✍️ Relectures de ' + expertName;
-  // Peupler le select de clients
-  const select = el('assignClientSelect');
-  select.innerHTML = '<option value="">— Sélectionner un client —</option>' +
-    usersCache.filter(u => u.role !== 'admin' && u.role !== 'expert').map(u =>
-      `<option value="${esc(u.id)}">${esc(u.full_name||u.email)}</option>`
-    ).join('');
-  await loadPortfolioClients(expertId);
-  await loadExpertRequests(expertId);
+let expertsCache    = [];
+let currentExpertId = null; // expert dont le portefeuille est ouvert
+
+// ── Charger la liste experts + peupler les deux selects ──────
+async function loadExperts() {
+  try {
+    if (!usersCache.length) await loadUsers();
+    const data = await apiFetch('/admin/experts');
+    expertsCache = data.experts || [];
+    renderExpertsTable();
+
+    // Select "Expert" (formulaire d'assignation rapide)
+    const selExp = el('assignExpertSelect');
+    if (selExp) {
+      selExp.innerHTML = '<option value="">Sélectionner un expert…</option>' +
+        expertsCache.map(e => `<option value="${esc(e.id)}">${esc(e.full_name||e.email)}</option>`).join('');
+    }
+
+    // Select "Client" (formulaire d'assignation rapide) — exclure admins
+    const selCli = el('assignClientSelect');
+    if (selCli) {
+      selCli.innerHTML = '<option value="">Sélectionner un client…</option>' +
+        usersCache
+          .filter(u => u.role !== 'admin')
+          .map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)} (${esc(u.email)})</option>`)
+          .join('');
+    }
+
+    // Select "Client" dans le panneau portefeuille — exclure admins
+    const selCliTab = el('expertTabClientSelect');
+    if (selCliTab) {
+      selCliTab.innerHTML = '<option value="">— Sélectionner un client —</option>' +
+        usersCache
+          .filter(u => u.role !== 'admin')
+          .map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)}</option>`)
+          .join('');
+    }
+  } catch(e) { showToast('Erreur chargement experts : ' + getApiMessage(e), 'err'); }
 }
 
+// ── Rendu du tableau des experts ─────────────────────────────
+function renderExpertsTable() {
+  const tbody = el('expertsTableBody');
+  if (!tbody) return;
+  if (!expertsCache.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Aucun compte expert. Attribuez le rôle "Expert" à un utilisateur via le panneau Actions.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = expertsCache.map(exp => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">
+            ${esc((exp.full_name||exp.email||'?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase())}
+          </div>
+          <div>
+            <div style="font-weight:700">${esc(exp.full_name||'—')}</div>
+            <div style="font-size:11px;color:var(--muted)">${esc(exp.organization||'')}</div>
+          </div>
+        </div>
+      </td>
+      <td style="color:var(--muted);font-size:12px">${esc(exp.email)}</td>
+      <td><span style="font-weight:700;color:var(--accent2)">${exp.portfolio_count||0}</span> client${exp.portfolio_count!=1?'s':''}</td>
+      <td><span style="font-weight:700;color:var(--yellow)">—</span></td>
+      <td>
+        <button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="openExpertPortfolio('${esc(exp.id)}','${esc(exp.full_name||exp.email)}')">📋 Portefeuille</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── Ouvrir le portefeuille d'un expert ───────────────────────
+window.openExpertPortfolio = async (expertId, expertName) => {
+  currentExpertId = expertId;
+  const card  = el('expertPortfolioCard');
+  const title = el('expertPortfolioTitle');
+  const reqCard = el('expertRequestsCard');
+  const reqTitle = el('expertRequestsTitle');
+  if (title)  title.textContent  = '📋 Portefeuille de ' + expertName;
+  if (reqTitle) reqTitle.textContent = '✍️ Relectures de ' + expertName;
+  if (card)   card.hidden  = false;
+  if (reqCard) reqCard.hidden = false;
+  // Scroll vers le portefeuille
+  if (card) card.scrollIntoView({ behavior:'smooth', block:'start' });
+  await loadPortfolioClients(expertId);
+  await loadExpertRequests(expertId);
+};
+
+// ── Charger et afficher les clients du portefeuille ──────────
 async function loadPortfolioClients(expertId) {
+  const container = el('portfolioClientsList');
+  if (!container) return;
+  container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:16px">Chargement…</p>';
   try {
     const data = await apiFetch(`/admin/expert-assignments/${expertId}`);
     const clients = data.clients || [];
-    const container = el('portfolioBody');
-    if (!clients.length) { container.innerHTML = '<p style="color:var(--muted)">Aucun client assigné à cet expert.</p>'; return; }
-    container.innerHTML = '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Client</th><th>Email</th><th>Assigné le</th><th></th></tr></thead><tbody>' +
+    if (!clients.length) {
+      container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:16px">Aucun client assigné à cet expert.</p>';
+      return;
+    }
+    container.innerHTML =
+      '<div class="adm-table-wrap"><table class="adm-table">' +
+      '<thead><tr><th>Client</th><th>Email</th><th>En attente</th><th>Traités</th><th>Assigné le</th><th></th></tr></thead><tbody>' +
       clients.map(c => `<tr>
         <td><strong>${esc(c.full_name||'—')}</strong></td>
         <td style="font-size:12px;color:var(--muted)">${esc(c.email)}</td>
+        <td style="text-align:center"><span style="font-weight:700;color:var(--yellow)">${c.pending_count||0}</span></td>
+        <td style="text-align:center"><span style="font-weight:700;color:var(--green)">${c.done_count||0}</span></td>
         <td style="font-size:12px;color:var(--muted)">${fmtDate(c.assigned_at)}</td>
-        <td><button class="adm-btn adm-btn-danger adm-btn-xs" onclick="unassignClient('${expertId}','${esc(c.client_id)}')">Retirer</button></td>
-      </tr>`).join('') + '</tbody></table></div>';
-  } catch(e) { el('portfolioBody').innerHTML = '<p style="color:var(--red)">Erreur chargement</p>'; }
+        <td><button class="adm-btn adm-btn-danger adm-btn-xs" onclick="unassignExpertClient('${esc(expertId)}','${esc(c.id)}')">Retirer</button></td>
+      </tr>`).join('') +
+      '</tbody></table></div>';
+  } catch(e) {
+    if (container) container.innerHTML = '<p style="color:var(--red);text-align:center;padding:16px">Erreur chargement : ' + esc(getApiMessage(e)) + '</p>';
+  }
 }
 
+// ── Charger les relectures de l'expert ───────────────────────
 async function loadExpertRequests(expertId) {
+  const tbody = el('expertRequestsBody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Chargement…</td></tr>';
   try {
-    const tbody = el('expertRequestsBody');
-    // Filtrer les relectures de cet expert depuis usersCache ou via API
-    const expertUser = usersCache.find(u => u.id === expertId);
-    // Pour l'instant, charger depuis /expert/all et filtrer
     const data = await apiFetch('/expert/all');
-    const reqs = (data.requests || []);
-    // Afficher toutes les relectures (filtrage expert_id pas encore disponible)
-    if (!reqs.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Aucune relecture</td></tr>'; return; }
-    tbody.innerHTML = reqs.slice(0,20).map(r => `<tr>
+    const reqs = data.requests || [];
+    if (!reqs.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Aucune relecture</td></tr>';
+      return;
+    }
+    tbody.innerHTML = reqs.slice(0,30).map(r => `<tr>
       <td style="font-size:13px">${esc(r.full_name||r.email||'—')}</td>
-      <td style="font-size:12px;color:var(--muted)">${esc((r.objective||'').substring(0,60))}…</td>
-      <td><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)">${esc(r.status||'new').toUpperCase()}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${esc((r.objective||'').substring(0,60))}${r.objective&&r.objective.length>60?'…':''}</td>
+      <td><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)">${esc((r.status||'new').toUpperCase())}</span></td>
       <td style="font-size:12px;color:var(--muted)">${fmtDate(r.created_at)}</td>
     </tr>`).join('');
-  } catch(e) {}
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red);padding:16px">Erreur</td></tr>';
+  }
 }
 
-window.openPortfolio = openPortfolio;
-window.unassignClient = async (expertId, clientId) => {
+// ── Retirer un client du portefeuille (depuis le panneau) ─────
+window.unassignExpertClient = async (expertId, clientId) => {
   if (!confirm('Retirer ce client du portefeuille ?')) return;
   try {
     await apiFetch('/admin/expert-assignments', { method:'DELETE', body:{ expertId, clientId } });
@@ -1352,45 +1466,50 @@ window.unassignClient = async (expertId, clientId) => {
   } catch(e) { showToast(getApiMessage(e), 'err'); }
 };
 
+// ── Assigner via le formulaire rapide (Expert + Client selects) ─
 el('btnAssignExpert').onclick = async () => {
   const expertId = el('assignExpertSelect').value;
   const clientId = el('assignClientSelect').value;
-  const msg = el('assignMsg');
-  if (!expertId) { msg.textContent = 'Sélectionnez un expert.'; msg.className = 'adm-msg err'; return; }
-  if (!clientId) { msg.textContent = 'Sélectionnez un client.'; msg.className = 'adm-msg err'; return; }
+  const msg      = el('assignMsg');
+  if (!expertId) { msg.textContent = 'Sélectionnez un expert.';  msg.className = 'adm-msg err'; return; }
+  if (!clientId) { msg.textContent = 'Sélectionnez un client.';  msg.className = 'adm-msg err'; return; }
   try {
     await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId, clientId } });
-    showToast('Client assigné avec succès', 'ok');
-    msg.textContent = '✓ Client assigné au portefeuille expert';
-    msg.className = 'adm-msg ok';
+    msg.textContent = '✓ Client assigné avec succès.'; msg.className = 'adm-msg ok';
+    showToast('Assignation effectuée', 'ok');
     el('assignExpertSelect').value = '';
     el('assignClientSelect').value = '';
+    await loadExperts();
+    // Si le portefeuille de cet expert est ouvert, le rafraîchir
+    if (currentExpertId === expertId) await loadPortfolioClients(expertId);
+  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'adm-msg err'; }
+};
+
+// ── Assigner depuis le panneau portefeuille ───────────────────
+el('expertTabAssignBtn').onclick = async () => {
+  const clientId = el('expertTabClientSelect').value;
+  const msg      = el('expertTabAssignMsg');
+  if (!currentExpertId) { msg.textContent = 'Aucun expert sélectionné.'; msg.className = 'adm-msg err'; return; }
+  if (!clientId) { msg.textContent = 'Sélectionnez un client.'; msg.className = 'adm-msg err'; return; }
+  try {
+    await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId: currentExpertId, clientId } });
+    msg.textContent = '✓ Client ajouté au portefeuille.'; msg.className = 'adm-msg ok';
+    showToast('Client assigné', 'ok');
+    el('expertTabClientSelect').value = '';
+    await loadPortfolioClients(currentExpertId);
     await loadExperts();
   } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'adm-msg err'; }
 };
 
-el('portfolioCloseBtn').onclick = () => {
-  el('portfolioCard').hidden = true;
-  el('expertRequestsCard').hidden = true;
-  selectedExpertId = null;
+// ── Fermer le panneau portefeuille ───────────────────────────
+el('closePortfolioBtn').onclick = () => {
+  el('expertPortfolioCard').hidden  = true;
+  el('expertRequestsCard').hidden   = true;
+  currentExpertId = null;
 };
 
 el('refreshExpertsBtn').onclick = loadExperts;
 
-// ── Navigation mobile : hamburger sidebar ──────────────────────────────────
-const hamburger = el('adminHamburger');
-const sidebar    = document.querySelector('.adm-sidebar');
-const sideOverlay = el('sidebarOverlay');
-if (hamburger && sidebar && sideOverlay) {
-  function openSidebar()  { sidebar.classList.add('open'); sideOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeSidebar() { sidebar.classList.remove('open'); sideOverlay.classList.remove('open'); document.body.style.overflow = ''; }
-  hamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-  sideOverlay.addEventListener('click', closeSidebar);
-  // Fermer la sidebar quand on clique sur un item de nav
-  sidebar.querySelectorAll('.adm-nav-item').forEach(btn => btn.addEventListener('click', closeSidebar));
-}
-
-// ═══ FIN EXPERTS ═══
 window.sendSat = async (id) => {
   try {
     await apiFetch(`/admin/users/${id}/send-satisfaction`, { method:'POST' });
@@ -1429,115 +1548,7 @@ if (getToken()) {
   loadUsers();
 }
 
-// ══ ONGLET EXPERTS ══════════════════════════════════════
 
-
-let expertsCache = [];
-let currentExpertId = null;
-
-let selectedExpertId = null;
-
-async function loadExperts() {
-  try {
-    // S'assurer que usersCache est peuplé
-    if (!usersCache.length) await loadUsers();
-    const data = await apiFetch('/admin/experts');
-    expertsCache = data.experts || [];
-    renderExpertsTable();
-    // Peupler le select expert dans le formulaire d'assignation
-    const sel = el('assignExpertSelect');
-    sel.innerHTML = '<option value="">Sélectionner un expert…</option>' +
-      expertsCache.map(e => `<option value="${esc(e.id)}">${esc(e.full_name||e.email)}</option>`).join('');
-    // Peupler le select client
-    const csel = el('assignClientSelect');
-    csel.innerHTML = '<option value="">Sélectionner un client…</option>' +
-      usersCache.filter(u => u.role !== 'admin').map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)} (${esc(u.email)})</option>`).join('');
-  } catch(e) { showToast('Erreur chargement experts: '+getApiMessage(e), 'err'); }
-}
-
-function renderExpertsTable() {
-  const tbody = el('expertsTableBody');
-  if (!expertsCache.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Aucun compte expert. Attribuez le rôle "Expert" à un utilisateur depuis le panneau Actions.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = expertsCache.map(exp => `
-    <tr>
-      <td>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${esc((exp.full_name||exp.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase())}</div>
-          <div>
-            <div style="font-weight:700">${esc(exp.full_name||'—')}</div>
-            <div style="font-size:11px;color:var(--muted)">${esc(exp.organization||'')}</div>
-          </div>
-        </div>
-      </td>
-      <td style="color:var(--muted);font-size:12px">${esc(exp.email)}</td>
-      <td><span style="font-weight:700;color:var(--accent2)">${exp.portfolio_count||0}</span> client${exp.portfolio_count!=1?'s':''}</td>
-      <td><span style="font-weight:700;color:var(--yellow)">—</span></td>
-      <td>
-        <button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="viewPortfolio('${esc(exp.id)}','${esc(exp.full_name||exp.email)}')">📋 Portefeuille</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-window.viewPortfolio = async (expertId, expertName) => {
-  currentExpertId = expertId;
-  el('portfolioExpertName').textContent = expertName;
-  el('portfolioCard').hidden = false;
-  el('portfolioBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">Chargement…</td></tr>';
-  try {
-    const data = await apiFetch(`/admin/expert-assignments/${expertId}`);
-    const clients = data.clients || [];
-    if (!clients.length) {
-      el('portfolioBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">Aucun client assigné à cet expert.</td></tr>';
-      return;
-    }
-    el('portfolioBody').innerHTML = clients.map(c => `
-      <tr>
-        <td><strong>${esc(c.full_name||'—')}</strong></td>
-        <td style="color:var(--muted);font-size:12px">${esc(c.email)}</td>
-        <td><span style="color:var(--yellow);font-weight:700">${c.pending_count||0}</span></td>
-        <td><span style="color:var(--green);font-weight:700">${c.done_count||0}</span></td>
-        <td style="color:var(--muted);font-size:12px">${fmtDate(c.assigned_at)}</td>
-        <td>
-          <button class="adm-btn adm-btn-danger adm-btn-xs" onclick="removeAssignment('${esc(expertId)}','${esc(c.id)}')">Retirer</button>
-        </td>
-      </tr>
-    `).join('');
-  } catch(e) { el('portfolioBody').innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:16px">'+esc(getApiMessage(e))+'</td></tr>'; }
-};
-
-window.removeAssignment = async (expertId, clientId) => {
-  if (!confirm('Retirer ce client du portefeuille ?')) return;
-  try {
-    await apiFetch('/admin/expert-assignments', { method:'DELETE', body:{ expertId, clientId } });
-    showToast('Client retiré du portefeuille', 'ok');
-    await viewPortfolio(expertId, el('portfolioExpertName').textContent);
-    await loadExperts();
-  } catch(e) { showToast(getApiMessage(e), 'err'); }
-};
-
-el('portfolioCloseBtn').onclick = () => { el('portfolioCard').hidden = true; currentExpertId = null; };
-
-el('btnAssignExpert').onclick = async () => {
-  const expertId = el('assignExpertSelect').value;
-  const clientId = el('assignClientSelect').value;
-  const msg = el('assignMsg');
-  if (!expertId || !clientId) { msg.textContent = 'Sélectionnez un expert et un client.'; msg.className = 'adm-msg err'; return; }
-  try {
-    await apiFetch('/admin/expert-assignments', { method:'POST', body:{ expertId, clientId } });
-    msg.textContent = '✓ Client assigné avec succès.'; msg.className = 'adm-msg ok';
-    showToast('Assignation effectuée', 'ok');
-    await loadExperts();
-    if (currentExpertId === expertId) await viewPortfolio(expertId, el('portfolioExpertName').textContent);
-  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'adm-msg err'; }
-};
-
-el('refreshExpertsBtn').onclick = loadExperts;
-
-// Sauvegarder le rôle depuis le panneau
 el('panelSaveRole').onclick = async () => {
   if (!selectedUser) return;
   const role = el('panelRole').value;
@@ -1564,6 +1575,33 @@ window.openPanel = function(id) {
   const panelRole = el('panelRole');
   if (panelRole) panelRole.value = u.role || 'client';
 };
+
+// ── Navigation mobile : hamburger sidebar ──────────────────────────────────
+(function initMobileNav() {
+  const hamburger   = el('adminHamburger');
+  const sidebar     = document.querySelector('.adm-sidebar');
+  const sideOverlay = el('sidebarOverlay');
+  if (!hamburger || !sidebar || !sideOverlay) return;
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    sideOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sideOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () =>
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar()
+  );
+  sideOverlay.addEventListener('click', closeSidebar);
+  sidebar.querySelectorAll('.adm-nav-item').forEach(btn =>
+    btn.addEventListener('click', closeSidebar)
+  );
+})();
 </script>
 </body>
 </html>
