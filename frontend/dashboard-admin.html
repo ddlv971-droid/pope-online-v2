@@ -52,7 +52,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
   border: none; cursor: pointer; transition: all .15s; text-decoration: none;
 }
-.adm-bar-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
+.adm-bar-btn-ghost { background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); }
 .adm-bar-btn-ghost:hover { background: rgba(255,255,255,.12); color: #fff; }
 .adm-bar-btn-red { background: rgba(239,68,68,.12); color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
 .adm-bar-btn-red:hover { background: rgba(239,68,68,.2); }
@@ -147,7 +147,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .adm-btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(0,121,193,.35); }
 .adm-btn-primary:hover { box-shadow: 0 6px 20px rgba(0,121,193,.5); transform: translateY(-1px); }
-.adm-btn-ghost { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border2); }
+.adm-btn-ghost { background: rgba(255,255,255,.07); color: #e8f0f8; border: 1px solid rgba(255,255,255,.12); }
 .adm-btn-ghost:hover { background: rgba(255,255,255,.12); }
 .adm-btn-danger { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); }
 .adm-btn-danger:hover { background: rgba(239,68,68,.18); }
@@ -892,7 +892,7 @@ el('panelReset').onclick = async () => {
 el('panelSendSat').onclick = async () => {
   if (!selectedUser) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}/satisfaction`, { method:'POST' });
+    await apiFetch(`/admin/users/${selectedUser.id}/send-satisfaction`, { method:'POST' });
     showToast('Enquête envoyée', 'ok');
     el('panelSatMsg').textContent = '✓ Enquête envoyée';
     el('panelSatMsg').className = 'adm-msg ok';
@@ -934,7 +934,7 @@ el('createUserBtn').onclick = async () => {
 // Expert relectures
 async function loadExpert() {
   try {
-    const data = await apiFetch('/expert/');
+    const data = await apiFetch('/expert/all');
     const missions = Array.isArray(data) ? data : (data.missions || []);
     if (!missions.length) { el('expertList').innerHTML = '<p style="color:var(--muted)">Aucune relecture en attente.</p>'; return; }
     el('expertList').innerHTML = missions.map(m => `
@@ -990,7 +990,7 @@ function renderSatTable() {
 
 window.sendSat = async (id) => {
   try {
-    await apiFetch(`/admin/users/${id}/satisfaction`, { method:'POST' });
+    await apiFetch(`/admin/users/${id}/send-satisfaction`, { method:'POST' });
     showToast('Enquête envoyée', 'ok');
     await loadUsers();
     renderSatTable();

@@ -23,7 +23,8 @@
   --pf-yellow: #f59e0b;
   --pf-radius: 18px;
 }
-body { background: var(--pf-bg); color: var(--pf-text); min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+body { background: var(--pf-bg); color: #f0f4f8; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+* { color: inherit; }
 
 /* Layout */
 .pf-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
@@ -124,15 +125,15 @@ body { background: var(--pf-bg); color: var(--pf-text); min-height: 100vh; font-
   padding: 20px 24px; margin-bottom: 20px;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-.pf-sub-plan { font-size: 22px; font-weight: 900; letter-spacing: -.04em; }
-.pf-sub-detail { font-size: 13px; color: var(--pf-muted); margin-top: 4px; }
+.pf-sub-plan { font-size: 22px; font-weight: 900; letter-spacing: -.04em; color: #fff; }
+.pf-sub-detail { font-size: 13px; color: rgba(255,255,255,.6); margin-top: 4px; }
 .pf-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
 .pf-stat {
   background: rgba(255,255,255,.03); border: 1px solid var(--pf-border2);
-  border-radius: 12px; padding: 14px 16px;
+  border-radius: 12px; padding: 14px 16px; color: #fff;
 }
-.pf-stat-label { font-size: 11px; color: var(--pf-muted); margin-bottom: 6px; font-weight: 500; }
-.pf-stat-val { font-size: 22px; font-weight: 900; letter-spacing: -.04em; }
+.pf-stat-label { font-size: 11px; color: rgba(255,255,255,.55); margin-bottom: 6px; font-weight: 500; }
+.pf-stat-val { font-size: 22px; font-weight: 900; letter-spacing: -.04em; color: #fff; }
 
 /* Paiements */
 .pf-invoice-table { width: 100%; border-collapse: collapse; font-size: 13px; }
