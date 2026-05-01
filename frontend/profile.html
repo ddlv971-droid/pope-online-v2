@@ -466,8 +466,7 @@ const el = (id) => document.getElementById(id);
 // Sync mobile nav tab bar avec la navigation de la sidebar
 
 
-// ── Navigation sections profil ───────────────────────────────────────
-// Table de correspondance clé → ID de la carte (camelCase)
+// Navigation sections profil
 const SEC_MAP = {
   infos:      'secInfos',
   abonnement: 'secAbonnement',
@@ -475,30 +474,24 @@ const SEC_MAP = {
   securite:   'secSecurite',
   donnees:    'secDonnees'
 };
-
 function navigateTo(secKey) {
-  // Sync état actif sur TOUS les boutons [data-sec] (sidebar + barre mobile)
   document.querySelectorAll('[data-sec]').forEach(b => {
     b.classList.toggle('active', b.dataset.sec === secKey);
   });
-  // Afficher la bonne carte, masquer les autres
   document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
-  const cardId = SEC_MAP[secKey];
+  var cardId = SEC_MAP[secKey];
   if (cardId) {
-    const card = document.getElementById(cardId);
+    var card = document.getElementById(cardId);
     if (card) card.classList.add('active');
   }
   if (secKey === 'paiements') loadInvoices();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// Sidebar
-document.querySelectorAll('.pf-sidebar .pf-nav-item[data-sec]').forEach(btn => {
-  btn.onclick = () => navigateTo(btn.dataset.sec);
+document.querySelectorAll('.pf-sidebar .pf-nav-item[data-sec]').forEach(function(btn) {
+  btn.onclick = function() { navigateTo(btn.dataset.sec); };
 });
-// Barre mobile
-document.querySelectorAll('#pfMobileNav [data-sec]').forEach(btn => {
-  btn.onclick = () => navigateTo(btn.dataset.sec);
+document.querySelectorAll('#pfMobileNav [data-sec]').forEach(function(btn) {
+  btn.onclick = function() { navigateTo(btn.dataset.sec); };
 });
 
 async function load() {

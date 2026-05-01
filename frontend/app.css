@@ -4496,7 +4496,7 @@ display:flex !important;
 flex-wrap:nowrap !important;
 flex-direction:row !important;
 }
-button:not(.v40-topbar-btn):not(.v40-burger):not(.v39-burger):not(.v38-burger):not(.v40-mobile-menu button),.btn{
+button:not(.v40-topbar-btn):not(.v40-burger):not(.v39-burger):not(.v38-burger):not(.v40-mobile-menu button):not(.v40-pw-eye),.btn{
 width:100%;
 }
 .consent-text{

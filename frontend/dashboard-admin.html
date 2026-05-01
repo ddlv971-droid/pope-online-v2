@@ -611,34 +611,32 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 
       <div id="tabExperts" hidden>
-        <!-- Hero -->
         <div class="adm-hero" style="margin-bottom:20px">
           <div class="adm-hero-header">
             <div>
-              <div class="adm-hero-title">🎓 Experts &amp; Portefeuilles</div>
-              <div class="adm-hero-sub">Gestion des conseillers experts et de leurs clients assignés</div>
+              <div class="adm-hero-title">&#127891; Experts &amp; Portefeuilles</div>
+              <div class="adm-hero-sub">Gestion des conseillers experts et de leurs clients assign&#233;s</div>
             </div>
-            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertsBtn">🔄 Actualiser</button>
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertsBtn">&#128260; Actualiser</button>
           </div>
         </div>
-
-        <!-- Formulaire d'assignation rapide -->
+        <!-- Formulaire assignation rapide -->
         <div class="adm-card" style="margin-bottom:20px">
           <div class="adm-card-head">
-            <div class="adm-card-title">➕ Assigner un client à un expert</div>
+            <div class="adm-card-title">&#10133; Assigner un client &#224; un expert</div>
           </div>
           <div class="adm-card-body">
             <div class="adm-form-grid">
               <div class="adm-form-group">
                 <label class="adm-label">Expert</label>
                 <select class="adm-input adm-select" id="assignExpertSelect">
-                  <option value="">Sélectionner un expert…</option>
+                  <option value="">S&#233;lectionner un expert&#8230;</option>
                 </select>
               </div>
               <div class="adm-form-group">
                 <label class="adm-label">Client</label>
                 <select class="adm-input adm-select" id="assignClientSelect">
-                  <option value="">Sélectionner un client…</option>
+                  <option value="">S&#233;lectionner un client&#8230;</option>
                 </select>
               </div>
             </div>
@@ -648,60 +646,53 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
             </div>
           </div>
         </div>
-
-        <!-- Table des experts -->
+        <!-- Table experts -->
         <div class="adm-card" style="margin-bottom:20px">
           <div class="adm-card-head">
             <div class="adm-card-title">Conseillers experts actifs</div>
-            <div style="font-size:12px;color:var(--muted)">Comptes avec rôle « expert »</div>
+            <div style="font-size:12px;color:var(--muted)">Comptes avec r&#244;le &#171;&nbsp;expert&nbsp;&#187;</div>
           </div>
           <div class="adm-table-wrap">
             <table class="adm-table">
-              <thead>
-                <tr>
-                  <th>Expert</th><th>Email</th><th>Clients assignés</th><th>Actions</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Expert</th><th>Email</th><th>Clients assign&#233;s</th><th>Actions</th></tr></thead>
               <tbody id="expertsTableBody">
-                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Chargement…</td></tr>
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Chargement&#8230;</td></tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <!-- Portefeuille de l'expert sélectionné -->
+        <!-- Panneau portefeuille -->
         <div class="adm-card" id="expertPortfolioCard" hidden style="margin-bottom:20px">
           <div class="adm-card-head">
-            <div class="adm-card-title" id="expertPortfolioTitle">📋 Portefeuille</div>
-            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="closePortfolioBtn">✕ Fermer</button>
+            <div class="adm-card-title" id="expertPortfolioTitle">&#128203; Portefeuille</div>
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="closePortfolioBtn">&#10005; Fermer</button>
           </div>
           <div class="adm-card-body">
             <div style="margin-bottom:16px;padding:14px;background:rgba(0,121,193,.06);border:1px solid rgba(0,121,193,.15);border-radius:12px">
-              <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Ajouter un client</div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Ajouter un client au portefeuille</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <select class="adm-input adm-select" id="expertTabClientSelect" style="flex:1;min-width:180px">
-                  <option value="">— Sélectionner un client —</option>
+                  <option value="">&#8212; S&#233;lectionner un client &#8212;</option>
                 </select>
                 <button class="adm-btn adm-btn-primary adm-btn-sm" id="expertTabAssignBtn">Assigner</button>
               </div>
               <div class="adm-msg" id="expertTabAssignMsg"></div>
             </div>
             <div id="portfolioClientsList">
-              <p style="color:var(--muted);text-align:center;padding:16px">Aucun client assigné.</p>
+              <p style="color:var(--muted);text-align:center;padding:16px">Aucun client assign&#233;.</p>
             </div>
           </div>
         </div>
-
-        <!-- Relectures de l'expert -->
+        <!-- Relectures expert -->
         <div class="adm-card" id="expertRequestsCard" hidden>
           <div class="adm-card-head">
-            <div class="adm-card-title" id="expertRequestsTitle">✍️ Relectures en cours</div>
+            <div class="adm-card-title" id="expertRequestsTitle">&#9997;&#65039; Relectures en cours</div>
           </div>
           <div class="adm-table-wrap">
             <table class="adm-table">
               <thead><tr><th>Client</th><th>Objectif</th><th>Statut</th><th>Date</th></tr></thead>
               <tbody id="expertRequestsBody">
-                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">—</td></tr>
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">&#8212;</td></tr>
               </tbody>
             </table>
           </div>
@@ -1240,10 +1231,8 @@ function renderSatTable() {
   `).join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-// EXPERTS & PORTEFEUILLES — source unique
-// ══════════════════════════════════════════════════════════════
-let expertsCache    = [];
+// EXPERTS & PORTEFEUILLES
+let expertsCache = [];
 let currentExpertId = null;
 
 async function loadExperts() {
@@ -1253,31 +1242,21 @@ async function loadExperts() {
     expertsCache = data.experts || [];
     renderExpertsTable();
 
-    // Peupler select expert (formulaire rapide)
     const selExp = el('assignExpertSelect');
     if (selExp) {
-      selExp.innerHTML = '<option value="">Sélectionner un expert…</option>' +
-        expertsCache.map(e =>
-          `<option value="${esc(e.id)}">${esc(e.full_name||e.email)}</option>`
-        ).join('');
+      selExp.innerHTML = '<option value="">Sélectionner un expert\u2026</option>' +
+        expertsCache.map(e => `<option value="${esc(e.id)}">${esc(e.full_name||e.email)}</option>`).join('');
     }
-
-    // Peupler select client (formulaire rapide) — exclure admins
+    const clients = usersCache.filter(u => u.role !== 'admin');
     const selCli = el('assignClientSelect');
     if (selCli) {
-      selCli.innerHTML = '<option value="">Sélectionner un client…</option>' +
-        usersCache.filter(u => u.role !== 'admin')
-          .map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)} (${esc(u.email)})</option>`)
-          .join('');
+      selCli.innerHTML = '<option value="">Sélectionner un client\u2026</option>' +
+        clients.map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)} (${esc(u.email)})</option>`).join('');
     }
-
-    // Peupler select client dans le panneau portefeuille — exclure admins
     const selTab = el('expertTabClientSelect');
     if (selTab) {
-      selTab.innerHTML = '<option value="">— Sélectionner un client —</option>' +
-        usersCache.filter(u => u.role !== 'admin')
-          .map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)}</option>`)
-          .join('');
+      selTab.innerHTML = '<option value="">\u2014 Sélectionner un client \u2014</option>' +
+        clients.map(u => `<option value="${esc(u.id)}">${esc(u.full_name||u.email)}</option>`).join('');
     }
   } catch(e) {
     showToast('Erreur chargement experts : ' + getApiMessage(e), 'err');
@@ -1288,44 +1267,33 @@ function renderExpertsTable() {
   const tbody = el('expertsTableBody');
   if (!tbody) return;
   if (!expertsCache.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Aucun compte expert. Attribuez le rôle « Expert » à un utilisateur via le panneau Actions.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Aucun compte expert. Attribuez le rôle « Expert » via le panneau Actions.</td></tr>';
     return;
   }
   tbody.innerHTML = expertsCache.map(exp => {
-    const initials = esc((exp.full_name||exp.email||'?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase());
+    const ini = esc((exp.full_name||exp.email||'?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase());
     return `<tr>
-      <td>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${initials}</div>
-          <div>
-            <div style="font-weight:700">${esc(exp.full_name||'—')}</div>
-            <div style="font-size:11px;color:var(--muted)">${esc(exp.organization||exp.email||'')}</div>
-          </div>
-        </div>
-      </td>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${ini}</div>
+        <div><div style="font-weight:700">${esc(exp.full_name||'—')}</div>
+        <div style="font-size:11px;color:var(--muted)">${esc(exp.organization||exp.email||'')}</div></div>
+      </div></td>
       <td style="color:var(--muted);font-size:12px">${esc(exp.email)}</td>
       <td><span style="font-weight:700;color:var(--accent2)">${exp.portfolio_count||0}</span> client${exp.portfolio_count!=1?'s':''}</td>
-      <td>
-        <button class="adm-btn adm-btn-ghost adm-btn-xs"
-          onclick="openExpertPortfolio('${esc(exp.id)}','${esc(exp.full_name||exp.email)}')">
-          📋 Portefeuille
-        </button>
-      </td>
+      <td><button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="openExpertPortfolio('${esc(exp.id)}','${esc(exp.full_name||exp.email)}')">📋 Portefeuille</button></td>
     </tr>`;
   }).join('');
 }
 
 window.openExpertPortfolio = async (expertId, expertName) => {
   currentExpertId = expertId;
-  const card     = el('expertPortfolioCard');
   const title    = el('expertPortfolioTitle');
-  const reqCard  = el('expertRequestsCard');
   const reqTitle = el('expertRequestsTitle');
   if (title)    title.textContent    = '📋 Portefeuille de ' + expertName;
-  if (reqTitle) reqTitle.textContent = '✍️ Relectures de ' + expertName;
-  if (card)     card.hidden    = false;
-  if (reqCard)  reqCard.hidden = false;
-  if (card)     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (reqTitle) reqTitle.textContent = '✍️ Relectures de '   + expertName;
+  el('expertPortfolioCard').hidden = false;
+  el('expertRequestsCard').hidden  = false;
+  el('expertPortfolioCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
   await loadPortfolioClients(expertId);
   await loadExpertRequests(expertId);
 };
@@ -1338,7 +1306,7 @@ async function loadPortfolioClients(expertId) {
     const data    = await apiFetch(`/admin/expert-assignments/${expertId}`);
     const clients = data.clients || [];
     if (!clients.length) {
-      container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:16px">Aucun client assigné à cet expert.</p>';
+      container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:16px">Aucun client assigné.</p>';
       return;
     }
     container.innerHTML =
@@ -1355,7 +1323,7 @@ async function loadPortfolioClients(expertId) {
       </tr>`).join('') +
       '</tbody></table></div>';
   } catch(e) {
-    if (container) container.innerHTML = '<p style="color:var(--red);text-align:center;padding:16px">Erreur : ' + esc(getApiMessage(e)) + '</p>';
+    if (container) container.innerHTML = '<p style="color:var(--red);text-align:center;padding:16px">Erreur : '+esc(getApiMessage(e))+'</p>';
   }
 }
 
@@ -1370,12 +1338,15 @@ async function loadExpertRequests(expertId) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Aucune relecture</td></tr>';
       return;
     }
-    tbody.innerHTML = reqs.slice(0, 30).map(r => `<tr>
-      <td style="font-size:13px">${esc(r.full_name||r.email||'—')}</td>
-      <td style="font-size:12px;color:var(--muted)">${esc((r.objective||'').substring(0,60))}${(r.objective||'').length>60?'…':''}</td>
-      <td><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)">${esc((r.status||'new').toUpperCase())}</span></td>
-      <td style="font-size:12px;color:var(--muted)">${fmtDate(r.created_at)}</td>
-    </tr>`).join('');
+    tbody.innerHTML = reqs.slice(0,30).map(r => {
+      const obj = r.objective||'';
+      return `<tr>
+        <td style="font-size:13px">${esc(r.full_name||r.email||'—')}</td>
+        <td style="font-size:12px;color:var(--muted)">${esc(obj.substring(0,60))}${obj.length>60?'…':''}</td>
+        <td><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)">${esc((r.status||'new').toUpperCase())}</span></td>
+        <td style="font-size:12px;color:var(--muted)">${fmtDate(r.created_at)}</td>
+      </tr>`;
+    }).join('');
   } catch(e) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red);padding:16px">Erreur</td></tr>';
   }
@@ -1391,7 +1362,6 @@ window.unassignExpertClient = async (expertId, clientId) => {
   } catch(e) { showToast(getApiMessage(e), 'err'); }
 };
 
-// Bouton "Assigner" formulaire rapide
 el('btnAssignExpert').onclick = async () => {
   const expertId = el('assignExpertSelect').value;
   const clientId = el('assignClientSelect').value;
@@ -1409,7 +1379,6 @@ el('btnAssignExpert').onclick = async () => {
   } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'adm-msg err'; }
 };
 
-// Bouton "Assigner" dans le panneau portefeuille
 el('expertTabAssignBtn').onclick = async () => {
   const clientId = el('expertTabClientSelect').value;
   const msg      = el('expertTabAssignMsg');
@@ -1433,7 +1402,8 @@ el('closePortfolioBtn').onclick = () => {
 
 el('refreshExpertsBtn').onclick = loadExperts;
 
-// Sauvegarder le rôle// Sauvegarder le rôle depuis le panneau
+// Sauvegarder le rôle
+ depuis le panneau
 el('panelSaveRole').onclick = async () => {
   if (!selectedUser) return;
   const role = el('panelRole').value;
@@ -1461,30 +1431,61 @@ window.openPanel = function(id) {
   if (panelRole) panelRole.value = u.role || 'client';
 };
 
-// ── Navigation mobile : hamburger sidebar ──────────────────────────────────
-(function initMobileNav() {
-  const hamburger   = document.getElementById('adminHamburger');
-  const sidebar     = document.querySelector('.adm-sidebar');
-  const sideOverlay = document.getElementById('sidebarOverlay');
-  if (!hamburger || !sidebar || !sideOverlay) return;
+// Login administrateur
+el('adminLoginBtn').addEventListener('click', async () => {
+  const btn = el('adminLoginBtn');
+  const msg = el('adminLoginMsg');
+  btn.disabled = true;
+  btn.textContent = 'Connexion…';
+  msg.textContent = '';
+  try {
+    const token = (typeof getTurnstileToken === 'function') ? getTurnstileToken() : '';
+    const data = await apiFetch('/auth/admin-login', {
+      method: 'POST',
+      body: { identifier: el('adminIdentifier').value, password: el('adminPassword').value, turnstileToken: token }
+    });
+    setSession(data.user || {}, data.token || '');
+    el('adminLoginArea').hidden = true;
+    el('adminBar').hidden = false;
+    el('adminApp').hidden = false;
+    el('adminApp').style.display = 'flex';
+    await loadUsers();
+  } catch(e) {
+    const code = (typeof getApiMessage === 'function') ? getApiMessage(e) : (e.message || 'error');
+    const MSGS = {
+      invalid_credentials: 'Email ou mot de passe incorrect.',
+      bot_protection_failed: 'Vérification anti-bot échouée — actualisez et réessayez.',
+      too_many_requests: 'Trop de tentatives. Attendez quelques minutes.'
+    };
+    msg.textContent = MSGS[code] || ('Erreur : ' + code);
+    msg.className = 'adm-msg err';
+    if (typeof resetTurnstile === 'function') resetTurnstile();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Se connecter';
+  }
+});
 
-  function openSidebar() {
-    sidebar.classList.add('open');
-    sideOverlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeSidebar() {
-    sidebar.classList.remove('open');
-    sideOverlay.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  hamburger.addEventListener('click', () =>
-    sidebar.classList.contains('open') ? closeSidebar() : openSidebar()
-  );
-  sideOverlay.addEventListener('click', closeSidebar);
-  sidebar.querySelectorAll('.adm-nav-item').forEach(btn =>
-    btn.addEventListener('click', closeSidebar)
-  );
+// Auto-login si token valide
+if (getToken()) {
+  el('adminLoginArea').hidden = true;
+  el('adminBar').hidden = false;
+  el('adminApp').hidden = false;
+  el('adminApp').style.display = 'flex';
+  loadUsers();
+}
+
+// Navigation mobile hamburger
+(function() {
+  var hamburger   = document.getElementById('adminHamburger');
+  var sidebar     = document.querySelector('.adm-sidebar');
+  var sideOverlay = document.getElementById('sidebarOverlay');
+  if (!hamburger || !sidebar || !sideOverlay) return;
+  function openSB()  { sidebar.classList.add('open'); sideOverlay.classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeSB() { sidebar.classList.remove('open'); sideOverlay.classList.remove('open'); document.body.style.overflow=''; }
+  hamburger.addEventListener('click', function() { sidebar.classList.contains('open') ? closeSB() : openSB(); });
+  sideOverlay.addEventListener('click', closeSB);
+  sidebar.querySelectorAll('.adm-nav-item').forEach(function(btn) { btn.addEventListener('click', closeSB); });
 })();
 </script>
 </body>
