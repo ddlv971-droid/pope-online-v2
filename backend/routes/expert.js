@@ -279,4 +279,43 @@ router.post('/notifications/read', requireAuth, async (req, res) => {
   }
 });
 
+
+// Route pour que l'expert envoie sa réponse (accessible avec rôle 'expert')
+router.post('/:id/expert-reply', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const replyText = String(req.body?.reply_text || '').trim();
+    const replyBy   = String(req.user?.email || '');
+    if (!replyText) return res.status(400).json({ error: 'missing_reply' });
+    if (!['expert','admin'].includes(req.user?.role)) return res.status(403).json({ error: 'forbidden' });
+
+    const result = await withClient(async (client) => {
+      const upd = await client.query(
+        `update expert_requests
+         set reply_text=$2, reply_by=$3, replied_at=now(), status='replied', updated_at=now()
+         where id=$1
+         returning user_id, email, objective`,
+        [id, replyText, replyBy]
+      );
+      if (!upd.rowCount) return { ok: false };
+      const row = upd.rows[0];
+      if (row.user_id) {
+        try {
+          await client.query(
+            `insert into notifications(user_id, kind, title, body, link)
+             values($1,'expert_replied','Votre relecture experte est prête',$2,'/dashboard.html')
+             on conflict do nothing`,
+            [row.user_id, 'Votre conseiller expert a répondu à votre demande de relecture.']
+          );
+        } catch(_) {}
+      }
+      return { ok: true, row };
+    });
+    return res.json(result);
+  } catch(e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
 export default router;
