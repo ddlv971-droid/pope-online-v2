@@ -8,6 +8,12 @@
   NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
 
 [[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
+
+[[redirects]]
   from = "/app"
   to = "/app.html"
   status = 200
