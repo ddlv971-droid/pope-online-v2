@@ -326,28 +326,131 @@
 }
 .v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; transition: transform .25s ease, opacity .25s ease; }
 
-/* Cookie (conservé tel quel) */
-.cookie-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,.5); }
-.cookie-modal {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 901;
-  background: #0d2035; border: 1px solid rgba(255,255,255,.1);
-  border-radius: 18px; padding: 24px 28px; max-width: 560px; width: calc(100% - 40px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+/* ══════════════════════════════════════════
+   COOKIE CONSENT PREMIUM — POPE Online
+══════════════════════════════════════════ */
+.ck-overlay {
+  position: fixed; inset: 0; z-index: 99990;
+  background: rgba(3,9,18,.75);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-.cookie-header { margin-bottom: 14px; }
-.cookie-badge {
-  display: inline-block; background: #0079c1; color: #fff;
-  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+.ck-panel {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 99991;
+  width: min(620px, calc(100vw - 20px));
+  background: linear-gradient(160deg, #0a1628 0%, #071020 100%);
+  border: 1px solid rgba(0,121,193,.2);
+  border-radius: 22px;
+  box-shadow:
+    0 48px 120px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.03),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  overflow: hidden;
+  animation: ckSlide .5s cubic-bezier(.16,1,.3,1);
 }
-.cookie-header h2 { margin: 0; font-size: 16px; font-weight: 700; color: #fff; }
-.cookie-content p { margin: 0 0 8px; font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.6; }
-.cookie-content label { display: flex; gap: 10px; align-items: center; font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 8px; }
-.cookie-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-.cookie-btn { padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: .15s; }
-.cookie-btn.primary { background: #0079c1; color: #fff; }
-.cookie-btn.primary:hover { background: #0088d4; }
-.cookie-btn.secondary { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); }
-.cookie-btn.secondary:hover { background: rgba(255,255,255,.16); }
+@keyframes ckSlide {
+  from { opacity:0; transform:translateX(-50%) translateY(32px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+.ck-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,180,216,.5) 40%, rgba(0,121,193,.5) 60%, transparent 100%);
+}
+.ck-head { padding: 24px 28px 0; display: flex; align-items: center; gap: 14px; }
+.ck-ico {
+  width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+  background: linear-gradient(135deg, #005fa3 0%, #00afd8 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; box-shadow: 0 8px 24px rgba(0,120,193,.45);
+}
+.ck-title-wrap { flex: 1; min-width: 0; }
+.ck-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #00b4d8; margin-bottom: 4px; }
+.ck-title { margin: 0; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -.025em; line-height: 1.2; }
+.ck-body { padding: 16px 28px 0; }
+.ck-desc { font-size: 13.5px; color: rgba(255,255,255,.48); line-height: 1.7; margin: 0 0 18px; }
+.ck-sep { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,150,200,.2), transparent); margin: 0 -28px 0; }
+/* Prefs */
+.ck-prefs-list { padding: 4px 0; }
+.ck-pref {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 13px 28px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .15s;
+}
+.ck-pref:last-child { border-bottom: none; }
+.ck-pref:hover { background: rgba(255,255,255,.02); }
+/* Toggle switch */
+.ck-sw { position: relative; width: 44px; height: 26px; flex-shrink: 0; margin-top: 1px; }
+.ck-sw input { opacity: 0; width: 0; height: 0; position: absolute; }
+.ck-sw-track {
+  position: absolute; inset: 0; cursor: pointer;
+  background: rgba(255,255,255,.1); border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.08);
+  transition: all .25s;
+}
+.ck-sw-track:before {
+  content: ''; position: absolute;
+  width: 20px; height: 20px; left: 2px; top: 2px;
+  background: rgba(255,255,255,.45); border-radius: 50%;
+  transition: all .25s; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.ck-sw input:checked ~ .ck-sw-track { background: #0079c1; border-color: #0079c1; }
+.ck-sw input:checked ~ .ck-sw-track:before { transform: translateX(18px); background: #fff; }
+.ck-sw input:disabled ~ .ck-sw-track { cursor: not-allowed; opacity: .9; }
+.ck-sw input:disabled:checked ~ .ck-sw-track { background: #00afd8; border-color: #00afd8; }
+.ck-sw input:disabled:checked ~ .ck-sw-track:before { background: #fff; }
+.ck-pref-info { flex: 1; min-width: 0; }
+.ck-pref-name {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px;
+}
+.ck-badge {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 99px;
+  color: #00b4d8; background: rgba(0,180,216,.1); border: 1px solid rgba(0,180,216,.2);
+}
+.ck-pref-desc { font-size: 12px; color: rgba(255,255,255,.38); line-height: 1.6; }
+/* Boutons */
+.ck-foot { padding: 16px 28px 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+.ck-btn {
+  flex: 1 1 0; min-width: 0;
+  padding: 12px 14px; border-radius: 12px;
+  font-size: 12.5px; font-weight: 700;
+  border: none; cursor: pointer;
+  transition: all .2s; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ck-btn-ok {
+  background: linear-gradient(135deg, #0070b8 0%, #0099d6 100%);
+  color: #fff; flex: 2 1 0;
+  box-shadow: 0 4px 18px rgba(0,112,184,.45);
+}
+.ck-btn-ok:hover { box-shadow: 0 6px 28px rgba(0,112,184,.6); transform: translateY(-1px); }
+.ck-btn-no { background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-no:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ck-btn-cfg { background: none; color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-cfg:hover { background: rgba(255,255,255,.05); color: rgba(255,255,255,.65); }
+.ck-btn-save {
+  background: linear-gradient(135deg, #0070b8 0%, #0099d6 100%);
+  color: #fff; flex: 2 1 0; box-shadow: 0 4px 18px rgba(0,112,184,.45);
+}
+.ck-btn-save:hover { box-shadow: 0 6px 28px rgba(0,112,184,.6); transform: translateY(-1px); }
+.ck-btn-back { background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-back:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ck-legal {
+  text-align: center; font-size: 11px; color: rgba(255,255,255,.2);
+  padding: 0 28px 18px; line-height: 1.65;
+}
+.ck-legal a { color: rgba(255,255,255,.35); text-decoration: underline; }
+.ck-legal a:hover { color: rgba(255,255,255,.6); }
+@media(max-width: 480px) {
+  .ck-panel { border-radius: 16px; bottom: 12px; }
+  .ck-head, .ck-body, .ck-foot, .ck-legal { padding-left: 18px; padding-right: 18px; }
+  .ck-pref { padding-left: 18px; padding-right: 18px; }
+  .ck-foot { flex-direction: column; }
+  .ck-btn { flex: none; width: 100%; }
+}
 
 @media(max-width: 860px) {
   .v39-spaces { grid-template-columns: 1fr; }
@@ -591,34 +694,90 @@
 </footer>
 
 <!-- Cookie modal conservé -->
-<div class="cookie-overlay" id="cookieOverlay" hidden></div>
-<section class="cookie-modal" id="cookieModal" hidden aria-modal="true" role="dialog">
-  <div class="cookie-header">
-    <div class="cookie-badge">POPE Online</div>
-    <h2>La protection de vos données est notre priorité</h2>
+<div class="ck-overlay" id="ckOverlay" hidden></div>
+
+<!-- Bannière principale -->
+<div class="ck-panel" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitleMain">
+  <div class="ck-glow"></div>
+  <div class="ck-head">
+    <div class="ck-ico">🍪</div>
+    <div class="ck-title-wrap">
+      <div class="ck-eyebrow">Confidentialité &amp; Données</div>
+      <h2 class="ck-title" id="ckTitleMain">Nous respectons votre vie privée</h2>
+    </div>
   </div>
-  <div class="cookie-content">
-    <p>POPE Online utilise des cookies strictement nécessaires au fonctionnement de la plateforme, à la sécurité des accès et à l'amélioration de l'expérience utilisateur.</p>
+  <div class="ck-body">
+    <p class="ck-desc">POPE Online utilise des cookies pour sécuriser votre session, mémoriser vos préférences et mesurer les performances de la plateforme. Aucune donnée n'est revendue à des tiers.</p>
   </div>
-  <div class="cookie-buttons">
-    <button id="cookieDecline" class="cookie-btn secondary" type="button">Continuer sans accepter</button>
-    <button id="cookieSettings" class="cookie-btn secondary" type="button">Paramétrer</button>
-    <button id="cookieAccept"  class="cookie-btn primary"   type="button">Tout accepter</button>
+  <div class="ck-sep"></div>
+  <div class="ck-foot">
+    <button class="ck-btn ck-btn-no"  id="ckRefuse"  type="button">Refuser</button>
+    <button class="ck-btn ck-btn-cfg" id="ckConfig"  type="button">⚙ Personnaliser</button>
+    <button class="ck-btn ck-btn-ok"  id="ckAccept"  type="button">✓ Tout accepter</button>
   </div>
-</section>
-<section class="cookie-modal" id="cookiePrefsModal" hidden aria-modal="true" role="dialog">
-  <div class="cookie-header"><div class="cookie-badge">Préférences</div><h2>Paramétrer vos cookies</h2></div>
-  <div class="cookie-content">
-    <label><input type="checkbox" checked disabled/> Cookies essentiels (obligatoires)</label>
-    <label><input type="checkbox" id="cookieAnalytics"/> Cookies analytiques</label>
-    <label><input type="checkbox" id="cookieFunctional"/> Cookies fonctionnels</label>
-    <label><input type="checkbox" id="cookieMarketing"/> Cookies marketing</label>
+  <p class="ck-legal">En continuant, vous acceptez notre <a href="privacy.html">Politique de confidentialité</a> et nos <a href="cgu.html">CGU</a>.</p>
+</div>
+
+<!-- Panneau préférences -->
+<div class="ck-panel" id="ckPrefs" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitlePrefs">
+  <div class="ck-glow"></div>
+  <div class="ck-head">
+    <div class="ck-ico">⚙️</div>
+    <div class="ck-title-wrap">
+      <div class="ck-eyebrow">Gestion des cookies</div>
+      <h2 class="ck-title" id="ckTitlePrefs">Personnaliser mes choix</h2>
+    </div>
   </div>
-  <div class="cookie-buttons">
-    <button id="cookieSavePrefs" class="cookie-btn primary"    type="button">Enregistrer</button>
-    <button id="cookieBackMain"  class="cookie-btn secondary"  type="button">Retour</button>
+  <div class="ck-sep"></div>
+  <div class="ck-prefs-list">
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" checked disabled/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Cookies essentiels <span class="ck-badge">Obligatoires</span></div>
+        <div class="ck-pref-desc">Authentification sécurisée, gestion de session, protection anti-fraude et stabilité de la plateforme. Ces cookies sont indispensables au bon fonctionnement du service et ne peuvent pas être désactivés.</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwAnalytics"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Analytiques</div>
+        <div class="ck-pref-desc">Mesure d'audience anonymisée pour comprendre comment vous utilisez POPE Online et améliorer nos services (pages visitées, durée de session, erreurs rencontrées).</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwFunctional"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Fonctionnels</div>
+        <div class="ck-pref-desc">Mémorisation de vos préférences d'affichage, de langue et de configuration pour personnaliser votre espace de travail à chaque connexion.</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwMarketing"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Communication ciblée</div>
+        <div class="ck-pref-desc">Contenus et communications adaptés à votre profil et à votre espace (public ou privé). Utilisés uniquement en interne — jamais transmis à des annonceurs tiers.</div>
+      </div>
+    </div>
   </div>
-</section>
+  <div class="ck-sep"></div>
+  <div class="ck-foot">
+    <button class="ck-btn ck-btn-back" id="ckBack"    type="button">← Retour</button>
+    <button class="ck-btn ck-btn-save" id="ckSave"    type="button">Enregistrer mes choix</button>
+  </div>
+  <p class="ck-legal">Vos préférences sont sauvegardées localement et respectent le RGPD. <a href="privacy.html">En savoir plus</a></p>
+</div>
 
 <script>
 // Burger
@@ -694,25 +853,26 @@ if (navLinksEl) {
 
 // Cookies
 (function() {
-  var KEY = 'pope_cookie_choice';
-  var overlay = document.getElementById('cookieOverlay');
-  var modal   = document.getElementById('cookieModal');
-  var prefs   = document.getElementById('cookiePrefsModal');
-  function close(choice) {
-    try { localStorage.setItem(KEY, choice); } catch(e) {}
-    overlay.hidden = modal.hidden = true;
-    if (prefs) prefs.hidden = true;
+  var KEY='pope_cookie_choice';
+  var ov=document.getElementById('ckOverlay');
+  var mn=document.getElementById('ckMain');
+  var pr=document.getElementById('ckPrefs');
+  function save(choice){
+    try{localStorage.setItem(KEY,JSON.stringify({v:2,choice:choice,
+      analytics: choice==='accept'||(document.getElementById('ckSwAnalytics')&&document.getElementById('ckSwAnalytics').checked),
+      functional:choice==='accept'||(document.getElementById('ckSwFunctional')&&document.getElementById('ckSwFunctional').checked),
+      marketing: choice==='accept'||(document.getElementById('ckSwMarketing')&&document.getElementById('ckSwMarketing').checked),
+      ts:Date.now()
+    }));}catch(e){}
+    if(ov)ov.hidden=true; if(mn)mn.hidden=true; if(pr)pr.hidden=true;
   }
-  try { if (localStorage.getItem(KEY)) return; } catch(e) {}
-  overlay.hidden = modal.hidden = false;
-  document.getElementById('cookieAccept').onclick  = function() { close('accepted'); };
-  document.getElementById('cookieDecline').onclick = function() { close('declined'); };
-  document.getElementById('cookieSettings').onclick = function() { modal.hidden=true; prefs.hidden=false; };
-  if (document.getElementById('cookieSavePrefs'))
-    document.getElementById('cookieSavePrefs').onclick = function() { close('customized'); };
-  if (document.getElementById('cookieBackMain'))
-    document.getElementById('cookieBackMain').onclick  = function() { prefs.hidden=true; modal.hidden=false; };
-  overlay.onclick = function() { close('dismissed'); };
+  try{var s=localStorage.getItem(KEY); if(s){var p=JSON.parse(s); if(p&&p.choice)return;}}catch(e){}
+  if(ov)ov.hidden=false; if(mn)mn.hidden=false;
+  document.getElementById('ckAccept').onclick =function(){save('accept');};
+  document.getElementById('ckRefuse').onclick  =function(){save('refuse');};
+  document.getElementById('ckConfig').onclick  =function(){mn.hidden=true;pr.hidden=false;};
+  document.getElementById('ckBack').onclick    =function(){pr.hidden=true;mn.hidden=false;};
+  document.getElementById('ckSave').onclick    =function(){save('custom');};
 })();
 </script>
 <script>

@@ -3,419 +3,509 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Mon compte</title>
-<link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<style id="v40-topbar-fix">
-/* ── Anti-conflits topbar V40 ── */
-html body header.v40-topbar{
-  position:sticky!important;top:0!important;z-index:200!important;
-  height:58px!important;min-height:58px!important;max-height:58px!important;
-  display:flex!important;align-items:center!important;
-  flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
-  backdrop-filter:blur(16px)!important;
-  border-bottom:1px solid rgba(255,255,255,.07)!important;
-  overflow:visible!important;
+<title>Mon compte — POPE Online</title>
+<link rel="icon" href="./favicon.png"/>
+<link rel="stylesheet" href="./app.css"/>
+<style>
+:root {
+  --pf-bg: #030b16;
+  --pf-surface: #08152a;
+  --pf-surface2: #0d1f3a;
+  --pf-border: rgba(0,121,193,.15);
+  --pf-border2: rgba(255,255,255,.07);
+  --pf-accent: #0079c1;
+  --pf-accent2: #00b4d8;
+  --pf-text: #f0f4f8;
+  --pf-muted: rgba(255,255,255,.45);
+  --pf-muted2: rgba(255,255,255,.25);
+  --pf-green: #22c55e;
+  --pf-red: #ef4444;
+  --pf-yellow: #f59e0b;
+  --pf-radius: 18px;
 }
-html body header.v40-topbar .v40-topbar-inner{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;height:58px!important;
-  width:100%!important;padding:0 20px!important;gap:10px!important;
+body { background: var(--pf-bg); color: var(--pf-text); min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* Layout */
+.pf-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+.pf-grid { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+
+/* Sidebar */
+.pf-sidebar { position: sticky; top: 80px; display: flex; flex-direction: column; gap: 8px; }
+.pf-profile-card {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 24px; text-align: center; margin-bottom: 8px;
+  position: relative; overflow: hidden;
 }
-html body header.v40-topbar .v40-topbar-brand{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;gap:9px!important;
-  text-decoration:none!important;flex-shrink:0!important;
+.pf-profile-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pf-accent), var(--pf-accent2), transparent);
 }
-html body header.v40-topbar .v40-topbar-brand img{
-  height:28px!important;width:auto!important;flex-shrink:0!important;
+.pf-avatar {
+  width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 12px;
+  background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent2) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 900; color: #fff;
+  box-shadow: 0 8px 24px rgba(0,121,193,.4);
 }
-html body header.v40-topbar .v40-topbar-brand-text{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:baseline!important;gap:5px!important;
+.pf-name { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+.pf-email { font-size: 12px; color: var(--pf-muted); margin-top: 4px; }
+.pf-plan-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 12px; padding: 5px 14px; border-radius: 99px;
+  font-size: 12px; font-weight: 700;
+  background: rgba(0,121,193,.12); color: var(--pf-accent2);
+  border: 1px solid rgba(0,121,193,.2);
 }
-html body header.v40-topbar .v40-topbar-brand-text strong,
-html body header.v40-topbar .v40-topbar-brand-text small{
-  white-space:nowrap!important;display:inline!important;width:auto!important;
+.pf-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  font-size: 13px; font-weight: 500; color: var(--pf-muted);
+  cursor: pointer; border: none; background: none; width: 100%;
+  text-align: left; text-decoration: none; transition: all .15s;
 }
-html body header.v40-topbar .v40-topbar-brand-text strong{
-  font-size:14px!important;font-weight:800!important;color:#fff!important;
+.pf-nav-item:hover { background: rgba(255,255,255,.05); color: var(--pf-text); }
+.pf-nav-item.active { background: rgba(0,121,193,.12); color: var(--pf-accent2); font-weight: 700; }
+.pf-nav-icon { font-size: 16px; width: 22px; text-align: center; }
+.pf-nav-sep { height: 1px; background: var(--pf-border2); margin: 6px 0; }
+
+/* Cards */
+.pf-card {
+  background: var(--pf-surface); border: 1px solid var(--pf-border2);
+  border-radius: var(--pf-radius); overflow: hidden; margin-bottom: 20px;
+  display: none;
 }
-html body header.v40-topbar .v40-topbar-brand-text small{
-  font-size:11px!important;color:rgba(255,255,255,.4)!important;
+.pf-card.active { display: block; }
+.pf-card-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 24px; border-bottom: 1px solid var(--pf-border2);
 }
-html body header.v40-topbar .v40-topbar-nav{
-  display:flex!important;align-items:center!important;gap:6px!important;
-  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+.pf-card-icon { font-size: 20px; }
+.pf-card-title { font-size: 15px; font-weight: 800; letter-spacing: -.02em; }
+.pf-card-sub { font-size: 12px; color: var(--pf-muted); margin-top: 2px; }
+.pf-card-body { padding: 24px; }
+
+/* Form */
+.pf-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pf-form-full { grid-column: 1/-1; }
+.pf-field { display: flex; flex-direction: column; gap: 6px; }
+.pf-label { font-size: 11.5px; font-weight: 700; color: var(--pf-muted); letter-spacing: .03em; }
+.pf-input {
+  padding: 11px 16px; border-radius: 12px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--pf-border2);
+  color: var(--pf-text); font-size: 13.5px; outline: none; font-family: inherit;
+  transition: all .15s;
 }
-html body header.v40-topbar #v40Burger{
-  display:none;flex-direction:column!important;gap:5px!important;
-  margin-left:auto!important;flex-shrink:0!important;
-  background:none!important;border:none!important;
-  cursor:pointer!important;padding:6px!important;width:auto!important;
+.pf-input:focus { border-color: var(--pf-accent); background: rgba(0,121,193,.07); }
+
+/* Buttons */
+.pf-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+  transition: all .2s; text-decoration: none;
 }
-html body header.v40-topbar #v40Burger span{
-  display:block!important;width:22px!important;height:2px!important;
-  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
-  transition:transform .25s ease,opacity .25s ease!important;
+.pf-btn-primary { background: var(--pf-accent); color: #fff; box-shadow: 0 4px 14px rgba(0,121,193,.35); }
+.pf-btn-primary:hover { box-shadow: 0 6px 22px rgba(0,121,193,.5); transform: translateY(-1px); }
+.pf-btn-ghost { background: rgba(255,255,255,.07); color: var(--pf-text); border: 1px solid var(--pf-border2); }
+.pf-btn-ghost:hover { background: rgba(255,255,255,.12); }
+.pf-btn-danger { background: rgba(239,68,68,.1); color: var(--pf-red); border: 1px solid rgba(239,68,68,.2); }
+.pf-btn-danger:hover { background: rgba(239,68,68,.18); }
+
+.pf-msg { font-size: 12.5px; margin-top: 12px; min-height: 20px; }
+.pf-msg.ok { color: var(--pf-green); }
+.pf-msg.err { color: var(--pf-red); }
+
+/* Abonnement */
+.pf-sub-hero {
+  background: linear-gradient(135deg, rgba(0,121,193,.1), rgba(0,180,216,.08));
+  border: 1px solid rgba(0,121,193,.2); border-radius: 14px;
+  padding: 20px 24px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-#v40MobileMenu{
-  display:none;position:fixed!important;
-  top:58px!important;left:0!important;right:0!important;bottom:0!important;
-  z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
-  backdrop-filter:blur(20px)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  padding:20px!important;overflow-y:auto!important;
-  flex-direction:column!important;gap:4px!important;
+.pf-sub-plan { font-size: 22px; font-weight: 900; letter-spacing: -.04em; }
+.pf-sub-detail { font-size: 13px; color: var(--pf-muted); margin-top: 4px; }
+.pf-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.pf-stat {
+  background: rgba(255,255,255,.03); border: 1px solid var(--pf-border2);
+  border-radius: 12px; padding: 14px 16px;
 }
-#v40MobileMenu.open{display:flex!important;}
-#v40MobileMenu a,#v40MobileMenu button{
-  display:flex!important;align-items:center!important;gap:10px!important;
-  padding:14px 18px!important;border-radius:12px!important;
-  font-size:15px!important;font-weight:600!important;
-  color:rgba(255,255,255,.85)!important;
-  text-decoration:none!important;background:none!important;
-  border:none!important;cursor:pointer!important;
-  width:100%!important;
+.pf-stat-label { font-size: 11px; color: var(--pf-muted); margin-bottom: 6px; font-weight: 500; }
+.pf-stat-val { font-size: 22px; font-weight: 900; letter-spacing: -.04em; }
+
+/* Paiements */
+.pf-invoice-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pf-invoice-table th { text-align: left; padding: 9px 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--pf-muted2); border-bottom: 1px solid var(--pf-border2); }
+.pf-invoice-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.03); }
+.pf-invoice-table tr:last-child td { border-bottom: none; }
+.pf-badge { display: inline-flex; padding: 3px 9px; border-radius: 99px; font-size: 10.5px; font-weight: 700; }
+.pf-badge-green { background: rgba(34,197,94,.1); color: var(--pf-green); border: 1px solid rgba(34,197,94,.2); }
+.pf-badge-grey  { background: rgba(255,255,255,.07); color: var(--pf-muted); border: 1px solid var(--pf-border2); }
+.pf-dl-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 600; background: rgba(0,121,193,.1); color: var(--pf-accent2); border: 1px solid rgba(0,121,193,.2); cursor: pointer; text-decoration: none; transition: all .15s; }
+.pf-dl-btn:hover { background: rgba(0,121,193,.18); }
+
+/* Danger zone */
+.pf-danger-box {
+  background: rgba(239,68,68,.05); border: 1px solid rgba(239,68,68,.15);
+  border-radius: 14px; padding: 18px 20px;
 }
-#v40MobileMenu a:hover,#v40MobileMenu button:hover{
-  background:rgba(255,255,255,.07)!important;color:#fff!important;
-}
-.v40-mobile-menu-sep{
-  height:1px!important;background:rgba(255,255,255,.08)!important;
-  margin:8px 0!important;
-}
-@media(max-width:860px){
-  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
-  html body header.v40-topbar #v40Burger{display:flex!important;}
-}
-</style>
-<style id="v40-override">
-header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
-.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
-.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
-.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
-.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
-.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
-.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
-.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
-.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
-.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
-.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
-.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
-.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
-.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
-.v40-mobile-menu.open{display:flex!important;}
-.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
-.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
-.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
-@media(max-width:860px){
-  .v40-topbar-nav{display:none!important;}
-  .v40-topbar-sub{display:none!important;}
-  .v40-topbar-sep{display:none!important;}
-  .v40-burger{display:flex!important;}
+.pf-danger-title { font-size: 13px; font-weight: 700; color: var(--pf-red); margin-bottom: 8px; }
+.pf-danger-desc { font-size: 12.5px; color: var(--pf-muted); margin-bottom: 14px; line-height: 1.6; }
+
+/* Responsive */
+@media(max-width: 700px) {
+  .pf-grid { grid-template-columns: 1fr; }
+  .pf-sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
+  .pf-profile-card { display: none; }
+  .pf-form-grid { grid-template-columns: 1fr; }
+  .pf-stat-row { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
-<body class="bg po-v5-harmony">
-<header class="v40-topbar">
-  <div class="v40-topbar-inner">
-    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
-      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div class="v40-topbar-brand-text">
-        <strong>POPE Online</strong>
-        <small>IA + Expertise</small>
+<body>
+
+<!-- Topbar héritée de app.css -->
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="#" id="profileHomeLink">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div>
+        <div class="brand-title">POPE Online</div>
+        <div class="brand-sub">Mon compte</div>
       </div>
     </a>
-    <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub">Mon compte</span>
-    <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
-      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
-    </nav>
-    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="row gap">
+      <button class="btn" data-logout>Déconnexion</button>
+    </div>
   </div>
 </header>
-<div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="dashboard.html">🏠 Dashboard</a>
-  <div class="v40-mobile-menu-sep"></div>
-  <button data-logout>🚪 Déconnexion</button>
-</div>
-    <button data-logout>🚪 Déconnexion</button>
-</div>
 
-<main class="v37-profile-layout">
+<div class="pf-wrap">
+  <div class="pf-grid">
 
-  <!-- Hero profil -->
-  <div class="v37-profile-hero">
-    <div class="v37-avatar">👤</div>
-    <div class="v37-profile-hero-text">
-      <h2 id="profileName">Mon compte</h2>
-      <p id="profileEmail">—</p>
-    </div>
-    <div style="margin-left:auto;text-align:right">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.55);margin-bottom:6px">Plan actif</div>
-      <div style="font-size:18px;font-weight:800;color:#fff" id="profilePlan">—</div>
-    </div>
-  </div>
+    <!-- Sidebar -->
+    <div class="pf-sidebar">
+      <div class="pf-profile-card">
+        <div class="pf-avatar" id="pfAvatar">?</div>
+        <div class="pf-name" id="profileName">Mon compte</div>
+        <div class="pf-email" id="profileEmail"></div>
+        <div class="pf-plan-badge">⚡ <span id="profilePlan">Free</span></div>
+      </div>
 
-  <!-- Informations personnelles -->
-  <div class="v37-profile-card">
-    <div class="v37-profile-card-head">
-      <span style="font-size:18px">👤</span>
-      <h3>Informations personnelles</h3>
-    </div>
-    <div class="v37-profile-card-body">
-      <label class="label">Nom complet</label>
-      <input class="input" id="fullName" placeholder="Votre nom et prénom" style="margin-bottom:14px"/>
-      <label class="label">Organisation</label>
-      <input class="input" id="organization" placeholder="Votre structure ou entreprise" style="margin-bottom:14px"/>
-      <label class="label">Téléphone</label>
-      <input class="input" id="phoneFull" placeholder="Ex : 06 12 34 56 78" style="margin-bottom:20px"/>
-      <button class="v36-generate-btn" id="btnSaveProfil" type="button" style="background:linear-gradient(135deg,#0079c1,#03a0d7)">
-        💾 Enregistrer mes informations
+      <button class="pf-nav-item active" data-sec="infos">
+        <span class="pf-nav-icon">👤</span> Informations
       </button>
-      <div id="profileMsg" class="fineprint" style="margin-top:10px;text-align:center"></div>
+      <button class="pf-nav-item" data-sec="abonnement">
+        <span class="pf-nav-icon">💎</span> Mon abonnement
+      </button>
+      <button class="pf-nav-item" data-sec="paiements">
+        <span class="pf-nav-icon">🧾</span> Paiements & Factures
+      </button>
+      <button class="pf-nav-item" data-sec="securite">
+        <span class="pf-nav-icon">🔐</span> Sécurité
+      </button>
+      <div class="pf-nav-sep"></div>
+      <button class="pf-nav-item" data-sec="donnees">
+        <span class="pf-nav-icon">🛡️</span> Mes données
+      </button>
     </div>
-  </div>
 
-  <!-- Sécurité -->
-  <div class="v37-profile-card">
-    <div class="v37-profile-card-head">
-      <span style="font-size:18px">🔒</span>
-      <h3>Sécurité</h3>
-    </div>
-    <div class="v37-profile-card-body">
-      <label class="label">Nouveau mot de passe</label>
-      <input class="input" id="newPassword" type="password" placeholder="••••••••" style="margin-bottom:14px"/>
-      <label class="label">Confirmer le mot de passe</label>
-      <input class="input" id="confirmPassword" type="password" placeholder="••••••••" style="margin-bottom:20px"/>
-      <button class="btn secondary" id="btnChangePassword" type="button">Changer le mot de passe</button>
-      <div id="pwMsg" class="fineprint" style="margin-top:10px"></div>
-    </div>
-  </div>
+    <!-- Content -->
+    <div id="pfContent">
 
-  <!-- Abonnement -->
-  <div class="v37-profile-card">
-    <div class="v37-profile-card-head">
-      <span style="font-size:18px">💳</span>
-      <h3>Mon abonnement</h3>
-    </div>
-    <div class="v37-profile-card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:14px;color:#50627a" id="subDetails">Chargement…</div>
+      <!-- Infos -->
+      <div class="pf-card active" id="secInfos">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">👤</span>
+          <div>
+            <div class="pf-card-title">Informations personnelles</div>
+            <div class="pf-card-sub">Vos coordonnées et votre profil professionnel</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div class="pf-form-grid">
+            <div class="pf-field pf-form-full">
+              <label class="pf-label">Prénom & Nom</label>
+              <input class="pf-input" id="fullName" placeholder="Jean Dupont"/>
+            </div>
+            <div class="pf-field pf-form-full">
+              <label class="pf-label">Organisation</label>
+              <input class="pf-input" id="organization" placeholder="Entreprise, cabinet, association…"/>
+            </div>
+            <div class="pf-field pf-form-full">
+              <label class="pf-label">Téléphone</label>
+              <input class="pf-input" id="phoneFull" placeholder="+33 6 00 00 00 00" type="tel"/>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:10px;align-items:center">
+            <button class="pf-btn pf-btn-primary" id="btnSaveProfil">Enregistrer</button>
+          </div>
+          <div class="pf-msg" id="profileMsg"></div>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="resiliation.html" class="btn ghost" style="font-size:13px">Gérer mon abonnement</a>
-        <a href="pricing.html" class="btn ghost" style="font-size:13px">Voir les plans</a>
+
+      <!-- Abonnement -->
+      <div class="pf-card" id="secAbonnement">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">💎</span>
+          <div>
+            <div class="pf-card-title">Mon abonnement</div>
+            <div class="pf-card-sub">Votre offre et vos crédits actuels</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div class="pf-sub-hero">
+            <div>
+              <div class="pf-sub-plan" id="subPlan">Free</div>
+              <div class="pf-sub-detail" id="subDetails">Chargement…</div>
+            </div>
+            <a class="pf-btn pf-btn-ghost" href="mailto:contact@pope-online.com">Évoluer mon offre</a>
+          </div>
+          <div class="pf-stat-row">
+            <div class="pf-stat">
+              <div class="pf-stat-label">Tickets IA restants</div>
+              <div class="pf-stat-val" id="statTickets">—</div>
+            </div>
+            <div class="pf-stat">
+              <div class="pf-stat-label">Relectures restantes</div>
+              <div class="pf-stat-val" id="statExpert">—</div>
+            </div>
+            <div class="pf-stat">
+              <div class="pf-stat-label">Statut du compte</div>
+              <div class="pf-stat-val" id="statStatus" style="font-size:14px;font-weight:700">—</div>
+            </div>
+          </div>
+          <div style="background:rgba(0,121,193,.06);border:1px solid var(--pf-border);border-radius:12px;padding:16px">
+            <p style="font-size:13px;color:var(--pf-muted);line-height:1.7">
+              Pour modifier votre abonnement, ajouter des crédits ou accéder aux offres Pro et Premium, contactez notre équipe : <a href="mailto:contact@pope-online.com" style="color:var(--pf-accent2)">contact@pope-online.com</a> ou <a href="tel:0970703055" style="color:var(--pf-accent2)">09 70 70 30 55</a>.
+            </p>
+          </div>
+        </div>
       </div>
+
+      <!-- Paiements -->
+      <div class="pf-card" id="secPaiements">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">🧾</span>
+          <div>
+            <div class="pf-card-title">Paiements & Factures</div>
+            <div class="pf-card-sub">Historique de vos transactions</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div id="invoiceArea">
+            <div id="invoiceLoading" style="text-align:center;padding:32px;color:var(--pf-muted)">Chargement de l'historique…</div>
+            <div id="invoiceContent" hidden>
+              <div style="overflow-x:auto">
+                <table class="pf-invoice-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Référence</th>
+                      <th>Description</th>
+                      <th>Montant</th>
+                      <th>Statut</th>
+                      <th>Facture</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invoiceBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div id="invoiceEmpty" hidden style="text-align:center;padding:32px;color:var(--pf-muted)">
+              <div style="font-size:32px;margin-bottom:8px">🧾</div>
+              <div>Aucune transaction pour le moment.</div>
+              <div style="font-size:12px;margin-top:6px">Vos paiements apparaîtront ici.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sécurité -->
+      <div class="pf-card" id="secSecurite">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">🔐</span>
+          <div>
+            <div class="pf-card-title">Sécurité</div>
+            <div class="pf-card-sub">Mot de passe et accès à votre compte</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div class="pf-form-grid">
+            <div class="pf-field">
+              <label class="pf-label">Nouveau mot de passe</label>
+              <input class="pf-input" id="newPassword" type="password" placeholder="Min. 8 caractères" autocomplete="new-password"/>
+            </div>
+            <div class="pf-field">
+              <label class="pf-label">Confirmer le mot de passe</label>
+              <input class="pf-input" id="confirmPassword" type="password" placeholder="Répétez le mot de passe" autocomplete="new-password"/>
+            </div>
+          </div>
+          <div style="margin-top:16px">
+            <button class="pf-btn pf-btn-primary" id="btnChangePassword">Changer le mot de passe</button>
+          </div>
+          <div class="pf-msg" id="pwMsg"></div>
+        </div>
+      </div>
+
+      <!-- Données -->
+      <div class="pf-card" id="secDonnees">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">🛡️</span>
+          <div>
+            <div class="pf-card-title">Mes données personnelles</div>
+            <div class="pf-card-sub">Conformité RGPD — vos droits sur vos données</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div style="background:rgba(0,180,216,.05);border:1px solid rgba(0,180,216,.15);border-radius:12px;padding:16px;margin-bottom:20px">
+            <p style="font-size:13px;color:var(--pf-muted);line-height:1.7">
+              Conformément au RGPD, vous pouvez télécharger l'intégralité des données que nous détenons sur votre compte. Cet export contient vos informations personnelles, vos productions et votre historique d'utilisation au format JSON.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:24px">
+            <button class="pf-btn pf-btn-ghost" id="btnExportData">📥 Télécharger mes données</button>
+          </div>
+          <div class="pf-msg" id="rgpdMsg"></div>
+
+          <div class="pf-danger-box">
+            <div class="pf-danger-title">⚠️ Zone dangereuse</div>
+            <div class="pf-danger-desc">La suppression de votre compte est définitive et irréversible. Toutes vos données, productions et historique seront effacés sans possibilité de récupération.</div>
+            <button class="pf-btn pf-btn-danger" id="btnDeleteAccount">Supprimer mon compte</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
+</div>
 
-  <!-- RGPD -->
-  <div class="v37-profile-card">
-    <div class="v37-profile-card-head">
-      <span style="font-size:18px">🛡️</span>
-      <h3>Mes données personnelles</h3>
-    </div>
-    <div class="v37-profile-card-body">
-      <p style="font-size:13px;color:#50627a;margin:0 0 16px;line-height:1.6">Conformément au RGPD, vous pouvez télécharger une copie de vos données ou demander la suppression de votre compte.</p>
-      <div class="row gap wrap">
-        <button class="btn ghost" id="btnExportData" type="button" style="font-size:13px">📦 Exporter mes données</button>
-        <button class="btn ghost" id="btnDeleteAccount" type="button" style="font-size:13px;color:#b91c1c;border-color:#fecaca">🗑️ Supprimer mon compte</button>
-      </div>
-      <div id="rgpdMsg" class="fineprint" style="margin-top:10px"></div>
-    </div>
-  </div>
-
-</main>
-
-<script>
-(function(){
-  function hasSession(){
-    return localStorage.getItem('pope_session_active')==='1'||
-           !!sessionStorage.getItem('pope_session_token')||
-           !!localStorage.getItem('pope_session_token');
-  }
-  function getToken(){
-    return sessionStorage.getItem('pope_session_token')||
-           localStorage.getItem('pope_session_token')||'';
-  }
-  function getApiBase(){
-    var e=window.__POPE_API_BASE__||'';
-    if(e) return String(e).replace(/\/$/,'');
-    var h=window.location.hostname;
-    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
-    return 'https://pope-online-v2.onrender.com';
-  }
-  function redirectToLogin(){
-    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
-    window.location.replace('login.html?next='+path);
-  }
-  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
-    'mission.html','private-onboarding.html','account.html','profile.html',
-    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
-    'mission-private.html','referral.html','tutoriel.html'];
-  var path=(window.location.pathname||'').toLowerCase();
-  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
-  if(!isProtected) return;
-  if(hasSession()){window.__popeAuthValidated=true;return;}
-  window.__popeAuthPending=true;
-  var headers={'Content-Type':'application/json'};
-  var token=getToken();
-  if(token) headers['Authorization']='Bearer '+token;
-  fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      return res.json().catch(function(){return {};});
-    })
-    .then(function(data){
-      if(data&&data.user){
-        localStorage.setItem('pope_session_active','1');
-        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
-        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
-        window.__popeAuthValidated=true;
-      } else throw new Error('missing_user');
-    })
-    .catch(function(){
-      window.__popeAuthValidated=false;
-      redirectToLogin();
-    })
-    .finally(function(){window.__popeAuthPending=false;});
-})();
-</script>
-<script type="module" src="./protected-topbar.js"></script>
 <script type="module">
 import { apiFetch, getApiMessage, clearSession } from './api.js';
 import { requireLogin, wireLogout, showToast } from './app.js';
 if (!requireLogin('profile.html')) {}
 wireLogout();
 
+const el = (id) => document.getElementById(id);
+
+// Navigation
+document.querySelectorAll('[data-sec]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('[data-sec]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.pf-card').forEach(c => c.classList.remove('active'));
+    const sec = el('sec'+btn.dataset.sec.charAt(0).toUpperCase()+btn.dataset.sec.slice(1));
+    if (sec) sec.classList.add('active');
+    if (btn.dataset.sec === 'paiements') loadInvoices();
+  };
+});
+
 async function load() {
   try {
     const me = await apiFetch('/auth/me');
     const u = me.user || {};
     const w = me.wallet || {};
-    document.getElementById('profileName').textContent = u.full_name || 'Mon compte';
-    document.getElementById('profileEmail').textContent = u.email || '';
-    document.getElementById('profilePlan').textContent = w.plan_label || 'Free';
-    document.getElementById('fullName').value    = u.full_name    || '';
-    document.getElementById('organization').value = u.organization || '';
-    document.getElementById('phoneFull').value   = u.phone_full   || '';
-    const space = u.accountSpace || 'public';
-    document.getElementById('profileHomeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+
+    // Avatar initials
+    const initials = (u.full_name || u.email || '?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+    el('pfAvatar').textContent = initials;
+    el('profileName').textContent = u.full_name || 'Mon compte';
+    el('profileEmail').textContent = u.email || '';
+    el('profilePlan').textContent = w.plan_label || w.plan || 'Free';
+    el('subPlan').textContent = w.plan_label || w.plan || 'Free';
+    el('fullName').value = u.full_name || '';
+    el('organization').value = u.organization || '';
+    el('phoneFull').value = u.phone_full || '';
+
+    const space = u.accountSpace || u.account_space || 'public';
+    el('profileHomeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+
     const left = w.expert_left ?? 0;
-    document.getElementById('subDetails').textContent =
-      (w.plan_label || 'Free') + ' · ' + left + ' relecture(s) restante(s) · ' +
-      (w.status === 'trial_active' ? 'Essai actif' : w.status === 'trial_expired' ? 'Essai expiré' : 'Actif');
+    const statusMap = { active: '✅ Actif', trial_active: '🟡 Essai actif', trial_expired: '🔴 Essai expiré' };
+    el('subDetails').textContent = (w.plan_label || 'Free') + ' · Statut : ' + (statusMap[w.status] || w.status || '—');
+    el('statTickets').textContent = w.tickets_ai ?? '—';
+    el('statExpert').textContent = left;
+    el('statStatus').textContent = statusMap[w.status] || w.status || '—';
   } catch(e) {}
 }
 
-document.getElementById('btnSaveProfil').addEventListener('click', async function() {
-  var btn = this;
-  var msg = document.getElementById('profileMsg');
-  btn.disabled = true;
+async function loadInvoices() {
+  el('invoiceLoading').hidden = false;
+  el('invoiceContent').hidden = true;
+  el('invoiceEmpty').hidden = true;
   try {
-    await apiFetch('/auth/me', { method: 'PUT', body: {
-      full_name:    document.getElementById('fullName').value.trim(),
-      organization: document.getElementById('organization').value.trim(),
-      phone_full:   document.getElementById('phoneFull').value.trim()
-    }});
-    msg.textContent = '✓ Informations enregistrées';
-    msg.style.color = '#059669';
-    showToast('Profil mis à jour', 'ok');
+    // Tenter de charger l'historique des paiements
+    let invoices = [];
+    try { const data = await apiFetch('/billing/invoices'); invoices = Array.isArray(data) ? data : (data.invoices || []); } catch(e2) {}
+    el('invoiceLoading').hidden = true;
+    if (!invoices.length) { el('invoiceEmpty').hidden = false; return; }
+    const tbody = el('invoiceBody');
+    tbody.innerHTML = invoices.map(inv => {
+      const date = inv.created_at || inv.date ? new Date(inv.created_at || inv.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const amount = inv.amount ? (inv.amount/100).toLocaleString('fr-FR',{style:'currency',currency:inv.currency||'EUR'}) : '—';
+      const badge = inv.status === 'paid' ? '<span class="pf-badge pf-badge-green">Payé</span>' : '<span class="pf-badge pf-badge-grey">'+esc(inv.status||'—')+'</span>';
+      const dlBtn = inv.invoice_pdf || inv.hosted_invoice_url ? `<a class="pf-dl-btn" href="${inv.invoice_pdf||inv.hosted_invoice_url}" target="_blank">📥 PDF</a>` : '—';
+      return `<tr><td>${date}</td><td style="font-family:monospace;font-size:12px;color:var(--pf-muted)">${esc(inv.id||'—').substring(0,16)}</td><td>${esc(inv.description||'Abonnement POPE Online')}</td><td style="font-weight:700">${amount}</td><td>${badge}</td><td>${dlBtn}</td></tr>`;
+    }).join('');
+    el('invoiceContent').hidden = false;
   } catch(e) {
-    msg.textContent = 'Erreur : ' + getApiMessage(e);
-    msg.style.color = '#b91c1c';
-  } finally { btn.disabled = false; }
-});
+    el('invoiceLoading').hidden = true;
+    el('invoiceEmpty').hidden = false;
+  }
+}
 
-document.getElementById('btnChangePassword').addEventListener('click', async function() {
-  var pw  = document.getElementById('newPassword').value;
-  var cpw = document.getElementById('confirmPassword').value;
-  var msg = document.getElementById('pwMsg');
-  if (!pw) { msg.textContent = 'Renseignez un nouveau mot de passe.'; msg.style.color='#b91c1c'; return; }
-  if (pw !== cpw) { msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.style.color='#b91c1c'; return; }
+function esc(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+el('btnSaveProfil').onclick = async function() {
+  this.disabled = true;
+  const msg = el('profileMsg');
   try {
-    await apiFetch('/auth/change-password', { method: 'PUT', body: { password: pw } });
-    msg.textContent = '✓ Mot de passe modifié';
-    msg.style.color = '#059669';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
-  } catch(e) { msg.textContent = 'Erreur : ' + getApiMessage(e); msg.style.color='#b91c1c'; }
-});
+    await apiFetch('/auth/me', { method:'PUT', body:{
+      full_name: el('fullName').value.trim(),
+      organization: el('organization').value.trim(),
+      phone_full: el('phoneFull').value.trim()
+    }});
+    msg.textContent = '✓ Informations enregistrées'; msg.className = 'pf-msg ok';
+    showToast('Profil mis à jour', 'ok');
+  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
+  finally { this.disabled = false; }
+};
 
-document.getElementById('btnExportData').addEventListener('click', async function() {
-  var msg = document.getElementById('rgpdMsg');
+el('btnChangePassword').onclick = async function() {
+  const pw = el('newPassword').value;
+  const cpw = el('confirmPassword').value;
+  const msg = el('pwMsg');
+  if (!pw) { msg.textContent = 'Renseignez un nouveau mot de passe.'; msg.className = 'pf-msg err'; return; }
+  if (pw !== cpw) { msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.className = 'pf-msg err'; return; }
+  try {
+    await apiFetch('/auth/change-password', { method:'PUT', body:{ password:pw } });
+    msg.textContent = '✓ Mot de passe modifié'; msg.className = 'pf-msg ok';
+    el('newPassword').value = ''; el('confirmPassword').value = '';
+    showToast('Mot de passe changé', 'ok');
+  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
+};
+
+el('btnExportData').onclick = async function() {
+  const msg = el('rgpdMsg');
   try {
     const data = await apiFetch('/auth/me/export');
-    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'pope-online-mes-donnees.json';
-    a.click();
-    msg.textContent = '✓ Export téléchargé';
-    msg.style.color = '#059669';
-  } catch(e) { msg.textContent = 'Erreur export : ' + getApiMessage(e); msg.style.color='#b91c1c'; }
-});
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'pope-online-mes-donnees.json'; a.click();
+    msg.textContent = '✓ Export téléchargé'; msg.className = 'pf-msg ok';
+  } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'pf-msg err'; }
+};
 
-document.getElementById('btnDeleteAccount').addEventListener('click', async function() {
+el('btnDeleteAccount').onclick = async function() {
   if (!confirm('Supprimer définitivement votre compte ? Cette action est irréversible.')) return;
   try {
-    await apiFetch('/auth/me', { method: 'DELETE' });
-    clearSession();
-    window.location.href = 'index.html';
-  } catch(e) { document.getElementById('rgpdMsg').textContent = 'Erreur : ' + getApiMessage(e); }
-});
+    await apiFetch('/auth/me', { method:'DELETE' });
+    clearSession(); window.location.href = 'index.html';
+  } catch(e) { el('rgpdMsg').textContent = getApiMessage(e); el('rgpdMsg').className = 'pf-msg err'; }
+};
 
 load();
-</script>
-<script>
-// Topbar mobile universelle V40 — burger + menu + croix
-(function() {
-  var burger  = document.getElementById('v40Burger');
-  var menu    = document.getElementById('v40MobileMenu');
-  if (!burger || !menu) return;
-
-  var spans = burger.querySelectorAll('span');
-
-  function setOpen(open) {
-    if (open) {
-      menu.classList.add('open');
-      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
-      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
-      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
-    } else {
-      menu.classList.remove('open');
-      spans[0].style.cssText = '';
-      spans[1].style.cssText = '';
-      spans[2].style.cssText = '';
-    }
-  }
-
-  burger.addEventListener('click', function() {
-    setOpen(!menu.classList.contains('open'));
-  });
-
-  // Fermer en cliquant un lien
-  menu.querySelectorAll('a, button').forEach(function(el) {
-    el.addEventListener('click', function() { setOpen(false); });
-  });
-
-  // Fermer en cliquant hors du menu
-  document.addEventListener('click', function(e) {
-    if (!burger.contains(e.target) && !menu.contains(e.target)) {
-      setOpen(false);
-    }
-  });
-})();
-
 </script>
 </body>
 </html>

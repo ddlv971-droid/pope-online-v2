@@ -4,179 +4,643 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Administration</title>
-<link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link rel="icon" href="./favicon.png"/>
+<style>
+:root {
+  --bg: #030b16;
+  --surface: #08152a;
+  --surface2: #0d1f3a;
+  --border: rgba(0,121,193,.15);
+  --border2: rgba(255,255,255,.06);
+  --accent: #0079c1;
+  --accent2: #00b4d8;
+  --text: #f0f4f8;
+  --muted: rgba(255,255,255,.45);
+  --muted2: rgba(255,255,255,.25);
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --radius: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Topbar */
+.adm-bar {
+  position: sticky; top: 0; z-index: 100;
+  height: 60px; display: flex; align-items: center;
+  padding: 0 24px; gap: 16px;
+  background: rgba(8,21,42,.95); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.adm-bar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.adm-bar-brand img { height: 28px; }
+.adm-bar-brand-text { display: flex; flex-direction: column; }
+.adm-bar-brand-text strong { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+.adm-bar-brand-text small { font-size: 10px; color: var(--accent2); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.adm-bar-spacer { flex: 1; }
+.adm-bar-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 99px;
+  font-size: 11px; font-weight: 600;
+  background: rgba(0,121,193,.12); color: var(--accent2);
+  border: 1px solid rgba(0,121,193,.2);
+}
+.adm-bar-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.adm-bar-btn {
+  padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+  border: none; cursor: pointer; transition: all .15s; text-decoration: none;
+}
+.adm-bar-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
+.adm-bar-btn-ghost:hover { background: rgba(255,255,255,.12); color: #fff; }
+.adm-bar-btn-red { background: rgba(239,68,68,.12); color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
+.adm-bar-btn-red:hover { background: rgba(239,68,68,.2); }
+
+/* Layout */
+.adm-main { display: flex; flex: 1; }
+.adm-sidebar {
+  width: 220px; flex-shrink: 0; padding: 20px 12px;
+  background: var(--surface); border-right: 1px solid var(--border2);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.adm-nav-label { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); padding: 12px 10px 6px; }
+.adm-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+  text-decoration: none; transition: all .15s;
+}
+.adm-nav-item:hover { background: rgba(255,255,255,.05); color: var(--text); }
+.adm-nav-item.active { background: rgba(0,121,193,.15); color: var(--accent2); font-weight: 700; }
+.adm-nav-item .adm-nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.adm-nav-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+  background: rgba(239,68,68,.15); color: #ef4444;
+}
+
+.adm-content { flex: 1; padding: 28px; overflow-x: hidden; }
+
+/* Hero KPIs */
+.adm-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, #0a1830 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.adm-hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+}
+.adm-hero-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.adm-hero-title { font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
+.adm-hero-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
+.adm-kpi {
+  background: rgba(255,255,255,.03); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 16px;
+  transition: all .2s;
+}
+.adm-kpi:hover { background: rgba(255,255,255,.05); border-color: var(--border); }
+.adm-kpi.clickable { cursor: pointer; }
+.adm-kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+.adm-kpi-value { font-size: 28px; font-weight: 900; letter-spacing: -.04em; color: #fff; }
+.adm-kpi-value.red { color: var(--red); }
+.adm-kpi-value.green { color: var(--green); }
+.adm-kpi-sub { font-size: 11px; color: var(--muted2); margin-top: 4px; }
+
+/* Cards */
+.adm-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
+}
+.adm-card-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border2);
+}
+.adm-card-title { font-size: 14px; font-weight: 700; flex: 1; }
+.adm-card-body { padding: 20px; }
+
+/* Form grid */
+.adm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.adm-form-group { display: flex; flex-direction: column; gap: 6px; }
+.adm-label { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.adm-input {
+  padding: 10px 14px; border-radius: 10px; font-size: 13px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
+  color: var(--text); transition: all .15s; outline: none;
+  font-family: inherit;
+}
+.adm-input:focus { border-color: var(--accent); background: rgba(0,121,193,.07); }
+.adm-select { appearance: none; }
+.adm-form-full { grid-column: 1 / -1; }
+
+/* Boutons */
+.adm-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px; border-radius: 11px;
+  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+  transition: all .2s; text-decoration: none; white-space: nowrap;
+}
+.adm-btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(0,121,193,.35); }
+.adm-btn-primary:hover { box-shadow: 0 6px 20px rgba(0,121,193,.5); transform: translateY(-1px); }
+.adm-btn-ghost { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border2); }
+.adm-btn-ghost:hover { background: rgba(255,255,255,.12); }
+.adm-btn-danger { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); }
+.adm-btn-danger:hover { background: rgba(239,68,68,.18); }
+.adm-btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+.adm-btn-xs { padding: 4px 9px; font-size: 11px; border-radius: 7px; }
+
+/* Table */
+.adm-table-wrap { overflow-x: auto; }
+.adm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.adm-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted2); border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+}
+.adm-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.03); vertical-align: middle; }
+.adm-table tr:hover td { background: rgba(255,255,255,.02); }
+.adm-table tr:last-child td { border-bottom: none; }
+
+/* Badges */
+.adm-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 99px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .03em;
+}
+.adm-badge-green { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+.adm-badge-blue  { background: rgba(0,121,193,.1); color: var(--accent2); border: 1px solid rgba(0,121,193,.2); }
+.adm-badge-red   { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); }
+.adm-badge-grey  { background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid var(--border2); }
+.adm-badge-yellow{ background: rgba(245,158,11,.1); color: var(--yellow); border: 1px solid rgba(245,158,11,.2); }
+
+/* Filters */
+.adm-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.adm-search {
+  flex: 1; min-width: 200px;
+  padding: 9px 14px 9px 36px; border-radius: 10px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
+  color: var(--text); font-size: 13px; outline: none; font-family: inherit;
+  position: relative;
+}
+.adm-search:focus { border-color: var(--accent); }
+.adm-search-wrap { position: relative; flex: 1; min-width: 200px; }
+.adm-search-wrap::before {
+  content: '🔍'; position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; pointer-events: none;
+}
+
+/* User detail panel */
+.adm-user-panel {
+  position: fixed; right: 0; top: 60px; bottom: 0;
+  width: 420px; background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 50; transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+.adm-user-panel.open { transform: translateX(0); }
+.adm-user-panel-head {
+  padding: 20px; border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 12px;
+}
+.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+.adm-user-avatar {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.adm-user-panel-info { flex: 1; min-width: 0; }
+.adm-user-panel-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-user-panel-email { font-size: 12px; color: var(--muted); }
+.adm-close-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 20px; padding: 4px; }
+.adm-close-btn:hover { color: #fff; }
+.adm-detail-section { margin-bottom: 20px; }
+.adm-detail-section-title { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 10px; }
+.adm-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: 13px; }
+.adm-detail-row:last-child { border-bottom: none; }
+.adm-detail-key { color: var(--muted); }
+.adm-detail-val { font-weight: 600; text-align: right; }
+.adm-actions-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* Textarea */
+.adm-textarea {
+  width: 100%; padding: 10px 14px; border-radius: 10px; font-size: 13px; min-height: 100px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
+  color: var(--text); resize: vertical; font-family: inherit; outline: none;
+}
+.adm-textarea:focus { border-color: var(--accent); }
+
+/* Login box */
+.adm-login {
+  max-width: 440px; margin: 80px auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; padding: 40px; text-align: center;
+}
+.adm-login-icon { font-size: 40px; margin-bottom: 16px; }
+.adm-login h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.04em; }
+.adm-login p { color: var(--muted); font-size: 13.5px; margin-bottom: 28px; line-height: 1.6; }
+.adm-login-form { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+
+/* Overlay */
+.adm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 49;
+  display: none; backdrop-filter: blur(2px);
+}
+.adm-overlay.open { display: block; }
+
+/* Message inline */
+.adm-msg { font-size: 12.5px; margin-top: 8px; min-height: 20px; }
+.adm-msg.ok { color: var(--green); }
+.adm-msg.err { color: var(--red); }
+
+/* Tab buttons */
+.adm-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(255,255,255,.04); border-radius: 12px; padding: 4px; }
+.adm-tab {
+  flex: 1; padding: 9px; border-radius: 9px; font-size: 12.5px; font-weight: 600;
+  border: none; cursor: pointer; background: none; color: var(--muted); transition: all .15s;
+}
+.adm-tab.active { background: var(--surface2); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+
+/* Responsive */
+@media(max-width: 900px) {
+  .adm-sidebar { display: none; }
+  .adm-content { padding: 16px; }
+  .adm-form-grid { grid-template-columns: 1fr; }
+  .adm-user-panel { width: 100%; }
+  .adm-kpis { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
 </head>
-<body class="bg po-v5-harmony">
-<header class="topbar">
-  <div class="container row between">
-    <a class="brand link" href="index.html">
-      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div>
-        <div class="brand-title">POPE Online</div>
-        <div class="brand-sub">Dashboard administrateur</div>
-      </div>
-    </a>
-    <div class="row gap wrap">
-      <a class="btn ghost" href="profile.html">Mon compte</a>
-      <button class="btn" data-logout>Déconnexion</button>
+<body>
+
+<header class="adm-bar" id="adminBar" hidden>
+  <a class="adm-bar-brand" href="index.html">
+    <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+    <div class="adm-bar-brand-text">
+      <strong>POPE Online</strong>
+      <small>Administration</small>
     </div>
-  </div>
+  </a>
+  <span class="adm-bar-spacer"></span>
+  <div class="adm-bar-pill" id="adminOnlinePill">Admin connecté</div>
+  <a class="adm-bar-btn adm-bar-btn-ghost" href="dashboard.html">Tableau de bord</a>
+  <button class="adm-bar-btn adm-bar-btn-red" data-logout>Déconnexion</button>
 </header>
 
-<main class="container app" style="grid-template-columns:1fr">
-  <section class="card left" style="max-width:1380px;margin:0 auto;width:100%">
-    <div id="adminLoginBox">
-      <h2>Connexion administrateur</h2>
-      <p class="muted">Aucun identifiant administrateur par défaut n’est livré dans cette version. Définissez-le explicitement côté environnement sécurisé.</p>
-      <div class="grid2">
-        <div>
-          <label class="label">Identifiant</label>
-          <input id="adminIdentifier" class="input" value="" autocomplete="username"/>
-          <label class="label">Mot de passe</label>
-          <input id="adminPassword" class="input" type="password" value="" autocomplete="current-password" placeholder="Mot de passe administrateur"/>
-        </div>
-        <div>
-          <div class="panel">
-            <h3>Sécurisation</h3>
-            <p class="muted">Le changement de mot de passe est imposé à la première connexion puis reste possible à tout moment depuis “Mon compte”.</p>
-            <button class="btn" id="adminLoginBtn">Se connecter</button>
-            <div id="turnstileBox" style="margin-top:14px" hidden></div><div class="fineprint" id="adminLoginMsg"></div>
-          </div>
-        </div>
+<!-- LOGIN -->
+<div id="adminLoginArea">
+  <div class="adm-login">
+    <div class="adm-login-icon">🔐</div>
+    <h1>Administration</h1>
+    <p>Accès réservé. Identifiez-vous avec vos identifiants administrateur sécurisés.</p>
+    <div class="adm-login-form">
+      <div class="adm-form-group">
+        <label class="adm-label">Identifiant</label>
+        <input id="adminIdentifier" class="adm-input" autocomplete="username" placeholder="Identifiant admin"/>
       </div>
+      <div class="adm-form-group">
+        <label class="adm-label">Mot de passe</label>
+        <input id="adminPassword" class="adm-input" type="password" autocomplete="current-password" placeholder="••••••••"/>
+      </div>
+      <div id="turnstileBox" hidden></div>
+      <button class="adm-btn adm-btn-primary" id="adminLoginBtn" style="justify-content:center;margin-top:4px">
+        Se connecter
+      </button>
+      <div class="adm-msg err" id="adminLoginMsg"></div>
     </div>
+  </div>
+</div>
 
-    <div id="adminApp" hidden>
-      <section class="po-admin-hero po-admin-hero-analytics">
-        <div>
-          <div class="po-admin-eyebrow">Pilotage commercial et relation client</div>
-          <h1>Gestion des comptes clients</h1>
-          <p>Créez des comptes, ajustez les accès, suivez les enquêtes de satisfaction et identifiez immédiatement les clients à risque pour agir sans délai.</p>
-        </div>
-        <div class="po-admin-hero-actions po-admin-hero-actions-analytics">
-          <div class="po-admin-kpi"><span>Clients total</span><strong id="userCount">0</strong></div>
-          <div class="po-admin-kpi"><span>Enquêtes envoyées</span><strong id="sentCount">0</strong></div>
-          <div class="po-admin-kpi"><span>Taux de réponse</span><strong id="responseRate">0 %</strong></div>
-          <div class="po-admin-kpi"><span>Note moyenne globale</span><strong id="avgScore">—</strong></div>
-          <button class="po-admin-kpi po-admin-kpi-alert po-admin-kpi-button" id="riskKpi" type="button">
-            <span>Clients à risque</span>
-            <strong id="riskCount">0</strong>
-            <small>Cliquer pour afficher la liste</small>
-          </button>
-          <button class="btn ghost" id="refreshUsers">Actualiser</button>
-        </div>
-      </section>
+<!-- APP ADMIN -->
+<div id="adminApp" hidden style="display:none;flex:1;overflow:hidden">
+  <div class="adm-main">
+    <!-- Sidebar -->
+    <nav class="adm-sidebar">
+      <div class="adm-nav-label">Principal</div>
+      <button class="adm-nav-item active" data-tab="clients">
+        <span class="adm-nav-icon">👥</span> Clients
+        <span class="adm-nav-badge" id="sideRiskCount">0</span>
+      </button>
+      <button class="adm-nav-item" data-tab="relectures">
+        <span class="adm-nav-icon">✍️</span> Relectures
+      </button>
+      <button class="adm-nav-item" data-tab="creer">
+        <span class="adm-nav-icon">➕</span> Créer un compte
+      </button>
+      <div class="adm-nav-label">Outils</div>
+      <button class="adm-nav-item" data-tab="satisfaction">
+        <span class="adm-nav-icon">📊</span> Satisfaction
+      </button>
+    </nav>
 
-      <div class="po-admin-layout">
-        <aside class="panel po-admin-create-card">
-          <div class="po-admin-panel-head">
+    <!-- Content -->
+    <div class="adm-content" id="adminContent">
+
+      <!-- ════ ONGLET CLIENTS ════ -->
+      <div id="tabClients">
+        <!-- KPIs -->
+        <div class="adm-hero">
+          <div class="adm-hero-header">
             <div>
-              <h3>Créer un client</h3>
-              <p class="muted">Création rapide d'un compte opérationnel avec mot de passe provisoire.</p>
+              <div class="adm-hero-title">Tableau de bord clients</div>
+              <div class="adm-hero-sub">Vue d'ensemble et gestion des accès</div>
+            </div>
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshBtn">🔄 Actualiser</button>
+          </div>
+          <div class="adm-kpis">
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Clients total</div>
+              <div class="adm-kpi-value" id="userCount">—</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Actifs ce mois</div>
+              <div class="adm-kpi-value green" id="activeCount">—</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Enquêtes envoyées</div>
+              <div class="adm-kpi-value" id="sentCount">—</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Note moyenne</div>
+              <div class="adm-kpi-value" id="avgScore">—</div>
+            </div>
+            <div class="adm-kpi clickable" id="riskKpi" style="border-color:rgba(239,68,68,.2)">
+              <div class="adm-kpi-label">⚠️ Clients à risque</div>
+              <div class="adm-kpi-value red" id="riskCount">—</div>
+              <div class="adm-kpi-sub">Cliquer pour filtrer</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Taux de réponse</div>
+              <div class="adm-kpi-value" id="responseRate">—</div>
             </div>
           </div>
-          <label class="label">Nom / Prénom</label>
-          <input id="newFullName" class="input" placeholder="Nom du client"/>
-          <label class="label">Organisation</label>
-          <input id="newOrg" class="input" placeholder="Structure ou société"/>
-          <label class="label">Email</label>
-          <input id="newEmail" class="input" placeholder="client@exemple.com"/>
-          <label class="label">Téléphone</label>
-          <input id="newPhone" class="input" placeholder="+590 ..."/>
-          <div class="grid2 po-admin-mini-grid">
-            <div>
-              <label class="label">Type</label>
-              <select id="newSpace" class="input">
+        </div>
+
+        <!-- Table clients -->
+        <div class="adm-card">
+          <div class="adm-card-head">
+            <div class="adm-card-title">Liste des clients</div>
+            <div class="adm-filters" style="margin:0;flex:1;justify-content:flex-end">
+              <div class="adm-search-wrap" style="max-width:280px">
+                <input class="adm-search" id="userSearch" placeholder="Rechercher un client…" oninput="filterUsers()"/>
+              </div>
+              <select class="adm-input adm-select" id="filterSpace" style="width:auto;padding:8px 12px;font-size:12px" onchange="filterUsers()">
+                <option value="">Tous espaces</option>
                 <option value="public">Public</option>
                 <option value="private">Privé</option>
               </select>
-            </div>
-            <div>
-              <label class="label">Mot de passe initial</label>
-              <input id="newPwd" class="input" value="Temporaire123!"/>
-            </div>
-          </div>
-          <button class="btn" id="createUserBtn" style="margin-top:16px">Créer le compte</button>
-          <div class="fineprint" id="createUserMsg"></div>
-        </aside>
-
-        <section class="po-admin-main">
-          <div class="panel">
-            <div class="po-admin-panel-head">
-              <div>
-                <h3>Comptes créés</h3>
-                <p class="muted">Les clients à risque remontent automatiquement en tête. Le KPI rouge est cliquable pour afficher directement la liste prioritaire.</p>
-              </div>
-            </div>
-
-            <div class="po-admin-filters">
-              <input id="userSearch" class="input" placeholder="Rechercher un client, un e-mail ou une organisation"/>
-              <select id="offerFilter" class="input">
-                <option value="all">Toutes les offres</option>
-                <option value="FREE">Free trial</option>
-                <option value="STANDARD">Offre standard</option>
-              </select>
-              <select id="satisfactionFilter" class="input">
-                <option value="all">Toutes satisfactions</option>
-                <option value="pending">Mail non envoyé</option>
-                <option value="sent">Mail envoyé</option>
-                <option value="answered">Réponse reçue</option>
-                <option value="risk">Clients à risque</option>
-                <option value="follow">À suivre</option>
-                <option value="good">Satisfaits</option>
+              <select class="adm-input adm-select" id="filterStatus" style="width:auto;padding:8px 12px;font-size:12px" onchange="filterUsers()">
+                <option value="">Tous statuts</option>
+                <option value="active">Actif</option>
+                <option value="trial">Essai</option>
+                <option value="expired">Expiré</option>
               </select>
             </div>
-
-            <div class="po-admin-filter-banner" id="filterBanner" hidden>
-              <div>
-                <strong id="filterBannerTitle">Filtre actif</strong>
-                <p id="filterBannerText">Liste filtrée.</p>
-              </div>
-              <button type="button" class="btn ghost" id="clearRiskFilter">Voir tous les clients</button>
-            </div>
-
-            <div class="po-admin-list" id="usersList"></div>
           </div>
-        </section>
-      </div>
-    </div>
-  </section>
-  <!-- Panel relectures expertes admin -->
-  <section class="card po-admin-section" style="max-width:1100px;margin:28px auto 0" id="expertPanel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-      <div>
-        <h2 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#0b2440">Relectures expertes</h2>
-        <p class="muted" style="margin:0;font-size:13px">Gérez et répondez aux demandes de relecture de vos clients.</p>
-      </div>
-      <div class="row gap">
-        <select id="expertFilter" class="input" style="width:auto;font-size:13px">
-          <option value="">Toutes</option>
-          <option value="new">En attente</option>
-          <option value="in_progress">En cours</option>
-          <option value="replied">Répondues</option>
-          <option value="closed">Clôturées</option>
-        </select>
-        <button class="btn ghost" id="btnRefreshExpert" type="button">🔄 Actualiser</button>
-      </div>
-    </div>
-    <div id="expertRequestsList"><div class="muted" style="text-align:center;padding:24px">Chargement...</div></div>
-    <!-- Modal réponse -->
-    <div id="replyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(11,36,64,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
-      <div style="background:#fff;border-radius:20px;padding:32px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto">
-        <h3 style="margin:0 0 6px;font-size:18px;font-weight:700;color:#0b2440">Répondre à la relecture</h3>
-        <p id="replySubject" style="color:#50627a;font-size:14px;margin:0 0 16px"></p>
-        <label class="label">Votre réponse experte</label>
-        <textarea id="replyText" class="input" rows="10" placeholder="Rédigez votre analyse, corrections, recommandations...&#10;&#10;Soyez précis et actionnable pour le client."></textarea>
-        <div class="row gap wrap" style="margin-top:16px">
-          <button class="btn" id="btnSendReply" type="button">✓ Envoyer la réponse</button>
-          <button class="btn ghost" id="btnCloseModal" type="button">Annuler</button>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Espace</th>
+                  <th>Statut</th>
+                  <th>Tickets</th>
+                  <th>Satisfaction</th>
+                  <th>Inscrit le</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">Chargement…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div id="replyMsg" style="font-size:13px;margin-top:10px;min-height:18px"></div>
+      </div>
+
+      <!-- ════ ONGLET RELECTURES ════ -->
+      <div id="tabRelectures" hidden>
+        <div class="adm-card">
+          <div class="adm-card-head">
+            <div class="adm-card-title">✍️ Relectures expertes en attente</div>
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertBtn">🔄 Actualiser</button>
+          </div>
+          <div class="adm-card-body" id="expertList">
+            <p style="color:var(--muted)">Chargement des relectures…</p>
+          </div>
+        </div>
+        <div class="adm-card" id="expertReplyBox" hidden>
+          <div class="adm-card-head">
+            <div class="adm-card-title">Répondre à la relecture</div>
+          </div>
+          <div class="adm-card-body">
+            <div class="adm-form-group" style="margin-bottom:12px">
+              <label class="adm-label">Réponse de l'expert</label>
+              <textarea class="adm-textarea" id="expertReply" placeholder="Rédigez votre retour expert…"></textarea>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="adm-btn adm-btn-primary" id="expertSendBtn">✓ Envoyer la réponse</button>
+              <button class="adm-btn adm-btn-ghost" id="expertCancelBtn">Annuler</button>
+            </div>
+            <div class="adm-msg" id="expertMsg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ ONGLET CRÉER ════ -->
+      <div id="tabCreer" hidden>
+        <div class="adm-card" style="max-width:600px">
+          <div class="adm-card-head">
+            <div class="adm-card-title">➕ Créer un compte client</div>
+          </div>
+          <div class="adm-card-body">
+            <div class="adm-form-grid">
+              <div class="adm-form-group">
+                <label class="adm-label">Prénom & Nom</label>
+                <input class="adm-input" id="createName" placeholder="Jean Dupont"/>
+              </div>
+              <div class="adm-form-group">
+                <label class="adm-label">Email</label>
+                <input class="adm-input" type="email" id="createEmail" placeholder="jean@exemple.fr"/>
+              </div>
+              <div class="adm-form-group">
+                <label class="adm-label">Mot de passe temporaire</label>
+                <input class="adm-input" type="password" id="createPassword" placeholder="Min. 8 caractères"/>
+              </div>
+              <div class="adm-form-group">
+                <label class="adm-label">Espace</label>
+                <select class="adm-input adm-select" id="createSpace">
+                  <option value="public">Espace public</option>
+                  <option value="private">Espace privé</option>
+                </select>
+              </div>
+              <div class="adm-form-group">
+                <label class="adm-label">Tickets IA</label>
+                <input class="adm-input" type="number" id="createTickets" value="10"/>
+              </div>
+              <div class="adm-form-group">
+                <label class="adm-label">Organisation</label>
+                <input class="adm-input" id="createOrg" placeholder="Entreprise (optionnel)"/>
+              </div>
+              <div class="adm-form-group adm-form-full">
+                <label class="adm-label">Offre</label>
+                <select class="adm-input adm-select" id="createPlan">
+                  <option value="free">Free / Essai</option>
+                  <option value="starter">Starter</option>
+                  <option value="pro">Pro</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px">
+              <button class="adm-btn adm-btn-primary" id="createUserBtn">Créer le compte</button>
+            </div>
+            <div class="adm-msg" id="createUserMsg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ ONGLET SATISFACTION ════ -->
+      <div id="tabSatisfaction" hidden>
+        <div class="adm-hero" style="margin-bottom:20px">
+          <div class="adm-hero-header">
+            <div>
+              <div class="adm-hero-title">📊 Satisfaction clients</div>
+              <div class="adm-hero-sub">Suivi des enquêtes et des retours</div>
+            </div>
+          </div>
+          <div class="adm-kpis">
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Enquêtes envoyées</div>
+              <div class="adm-kpi-value" id="satSent">—</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Taux de réponse</div>
+              <div class="adm-kpi-value green" id="satRate">—</div>
+            </div>
+            <div class="adm-kpi">
+              <div class="adm-kpi-label">Note moyenne</div>
+              <div class="adm-kpi-value" id="satAvg">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head">
+            <div class="adm-card-title">Clients sans enquête envoyée</div>
+          </div>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead>
+                <tr><th>Client</th><th>Email</th><th>Inscrit le</th><th>Action</th></tr>
+              </thead>
+              <tbody id="satTableBody">
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /adm-content -->
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="adm-overlay" id="panelOverlay"></div>
+
+<!-- Panneau détail utilisateur -->
+<div class="adm-user-panel" id="userPanel">
+  <div class="adm-user-panel-head">
+    <div class="adm-user-avatar" id="panelAvatar">?</div>
+    <div class="adm-user-panel-info">
+      <div class="adm-user-panel-name" id="panelName">—</div>
+      <div class="adm-user-panel-email" id="panelEmail">—</div>
+    </div>
+    <button class="adm-close-btn" id="panelCloseBtn">✕</button>
+  </div>
+  <div class="adm-user-panel-body">
+    <div class="adm-tabs">
+      <button class="adm-tab active" data-ptab="info">Infos</button>
+      <button class="adm-tab" data-ptab="actions">Actions</button>
+      <button class="adm-tab" data-ptab="satisfaction">Satisfaction</button>
+    </div>
+
+    <!-- Tab Infos -->
+    <div id="ptabInfo">
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">Compte</div>
+        <div class="adm-detail-row"><span class="adm-detail-key">ID</span><span class="adm-detail-val" id="dId">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Espace</span><span class="adm-detail-val" id="dSpace">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Offre</span><span class="adm-detail-val" id="dPlan">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Statut</span><span class="adm-detail-val" id="dStatus">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Tickets IA</span><span class="adm-detail-val" id="dTickets">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Organisation</span><span class="adm-detail-val" id="dOrg">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Inscription</span><span class="adm-detail-val" id="dCreated">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Fin essai</span><span class="adm-detail-val" id="dTrial">—</span></div>
       </div>
     </div>
-  </section>
-</main>
+
+    <!-- Tab Actions -->
+    <div id="ptabActions" hidden>
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">Tickets & Accès</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+          <input class="adm-input" type="number" id="panelTickets" placeholder="Nb tickets" style="width:120px"/>
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveTickets">Mettre à jour</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <select class="adm-input adm-select" id="panelPlan" style="flex:1">
+            <option value="free">Free</option>
+            <option value="starter">Starter</option>
+            <option value="pro">Pro</option>
+            <option value="premium">Premium</option>
+          </select>
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSavePlan">Appliquer</button>
+        </div>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelPromoteStandard" style="width:100%;justify-content:center;margin-bottom:8px">
+          Passer en offre standard
+        </button>
+      </div>
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">Communication</div>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelContact" style="width:100%;justify-content:center;margin-bottom:8px">
+          📧 Contacter ce client
+        </button>
+      </div>
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">Zone dangereuse</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="adm-btn adm-btn-danger adm-btn-sm" id="panelDelete">Supprimer le compte</button>
+          <button class="adm-btn adm-btn-danger adm-btn-sm" id="panelReset">⚠️ Réinitialiser</button>
+        </div>
+        <div class="adm-msg" id="panelMsg" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- Tab Satisfaction -->
+    <div id="ptabSatisfaction" hidden>
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">Enquête satisfaction</div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Mail envoyé</span><span class="adm-detail-val" id="dSatSent">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Date réponse</span><span class="adm-detail-val" id="dSatDate">—</span></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Note globale</span><span class="adm-detail-val" id="dSatScore">—</span></div>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSendSat" style="width:100%;justify-content:center;margin-top:12px">
+          📧 Envoyer l'enquête
+        </button>
+        <div class="adm-msg" id="panelSatMsg" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 <script type="module">
 import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
@@ -187,553 +651,380 @@ wireLogout();
 const el = (id) => document.getElementById(id);
 mountTurnstile('turnstileBox').catch(() => {});
 let usersCache = [];
-let lastFilteredUsers = [];
+let selectedUser = null;
+let currentPtab = 'info';
 
-function escapeHtml(value='') {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-function formatDate(value) {
-  if (!value) return '—';
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('fr-FR');
+function planBadge(plan) {
+  const map = { FREE:'grey', STARTER:'blue', PRO:'green', PREMIUM:'blue' };
+  const cls = map[(plan||'FREE').toUpperCase()] || 'grey';
+  return `<span class="adm-badge adm-badge-${cls}">${esc(plan||'Free')}</span>`;
 }
 
-function trialDaysInfo(trialExpiresAt) {
-  if (!trialExpiresAt) return '';
-  const d = new Date(trialExpiresAt);
-  const days = Math.ceil((d - Date.now()) / 86400000);
-  if (days < 0) return 'Essai expiré';
-  if (days === 0) return 'Expire aujourd\'hui';
-  return `${days}j d'essai restants`;
+function statusBadge(u) {
+  const w = u.wallet;
+  if (!w) return '<span class="adm-badge adm-badge-grey">—</span>';
+  const now = new Date();
+  const exp = w.trial_expires_at ? new Date(w.trial_expires_at) : null;
+  if (w.status === 'active') return '<span class="adm-badge adm-badge-green">Actif</span>';
+  if (exp && exp > now) return '<span class="adm-badge adm-badge-yellow">Essai</span>';
+  return '<span class="adm-badge adm-badge-red">Expiré</span>';
 }
 
-function getOfferValue(user) {
-  return (user.plan_code || '').toUpperCase() === 'STANDARD' || user.status === 'active' ? 'STANDARD' : 'FREE';
-}
-
-function getStatusLabel(status) {
-  return {
-    trial_active: 'Essai actif',
-    active: 'Compte débloqué',
-    trial_expired: 'Essai expiré',
-    verified_no_trial: 'Vérifié sans essai'
-  }[status] || 'À vérifier';
-}
-
-function getSatisfactionFlowStatus(user) {
-  if (user.satisfaction_response_received_at) return 'answered';
-  if (user.satisfaction_mail_sent_at) return 'sent';
-  return 'pending';
-}
-
-function getSatisfactionScore(user) {
-  const n = Number(user.satisfaction_score_10 || 0);
-  if (!Number.isFinite(n) || n <= 0) return null;
-  return Math.round(n * 10) / 10;
-}
-
-function getRiskProfile(user) {
-  const score = getSatisfactionScore(user);
-  if (score === null) return { key: 'na', label: 'Sans note', className: 'neutral', priority: 3 };
-  if (score < 5) return { key: 'risk', label: 'À risque', className: 'risk', priority: 0 };
-  if (score < 8) return { key: 'follow', label: 'À suivre', className: 'follow', priority: 1 };
-  return { key: 'good', label: 'Satisfait', className: 'good', priority: 2 };
-}
-
-function getSatisfactionBadge(user) {
-  const flow = getSatisfactionFlowStatus(user);
-  if (flow === 'answered') return '<span class="po-admin-pill answered">Réponse reçue</span>';
-  if (flow === 'sent') return `<span class="po-admin-pill sent">Envoyé le ${formatDate(user.satisfaction_mail_sent_at)}</span>`;
-  return '<span class="po-admin-pill pending">À envoyer</span>';
-}
-
-function getSatisfactionScoreBadge(user) {
-  const score = getSatisfactionScore(user);
-  if (score === null) return '<span class="po-admin-score score-na">— <small>En attente</small></span>';
-  const cls = score >= 8 ? 'score-good' : score >= 5 ? 'score-mid' : 'score-low';
-  return `<span class="po-admin-score ${cls}">${String(score).replace('.', ',')}/10</span>`;
-}
-
-function getRiskBadge(user) {
-  const profile = getRiskProfile(user);
-  return `<span class="po-admin-risk ${profile.className}">${profile.label}</span>`;
-}
-
-function getScoreCell(user) {
-  const score = getSatisfactionScore(user);
-  const profile = getRiskProfile(user);
-  if (score === null) {
-    return `<div class="po-admin-score-panel na"><div class="value">—</div><div class="meta">Aucune réponse</div></div>`;
-  }
-  return `<div class="po-admin-score-panel ${profile.className}"><div class="value">${String(score).replace('.', ',')}/10</div><div class="meta">${profile.label}</div></div>`;
-}
-
-function buildUserCard(u) {
-  const trialExpiry = u.trial_expires_at ? new Date(u.trial_expires_at).toISOString().slice(0,10) : '';
-  const offerValue = getOfferValue(u);
-  const statusValue = u.status || 'trial_active';
-  const flow = getSatisfactionFlowStatus(u);
-  const risk = getRiskProfile(u);
-  return `
-    <article class="po-admin-user-card ${risk.className === 'risk' ? 'is-risk' : risk.className === 'follow' ? 'is-follow' : ''}" data-user-id="${u.id}" data-search="${escapeHtml(`${u.full_name||''} ${u.organization||''} ${u.email||''}`.toLowerCase())}" data-offer="${offerValue}" data-satisfaction="${flow}" data-risk="${risk.key}" data-score="${getSatisfactionScore(u) ?? -1}">
-      <div class="po-admin-user-top">
-        <div class="po-admin-user-identity">
-          <h4>${escapeHtml(u.full_name || 'Client sans nom')}</h4>
-          <div class="po-admin-user-meta">
-            <div>${escapeHtml(u.organization || 'Organisation non renseignée')}</div>
-            <div>${escapeHtml(u.email || '—')}${u.phone_full ? ` <span class="po-admin-meta-sep">•</span> ${escapeHtml(u.phone_full)}` : ''}</div>
-          </div>
-        </div>
-        <div class="po-admin-user-badges">
-          <span class="po-admin-pill type">${escapeHtml(u.account_space || 'public')}</span>
-          <span class="po-admin-pill neutral">${escapeHtml(getStatusLabel(statusValue))}</span>
-          ${getSatisfactionBadge(u)}
-          ${getRiskBadge(u)}
-        </div>
-      </div>
-
-      <div class="po-admin-user-body po-admin-user-body-flat">
-        <div class="po-admin-user-fields po-admin-user-fields-flat">
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Statut</span>
-            <select data-field="status" class="input">
-              <option value="trial_active" ${statusValue === 'trial_active' ? 'selected' : ''}>Essai actif</option>
-              <option value="active" ${statusValue === 'active' ? 'selected' : ''}>Compte débloqué</option>
-              <option value="trial_expired" ${statusValue === 'trial_expired' ? 'selected' : ''}>Essai expiré</option>
-              <option value="verified_no_trial" ${statusValue === 'verified_no_trial' ? 'selected' : ''}>Vérifié sans essai</option>
-            </select>
-          </label>
-
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Plan</span>
-            <select data-field="planCode" class="input">
-              <option value="FREE" ${(u.plan_code||'FREE')==='FREE'?'selected':''}>Free (essai)</option>
-              <option value="STARTER" ${(u.plan_code||'')==='STARTER'?'selected':''}>Starter — 49€/mois</option>
-              <option value="PRO" ${(u.plan_code||'')==='PRO'?'selected':''}>Pro — 89€/mois</option>
-              <option value="PREMIUM" ${(u.plan_code||'')==='PREMIUM'?'selected':''}>Premium — Sur devis</option>
-              <option value="CUSTOM" ${(u.plan_code||'')==='CUSTOM'?'selected':''}>Custom (admin)</option>
-            </select>
-          </label>
-
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Relectures expertes/mois</span>
-            <input data-field="expertLimit" value="${u.expert_limit ?? 2}" class="input" type="number" min="0">
-            <small class="po-admin-field-hint" style="color:#7a8fa8;font-size:11px;margin-top:2px">Free=2 · Starter=5 · Pro=15 · Premium=999</small>
-          </label>
-
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Relectures utilisées</span>
-            <input data-field="expertUsed" value="${u.expert_used ?? 0}" class="input" type="number" min="0">
-          </label>
-
-          <label class="po-admin-field">
-            <span class="po-admin-field-label">Échéance</span>
-            <input data-field="expiry" value="${trialExpiry}" class="input" type="date">
-          </label>
-
-          <div class="po-admin-field po-admin-field-score po-admin-field-score-flat">
-            <div class="po-admin-field-label">Note satisfaction globale</div>
-            ${getScoreCell(u)}
-            <div class="po-admin-score-inline">${getSatisfactionScoreBadge(u)}</div>
-          </div>
-        </div>
-
-        <div class="po-admin-actions-col po-admin-actions-row">
-          <button class="btn ghost save">Enregistrer</button>
-          <button class="btn ghost satisfaction" ${u.satisfaction_mail_sent_at ? 'disabled' : ''}>${u.satisfaction_mail_sent_at ? 'Mail déjà envoyé' : 'Envoyer satisfaction'}</button>
-          <button class="btn ghost promote">Passer en offre standard</button>
-          <a class="btn ghost contact" href="mailto:${encodeURIComponent(u.email || '')}?subject=${encodeURIComponent('POPE Online — Suite à votre retour satisfaction')}">Contacter client</a>
-          <button class="btn ghost delete danger">Supprimer le compte</button>
-          <button class="btn ghost delete-full danger">⚠️ Réinitialiser intégralement</button>
-        </div>
-      </div>
-
-      <input type="hidden" data-field="publicLimit" value="${Number(u.public_dossiers_limit ?? (u.account_space === 'public' ? 1 : 0))}">
-      <input type="hidden" data-field="privateLimit" value="${Number(u.private_dossiers_limit ?? (u.account_space === 'private' ? 1 : 0))}">
-      <input type="hidden" data-field="privateUsersLimit" value="${Number(u.private_users_limit ?? 1)}">
-    </article>`;
-}
-
-function round1(value) {
-  return Math.round(value * 10) / 10;
-}
-
-function updateStats(users) {
-  const sent = users.filter((u) => !!u.satisfaction_mail_sent_at).length;
-  const answered = users.filter((u) => !!u.satisfaction_response_received_at).length;
-  const scored = users.map(getSatisfactionScore).filter((v) => v !== null);
-  const avg = scored.length ? round1(scored.reduce((a, b) => a + b, 0) / scored.length) : null;
-  const risk = users.filter((u) => getRiskProfile(u).key === 'risk').length;
-  const responseRate = sent ? Math.round((answered / sent) * 100) : 0;
-
-  el('userCount').textContent = String(users.length);
-  el('sentCount').textContent = String(sent);
-  el('responseRate').textContent = `${responseRate} %`;
-  el('avgScore').textContent = avg === null ? '—' : `${String(avg).replace('.', ',')}/10`;
-  el('riskCount').textContent = String(risk);
-  el('riskKpi').disabled = risk === 0;
-  el('riskKpi').classList.toggle('is-empty', risk === 0);
-}
-
-function sortUsers(users) {
-  return [...users].sort((a, b) => {
-    const pa = getRiskProfile(a).priority;
-    const pb = getRiskProfile(b).priority;
-    if (pa !== pb) return pa - pb;
-    const sa = getSatisfactionScore(a);
-    const sb = getSatisfactionScore(b);
-    if (sa !== null && sb !== null && sa !== sb) return sa - sb;
-    if (sa === null && sb !== null) return 1;
-    if (sa !== null && sb === null) return -1;
-    const da = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-    if (da !== 0) return da;
-    return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'fr');
-  });
-}
-
-function attachCardActions(card, user) {
-  const saveBtn = card.querySelector('.save');
-  const deleteBtn = card.querySelector('.delete');
-  const satisfactionBtn = card.querySelector('.satisfaction');
-  const promoteBtn = card.querySelector('.promote');
-
-  card.querySelector('[data-field="planCode"]').addEventListener('change', (event) => {
-    const status = card.querySelector('[data-field="status"]');
-    if (event.target.value === 'STANDARD' && status.value !== 'active') status.value = 'active';
-  });
-
-  promoteBtn.addEventListener('click', () => {
-    card.querySelector('[data-field="planCode"]').value = 'STANDARD';
-    card.querySelector('[data-field="status"]').value = 'active';
-    showToast('Le compte est prêt à être enregistré en offre standard.', 'ok');
-  });
-
-  saveBtn.addEventListener('click', async () => {
-    try {
-      const planCode = card.querySelector('[data-field="planCode"]').value || 'FREE';
-      const expertLimitEl = card.querySelector('[data-field="expertLimit"]');
-      const expertLimit = expertLimitEl ? Number(expertLimitEl.value) : planDefaultExpert(planCode);
-      const expertUsedEl = card.querySelector('[data-field="expertUsed"]');
-      const expertUsed  = expertUsedEl ? Number(expertUsedEl.value) : 0;
-      const payload = {
-        wallet: {
-          planCode,
-          planLabel: planCodeToLabel(planCode),
-          aiUnlimited: true,
-          expertLimit,
-          expertUsed,
-          status: card.querySelector('[data-field="status"]').value,
-          ticketsAi: 9999,
-          ticketsExpert: (() => {
-            const expertEl = card.querySelector('[data-field="ticketsExpert"]');
-            const expertVal = expertEl ? expertEl.value.trim() : '';
-            if (expertVal === '' || expertVal === '0') {
-              // Si vide ou 0 → synchroniser avec tickets IA
-              return Number(card.querySelector('[data-field="ticketsAi"]').value || 0);
-            }
-            return Number(expertVal);
-          })(),
-          trialExpiresAt: card.querySelector('[data-field="expiry"]').value || null,
-          publicDossiersLimit: Number(card.querySelector('[data-field="publicLimit"]').value || 0),
-          privateDossiersLimit: Number(card.querySelector('[data-field="privateLimit"]').value || 0),
-          privateUsersLimit: Number(card.querySelector('[data-field="privateUsersLimit"]').value || 1)
-        }
-      };
-      await apiFetch('/admin/users/' + user.id, { method:'PUT', body: payload });
-      showToast('Compte mis à jour', 'ok');
-      await loadUsers();
-    } catch (e) {
-      showToast(getApiMessage(e), 'err');
-    }
-  });
-
-  satisfactionBtn?.addEventListener('click', async () => {
-    try {
-      await apiFetch('/admin/users/' + user.id + '/send-satisfaction', { method:'POST', body:{} });
-      showToast('Mail de satisfaction envoyé', 'ok');
-      await loadUsers();
-    } catch (e) {
-      showToast(getApiMessage(e), 'warn');
-    }
-  });
-
-  deleteBtn.addEventListener('click', async () => {
-    const name = user.full_name || user.email || 'ce compte';
-    const confirmed = confirm(
-      `⚠️ Suppression du compte\n\n` +
-      `Client : ${name}\nEmail : ${user.email}\n\n` +
-      `Le compte sera supprimé. L'empreinte est conservée : l'utilisateur ne pourra PAS recréer un compte avec une offre gratuite.\n\n` +
-      `Confirmer la suppression ?`
-    );
-    if (!confirmed) return;
-    try {
-      await apiFetch('/admin/users/' + user.id + '?reset=false', { method:'DELETE' });
-      showToast('Compte supprimé (empreinte conservée)', 'ok');
-      await loadUsers();
-    } catch (e) {
-      showToast(getApiMessage(e), 'err');
-    }
-  });
-
-  const deleteFullBtn = card.querySelector('.delete-full');
-  deleteFullBtn?.addEventListener('click', async () => {
-    const name = user.full_name || user.email || 'ce compte';
-    const step1 = confirm(
-      `🔴 RÉINITIALISATION INTÉGRALE DU COMPTE\n\n` +
-      `Client : ${name}\nEmail : ${user.email}\n\n` +
-      `Cette action supprime TOUTES les données ET l'empreinte de l'utilisateur.\n` +
-      `Il pourra se réinscrire et bénéficier à nouveau d'une offre gratuite.\n\n` +
-      `⚠️ Cette action est IRRÉVERSIBLE. Confirmer ?`
-    );
-    if (!step1) return;
-    const step2 = confirm(
-      `CONFIRMATION FINALE\n\n` +
-      `Tapez OK pour confirmer la réinitialisation intégrale de "${name}".\n` +
-      `L'utilisateur sera autorisé à se réinscrire avec un nouveau free trial.`
-    );
-    if (!step2) return;
-    try {
-      await apiFetch('/admin/users/' + user.id + '?reset=true', { method:'DELETE' });
-      showToast('Compte réinitialisé intégralement', 'ok');
-      await loadUsers();
-    } catch (e) {
-      showToast(getApiMessage(e), 'err');
-    }
-  });
-}
-
-function renderUsers(users) {
-  lastFilteredUsers = users;
-  const list = el('usersList');
-  list.innerHTML = '';
-  if (!users.length) {
-    list.innerHTML = '<div class="po-admin-empty">Aucun compte ne correspond aux filtres actuels.</div>';
-    return;
-  }
-  sortUsers(users).forEach((user) => {
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = buildUserCard(user);
-    const card = wrapper.firstElementChild;
-    list.appendChild(card);
-    attachCardActions(card, user);
-  });
-}
-
-function updateFilterBanner(filtered) {
-  const filter = el('satisfactionFilter').value;
-  const banner = el('filterBanner');
-  if (filter === 'risk') {
-    banner.hidden = false;
-    el('filterBannerTitle').textContent = 'Filtre actif : clients à risque';
-    el('filterBannerText').textContent = `${filtered.length} client${filtered.length > 1 ? 's' : ''} à risque affiché${filtered.length > 1 ? 's' : ''}.`;
-    return;
-  }
-  banner.hidden = true;
-}
-
-function applyFilters() {
-  const q = el('userSearch').value.trim().toLowerCase();
-  const offer = el('offerFilter').value;
-  const satisfaction = el('satisfactionFilter').value;
-  const filtered = usersCache.filter((user) => {
-    const matchesQ = !q || `${user.full_name||''} ${user.organization||''} ${user.email||''}`.toLowerCase().includes(q);
-    const matchesOffer = offer === 'all' || getOfferValue(user) === offer;
-    const flow = getSatisfactionFlowStatus(user);
-    const risk = getRiskProfile(user).key;
-    const matchesSat = satisfaction === 'all' || flow === satisfaction || risk === satisfaction;
-    return matchesQ && matchesOffer && matchesSat;
-  });
-  updateFilterBanner(filtered);
-  renderUsers(filtered);
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
 }
 
 async function loadUsers() {
   try {
-    const data = await apiFetch('/admin/users');
-    usersCache = data.users || [];
-    if (usersCache.length === 0) console.warn('[admin] loadUsers: 0 users returned from API');
-    updateStats(usersCache);
-    applyFilters();
-  } catch (e) {
-    console.error('[admin] loadUsers error:', e?.status, e?.message);
-    if (e?.status === 401) {
-      clearSession();
-      el('adminLoginBox').hidden = false;
-      el('adminApp').hidden = true;
-      showToast('Session expirée, reconnectez-vous', 'warn');
-    } else {
-      showToast(getApiMessage(e), 'err');
+    const data = await apiFetch('/admin/users/');
+    usersCache = Array.isArray(data) ? data : (data.users || []);
+    updateKpis();
+    renderTable(usersCache);
+  } catch(e) {
+    showToast('Erreur chargement: '+getApiMessage(e), 'err');
+  }
+}
+
+function updateKpis() {
+  el('userCount').textContent = usersCache.length;
+  const risk = usersCache.filter(u => u.wallet?.status !== 'active' && (!u.wallet?.trial_expires_at || new Date(u.wallet.trial_expires_at) < new Date()));
+  el('riskCount').textContent = risk.length;
+  el('sideRiskCount').textContent = risk.length;
+  const sent = usersCache.filter(u => u.satisfaction_mail_sent_at).length;
+  const replied = usersCache.filter(u => u.satisfaction_score).length;
+  el('sentCount').textContent = sent;
+  el('satSent').textContent = sent;
+  el('activeCount').textContent = usersCache.filter(u => u.wallet?.status === 'active').length;
+  el('responseRate').textContent = sent > 0 ? Math.round(replied/sent*100)+'%' : '—';
+  el('satRate').textContent = sent > 0 ? Math.round(replied/sent*100)+'%' : '—';
+  const scores = usersCache.filter(u => u.satisfaction_score).map(u => Number(u.satisfaction_score));
+  const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
+  el('avgScore').textContent = avg === '—' ? '—' : '⭐ '+avg;
+  el('satAvg').textContent = avg;
+}
+
+function filterUsers() {
+  const q = (el('userSearch')?.value || '').toLowerCase();
+  const sp = el('filterSpace')?.value || '';
+  const st = el('filterStatus')?.value || '';
+  let filtered = usersCache.filter(u => {
+    const txt = (u.email+' '+(u.full_name||'')+' '+(u.organization||'')).toLowerCase();
+    if (q && !txt.includes(q)) return false;
+    if (sp && u.account_space !== sp) return false;
+    if (st) {
+      const w = u.wallet;
+      if (st === 'active' && w?.status !== 'active') return false;
+      if (st === 'trial') { const exp = w?.trial_expires_at ? new Date(w.trial_expires_at) : null; if (!exp || exp <= new Date() || w?.status === 'active') return false; }
+      if (st === 'expired') { const exp = w?.trial_expires_at ? new Date(w.trial_expires_at) : null; if (w?.status === 'active' || (exp && exp > new Date())) return false; }
     }
-  }
+    return true;
+  });
+  renderTable(filtered);
 }
 
-async function adminLogin() {
-  try {
-    const data = await apiFetch('/auth/admin-login', {
-      method:'POST',
-      body:{ identifier: el('adminIdentifier').value.trim(), password: el('adminPassword').value, fp:'admin-dashboard', turnstileToken:getTurnstileToken() }
-    });
-    if (data?.user?.role !== 'admin') throw new Error('forbidden');
-    setSession(data.user || {}, data.token || '');
-    el('adminLoginBox').hidden = true;
-    el('adminApp').hidden = false;
-    el('adminLoginMsg').textContent = data.user.mustChangePassword ? 'Changement de mot de passe requis dans Mon compte.' : '';
-    await loadUsers();
-    showToast('Administration ouverte', 'ok');
-  } catch (e) {
-    resetTurnstile();
-    el('adminLoginMsg').textContent = 'Erreur : ' + getApiMessage(e);
-    showToast('Connexion admin impossible', 'err');
+window.filterUsers = filterUsers;
+
+function renderTable(users) {
+  const tbody = el('usersTableBody');
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">Aucun client trouvé</td></tr>';
+    return;
   }
-}
-
-el('adminLoginBtn').addEventListener('click', adminLogin);
-el('refreshUsers').addEventListener('click', loadUsers);
-el('userSearch').addEventListener('input', applyFilters);
-el('offerFilter').addEventListener('change', applyFilters);
-el('satisfactionFilter').addEventListener('change', applyFilters);
-el('riskKpi').addEventListener('click', () => {
-  if (el('riskKpi').disabled) return;
-  el('satisfactionFilter').value = 'risk';
-  applyFilters();
-  el('usersList').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-el('clearRiskFilter').addEventListener('click', () => {
-  el('satisfactionFilter').value = 'all';
-  applyFilters();
-});
-
-el('createUserBtn').addEventListener('click', async () => {
-  try {
-    await apiFetch('/admin/users', {
-      method:'POST',
-      body:{
-        fullName: el('newFullName').value.trim(),
-        organization: el('newOrg').value.trim(),
-        email: el('newEmail').value.trim(),
-        phoneFull: el('newPhone').value.trim(),
-        accountSpace: el('newSpace').value,
-        password: el('newPwd').value
-      }
-    });
-    el('createUserMsg').textContent = 'Compte créé.';
-    ['newFullName','newOrg','newEmail','newPhone'].forEach((id) => el(id).value = '');
-    showToast('Client créé', 'ok');
-    await loadUsers();
-  } catch (e) {
-    el('createUserMsg').textContent = 'Erreur : ' + getApiMessage(e);
-    showToast('Création impossible', 'err');
-  }
-});
-
-if (getToken()) {
-  loadUsers().then(() => {
-    el('adminLoginBox').hidden = true;
-    el('adminApp').hidden = false;
-  }).catch(() => clearSession());
-}
-</script>
-
-<script type="module">
-// ── Admin : gestion des relectures expertes ──────────────────────────────────
-import { apiFetch } from './api.js';
-
-let currentReplyId = null;
-const statusLabel = { new:'En attente', in_progress:'En cours', replied:'Répondues', closed:'Clôturées' };
-const statusColor = { new:'#f59e0b', in_progress:'#0079c1', replied:'#059669', closed:'#9ca3af' };
-
-function esc(v) { return String(v||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-async function loadExpertRequests() {
-  const list   = document.getElementById('expertRequestsList');
-  const filter = document.getElementById('expertFilter').value;
-  if (!list) return;
-  list.innerHTML = '<div class="muted" style="text-align:center;padding:24px">Chargement...</div>';
-  try {
-    const url  = '/expert/all' + (filter ? '?status=' + filter : '');
-    const data = await apiFetch(url);
-    const reqs = data.requests || [];
-    if (!reqs.length) { list.innerHTML = '<div class="muted" style="text-align:center;padding:24px">Aucune demande.</div>'; return; }
-    list.innerHTML = reqs.map(r => `
-      <div style="border:1.5px solid ${r.status==='replied'?'#a7f3d0':r.status==='new'?'#fde68a':'#e4edf6'};border-radius:16px;padding:20px;margin-bottom:12px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+  tbody.innerHTML = users.map(u => {
+    const w = u.wallet || {};
+    const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
+    const score = u.satisfaction_score ? '⭐ '+u.satisfaction_score : '—';
+    return `<tr style="cursor:pointer" onclick="openPanel('${esc(u.id)}')">
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">${esc(initials)}</div>
           <div>
-            <div style="font-weight:700;font-size:15px;color:#0b2440;margin-bottom:2px">${esc(r.objective)}</div>
-            <div style="font-size:12px;color:#7a8fa8">${esc(r.full_name||r.user_email||r.email)} · ${esc(r.organization||'')} · ${new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="background:${statusColor[r.status]||'#9ca3af'}22;color:${statusColor[r.status]||'#9ca3af'};border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700">${statusLabel[r.status]||r.status}</span>
-            <select onchange="updateStatus('${r.id}', this.value, this)" style="font-size:12px;border:1px solid #dce9f4;border-radius:8px;padding:3px 8px;color:#50627a">
-              <option value="">Changer statut</option>
-              <option value="in_progress">→ En cours</option>
-              <option value="closed">→ Clôturer</option>
-            </select>
-            ${r.status !== 'replied' && r.status !== 'closed' ? `<button onclick="openReply('${r.id}','${esc(r.objective)}')" style="background:#0079c1;color:#fff;border:none;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer">Répondre</button>` : ''}
+            <div style="font-weight:600;font-size:13px">${esc(u.full_name||'—')}</div>
+            <div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div>
           </div>
         </div>
-        <div style="font-size:13px;color:#50627a;background:#f8fafc;border-radius:10px;padding:12px;white-space:pre-wrap;max-height:120px;overflow:hidden">${esc(r.expectations)}</div>
-        ${r.reply_text ? `<div style="margin-top:10px;background:#f0fdf4;border-left:3px solid #059669;border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;color:#065f46"><strong>Réponse envoyée le ${new Date(r.replied_at).toLocaleDateString('fr-FR')} par ${esc(r.reply_by)} :</strong><br>${esc(r.reply_text)}</div>` : ''}
-      </div>`).join('');
-  } catch(e) {
-    list.innerHTML = '<div class="muted" style="text-align:center;padding:24px">Impossible de charger les relectures.</div>';
-    console.error(e);
-  }
+      </td>
+      <td><span class="adm-badge ${u.account_space==='private'?'adm-badge-blue':'adm-badge-grey'}">${u.account_space==='private'?'Privé':'Public'}</span></td>
+      <td>${statusBadge(u)}</td>
+      <td><span style="font-weight:700">${w.tickets_ai ?? '—'}</span></td>
+      <td>${score}</td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="openPanel('${esc(u.id)}')">Détails</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-window.updateStatus = async function(id, status, sel) {
-  if (!status) return;
-  try {
-    await apiFetch('/expert/' + id + '/status', { method:'PUT', body:{ status } });
-    sel.value = '';
-    loadExpertRequests();
-  } catch(e) { alert('Erreur : ' + e.message); }
+function openPanel(id) {
+  const u = usersCache.find(x => x.id === id);
+  if (!u) return;
+  selectedUser = u;
+  const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
+  el('panelAvatar').textContent = initials;
+  el('panelName').textContent = u.full_name || u.email;
+  el('panelEmail').textContent = u.email;
+  const w = u.wallet || {};
+  el('dId').textContent = u.id?.substring(0,8)+'…';
+  el('dSpace').textContent = u.account_space === 'private' ? '🔒 Privé' : '🏛️ Public';
+  el('dPlan').textContent = w.plan || 'Free';
+  el('dStatus').textContent = w.status || '—';
+  el('dTickets').textContent = w.tickets_ai ?? '—';
+  el('dOrg').textContent = u.organization || '—';
+  el('dCreated').textContent = fmtDate(u.created_at);
+  el('dTrial').textContent = fmtDate(w.trial_expires_at);
+  el('panelTickets').value = w.tickets_ai ?? '';
+  el('panelPlan').value = (w.plan || 'free').toLowerCase();
+  el('dSatSent').textContent = u.satisfaction_mail_sent_at ? fmtDate(u.satisfaction_mail_sent_at) : 'Non envoyé';
+  el('dSatDate').textContent = u.satisfaction_responded_at ? fmtDate(u.satisfaction_responded_at) : '—';
+  el('dSatScore').textContent = u.satisfaction_score ? '⭐ '+u.satisfaction_score : '—';
+  el('panelMsg').textContent = '';
+  el('panelSatMsg').textContent = '';
+  switchPtab('info');
+  el('userPanel').classList.add('open');
+  el('panelOverlay').classList.add('open');
+}
+
+window.openPanel = openPanel;
+
+function closePanel() {
+  el('userPanel').classList.remove('open');
+  el('panelOverlay').classList.remove('open');
+  selectedUser = null;
+}
+
+function switchPtab(tab) {
+  currentPtab = tab;
+  ['info','actions','satisfaction'].forEach(t => {
+    el('ptab'+t.charAt(0).toUpperCase()+t.slice(1)).hidden = t !== tab;
+  });
+  document.querySelectorAll('[data-ptab]').forEach(b => b.classList.toggle('active', b.dataset.ptab === tab));
+}
+
+el('panelCloseBtn').onclick = closePanel;
+el('panelOverlay').onclick = closePanel;
+
+document.querySelectorAll('[data-ptab]').forEach(b => b.onclick = () => switchPtab(b.dataset.ptab));
+
+// Tabs sidebar
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    ['Clients','Relectures','Creer','Satisfaction'].forEach(t => {
+      const el2 = el('tab'+t);
+      if (el2) el2.hidden = true;
+    });
+    const target = btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1);
+    if (el('tab'+target)) el('tab'+target).hidden = false;
+    if (btn.dataset.tab === 'relectures') loadExpert();
+    if (btn.dataset.tab === 'satisfaction') renderSatTable();
+  };
+});
+
+// KPI risk click
+el('riskKpi').onclick = () => {
+  el('filterStatus').value = 'expired';
+  filterUsers();
+  document.querySelector('[data-tab="clients"]').click();
 };
 
-window.openReply = function(id, subject) {
-  currentReplyId = id;
-  document.getElementById('replySubject').textContent = 'Objet : ' + subject;
-  document.getElementById('replyText').value = '';
-  document.getElementById('replyMsg').textContent = '';
-  const modal = document.getElementById('replyModal');
-  modal.style.display = 'flex';
-  document.getElementById('replyText').focus();
+// Refresh
+el('refreshBtn').onclick = loadUsers;
+
+// Panel actions
+el('panelSaveTickets').onclick = async () => {
+  if (!selectedUser) return;
+  const n = parseInt(el('panelTickets').value);
+  if (isNaN(n)) return;
+  try {
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ ticketsAi:n } });
+    showToast('Tickets mis à jour', 'ok');
+    el('panelMsg').textContent = '✓ Tickets mis à jour';
+    el('panelMsg').className = 'adm-msg ok';
+    await loadUsers();
+  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
 };
 
-const btnClose = document.getElementById('btnCloseModal');
-if (btnClose) btnClose.addEventListener('click', () => { document.getElementById('replyModal').style.display = 'none'; });
-
-const btnSend = document.getElementById('btnSendReply');
-if (btnSend) btnSend.addEventListener('click', async () => {
-  const text = document.getElementById('replyText').value.trim();
-  const msg  = document.getElementById('replyMsg');
-  if (!text) { msg.textContent = 'La réponse ne peut pas être vide.'; msg.style.color='#b91c1c'; return; }
-  btnSend.disabled = true;
-  btnSend.textContent = 'Envoi en cours...';
+el('panelSavePlan').onclick = async () => {
+  if (!selectedUser) return;
+  const plan = el('panelPlan').value;
   try {
-    await apiFetch('/expert/' + currentReplyId + '/reply', { method:'POST', body:{ reply_text: text } });
-    document.getElementById('replyModal').style.display = 'none';
-    loadExpertRequests();
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ plan: plan.toUpperCase() } });
+    showToast('Offre mise à jour', 'ok');
+    await loadUsers();
+  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+};
+
+el('panelPromoteStandard').onclick = async () => {
+  if (!selectedUser) return;
+  try {
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ plan:'STARTER', status:'active' } });
+    showToast('Passé en offre standard', 'ok');
+    await loadUsers();
+  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+};
+
+el('panelDelete').onclick = async () => {
+  if (!selectedUser || !confirm('Supprimer définitivement ce compte ?')) return;
+  try {
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'DELETE' });
+    showToast('Compte supprimé', 'ok');
+    closePanel();
+    await loadUsers();
+  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+};
+
+el('panelReset').onclick = async () => {
+  if (!selectedUser || !confirm('Réinitialiser intégralement ce compte ?')) return;
+  try {
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ reset:true } });
+    showToast('Compte réinitialisé', 'ok');
+    await loadUsers();
+  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+};
+
+el('panelSendSat').onclick = async () => {
+  if (!selectedUser) return;
+  try {
+    await apiFetch(`/admin/users/${selectedUser.id}/satisfaction`, { method:'POST' });
+    showToast('Enquête envoyée', 'ok');
+    el('panelSatMsg').textContent = '✓ Enquête envoyée';
+    el('panelSatMsg').className = 'adm-msg ok';
+    await loadUsers();
+  } catch(e) { el('panelSatMsg').textContent = getApiMessage(e); el('panelSatMsg').className = 'adm-msg err'; }
+};
+
+el('panelContact').onclick = () => {
+  if (selectedUser) window.location.href = 'mailto:'+selectedUser.email;
+};
+
+// Create user
+el('createUserBtn').onclick = async () => {
+  try {
+    await apiFetch('/admin/users', {
+      method: 'POST',
+      body: {
+        fullName: el('createName').value.trim(),
+        email: el('createEmail').value.trim(),
+        password: el('createPassword').value,
+        accountSpace: el('createSpace').value,
+        ticketsAi: parseInt(el('createTickets').value) || 10,
+        organization: el('createOrg').value.trim(),
+        plan: el('createPlan').value.toUpperCase()
+      }
+    });
+    el('createUserMsg').textContent = '✓ Compte créé avec succès.';
+    el('createUserMsg').className = 'adm-msg ok';
+    showToast('Client créé', 'ok');
+    ['createName','createEmail','createPassword','createOrg'].forEach(i => el(i).value = '');
+    await loadUsers();
   } catch(e) {
-    msg.textContent = 'Erreur : ' + e.message;
-    msg.style.color = '#b91c1c';
-    btnSend.disabled = false;
-    btnSend.textContent = '✓ Envoyer la réponse';
+    el('createUserMsg').textContent = getApiMessage(e);
+    el('createUserMsg').className = 'adm-msg err';
+    showToast('Création impossible', 'err');
+  }
+};
+
+// Expert relectures
+async function loadExpert() {
+  try {
+    const data = await apiFetch('/expert/');
+    const missions = Array.isArray(data) ? data : (data.missions || []);
+    if (!missions.length) { el('expertList').innerHTML = '<p style="color:var(--muted)">Aucune relecture en attente.</p>'; return; }
+    el('expertList').innerHTML = missions.map(m => `
+      <div style="border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>${esc(m.usecase_label||m.usecase||'Mission')}</strong>
+          <span style="font-size:11px;color:var(--muted)">${fmtDate(m.created_at)}</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px;white-space:pre-wrap">${esc((m.result_text||'').substring(0,200))}…</p>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="startReply('${esc(m.id)}')">Répondre</button>
+      </div>
+    `).join('');
+  } catch(e) { el('expertList').innerHTML = '<p style="color:var(--red)">Erreur: '+esc(getApiMessage(e))+'</p>'; }
+}
+
+let currentMissionId = null;
+window.startReply = (id) => {
+  currentMissionId = id;
+  el('expertReplyBox').hidden = false;
+  el('expertReply').value = '';
+  el('expertMsg').textContent = '';
+  el('expertReply').focus();
+};
+
+el('expertSendBtn').onclick = async () => {
+  if (!currentMissionId) return;
+  try {
+    await apiFetch('/expert/', { method:'POST', body:{ missionId:currentMissionId, expertText:el('expertReply').value.trim() } });
+    showToast('Réponse envoyée', 'ok');
+    el('expertReplyBox').hidden = true;
+    await loadExpert();
+  } catch(e) { el('expertMsg').textContent = getApiMessage(e); el('expertMsg').className = 'adm-msg err'; }
+};
+
+el('expertCancelBtn').onclick = () => { el('expertReplyBox').hidden = true; currentMissionId = null; };
+el('refreshExpertBtn').onclick = loadExpert;
+
+function renderSatTable() {
+  const pending = usersCache.filter(u => !u.satisfaction_mail_sent_at);
+  const tbody = el('satTableBody');
+  if (!pending.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Tous les clients ont reçu l\'enquête.</td></tr>'; return; }
+  tbody.innerHTML = pending.map(u => `
+    <tr>
+      <td><strong>${esc(u.full_name||'—')}</strong></td>
+      <td style="color:var(--muted);font-size:12px">${esc(u.email)}</td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
+      <td>
+        <button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="sendSat('${esc(u.id)}')">📧 Envoyer</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+window.sendSat = async (id) => {
+  try {
+    await apiFetch(`/admin/users/${id}/satisfaction`, { method:'POST' });
+    showToast('Enquête envoyée', 'ok');
+    await loadUsers();
+    renderSatTable();
+  } catch(e) { showToast(getApiMessage(e), 'err'); }
+};
+
+// Login
+el('adminLoginBtn').addEventListener('click', async () => {
+  try {
+    const token = await getTurnstileToken();
+    const data = await apiFetch('/auth/admin-login', {
+      method: 'POST',
+      body: { identifier: el('adminIdentifier').value, password: el('adminPassword').value, turnstileToken: token }
+    });
+    setSession(data.user || {}, data.token || '');
+    el('adminLoginArea').hidden = true;
+    el('adminBar').hidden = false;
+    el('adminApp').hidden = false;
+    el('adminApp').style.display = 'flex';
+    await loadUsers();
+  } catch(e) {
+    el('adminLoginMsg').textContent = 'Identifiants incorrects';
+    resetTurnstile();
   }
 });
 
-const btnFilter = document.getElementById('expertFilter');
-if (btnFilter) btnFilter.addEventListener('change', loadExpertRequests);
-const btnRefresh = document.getElementById('btnRefreshExpert');
-if (btnRefresh) btnRefresh.addEventListener('click', loadExpertRequests);
-
-loadExpertRequests();
+// Auto-login si token présent
+if (getToken()) {
+  el('adminLoginArea').hidden = true;
+  el('adminBar').hidden = false;
+  el('adminApp').hidden = false;
+  el('adminApp').style.display = 'flex';
+  loadUsers();
+}
 </script>
 </body>
 </html>
