@@ -1207,40 +1207,6 @@ function renderSatTable() {
 }
 
 // ═══ EXPERTS & PORTEFEUILLES ═══
-let selectedExpertId = null;
-
-async function loadExperts() {
-  try {
-    const data = await apiFetch('/admin/experts');
-    const experts = data.experts || [];
-    const tbody = el('expertsTableBody');
-    if (!experts.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Aucun expert. Attribuez le rôle "expert" à un compte client.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = experts.map(e => `
-      <tr>
-        <td>
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">${esc((e.full_name||e.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase())}</div>
-            <div>
-              <div style="font-weight:700;font-size:13px">${esc(e.full_name||'—')}</div>
-              <div style="font-size:11.5px;color:var(--muted)">${esc(e.email)}</div>
-            </div>
-          </div>
-        </td>
-        <td style="color:var(--muted);font-size:12px">${esc(e.organization||'—')}</td>
-        <td>
-          <span style="font-weight:800;font-size:18px">${e.portfolio_count||0}</span>
-          <span style="font-size:11px;color:var(--muted);margin-left:4px">client(s)</span>
-        </td>
-        <td>
-          <button class="adm-btn adm-btn-ghost adm-btn-xs" onclick="openPortfolio('${esc(e.id)}','${esc(e.full_name||e.email)}')">📋 Portefeuille</button>
-        </td>
-      </tr>
-    `).join('');
-  } catch(e) { el('expertsTableBody').innerHTML = '<tr><td colspan="4" style="color:var(--red);padding:16px">Erreur: '+esc(getApiMessage(e))+'</td></tr>'; }
-}
 
 async function openPortfolio(expertId, expertName) {
   selectedExpertId = expertId;
@@ -1388,6 +1354,8 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
 
 let expertsCache = [];
 let currentExpertId = null;
+
+let selectedExpertId = null;
 
 async function loadExperts() {
   try {
