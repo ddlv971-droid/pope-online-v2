@@ -18,7 +18,7 @@ function htmlInputs(dir) {
 export default defineConfig(({ mode }) => ({
   root: ROOT,
   base: './',
-  publicDir: false,
+  publicDir: 'public',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
