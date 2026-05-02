@@ -131,11 +131,137 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     }
   }
 
-  // Gérer l'abonnement annulé
+  // ── Renouvellement mensuel → remise à zéro du compteur expert_used ──────────
+  if (event.type === 'invoice.paid') {
+    const invoice        = event.data.object;
+    const custId         = String(invoice.customer || '').trim();
+    const billingReason  = invoice.billing_reason; // 'subscription_cycle' = renouvellement
+    const lines          = invoice.lines?.data || [];
+
+    // Déduire le plan depuis les line items de la facture
+    function resolvePlanFromInvoice(lines) {
+      for (const line of lines) {
+        const desc = String(line.description || line.price?.nickname || '').toLowerCase();
+        if (desc.includes('pro'))     return { label: 'Pro',     code: 'PRO_M',     expertLimit: 15 };
+        if (desc.includes('starter')) return { label: 'Starter', code: 'STARTER_M', expertLimit: 5  };
+        const amount = Number(line.amount || 0);
+        if (amount >= 8900)  return { label: 'Pro',     code: 'PRO_M',     expertLimit: 15 };
+        if (amount >= 4900)  return { label: 'Starter', code: 'STARTER_M', expertLimit: 5  };
+      }
+      return null;
+    }
+
+    if (custId && billingReason === 'subscription_cycle') {
+      try {
+        await withClient(async (client) => {
+          // Récupérer l'utilisateur via stripe_customer_id
+          const userRes = await client.query(
+            'select user_id from wallets where stripe_customer_id=$1 limit 1',
+            [custId]
+          );
+          if (!userRes.rowCount) {
+            console.warn('[stripe invoice.paid] customer introuvable:', custId);
+            return;
+          }
+          const userId = userRes.rows[0].user_id;
+
+          // Tenter de déduire le plan depuis la facture
+          const plan = resolvePlanFromInvoice(lines);
+
+          // Remise à zéro de expert_used + mise à jour expert_limit si plan détecté
+          if (plan) {
+            await client.query(
+              `update wallets
+                  set expert_used   = 0,
+                      expert_limit  = $2,
+                      plan_code     = $3,
+                      plan_label    = $4,
+                      status        = 'active',
+                      updated_at    = now()
+                where user_id = $1`,
+              [userId, plan.expertLimit, plan.code, plan.label]
+            );
+            console.log(`[stripe] Renouvellement ${plan.label} — expert_used remis à 0 pour customer ${custId}`);
+          } else {
+            // Plan non détecté : remettre uniquement expert_used à zéro
+            await client.query(
+              `update wallets set expert_used=0, status='active', updated_at=now() where user_id=$1`,
+              [userId]
+            );
+            console.log(`[stripe] Renouvellement — expert_used remis à 0 pour customer ${custId} (plan non résolu)`);
+          }
+
+          // Notification in-app
+          const expertLimit = plan?.expertLimit || 0;
+          await client.query(
+            `insert into notifications(user_id, kind, title, body, link)
+             values($1,'plan_renewed','Abonnement renouvelé',$2,'/expert.html')`,
+            [userId, `Votre abonnement a été renouvelé. Vous disposez à nouveau de ${expertLimit} relectures expertes ce mois.`]
+          );
+        });
+      } catch (e) {
+        console.error('[stripe invoice.paid] Erreur:', e.message);
+      }
+    }
+  }
+
+  // ── Abonnement annulé → downgrade vers Free ───────────────────────────────
   if (event.type === 'customer.subscription.deleted') {
     const sub    = event.data.object;
-    const custId = sub.customer;
-    console.log(`[stripe] subscription deleted for customer ${custId} — downgrade à gérer manuellement ou via customer lookup`);
+    const custId = String(sub.customer || '').trim();
+
+    if (custId) {
+      try {
+        await withClient(async (client) => {
+          // Récupérer l'utilisateur
+          const userRes = await client.query(
+            'select user_id from wallets where stripe_customer_id=$1 limit 1',
+            [custId]
+          );
+          if (!userRes.rowCount) {
+            console.warn('[stripe subscription.deleted] customer introuvable:', custId);
+            return;
+          }
+          const userId = userRes.rows[0].user_id;
+
+          // Downgrade vers Free : conserver les données, rétrograder le plan
+          await client.query(
+            `update wallets
+                set plan_code    = 'FREE',
+                    plan_label   = 'Free',
+                    status       = 'cancelled',
+                    expert_limit = 2,
+                    expert_used  = 0,
+                    ai_unlimited = false,
+                    tickets_ai   = 0,
+                    updated_at   = now()
+              where user_id = $1`,
+            [userId]
+          );
+          console.log(`[stripe] Abonnement annulé — downgrade Free pour customer ${custId}`);
+
+          // Notification in-app
+          await client.query(
+            `insert into notifications(user_id, kind, title, body, link)
+             values($1,'plan_cancelled','Abonnement résilié',$2,'/pricing.html')`,
+            [userId, 'Votre abonnement a été résilié. Vous êtes repassé en offre Free (2 relectures/mois). Réabonnez-vous à tout moment.']
+          );
+
+          // Email de confirmation
+          const emailRes = await client.query('select email from users where id=$1 limit 1', [userId]);
+          if (emailRes.rowCount) {
+            const email = emailRes.rows[0].email;
+            await sendMail({
+              to: email,
+              subject: 'POPE Online — Votre abonnement a été résilié',
+              text: `Bonjour,\n\nVotre abonnement POPE Online a bien été résilié.\n\nVous continuez à accéder à POPE Online en offre Free (2 relectures expertes par mois).\n\nPour vous réabonner : https://pope-online.com/pricing.html\n\nL'équipe POPE Online`
+            });
+          }
+        });
+      } catch (e) {
+        console.error('[stripe subscription.deleted] Erreur:', e.message);
+      }
+    }
   }
 
   res.json({ received: true });

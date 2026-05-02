@@ -287,12 +287,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 // Remplacez ces URLs par vos vrais liens Stripe Payment Links
 // ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
 // Créez-les sur : https://dashboard.stripe.com/payment-links
-var STRIPE = {
-  starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01', // ex: https://buy.stripe.com/xxxx
-  starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00', // ex: https://buy.stripe.com/xxxx
-  pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02', // ex: https://buy.stripe.com/xxxx
-  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'  // ex: https://buy.stripe.com/xxxx
+// ── Détection automatique STAGING vs PROD ────────────────────────────────────
+// En staging, remplacez les URLs _TEST par vos vrais Payment Links de test Stripe
+// (Mode Test → Payment Links → Créer un lien → copier l'URL buy.stripe.com/test_xxx)
+var IS_STAGING = window.location.hostname !== 'pope-online.com';
+
+var STRIPE_LIVE = {
+  starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01',
+  starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00',
+  pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02',
+  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'
 };
+
+var STRIPE_TEST = {
+  starter_m: 'https://buy.stripe.com/test_eVq5kxei0eIIcZceeTb7y00', 
+  starter_a: 'https://buy.stripe.com/test_fZu5kx8XGcAA2ky2wbb7y01',
+  pro_m:     'https://buy.stripe.com/test_7sYdR32zibww8IW9YDb7y02',
+  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03'
+};
+
+var STRIPE = IS_STAGING ? STRIPE_TEST : STRIPE_LIVE;
+
+if (IS_STAGING) {
+  console.warn('[POPE] Mode staging — Payment Links Stripe TEST actifs');
+}
 
 // ── Tarifs (ne pas modifier les prix mensuels) ─────────────────────────────
 var PLANS = {
