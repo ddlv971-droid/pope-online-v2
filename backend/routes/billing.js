@@ -181,22 +181,22 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                 where user_id = $1`,
               [userId, plan.expertLimit, plan.code, plan.label]
             );
-            console.log(\`[stripe] Renouvellement \${plan.label} — expert_used remis à 0 pour customer \${custId}\`);
+            console.log(`[stripe] Renouvellement ${plan.label} — expert_used remis à 0 pour customer ${custId}`);
           } else {
             // Plan non détecté : remettre uniquement expert_used à zéro
             await client.query(
               `update wallets set expert_used=0, status='active', updated_at=now() where user_id=$1`,
               [userId]
             );
-            console.log(\`[stripe] Renouvellement — expert_used remis à 0 pour customer \${custId} (plan non résolu)\`);
+            console.log(`[stripe] Renouvellement — expert_used remis à 0 pour customer ${custId} (plan non résolu)`);
           }
 
           // Notification in-app
           const expertLimit = plan?.expertLimit || 0;
           await client.query(
-            \`insert into notifications(user_id, kind, title, body, link)
-             values($1,'plan_renewed','Abonnement renouvelé',$2,'/expert.html')\`,
-            [userId, \`Votre abonnement a été renouvelé. Vous disposez à nouveau de \${expertLimit} relectures expertes ce mois.\`]
+            `insert into notifications(user_id, kind, title, body, link)
+             values($1,'plan_renewed','Abonnement renouvelé',$2,'/expert.html')`,
+            [userId, `Votre abonnement a été renouvelé. Vous disposez à nouveau de ${expertLimit} relectures expertes ce mois.`]
           );
         });
       } catch (e) {
