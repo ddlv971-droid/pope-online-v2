@@ -527,6 +527,96 @@
   .v39-band-sub { font-size: 12px; }
   .v39-band-tagline { font-size: 11px; }
 }
+
+/* ══ EXPERTS PANEL — section index ══ */
+.v39-experts {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px 72px;
+}
+.v39-experts-head {
+  text-align: center; margin-bottom: 52px;
+}
+.v39-experts-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,153,230,.1); border: 1px solid rgba(0,153,230,.2);
+  color: #7dcfff; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase;
+  border-radius: 99px; padding: 5px 18px; margin-bottom: 24px;
+}
+.v39-experts-head h2 {
+  font-size: clamp(24px, 3.2vw, 38px); font-weight: 800;
+  color: #fff; letter-spacing: -.025em; line-height: 1.15;
+  margin: 0 0 14px;
+}
+.v39-experts-head p {
+  font-size: 15px; color: rgba(255,255,255,.52);
+  line-height: 1.72; max-width: 560px; margin: 0 auto;
+}
+.v39-experts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 48px;
+}
+.v39-ecard {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px; padding: 22px 18px;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.v39-ecard:hover {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(0,153,230,.32);
+  transform: translateY(-3px);
+}
+.v39-ecard-ico {
+  font-size: 22px; margin-bottom: 12px; display: block; line-height: 1;
+}
+.v39-ecard h3 {
+  font-size: 13.5px; font-weight: 700; color: #fff;
+  margin: 0 0 7px; letter-spacing: -.01em;
+}
+.v39-ecard p {
+  font-size: 12px; color: rgba(255,255,255,.46);
+  line-height: 1.6; margin: 0 0 12px;
+}
+.v39-etags {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.v39-etag {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 99px;
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.48);
+  border: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+}
+.v39-experts-stat {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: 44px;
+}
+.v39-estat { text-align: center; }
+.v39-estat-n {
+  font-size: clamp(30px,4vw,44px); font-weight: 800;
+  color: #fff; line-height: 1; margin-bottom: 6px; letter-spacing: -.04em;
+}
+.v39-estat-n em { font-style: normal; color: #0099e6; }
+.v39-estat-l { font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.5; }
+.v39-estat-sep { width: 1px; height: 48px; background: rgba(255,255,255,.08); }
+
+@media(max-width: 1024px) {
+  .v39-experts-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media(max-width: 860px) {
+  .v39-experts-grid { grid-template-columns: repeat(2, 1fr); }
+  .v39-estat-sep { display: none; }
+  .v39-experts-stat { gap: 24px; }
+}
+@media(max-width: 480px) {
+  .v39-experts-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .v39-ecard { padding: 18px 14px; }
+}
 </style>
 </head>
 <body class="v39-body">
@@ -680,6 +770,176 @@
     </div>
   </div>
 </section>
+<!-- PANEL EXPERTS -->
+<section style="background:rgba(0,0,0,.15);padding:0 0 0;">
+<div class="v39-experts">
+  <div class="v39-experts-head">
+    <div class="v39-experts-eyebrow">✦ Notre panel d'experts</div>
+    <h2>Des experts humains à chaque étape<br>de votre dossier</h2>
+    <p>Derrière POPE Online, un réseau de conseillers issus du terrain public et privé.
+       Chaque avis, chaque relecture est rendu par un professionnel qualifié — pas par un algorithme.</p>
+  </div>
+
+  <div class="v39-experts-grid">
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">⚖️</span>
+      <h3>Droit & Juridique</h3>
+      <p>Contrats, contentieux, conformité réglementaire, droit public et des affaires.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Droit public</span>
+        <span class="v39-etag">Contrats</span>
+        <span class="v39-etag">Contentieux</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🏛️</span>
+      <h3>Marchés publics</h3>
+      <p>DCE, mémoires techniques, réponses aux appels d'offres, délégations de service.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">DCE & CCAP</span>
+        <span class="v39-etag">Offres</span>
+        <span class="v39-etag">DSP</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🏗️</span>
+      <h3>Travaux & MOA</h3>
+      <p>Maîtrise d'ouvrage, suivi de chantier, CCTP, coordination MOE/MOA.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">CCTP</span>
+        <span class="v39-etag">MOA / MOE</span>
+        <span class="v39-etag">Réception</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">📊</span>
+      <h3>Management & Stratégie</h3>
+      <p>Pilotage de projets, notes de décision, cadrages stratégiques, gouvernance.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">PMO</span>
+        <span class="v39-etag">Gouvernance</span>
+        <span class="v39-etag">Arbitrage</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">💰</span>
+      <h3>Finances & Gestion</h3>
+      <p>Budget M57, fiscalité, trésorerie, plans de financement, rapports financiers.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Budget M57</span>
+        <span class="v39-etag">Fiscalité</span>
+        <span class="v39-etag">Financement</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">👥</span>
+      <h3>Ressources humaines</h3>
+      <p>Statut FPT, recrutement, fiche de poste, entretiens, procédures disciplinaires.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Statut FPT</span>
+        <span class="v39-etag">Recrutement</span>
+        <span class="v39-etag">Disciplinaire</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🔍</span>
+      <h3>Audit des organisations</h3>
+      <p>Diagnostic organisationnel, cartographie des risques, contrôle de gestion.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Audit interne</span>
+        <span class="v39-etag">Risques</span>
+        <span class="v39-etag">Contrôle</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🛡️</span>
+      <h3>Cybersécurité & SI</h3>
+      <p>RGPD, PSSI, NIS2, politique de sécurité des systèmes d'information.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">RGPD / DPO</span>
+        <span class="v39-etag">PSSI</span>
+        <span class="v39-etag">NIS2</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🌿</span>
+      <h3>Transition écologique</h3>
+      <p>PCAET, bilan carbone, commande publique responsable, stratégies RSE.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">PCAET</span>
+        <span class="v39-etag">Bilan carbone</span>
+        <span class="v39-etag">RSE</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">📣</span>
+      <h3>Communication</h3>
+      <p>Stratégie éditoriale, gestion de crise, discours, supports institutionnels.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Com. inst.</span>
+        <span class="v39-etag">Gestion de crise</span>
+        <span class="v39-etag">Discours</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🤝</span>
+      <h3>Médiation & Conflits</h3>
+      <p>Médiation administrative, négociation, protocoles amiables, sortie de crise.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Médiation</span>
+        <span class="v39-etag">Négociation</span>
+        <span class="v39-etag">Protocole</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🤖</span>
+      <h3>Intelligence artificielle</h3>
+      <p>Gouvernance IA, éthique algorithmique, intégration métier, prompts avancés.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Gouvernance IA</span>
+        <span class="v39-etag">Éthique</span>
+        <span class="v39-etag">Intégration</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="v39-experts-stat">
+    <div class="v39-estat">
+      <div class="v39-estat-n"><em>+</em>30</div>
+      <div class="v39-estat-l">Années d'expertise<br>terrain cumulées</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n">12</div>
+      <div class="v39-estat-l">Domaines d'expertise<br>couverts</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n">48<em>h</em></div>
+      <div class="v39-estat-l">Retour expert<br>garanti</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n"><em>2</em></div>
+      <div class="v39-estat-l">Espaces dédiés<br>public &amp; privé</div>
+    </div>
+  </div>
+</div>
+</section>
+
 
 <!-- FOOTER -->
 <footer class="v39-footer">
