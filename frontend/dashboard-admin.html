@@ -873,9 +873,15 @@ function statusBadge(u) {
   if (!w) return '<span class="adm-badge adm-badge-grey">—</span>';
   const now = new Date();
   const exp = w.trial_expires_at ? new Date(w.trial_expires_at) : null;
-  if (w.status === 'active') return '<span class="adm-badge adm-badge-green">Actif</span>';
-  if (exp && exp > now) return '<span class="adm-badge adm-badge-yellow">Essai</span>';
-  return '<span class="adm-badge adm-badge-red">Expiré</span>';
+  if (w.status === 'active')                 return '<span class="adm-badge adm-badge-green">Actif</span>';
+  if (w.status === 'pending_verification')   return '<span class="adm-badge adm-badge-grey">En attente</span>';
+  if (w.status === 'verified_no_trial')      return '<span class="adm-badge adm-badge-grey">Sans essai</span>';
+  if (w.status === 'cancelled')              return '<span class="adm-badge adm-badge-red">R\u00e9sili\u00e9</span>';
+  if (w.status === 'trial_active' && exp && exp > now) return '<span class="adm-badge adm-badge-yellow">Essai actif</span>';
+  if (w.status === 'trial_expired')          return '<span class="adm-badge adm-badge-red">Expir\u00e9</span>';
+  if (exp && exp > now)                      return '<span class="adm-badge adm-badge-yellow">Essai</span>';
+  if (exp && exp <= now)                     return '<span class="adm-badge adm-badge-red">Expir\u00e9</span>';
+  return '<span class="adm-badge adm-badge-grey">Inconnu</span>';
 }
 
 function fmtDate(d) {
@@ -973,7 +979,7 @@ function renderTable(users) {
       </td>
       <td><span class="adm-badge ${u.account_space==='private'?'adm-badge-blue':'adm-badge-fushia'}">${u.account_space==='private'?'Privé':'Public'}</span></td>
       <td>${statusBadge(u)}</td>
-      <td><span style="font-weight:700">${w.tickets_ai ?? '—'}</span></td>
+      <td><span style="font-weight:700">${(w.ai_unlimited || Number(w.tickets_ai) >= 9999) ? '∞' : (w.tickets_ai ?? '—')}</span></td>
       <td>${score}</td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
       <td onclick="event.stopPropagation()">
@@ -998,7 +1004,7 @@ function openPanel(id) {
   el('panelRole').value = u.role || 'client';
   el('dPlan').textContent = w.plan || 'Free';
   el('dStatus').textContent = w.status || '—';
-  el('dTickets').textContent = w.tickets_ai ?? '—';
+  el('dTickets').textContent = (w.ai_unlimited || Number(w.tickets_ai) >= 9999) ? '∞ (illimité)' : (w.tickets_ai ?? '—');
   el('dOrg').textContent = u.organization || '—';
   el('dCreated').textContent = fmtDate(u.created_at);
   el('dTrial').textContent = fmtDate(w.trial_expires_at);

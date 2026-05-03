@@ -667,8 +667,16 @@ async function load() {
       el('statTrialEnd').title = _tExpired ? 'Période d\'essai expirée' : '';
     } else if (w.status === 'active') {
       el('statTrialEnd').textContent = 'Abonnement actif';
+    } else if (w.status === 'pending_verification') {
+      el('statTrialEnd').textContent = 'En attente de vérification email';
+      el('statTrialEnd').style.color = '#d97706';
+    } else if (w.status === 'verified_no_trial') {
+      el('statTrialEnd').textContent = 'Sans période d\'essai';
+    } else if (w.status === 'trial_expired') {
+      el('statTrialEnd').textContent = 'Période expirée';
+      el('statTrialEnd').style.color = '#dc2626';
     } else {
-      el('statTrialEnd').textContent = 'N/A';
+      el('statTrialEnd').textContent = '—';
     }
 
     // Infos session sécurité
