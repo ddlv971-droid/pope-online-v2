@@ -650,7 +650,7 @@ async function load() {
 
     // Abonnement
     el('subPlan').textContent = w.plan_label || 'Free';
-    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente' };
+    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente', verified_no_trial:'✅ Actif (offre gratuite)', cancelled:'🔴 Résilié' };
     const statusLabel  = statusLabels[w.status] || w.status || '—';
     el('subDetails').textContent = (w.plan_label || 'Free') + ' · ' + statusLabel;
 
