@@ -9,7 +9,10 @@ import {
   archivePreviewHtml
 } from './archive.js';
 
-if (!requireLogin('app.html')) {}
+// Déduire la page courante pour la redirection après reconnexion
+var _currentPage = (window.location.pathname.split('/').pop() || 'app.html');
+if (!_currentPage || _currentPage === '') _currentPage = 'app.html';
+if (!requireLogin(_currentPage)) {}
 wireLogout();
 
 const el = (id) => document.getElementById(id);

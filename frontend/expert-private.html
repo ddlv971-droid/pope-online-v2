@@ -354,6 +354,19 @@ async function updateQuota() {
   try {
     const me = await apiFetch('/auth/me');
     const w  = me.wallet || {};
+    // Blocage si essai expiré (indépendamment du quota)
+    if (w.status === 'trial_expired' || w.trial_expired) {
+      const btnSend = document.getElementById('btnSend');
+      const msgEl   = document.getElementById('msg');
+      if (btnSend) { btnSend.disabled = true; btnSend.style.opacity = '0.5'; btnSend.style.cursor = 'not-allowed'; }
+      if (msgEl) {
+        msgEl.innerHTML = '⏰ Votre période d\'essai est terminée. '
+          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Choisissez un plan</a> '
+          + 'pour reprendre les relectures expertes.';
+        msgEl.style.display = 'block';
+      }
+      return;
+    }
     const left  = w.expert_left  ?? 0;
     const limit = w.expert_limit ?? 2;
     document.getElementById('quotaN').textContent = left;

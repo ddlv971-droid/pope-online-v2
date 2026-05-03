@@ -44,22 +44,25 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
         return { ok: false, status: 403, body: { error: 'wallet_missing' } };
       }
 
-      if (wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now()) {
-        await client.query(
-          `update wallets
-              set status='trial_expired',
-                  tickets_ai=0,
-                  updated_at=now()
-            where user_id=$1`,
-          [userId]
-        );
+      // Blocage trial expiré — SAUF pour les abonnés actifs
+      const _isActive = wallet.status === 'active';
+      const _trialDateExpired = wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now();
+      const _trialStatusExpired = wallet.status === 'trial_expired';
+      if (!_isActive && (_trialDateExpired || _trialStatusExpired)) {
+        // Marquer le statut expiré si pas encore fait
+        if (!_trialStatusExpired) {
+          await client.query(
+            `update wallets set status='trial_expired', tickets_ai=0, updated_at=now() where user_id=$1`,
+            [userId]
+          );
+        }
         await client.query('commit');
         return {
           ok: false,
           status: 402,
           body: {
             error: 'trial_expired',
-            message: "Votre période gratuite est terminée\nContactez-nous pour définir l'offre adaptée à votre besoin"
+            message: "Votre p\u00e9riode gratuite est termin\u00e9e\nContactez-nous pour d\u00e9finir l'offre adapt\u00e9e \u00e0 votre besoin"
           }
         };
       }

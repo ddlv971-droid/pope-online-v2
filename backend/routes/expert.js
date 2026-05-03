@@ -53,8 +53,10 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
       if (userId) {
         const walletRes = await client.query('select * from wallets where user_id=$1 for update', [userId]);
         const wallet = walletRes.rows[0];
-        if (wallet?.trial_expires_at && new Date(wallet.trial_expires_at) < new Date()) {
-          await client.query("update wallets set status='trial_expired', updated_at=now() where user_id=$1", [userId]);
+        if ((wallet?.trial_expires_at && new Date(wallet.trial_expires_at) < new Date()) || wallet?.status === 'trial_expired') {
+          if (wallet?.status !== 'active') {
+            await client.query("update wallets set status='trial_expired', updated_at=now() where user_id=$1", [userId]);
+          }
           await client.query('commit');
           return { ok: false, status: 402, body: { error: 'trial_expired' } };
         }

@@ -775,7 +775,11 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
         <div class="adm-detail-row"><span class="adm-detail-key">Tickets IA</span><span class="adm-detail-val" id="dTickets">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Organisation</span><span class="adm-detail-val" id="dOrg">—</span></div>
         <div class="adm-detail-row"><span class="adm-detail-key">Inscription</span><span class="adm-detail-val" id="dCreated">—</span></div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Fin essai</span><span class="adm-detail-val" id="dTrial">—</span></div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Fin essai</span>
+          <span class="adm-detail-val" id="dTrial">—</span>
+          <button class="adm-btn adm-btn-ghost adm-btn-xs" id="btnEditTrial" title="Modifier la date d'expiration" style="margin-left:8px;font-size:11px;padding:2px 8px">✏️</button>
+        </div>
       </div>
     </div>
 
@@ -812,6 +816,26 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
           Passer en offre standard
         </button>
       </div>
+      <div class="adm-detail-section" id="sectionTrialEdit" hidden>
+        <div class="adm-detail-section-title">📅 Forcer la date d'expiration</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+          Définissez une date limite. Si la date est dans le passé, le compte est expiré d'office.
+          Laissez vide pour supprimer la date (offre gratuite permanente sans expiration).
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+          <input type="date" class="adm-input" id="panelTrialDate" style="flex:1;min-width:140px"/>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" id="panelSaveTrialDate">Appliquer</button>
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelClearTrialDate">Supprimer</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <button class="adm-btn adm-btn-ghost adm-btn-xs" data-trial-days="7">+7j</button>
+          <button class="adm-btn adm-btn-ghost adm-btn-xs" data-trial-days="15">+15j</button>
+          <button class="adm-btn adm-btn-ghost adm-btn-xs" data-trial-days="30">+30j</button>
+          <button class="adm-btn adm-btn-ghost adm-btn-xs" data-trial-days="90">+90j</button>
+        </div>
+        <div class="adm-msg" id="trialDateMsg" style="margin-top:6px"></div>
+      </div>
+
       <div class="adm-detail-section">
         <div class="adm-detail-section-title">Communication</div>
         <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelContact" style="width:100%;justify-content:center;margin-bottom:8px">
@@ -873,9 +897,15 @@ function statusBadge(u) {
   if (!w) return '<span class="adm-badge adm-badge-grey">—</span>';
   const now = new Date();
   const exp = w.trial_expires_at ? new Date(w.trial_expires_at) : null;
-  if (w.status === 'active') return '<span class="adm-badge adm-badge-green">Actif</span>';
-  if (exp && exp > now) return '<span class="adm-badge adm-badge-yellow">Essai</span>';
-  return '<span class="adm-badge adm-badge-red">Expiré</span>';
+  if (w.status === 'active')                 return '<span class="adm-badge adm-badge-green">Actif</span>';
+  if (w.status === 'pending_verification')   return '<span class="adm-badge adm-badge-grey">En attente</span>';
+  if (w.status === 'verified_no_trial')      return '<span class="adm-badge adm-badge-grey">Sans essai</span>';
+  if (w.status === 'cancelled')              return '<span class="adm-badge adm-badge-red">R\u00e9sili\u00e9</span>';
+  if (w.status === 'trial_active' && exp && exp > now) return '<span class="adm-badge adm-badge-yellow">Essai actif</span>';
+  if (w.status === 'trial_expired')          return '<span class="adm-badge adm-badge-red">Expir\u00e9</span>';
+  if (exp && exp > now)                      return '<span class="adm-badge adm-badge-yellow">Essai</span>';
+  if (exp && exp <= now)                     return '<span class="adm-badge adm-badge-red">Expir\u00e9</span>';
+  return '<span class="adm-badge adm-badge-grey">Inconnu</span>';
 }
 
 function fmtDate(d) {
@@ -886,7 +916,25 @@ function fmtDate(d) {
 async function loadUsers() {
   try {
     const data = await apiFetch('/admin/users/');
-    usersCache = Array.isArray(data) ? data : (data.users || []);
+    const raw = Array.isArray(data) ? data : (data.users || []);
+    // Construire l'objet wallet nested depuis les champs plats retournés par le SQL
+    usersCache = raw.map(u => ({
+      ...u,
+      wallet: {
+        plan_code:             u.plan_code,
+        plan_label:            u.plan_label,
+        status:                u.status,
+        ai_unlimited:          u.ai_unlimited,
+        tickets_ai:            u.tickets_ai,
+        tickets_expert:        u.tickets_expert,
+        expert_limit:          u.expert_limit,
+        expert_used:           u.expert_used,
+        public_dossiers_limit: u.public_dossiers_limit,
+        private_dossiers_limit:u.private_dossiers_limit,
+        private_users_limit:   u.private_users_limit,
+        trial_expires_at:      u.trial_expires_at,
+      }
+    }));
     updateKpis();
     renderTable(usersCache);
   } catch(e) {
@@ -955,7 +1003,7 @@ function renderTable(users) {
       </td>
       <td><span class="adm-badge ${u.account_space==='private'?'adm-badge-blue':'adm-badge-fushia'}">${u.account_space==='private'?'Privé':'Public'}</span></td>
       <td>${statusBadge(u)}</td>
-      <td><span style="font-weight:700">${w.tickets_ai ?? '—'}</span></td>
+      <td><span style="font-weight:700">${(w.ai_unlimited || Number(w.tickets_ai) >= 9999) ? '∞' : (w.tickets_ai ?? '—')}</span></td>
       <td>${score}</td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
       <td onclick="event.stopPropagation()">
@@ -980,7 +1028,7 @@ function openPanel(id) {
   el('panelRole').value = u.role || 'client';
   el('dPlan').textContent = w.plan || 'Free';
   el('dStatus').textContent = w.status || '—';
-  el('dTickets').textContent = w.tickets_ai ?? '—';
+  el('dTickets').textContent = (w.ai_unlimited || Number(w.tickets_ai) >= 9999) ? '∞ (illimité)' : (w.tickets_ai ?? '—');
   el('dOrg').textContent = u.organization || '—';
   el('dCreated').textContent = fmtDate(u.created_at);
   el('dTrial').textContent = fmtDate(w.trial_expires_at);
@@ -1066,6 +1114,103 @@ el('panelSavePlan').onclick = async () => {
     showToast('Offre mise à jour', 'ok');
     await loadUsers();
   } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+};
+
+// ── Gestion date d'expiration trial ─────────────────────────────────────────
+
+el('btnEditTrial').onclick = function() {
+  switchPtab('actions');
+  const section = el('sectionTrialEdit');
+  section.removeAttribute('hidden');
+  const w = selectedUser?.wallet || {};
+  if (w.trial_expires_at) {
+    const d = new Date(w.trial_expires_at);
+    el('panelTrialDate').value = d.toISOString().split('T')[0];
+  } else {
+    el('panelTrialDate').value = '';
+  }
+  el('panelTrialDate').focus();
+};
+
+document.querySelectorAll('[data-trial-days]').forEach(btn => {
+  btn.onclick = function() {
+    const days = parseInt(this.dataset.trialDays);
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    el('panelTrialDate').value = d.toISOString().split('T')[0];
+  };
+});
+
+el('panelSaveTrialDate').onclick = async function() {
+  const dateVal = el('panelTrialDate').value;
+  const msg = el('trialDateMsg');
+  if (!dateVal) { msg.textContent = 'Saisissez une date.'; msg.className = 'adm-msg adm-msg-err'; return; }
+  const newDate = new Date(dateVal + 'T23:59:59');
+  const isExpired = newDate < new Date();
+  const newStatus = isExpired ? 'trial_expired' : 'trial_active';
+  this.disabled = true;
+  msg.textContent = 'Enregistrement\u2026';
+  msg.className = 'adm-msg';
+  try {
+    const w = selectedUser.wallet || {};
+    await apiFetch('/admin/users/' + selectedUser.id, {
+      method: 'PUT',
+      body: { wallet: {
+        planCode: w.plan_code || 'FREE',
+        status: newStatus,
+        ticketsAi: w.tickets_ai ?? 9999,
+        aiUnlimited: w.ai_unlimited ?? true,
+        expertLimit: w.expert_limit ?? 2,
+        publicDossiersLimit: w.public_dossiers_limit ?? 1,
+        privateDossiersLimit: w.private_dossiers_limit ?? 1,
+        privateUsersLimit: w.private_users_limit ?? 1,
+        trialExpiresAt: newDate.toISOString()
+      }}
+    });
+    const u = usersCache.find(x => x.id === selectedUser.id);
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; }
+    const dateFmt = newDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+    el('dTrial').textContent = dateFmt;
+    el('dTrial').style.color = isExpired ? '#ef4444' : '#22c55e';
+    msg.textContent = isExpired ? '\u26d4 Compte expir\u00e9 d\u2019office.' : '\u2705 Essai actif jusqu\u2019au ' + dateFmt + '.';
+    msg.className = 'adm-msg ' + (isExpired ? 'adm-msg-err' : 'adm-msg-ok');
+    renderTable(usersCache);
+    showToast('Date d\u2019expiration mise \u00e0 jour', 'ok');
+  } catch(e) { msg.textContent = 'Erreur: ' + getApiMessage(e); msg.className = 'adm-msg adm-msg-err'; }
+  finally { this.disabled = false; }
+};
+
+el('panelClearTrialDate').onclick = async function() {
+  const msg = el('trialDateMsg');
+  if (!confirm('Supprimer la date d\u2019expiration\u00a0? Le compte passera en offre gratuite permanente.')) return;
+  this.disabled = true;
+  try {
+    const w = selectedUser.wallet || {};
+    await apiFetch('/admin/users/' + selectedUser.id, {
+      method: 'PUT',
+      body: { wallet: {
+        planCode: w.plan_code || 'FREE',
+        status: 'verified_no_trial',
+        ticketsAi: w.tickets_ai ?? 9999,
+        aiUnlimited: w.ai_unlimited ?? true,
+        expertLimit: w.expert_limit ?? 2,
+        publicDossiersLimit: w.public_dossiers_limit ?? 1,
+        privateDossiersLimit: w.private_dossiers_limit ?? 1,
+        privateUsersLimit: w.private_users_limit ?? 1,
+        trialExpiresAt: null
+      }}
+    });
+    const u = usersCache.find(x => x.id === selectedUser.id);
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; }
+    el('dTrial').textContent = 'Aucune';
+    el('dTrial').style.color = '';
+    el('panelTrialDate').value = '';
+    msg.textContent = '\u2705 Date supprim\u00e9e \u2014 offre gratuite permanente.';
+    msg.className = 'adm-msg adm-msg-ok';
+    renderTable(usersCache);
+    showToast('Date supprim\u00e9e', 'ok');
+  } catch(e) { msg.textContent = 'Erreur: ' + getApiMessage(e); msg.className = 'adm-msg adm-msg-err'; }
+  finally { this.disabled = false; }
 };
 
 el('panelSaveRole').onclick = async () => {

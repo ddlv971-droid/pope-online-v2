@@ -612,21 +612,35 @@ router.put('/me', requireAuth, async (req, res) => {
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
-  const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const phoneCountry = cleanPhone(req.body?.phoneCountry);
   const phoneNumber = cleanPhone(req.body?.phoneNumber);
   const phoneFull = cleanPhone(req.body?.phoneFull);
-  if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  // Si email absent du body (champ readonly non envoyé) → conserver l'email actuel en BDD
+  let email = null;
+  if (rawIdentifier) {
+    email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  }
   try {
     await withClient(async (client) => {
       const dup = await client.query('select id from users where email=$1 and id<>$2 limit 1', [email, req.user.sub]);
       if (dup.rowCount) return res.status(409).json({ error: 'email_exists' });
-      await client.query(
-        `update users
-            set full_name=$2, organization=$3, email=$4, phone_country=$5, phone_number=$6, phone_full=$7
-          where id=$1`,
-        [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
-      );
+      // Mettre à jour l'email uniquement s'il est fourni
+      if (email) {
+        await client.query(
+          `update users
+              set full_name=$2, organization=$3, email=$4, phone_country=$5, phone_number=$6, phone_full=$7
+            where id=$1`,
+          [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
+        );
+      } else {
+        await client.query(
+          `update users
+              set full_name=$2, organization=$3, phone_country=$4, phone_number=$5, phone_full=$6
+            where id=$1`,
+          [req.user.sub, fullName, organization, phoneCountry, phoneNumber, phoneFull]
+        );
+      }
       const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [req.user.sub]);
       return res.json({ ok: true, user: u.rows[0] });
     });
