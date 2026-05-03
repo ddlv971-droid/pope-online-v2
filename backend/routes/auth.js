@@ -527,25 +527,41 @@ async function handleVerify(req, res) {
 
       let awardedFreeTickets = 0;
       let suspicious = row.is_suspicious;
-      if (!suspicious) {
-        const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
-        if (!fpAlready) {
-          const entitlements = resolveFreeTrialEntitlements(row.account_space);
-          awardedFreeTickets = entitlements.ticketsAi;
-          const startedAt = new Date();
-          const expiresAt = trialExpiryDate(15);
-          await client.query(
-            `update wallets
-                set plan_code='FREE', plan_label='Free', status='trial_active', tickets_ai=$2, tickets_expert=$2, ai_unlimited=true, expert_limit=2, expert_used=0,
-                    public_dossiers_used=0, private_dossiers_used=0,
-                    public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
-                    trial_started_at=$6, trial_expires_at=$7, updated_at=now()
-              where user_id=$1`,
-            [row.user_id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit, startedAt, expiresAt]
-          );
-        } else {
-          await client.query(`update wallets set status='verified_no_trial', updated_at=now() where user_id=$1`, [row.user_id]);
-        }
+      // Vérifier si fp_hash a déjà eu un essai (anti-abus)
+      const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
+
+      if (!suspicious && !fpAlready) {
+        // Cas normal: premier essai sur ce navigateur -> trial_active
+        const entitlements = resolveFreeTrialEntitlements(row.account_space);
+        awardedFreeTickets = entitlements.ticketsAi;
+        const startedAt = new Date();
+        const expiresAt = trialExpiryDate(15);
+        await client.query(
+          `update wallets
+              set plan_code='FREE', plan_label='Free', status='trial_active',
+                  tickets_ai=$2, tickets_expert=$2, ai_unlimited=true,
+                  expert_limit=2, expert_used=0,
+                  public_dossiers_used=0, private_dossiers_used=0,
+                  public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
+                  trial_started_at=$6, trial_expires_at=$7, updated_at=now()
+            where user_id=$1`,
+          [row.user_id, entitlements.ticketsAi,
+           entitlements.publicDossiersLimit, entitlements.privateDossiersLimit,
+           entitlements.privateUsersLimit, startedAt, expiresAt]
+        );
+      } else {
+        // Suspicious OU fp deja utilise -> pas d'essai gratuit
+        // CRITIQUE: le wallet DOIT sortir de 'pending_verification'
+        // pour que l'utilisateur accede a l'offre gratuite permanente
+        await client.query(
+          `update wallets
+              set status='verified_no_trial',
+                  plan_code='FREE', plan_label='Free',
+                  ai_unlimited=true, expert_limit=2, expert_used=0,
+                  updated_at=now()
+            where user_id=$1`,
+          [row.user_id]
+        );
       }
       const computed = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
       if (computed && !row.is_suspicious) {
