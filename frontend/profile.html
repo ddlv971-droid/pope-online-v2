@@ -650,7 +650,7 @@ async function load() {
 
     // Abonnement
     el('subPlan').textContent = w.plan_label || 'Free';
-    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente', verified_no_trial:'✅ Actif (offre gratuite)', cancelled:'🔴 Résilié' };
+    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente' };
     const statusLabel  = statusLabels[w.status] || w.status || '—';
     el('subDetails').textContent = (w.plan_label || 'Free') + ' · ' + statusLabel;
 
@@ -748,7 +748,8 @@ el('btnSaveProfil').onclick = async function() {
     await apiFetch('/auth/me', { method:'PUT', body:{
       full_name:    el('fullName').value.trim(),
       organization: el('organization').value.trim(),
-      phone_full:   el('phoneFull').value.trim()
+      phone_full:   el('phoneFull').value.trim(),
+      email:        el('userEmail').value.trim()  // email readonly mais requis par le backend
     }});
     msg.textContent = '✓ Informations enregistrées avec succès.';
     msg.className   = 'pf-msg ok';

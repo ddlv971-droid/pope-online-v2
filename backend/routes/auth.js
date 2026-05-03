@@ -527,41 +527,25 @@ async function handleVerify(req, res) {
 
       let awardedFreeTickets = 0;
       let suspicious = row.is_suspicious;
-      // Vérifier si fp_hash a déjà eu un essai (anti-abus)
-      const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
-
-      if (!suspicious && !fpAlready) {
-        // Cas normal: premier essai sur ce navigateur -> trial_active
-        const entitlements = resolveFreeTrialEntitlements(row.account_space);
-        awardedFreeTickets = entitlements.ticketsAi;
-        const startedAt = new Date();
-        const expiresAt = trialExpiryDate(15);
-        await client.query(
-          `update wallets
-              set plan_code='FREE', plan_label='Free', status='trial_active',
-                  tickets_ai=$2, tickets_expert=$2, ai_unlimited=true,
-                  expert_limit=2, expert_used=0,
-                  public_dossiers_used=0, private_dossiers_used=0,
-                  public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
-                  trial_started_at=$6, trial_expires_at=$7, updated_at=now()
-            where user_id=$1`,
-          [row.user_id, entitlements.ticketsAi,
-           entitlements.publicDossiersLimit, entitlements.privateDossiersLimit,
-           entitlements.privateUsersLimit, startedAt, expiresAt]
-        );
-      } else {
-        // Suspicious OU fp deja utilise -> pas d'essai gratuit
-        // CRITIQUE: le wallet DOIT sortir de 'pending_verification'
-        // pour que l'utilisateur accede a l'offre gratuite permanente
-        await client.query(
-          `update wallets
-              set status='verified_no_trial',
-                  plan_code='FREE', plan_label='Free',
-                  ai_unlimited=true, expert_limit=2, expert_used=0,
-                  updated_at=now()
-            where user_id=$1`,
-          [row.user_id]
-        );
+      if (!suspicious) {
+        const fpAlready = await hasPriorFreeTrialOnFingerprint({ client, fp_hash });
+        if (!fpAlready) {
+          const entitlements = resolveFreeTrialEntitlements(row.account_space);
+          awardedFreeTickets = entitlements.ticketsAi;
+          const startedAt = new Date();
+          const expiresAt = trialExpiryDate(15);
+          await client.query(
+            `update wallets
+                set plan_code='FREE', plan_label='Free', status='trial_active', tickets_ai=$2, tickets_expert=$2, ai_unlimited=true, expert_limit=2, expert_used=0,
+                    public_dossiers_used=0, private_dossiers_used=0,
+                    public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
+                    trial_started_at=$6, trial_expires_at=$7, updated_at=now()
+              where user_id=$1`,
+            [row.user_id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit, startedAt, expiresAt]
+          );
+        } else {
+          await client.query(`update wallets set status='verified_no_trial', updated_at=now() where user_id=$1`, [row.user_id]);
+        }
       }
       const computed = await computeSuspicion({ client, fp_hash, ip_hash, user_agent_hash });
       if (computed && !row.is_suspicious) {
@@ -628,21 +612,35 @@ router.put('/me', requireAuth, async (req, res) => {
   const rawIdentifier = String(req.body?.identifier || req.body?.email || '').trim();
   const adminUsername = String(process.env.DEFAULT_ADMIN_USERNAME || '').trim().toLowerCase();
   const adminEmail = String(process.env.DEFAULT_ADMIN_EMAIL || '').trim().toLowerCase();
-  const email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
   const phoneCountry = cleanPhone(req.body?.phoneCountry);
   const phoneNumber = cleanPhone(req.body?.phoneNumber);
   const phoneFull = cleanPhone(req.body?.phoneFull);
-  if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  // Si email absent du body (champ readonly non envoyé) → conserver l'email actuel en BDD
+  let email = null;
+  if (rawIdentifier) {
+    email = normalizeEmail(rawIdentifier.toLowerCase() === adminUsername ? adminEmail : rawIdentifier);
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
+  }
   try {
     await withClient(async (client) => {
       const dup = await client.query('select id from users where email=$1 and id<>$2 limit 1', [email, req.user.sub]);
       if (dup.rowCount) return res.status(409).json({ error: 'email_exists' });
-      await client.query(
-        `update users
-            set full_name=$2, organization=$3, email=$4, phone_country=$5, phone_number=$6, phone_full=$7
-          where id=$1`,
-        [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
-      );
+      // Mettre à jour l'email uniquement s'il est fourni
+      if (email) {
+        await client.query(
+          `update users
+              set full_name=$2, organization=$3, email=$4, phone_country=$5, phone_number=$6, phone_full=$7
+            where id=$1`,
+          [req.user.sub, fullName, organization, email, phoneCountry, phoneNumber, phoneFull]
+        );
+      } else {
+        await client.query(
+          `update users
+              set full_name=$2, organization=$3, phone_country=$4, phone_number=$5, phone_full=$6
+            where id=$1`,
+          [req.user.sub, fullName, organization, phoneCountry, phoneNumber, phoneFull]
+        );
+      }
       const u = await client.query('select id, email, full_name, organization, account_space, role, must_change_password, phone_country, phone_number, phone_full, session_version from users where id=$1', [req.user.sub]);
       return res.json({ ok: true, user: u.rows[0] });
     });
