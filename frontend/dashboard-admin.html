@@ -886,7 +886,25 @@ function fmtDate(d) {
 async function loadUsers() {
   try {
     const data = await apiFetch('/admin/users/');
-    usersCache = Array.isArray(data) ? data : (data.users || []);
+    const raw = Array.isArray(data) ? data : (data.users || []);
+    // Construire l'objet wallet nested depuis les champs plats retournés par le SQL
+    usersCache = raw.map(u => ({
+      ...u,
+      wallet: {
+        plan_code:             u.plan_code,
+        plan_label:            u.plan_label,
+        status:                u.status,
+        ai_unlimited:          u.ai_unlimited,
+        tickets_ai:            u.tickets_ai,
+        tickets_expert:        u.tickets_expert,
+        expert_limit:          u.expert_limit,
+        expert_used:           u.expert_used,
+        public_dossiers_limit: u.public_dossiers_limit,
+        private_dossiers_limit:u.private_dossiers_limit,
+        private_users_limit:   u.private_users_limit,
+        trial_expires_at:      u.trial_expires_at,
+      }
+    }));
     updateKpis();
     renderTable(usersCache);
   } catch(e) {

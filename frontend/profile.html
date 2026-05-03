@@ -659,8 +659,14 @@ async function load() {
     el('statStatus').textContent  = statusLabel;
 
     if (w.trial_expires_at) {
-      const exp = new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
-      el('statTrialEnd').textContent = exp;
+      const _tExp = new Date(w.trial_expires_at);
+      const _tFmt = _tExp.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+      const _tExpired = _tExp < new Date();
+      el('statTrialEnd').textContent = _tFmt;
+      el('statTrialEnd').style.color = _tExpired ? '#dc2626' : (_tExp - new Date() < 3*86400000 ? '#d97706' : '');
+      el('statTrialEnd').title = _tExpired ? 'Période d\'essai expirée' : '';
+    } else if (w.status === 'active') {
+      el('statTrialEnd').textContent = 'Abonnement actif';
     } else {
       el('statTrialEnd').textContent = 'N/A';
     }

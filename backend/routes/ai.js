@@ -44,7 +44,7 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
         return { ok: false, status: 403, body: { error: 'wallet_missing' } };
       }
 
-      if (wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now()) {
+      if ((wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now()) || wallet.status === 'trial_expired') {
         await client.query(
           `update wallets
               set status='trial_expired',
