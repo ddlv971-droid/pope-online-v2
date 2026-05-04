@@ -311,7 +311,7 @@ footer span{color:rgba(255,255,255,.15);}
 <body>
 
 <!-- HEADER -->
-<header class="hd">
+<header class="hd" id="hd">
   <div class="hd-i">
     <a class="hd-brand" href="index.html">
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
@@ -332,6 +332,18 @@ footer span{color:rgba(255,255,255,.15);}
     </nav>
   </div>
 </header>
+<!-- Overlay menu mobile — SÉPARÉ du header pour éviter le bug stacking context -->
+<div id="mobileMenu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(7,22,42,.99);padding:80px 20px 40px;overflow-y:auto;flex-direction:column;gap:4px;">
+  <a href="about.html" style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;">Qui sommes-nous</a>
+  <a href="pricing.html" style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;">Tarifs</a>
+  <a href="tutoriel.html" style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;">&#9658; Tutoriel</a>
+  <a href="mailto:contact@pope-online.com" style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;">Contact</a>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:10px 0;"></div>
+  <a href="private.html" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:700;color:#7dcfff;text-decoration:none;background:rgba(0,121,193,.25);border:1.5px solid rgba(0,121,193,.4);">&#128274; Espace priv&#233;</a>
+  <a href="public.html"  style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:700;color:#ffaad8;text-decoration:none;background:rgba(194,46,131,.2);border:1.5px solid rgba(194,46,131,.35);margin-top:8px;">&#127963;&#65039; Espace public</a>
+  <a href="login.html"   style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:700;color:#fff;text-decoration:none;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);margin-top:8px;">Connexion</a>
+  <button onclick="closeMenu()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,.6);font-size:28px;cursor:pointer;line-height:1;">&#10005;</button>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -471,20 +483,46 @@ footer span{color:rgba(255,255,255,.15);}
 </footer>
 
 <script>
-var b=document.getElementById('burger');
-var n=document.getElementById('navLinks');
-b.addEventListener('click',function(){
-  var open=n.classList.toggle('open');
-  var s=b.querySelectorAll('span');
-  if(open){s[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';s[1].style.cssText='opacity:0;transform:scaleX(0)';s[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}
-  else{s[0].style.cssText=s[1].style.cssText=s[2].style.cssText='';}
+var burger = document.getElementById('burger');
+var menu   = document.getElementById('mobileMenu');
+var isOpen = false;
+
+function openMenu() {
+  isOpen = true;
+  menu.style.display = 'flex';
+  var s = burger.querySelectorAll('span');
+  s[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+  s[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+  s[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMenu() {
+  isOpen = false;
+  menu.style.display = 'none';
+  var s = burger.querySelectorAll('span');
+  s[0].style.cssText = s[1].style.cssText = s[2].style.cssText = '';
+  document.body.style.overflow = '';
+}
+
+burger.addEventListener('click', function() {
+  if (isOpen) closeMenu(); else openMenu();
 });
-n.querySelectorAll('a').forEach(function(a){
-  a.addEventListener('click',function(){
-    n.classList.remove('open');
-    b.querySelectorAll('span').forEach(function(s){s.style.cssText='';});
-  });
-});
+
+// Masquer le menu desktop sous 860px via JS (filet de sécurité)
+function checkNav() {
+  var nav = document.getElementById('navLinks');
+  if (window.innerWidth <= 860) {
+    nav.style.display = 'none';
+    burger.style.display = 'flex';
+  } else {
+    nav.style.display = 'flex';
+    burger.style.display = 'none';
+    closeMenu();
+  }
+}
+checkNav();
+window.addEventListener('resize', checkNav);
 </script>
 </body>
 </html>
