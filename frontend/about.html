@@ -62,7 +62,7 @@ body{background:#fff;color:var(--ink);overflow-x:hidden;width:100%;max-width:100
 .hd-burger{
   display:none;
   background:none;border:none;cursor:pointer;
-  padding:6px;margin-left:auto;
+  padding:6px;margin-left:8px;
   flex-direction:column;gap:5px;flex-shrink:0;
 }
 .hd-burger span{
@@ -319,9 +319,6 @@ footer span{color:rgba(255,255,255,.15);}
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <strong>POPE Online</strong><small>IA + Expertise</small>
     </a>
-    <button class="hd-burger" id="burger" aria-label="Menu" type="button">
-      <span></span><span></span><span></span>
-    </button>
     <nav class="hd-nav" id="navLinks">
       <a href="about.html" class="on">Qui sommes-nous</a>
       <a href="pricing.html">Tarifs</a>
@@ -332,6 +329,9 @@ footer span{color:rgba(255,255,255,.15);}
       <a href="public.html"  class="hd-pub">&#127963;&#65039; Espace public</a>
       <a href="login.html"   class="hd-login">Connexion</a>
     </nav>
+    <button class="hd-burger" id="burger" aria-label="Menu" type="button">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 <!-- Overlay menu mobile — SÉPARÉ du header pour éviter le bug stacking context -->
