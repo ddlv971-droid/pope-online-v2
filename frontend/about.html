@@ -1,91 +1,530 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>POPE Online — Qui sommes-nous</title>
-  <meta name="description" content="Découvrez POPE Online, ses deux univers, son exigence de qualité et sa promesse d’efficacité métier."/>
-  <link rel="icon" href="./assets/favicon.png" type="image/png">
-  <link rel="stylesheet" href="app.css"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Qui sommes-nous</title>
+<meta name="description" content="Découvrez POPE Online, ses deux univers, son exigence de qualité et sa promesse d'efficacité métier."/>
+<link rel="icon" href="./assets/favicon.png" type="image/png"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --navy:#07162a;
+  --blue:#0079c1;
+  --cyan:#03a0d7;
+  --pink:#c22e83;
+  --ink:#0d1e30;
+  --muted:#566477;
+  --soft:#f4f7fb;
+  --border:rgba(13,30,48,.09);
+}
+
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
+body{background:#fff;color:var(--ink);overflow-x:hidden;width:100%;max-width:100vw;-webkit-font-smoothing:antialiased;}
+
+/* ── HEADER ─────────────────────────────────── */
+.hd{
+  position:sticky;top:0;left:0;right:0;z-index:100;
+  height:62px;
+  background:rgba(7,22,42,.93);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;
+}
+.hd-i{
+  max-width:100%;margin:0 auto;padding:0 16px;
+  width:100%;display:flex;align-items:center;box-sizing:border-box;
+}
+.hd-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.hd-brand img{height:32px;}
+.hd-brand strong{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em;}
+.hd-brand small{font-size:11px;color:rgba(255,255,255,.42);margin-left:4px;}
+
+/* NAV — CACHÉE PAR DÉFAUT SUR MOBILE, visible desktop */
+.hd-nav{
+  display:flex;align-items:center;gap:2px;margin-left:auto;
+}
+.hd-nav a{
+  color:rgba(255,255,255,.62);text-decoration:none;
+  font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;transition:.15s;
+}
+.hd-nav a:hover{color:#fff;background:rgba(255,255,255,.07);}
+.hd-nav a.on{color:#fff;}
+.hd-sep{width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 6px;}
+.hd-priv{background:rgba(0,121,193,.25)!important;color:#7dcfff!important;border:1px solid rgba(0,121,193,.35)!important;border-radius:10px!important;font-weight:700!important;}
+.hd-pub{background:rgba(194,46,131,.2)!important;color:#ffaad8!important;border:1px solid rgba(194,46,131,.3)!important;border-radius:10px!important;font-weight:700!important;}
+.hd-login{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;font-weight:700!important;}
+
+/* BURGER — caché desktop */
+.hd-burger{
+  display:none;
+  background:none;border:none;cursor:pointer;
+  padding:6px;margin-left:8px;
+  flex-direction:column;gap:5px;flex-shrink:0;
+}
+.hd-burger span{
+  display:block;width:22px;height:2px;
+  background:rgba(255,255,255,.75);border-radius:2px;
+  transition:transform .25s,opacity .25s;
+}
+
+/* ── HERO ──────────────────────────────────── */
+.hero{
+  background:var(--navy);
+  padding:76px 20px 84px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  box-sizing:border-box;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 65% 90% at 18% 55%,rgba(0,121,193,.16),transparent),
+    radial-gradient(ellipse 50% 70% at 82% 38%,rgba(194,46,131,.1),transparent);
+  pointer-events:none;
+}
+.hero-in{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,153,230,.1);border:1px solid rgba(0,153,230,.22);
+  color:#7dcfff;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  border-radius:99px;padding:5px 18px;margin-bottom:34px;
+}
+.hero h1{
+  font-size:clamp(32px,5.5vw,62px);
+  font-weight:800;line-height:1.08;letter-spacing:-.03em;
+  color:#fff;margin-bottom:26px;
+  word-break:break-word;overflow-wrap:break-word;hyphens:auto;
+}
+.hero-sub{
+  font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,.6);
+  line-height:1.78;max-width:680px;margin:0 auto;
+}
+.hero-rule{height:1px;background:linear-gradient(90deg,transparent,rgba(0,153,230,.35),rgba(194,46,131,.25),transparent);}
+
+/* ── LAYOUT ────────────────────────────────── */
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px;width:100%;box-sizing:border-box;}
+.label{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:16px;}
+
+/* ── MISSION ───────────────────────────────── */
+.s-mission{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:68px;
+  align-items:start;padding:88px 0;
+  border-bottom:1px solid var(--border);
+}
+.s-mission-text h2{
+  font-size:clamp(26px,3.2vw,40px);font-weight:800;
+  line-height:1.2;letter-spacing:-.022em;color:var(--ink);margin-bottom:26px;
+}
+.s-mission-text h2 em{font-style:italic;color:var(--blue);}
+.s-mission-text p{font-size:15.5px;color:var(--muted);line-height:1.82;margin-bottom:18px;}
+.s-mission-text p:last-child{margin-bottom:0;}
+.promise-card{
+  background:var(--navy);border-radius:20px;padding:36px;
+  position:relative;overflow:hidden;
+}
+.promise-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.promise-card-ttl{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:20px;}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.checklist li{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:rgba(255,255,255,.76);line-height:1.55;}
+.checklist li::before{content:"✓";font-weight:800;color:var(--cyan);flex-shrink:0;margin-top:2px;}
+.hdivider{height:1px;margin:22px 0;background:rgba(255,255,255,.07);}
+
+/* ── ESPACES ───────────────────────────────── */
+.s-spaces{padding:88px 0;border-bottom:1px solid var(--border);}
+.s-spaces-head{margin-bottom:48px;}
+.s-spaces-head h2{font-size:clamp(26px,3vw,38px);font-weight:800;color:var(--ink);letter-spacing:-.022em;margin-top:12px;}
+.spaces-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.space-card{border-radius:22px;padding:36px 32px;border:1.5px solid var(--border);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;}
+.space-card:hover{transform:translateY(-4px);}
+.space-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;}
+.space-card.priv{background:linear-gradient(148deg,#eef6fd 0%,#fff 55%);}
+.space-card.priv::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.space-card.priv:hover{box-shadow:0 24px 64px rgba(0,121,193,.11);border-color:rgba(0,121,193,.22);}
+.space-card.pub{background:linear-gradient(148deg,#fdf0f7 0%,#fff 55%);}
+.space-card.pub::before{background:linear-gradient(90deg,var(--pink),#e060a8);}
+.space-card.pub:hover{box-shadow:0 24px 64px rgba(194,46,131,.09);border-color:rgba(194,46,131,.2);}
+.space-tag{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:4px 13px;margin-bottom:18px;}
+.space-card.priv .space-tag{background:rgba(0,121,193,.09);color:var(--blue);}
+.space-card.pub  .space-tag{background:rgba(194,46,131,.09);color:var(--pink);}
+.space-card h3{font-size:clamp(18px,2.1vw,22px);font-weight:800;line-height:1.25;color:var(--ink);margin-bottom:14px;}
+.space-card p{font-size:14px;color:var(--muted);line-height:1.72;}
+
+/* ── EXPERTS ───────────────────────────────── */
+.s-experts{background:var(--navy);padding:88px 0;position:relative;overflow:hidden;width:100%;}
+.s-experts::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 8% 60%,rgba(0,121,193,.12),transparent),radial-gradient(ellipse 45% 70% at 90% 30%,rgba(194,46,131,.08),transparent);pointer-events:none;}
+.s-experts .wrap{position:relative;z-index:1;}
+.experts-head{text-align:center;margin-bottom:56px;}
+.experts-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(0,153,230,.1);border:1px solid rgba(0,153,230,.2);color:#7dcfff;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;border-radius:99px;padding:5px 18px;margin-bottom:28px;}
+.experts-head h2{font-size:clamp(26px,3.8vw,44px);font-weight:800;color:#fff;letter-spacing:-.025em;line-height:1.12;margin-bottom:18px;}
+.experts-head p{font-size:clamp(14px,1.7vw,16px);color:rgba(255,255,255,.55);line-height:1.78;max-width:600px;margin:0 auto;}
+.experts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:52px;}
+.expert-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px 18px;transition:background .2s,border-color .2s,transform .2s;}
+.expert-card:hover{background:rgba(255,255,255,.09);border-color:rgba(0,153,230,.32);transform:translateY(-3px);}
+.expert-card-ico{font-size:22px;margin-bottom:12px;display:block;line-height:1;}
+.expert-card h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;letter-spacing:-.01em;}
+.expert-card p{font-size:12px;color:rgba(255,255,255,.46);line-height:1.6;margin-bottom:12px;}
+.expert-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.expert-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.48);border:1px solid rgba(255,255,255,.08);white-space:nowrap;}
+.experts-stat{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07);padding-top:44px;}
+.e-stat{text-align:center;}
+.e-stat-n{font-size:clamp(30px,4vw,44px);font-weight:800;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:-.04em;}
+.e-stat-n em{font-style:normal;color:#0099e6;}
+.e-stat-l{font-size:12px;color:rgba(255,255,255,.42);line-height:1.5;}
+.e-stat-sep{width:1px;height:48px;background:rgba(255,255,255,.08);}
+
+/* ── MÉTHODE ───────────────────────────────── */
+.s-method{background:var(--soft);padding:88px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);width:100%;overflow:hidden;}
+.s-method-head{margin-bottom:48px;}
+.s-method-head h2{font-size:clamp(26px,3vw,38px);font-weight:800;color:var(--ink);letter-spacing:-.022em;margin-top:12px;}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.method-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:32px 26px;transition:transform .2s,box-shadow .2s,border-color .2s;}
+.method-card:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,121,193,.07);border-color:rgba(0,121,193,.18);}
+.method-n{font-size:48px;font-weight:800;color:var(--blue);opacity:.14;line-height:1;margin-bottom:16px;}
+.method-card h3{font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:10px;letter-spacing:-.01em;}
+.method-card p{font-size:14px;color:var(--muted);line-height:1.72;}
+
+/* ── CTA ───────────────────────────────────── */
+.s-cta{background:var(--navy);padding:92px 20px;text-align:center;position:relative;overflow:hidden;width:100%;box-sizing:border-box;}
+.s-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 100% at 28% 50%,rgba(0,121,193,.16),transparent),radial-gradient(ellipse 40% 80% at 76% 50%,rgba(194,46,131,.09),transparent);pointer-events:none;}
+.s-cta-in{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+.s-cta h2{font-size:clamp(26px,3.5vw,44px);font-weight:800;color:#fff;letter-spacing:-.025em;line-height:1.14;margin-bottom:18px;}
+.s-cta p{font-size:16px;color:rgba(255,255,255,.56);line-height:1.72;margin-bottom:36px;}
+.cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(0,121,193,.38);transition:transform .2s,box-shadow .2s;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,121,193,.55);}
+.btn-g{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 24px;font-size:14px;font-weight:600;text-decoration:none;transition:.2s;}
+.btn-g:hover{background:rgba(255,255,255,.14);color:#fff;}
+
+/* ── FOOTER ────────────────────────────────── */
+footer{background:rgba(7,22,42,.98);border-top:1px solid rgba(255,255,255,.06);padding:20px 24px;text-align:center;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+footer a{color:rgba(255,255,255,.38);font-size:12px;text-decoration:none;transition:.15s;}
+footer a:hover{color:rgba(255,255,255,.7);}
+footer span{color:rgba(255,255,255,.15);}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+
+/* Tablette large */
+@media (max-width: 1024px) {
+  .experts-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Tablette / Mobile */
+@media (max-width: 860px) {
+
+  /* HEADER MOBILE */
+  .hd-nav  { display: none; }         /* cacher la nav */
+  .hd-burger { display: flex; }       /* afficher le burger */
+
+  /* Menu déroulant mobile — full-screen */
+  .hd-nav.open {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    position: fixed;
+    top: 62px; left: 0; right: 0; bottom: 0;
+    background: rgba(7,22,42,.99);
+    padding: 24px 20px 40px;
+    z-index: 9999;
+    overflow-y: auto;
+  }
+  .hd-nav.open a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255,255,255,.85);
+    text-decoration: none;
+    border: none !important;
+    background: none !important;
+  }
+  .hd-nav.open a:hover { background: rgba(255,255,255,.07) !important; color: #fff; }
+  .hd-nav.open .hd-sep {
+    display: block; width: 100%; height: 1px;
+    margin: 10px 0; background: rgba(255,255,255,.08);
+  }
+  .hd-nav.open .hd-priv,
+  .hd-nav.open .hd-pub,
+  .hd-nav.open .hd-login {
+    justify-content: center;
+    margin-top: 6px;
+    border-radius: 12px !important;
+    border: 1.5px solid !important;
+    padding: 14px 18px !important;
+    font-size: 15px !important;
+  }
+
+  /* HERO */
+  .hero { padding: 56px 20px 64px; }
+  .hero h1 { font-size: clamp(28px, 7vw, 38px); }
+  .hero-sub { font-size: 15px; }
+
+  /* MISSION */
+  .s-mission { grid-template-columns: 1fr; gap: 32px; padding: 64px 0; }
+
+  /* ESPACES */
+  .s-spaces { padding: 64px 0; }
+  .spaces-grid { grid-template-columns: 1fr; gap: 14px; }
+
+  /* EXPERTS */
+  .s-experts { padding: 72px 0; }
+  .experts-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .experts-stat { gap: 24px; }
+  .e-stat-sep { display: none; }
+
+  /* MÉTHODE */
+  .s-method { padding: 64px 0; }
+  .method-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* CTA */
+  .s-cta { padding: 68px 20px; }
+}
+
+/* Petit mobile */
+@media (max-width: 480px) {
+  .wrap { padding: 0 14px; }
+  .hero { padding: 44px 14px 52px; }
+  .hero h1 { font-size: clamp(24px, 8.5vw, 32px); letter-spacing: -.02em; }
+  .hero-sub { font-size: 14px; }
+  .hero-pill { font-size: 10px; padding: 4px 12px; margin-bottom: 24px; }
+  .s-mission { padding: 52px 0; }
+  .promise-card { padding: 24px 18px; }
+  .space-card { padding: 24px 18px; }
+  .expert-card { padding: 18px 14px; }
+  .experts-grid { grid-template-columns: 1fr; }
+  .method-card { padding: 24px 18px; }
+  .s-cta { padding: 52px 14px; }
+  .cta-btns { flex-direction: column; }
+  .btn-p, .btn-g { width: 100%; justify-content: center; }
+}
+</style>
 </head>
-<body class="bg po-v5-harmony">
-  <header class="topbar">
-    <div class="container row between">
-      <a class="brand link" href="index.html">
-        <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
-        <div>
-          <div class="brand-title">POPE Online</div>
-          <div class="brand-sub">Qui sommes-nous</div>
-        </div>
-      </a>
- <nav class="po-menu po-menu-extended" aria-label="Navigation principale">
-	<a href="private.html" class="po-link-private">Espace privé</a>
-      <a href="public.html" class="po-link-public">Espace public</a>
-      <a class="po-menu-contact po-menu-contact-mail" href="mailto:contact@popeconsulting-group.com">✉️ Contact mail</a>
-      <a class="po-menu-contact po-menu-contact-phone" href="tel:0970703055">📞 09 70 70 30 55</a>      
-      <a class="po-menu-cta" href="signup.html">Créer un compte</a>
+<body>
+
+<!-- HEADER -->
+<header class="hd" id="hd">
+  <div class="hd-i">
+    <a class="hd-brand" href="index.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <strong>POPE Online</strong><small>IA + Expertise</small>
+    </a>
+    <nav class="hd-nav" id="navLinks">
+      <a href="about.html" class="on">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">&#9658; Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="hd-sep"></div>
+      <a href="private.html" class="hd-priv">&#128274; Espace priv&#233;</a>
+      <a href="public.html"  class="hd-pub">&#127963;&#65039; Espace public</a>
+      <a href="login.html"   class="hd-login">Connexion</a>
     </nav>
-      <!-- <div class="row gap wrap">
-        <a class="btn ghost" href="private.html">Espace privé</a>
-        <a class="btn ghost" href="public.html">Espace public</a>
-        <a class="btn" href="signup.html">Créer un compte</a>
-      </div> -->
+    <button class="hd-burger" id="burger" aria-label="Menu" type="button">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<!-- Overlay menu mobile — SÉPARÉ du header pour éviter le bug stacking context -->
+<div id="mobileMenu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(7,22,42,.99);padding:72px 16px 40px;overflow-y:auto;overflow-x:hidden;flex-direction:column;gap:6px;box-sizing:border-box;">
+  <a href="about.html" style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;width:100%;box-sizing:border-box;">Qui sommes-nous</a>
+  <a href="pricing.html" style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;width:100%;box-sizing:border-box;">Tarifs</a>
+  <a href="tutoriel.html" style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;width:100%;box-sizing:border-box;">&#9658; Tutoriel</a>
+  <a href="mailto:contact@pope-online.com" style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.9);text-decoration:none;width:100%;box-sizing:border-box;">Contact</a>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:10px 0;"></div>
+  <a href="private.html" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;color:#7dcfff;text-decoration:none;background:rgba(0,121,193,.25);border:1.5px solid rgba(0,121,193,.4);width:100%;box-sizing:border-box;">&#128274; Espace priv&#233;</a>
+  <a href="public.html"  style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;color:#ffaad8;text-decoration:none;background:rgba(194,46,131,.2);border:1.5px solid rgba(194,46,131,.35);margin-top:8px;width:100%;box-sizing:border-box;">&#127963;&#65039; Espace public</a>
+  <a href="login.html"   style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);margin-top:8px;width:100%;box-sizing:border-box;">Connexion</a>
+  <button onclick="closeMenu()" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">&#10005;</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-pill">&#10022; Qui sommes-nous</div>
+    <h1>Deux univers,<br>une m&#234;me exigence</h1>
+    <p class="hero-sub">POPE Online est une plateforme d&#8217;aide &#224; la d&#233;cision et &#224; la conduite de projets d&#233;di&#233;e aux acteurs publics et priv&#233;s. Elle s&#8217;appuie sur une expertise de plus de 30 ann&#233;es de conseil strat&#233;gique dans la sph&#232;re publique et priv&#233;e.</p>
+  </div>
+</section>
+<div class="hero-rule"></div>
+
+<!-- MISSION -->
+<div class="wrap">
+  <div class="s-mission">
+    <div class="s-mission-text">
+      <span class="label">Notre mission</span>
+      <h2>Une ambition simple&#160;: faire gagner du temps, <em>renforcer la qualit&#233;</em>.</h2>
+      <p>POPE Online articule un espace priv&#233; et un espace public dans une exp&#233;rience premium, claire et fluide. Notre ambition est simple&#160;: faire gagner du temps, renforcer la qualit&#233; des productions et offrir un cadre professionnel &#224; la fois humain, exigeant et op&#233;rationnel.</p>
+      <p>POPE Online combine clart&#233; d&#8217;usage, redirections intelligentes, s&#233;curit&#233; des acc&#232;s et logique d&#8217;accompagnement sur mesure apr&#232;s qualification du besoin.</p>
+      <p>POPE Online s&#8217;appuie sur des m&#233;thodologies &#233;prouv&#233;es pour analyser une situation complexe, identifier des marges de man&#339;uvre, structurer une strat&#233;gie claire et piloter efficacement sa mise en &#339;uvre r&#233;elle.</p>
     </div>
-  </header>
-
-  <main class="about-shell">
-    <section class="about-hero">
-      <div class="about-hero-grid">
-        <div class="about-card">
-          <span class="badge">Deux univers, une même exigence</span>
-          <h1 class="h2" style="margin-top:14px">POPE ONLINE est une plateforme d’aide à la décision et à la conduite de projets dédiée aux acteurs publics et privés.</h1>
-		<p class="p">POPE Online s'appui sur une expertise de plus de 30 années d’expérience et et de conseil stratégique dans la sphère publique et privée.</p>
-          <p class="p">POPE Online articule un espace privé et un espace public dans une expérience premium, claire et fluide. Notre ambition est simple : faire gagner du temps, renforcer la qualité des productions et offrir un cadre professionnel à la fois humain, exigeant et opérationnel.</p>
-          <ul class="about-list">
-            <li>Une interface pensée pour la lisibilité, la rapidité et la confiance.</li>
-            <li>Une logique de parcours différenciée selon les besoins privés et publics.</li>
-            <li>Une approche premium mêlant IA guidée, cadrage métier et accompagnement sur mesure.</li>
-          </ul>
-        </div>
-        <aside class="about-card">
-          <div class="po-overline">Notre promesse</div>
-          <p class="p"><span class="about-highlight">Décupler l’efficacité métier</span> sans sacrifier la qualité, la sécurité ni la clarté des livrables.</p>
-          <div class="divider"></div>
-          <ul class="about-list">
-           <li>Cadre responsable et traçable</li>
-            <li>Navigation simple et premium</li>
-            <li>Montée en qualité des productions</li>
-            <li>Réponse adaptée au besoin réel</li>
-          </ul>
-	<p class="p"><span class="about-highlight">POPE ONLINE,</span>s’appuie sur des méthodologies éprouvées pour :</p>
-          <div class="divider"></div>
-          <ul class="about-list">
-           <li>Analyser une situation complexe</li>
-            <li>Identifier des marges de manœuvre</li>
-            <li>Structurer une stratégie claire</li>
-            <li>Piloter efficacement sa mise en œuvre réel</li>
-          </ul>
-        </aside>
+    <div>
+      <div class="promise-card">
+        <div class="promise-card-ttl">Notre promesse</div>
+        <ul class="checklist">
+          <li>D&#233;cupler l&#8217;efficacit&#233; m&#233;tier sans sacrifier la qualit&#233;, la s&#233;curit&#233; ni la clart&#233; des livrables</li>
+          <li>Cadre responsable et tra&#231;able</li>
+          <li>Navigation simple et premium</li>
+          <li>Mont&#233;e en qualit&#233; des productions</li>
+          <li>R&#233;ponse adapt&#233;e au besoin r&#233;el</li>
+        </ul>
+        <div class="hdivider"></div>
+        <div class="promise-card-ttl">Une interface pens&#233;e pour</div>
+        <ul class="checklist">
+          <li>La lisibilit&#233;, la rapidit&#233; et la confiance</li>
+          <li>Une logique de parcours diff&#233;renci&#233;e selon les besoins priv&#233;s et publics</li>
+          <li>Une approche premium m&#234;lant IA guid&#233;e, cadrage m&#233;tier et accompagnement sur mesure</li>
+        </ul>
       </div>
-    </section>
+    </div>
+  </div>
+</div>
 
-    <section class="about-grid">
-      <article class="about-card">
-        <div class="po-overline">Espace privé</div>
-        <h2>Pour les structures qui veulent déléguer et avancer.</h2>
-        <p class="p">Artisans, TPE, indépendants, commerçants et petites structures trouvent un environnement pensé pour simplifier la charge administrative et fluidifier les démarches.</p>
-      </article>
-      <article class="about-card">
-        <div class="po-overline">Espace public</div>
-        <h2>Pour les acteurs publics qui doivent produire vite et juste.</h2>
-        <p class="p">Collectivités, établissements et organisations disposent d’un cadre premium pour produire, cadrer et consolider leurs livrables stratégiques avec rigueur.</p>
-      </article>
-      <article class="about-card">
-        <div class="po-overline">Méthode</div>
-        <h2>Un outil pensé pour l’action.</h2>
-        <p class="p">POPE Online combine clarté d’usage, redirections intelligentes, sécurité des accès et logique d’accompagnement sur mesure après qualification du besoin.</p>
-      </article>
-    </section>
-  </main>
+<!-- DEUX ESPACES -->
+<div class="wrap">
+  <section class="s-spaces">
+    <div class="s-spaces-head">
+      <span class="label">Nos deux univers</span>
+      <h2>Un cadre adapt&#233; &#224; chaque profil</h2>
+    </div>
+    <div class="spaces-grid">
+      <div class="space-card priv">
+        <div class="space-tag">&#128274; Espace priv&#233;</div>
+        <h3>Pour les structures qui veulent d&#233;l&#233;guer et avancer.</h3>
+        <p>Artisans, TPE, ind&#233;pendants, commer&#231;ants et petites structures trouvent un environnement pens&#233; pour simplifier la charge administrative et fluidifier les d&#233;marches.</p>
+      </div>
+      <div class="space-card pub">
+        <div class="space-tag">&#127963;&#65039; Espace public</div>
+        <h3>Pour les acteurs publics qui doivent produire vite et juste.</h3>
+        <p>Collectivit&#233;s, &#233;tablissements et organisations disposent d&#8217;un cadre premium pour produire, cadrer et consolider leurs livrables strat&#233;giques avec rigueur.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- EXPERTS -->
+<section class="s-experts">
+  <div class="wrap">
+    <div class="experts-head">
+      <div class="experts-eyebrow">&#10022; Notre panel d&#8217;experts</div>
+      <h2>Des experts humains &#224; chaque &#233;tape de votre dossier</h2>
+      <p>Derri&#232;re POPE Online, un r&#233;seau de conseillers issus du terrain public et priv&#233;. Chaque avis, chaque relecture est rendu par un professionnel qualifi&#233;&#160;&#8212;&#160;pas par un algorithme.</p>
+    </div>
+    <div class="experts-grid">
+      <div class="expert-card"><span class="expert-card-ico">&#9878;&#65039;</span><h3>Droit &amp; Juridique</h3><p>Contrats, contentieux, conformit&#233; r&#233;glementaire, droit public et des affaires.</p><div class="expert-tags"><span class="expert-tag">Droit public</span><span class="expert-tag">Contrats</span><span class="expert-tag">Contentieux</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#127963;&#65039;</span><h3>March&#233;s publics</h3><p>DCE, m&#233;moires techniques, r&#233;ponses aux appels d&#8217;offres, d&#233;l&#233;gations de service.</p><div class="expert-tags"><span class="expert-tag">DCE &amp; CCAP</span><span class="expert-tag">Offres</span><span class="expert-tag">DSP</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#127959;&#65039;</span><h3>Travaux &amp; MOA</h3><p>Ma&#238;trise d&#8217;ouvrage, suivi de chantier, CCTP, coordination MOE/MOA.</p><div class="expert-tags"><span class="expert-tag">CCTP</span><span class="expert-tag">MOA / MOE</span><span class="expert-tag">R&#233;ception</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128202;</span><h3>Management &amp; Strat&#233;gie</h3><p>Pilotage de projets, notes de d&#233;cision, cadrages strat&#233;giques, gouvernance.</p><div class="expert-tags"><span class="expert-tag">PMO</span><span class="expert-tag">Gouvernance</span><span class="expert-tag">Arbitrage</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128176;</span><h3>Finances &amp; Gestion</h3><p>Budget M57, fiscalit&#233;, tr&#233;sorerie, plans de financement, rapports financiers.</p><div class="expert-tags"><span class="expert-tag">Budget M57</span><span class="expert-tag">Fiscalit&#233;</span><span class="expert-tag">Financement</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128101;</span><h3>Ressources humaines</h3><p>Statut FPT, recrutement, fiche de poste, entretiens, proc&#233;dures disciplinaires.</p><div class="expert-tags"><span class="expert-tag">Statut FPT</span><span class="expert-tag">Recrutement</span><span class="expert-tag">Disciplinaire</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128269;</span><h3>Audit des organisations</h3><p>Diagnostic organisationnel, cartographie des risques, contr&#244;le de gestion.</p><div class="expert-tags"><span class="expert-tag">Audit interne</span><span class="expert-tag">Risques</span><span class="expert-tag">Contr&#244;le</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128737;&#65039;</span><h3>Cybers&#233;curit&#233; &amp; SI</h3><p>RGPD, PSSI, NIS2, politique de s&#233;curit&#233; des syst&#232;mes d&#8217;information.</p><div class="expert-tags"><span class="expert-tag">RGPD / DPO</span><span class="expert-tag">PSSI</span><span class="expert-tag">NIS2</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#127807;</span><h3>Transition &#233;cologique</h3><p>PCAET, bilan carbone, commande publique responsable, strat&#233;gies RSE.</p><div class="expert-tags"><span class="expert-tag">PCAET</span><span class="expert-tag">Bilan carbone</span><span class="expert-tag">RSE</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#128227;</span><h3>Communication</h3><p>Strat&#233;gie &#233;ditoriale, gestion de crise, discours, supports institutionnels.</p><div class="expert-tags"><span class="expert-tag">Com. inst.</span><span class="expert-tag">Gestion de crise</span><span class="expert-tag">Discours</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#129309;</span><h3>M&#233;diation &amp; Conflits</h3><p>M&#233;diation administrative, n&#233;gociation, protocoles amiables, sortie de crise.</p><div class="expert-tags"><span class="expert-tag">M&#233;diation</span><span class="expert-tag">N&#233;gociation</span><span class="expert-tag">Protocole</span></div></div>
+      <div class="expert-card"><span class="expert-card-ico">&#129302;</span><h3>Intelligence artificielle</h3><p>Gouvernance IA, &#233;thique algorithmique, int&#233;gration m&#233;tier, prompts avanc&#233;s.</p><div class="expert-tags"><span class="expert-tag">Gouvernance IA</span><span class="expert-tag">&#201;thique</span><span class="expert-tag">Int&#233;gration</span></div></div>
+    </div>
+    <div class="experts-stat">
+      <div class="e-stat"><div class="e-stat-n"><em>+</em>30</div><div class="e-stat-l">Ann&#233;es d&#8217;expertise<br>terrain cumul&#233;es</div></div>
+      <div class="e-stat-sep"></div>
+      <div class="e-stat"><div class="e-stat-n">12</div><div class="e-stat-l">Domaines d&#8217;expertise<br>couverts</div></div>
+      <div class="e-stat-sep"></div>
+      <div class="e-stat"><div class="e-stat-n">48<em>h</em></div><div class="e-stat-l">Retour expert<br>garanti</div></div>
+      <div class="e-stat-sep"></div>
+      <div class="e-stat"><div class="e-stat-n"><em>2</em></div><div class="e-stat-l">Espaces d&#233;di&#233;s<br>public &amp; priv&#233;</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTHODE -->
+<div class="s-method">
+  <div class="wrap">
+    <div class="s-method-head">
+      <span class="label">Notre m&#233;thode</span>
+      <h2>Un outil pens&#233; pour l&#8217;action</h2>
+    </div>
+    <div class="method-grid">
+      <div class="method-card"><div class="method-n">01</div><h3>Analyser une situation complexe</h3><p>Chaque demande est qualifi&#233;e et orient&#233;e vers le bon outil, la bonne expertise, le bon cadre &#8212; public ou priv&#233;.</p></div>
+      <div class="method-card"><div class="method-n">02</div><h3>Identifier des marges de man&#339;uvre</h3><p>L&#8217;IA guid&#233;e produit un premier draft calibr&#233;. L&#8217;expert humain l&#8217;affine, le s&#233;curise et le valide selon les enjeux r&#233;els du client.</p></div>
+      <div class="method-card"><div class="method-n">03</div><h3>Piloter efficacement la mise en &#339;uvre</h3><p>Structurer une strat&#233;gie claire et piloter sa mise en &#339;uvre r&#233;elle, avec un retour expert sous 48 heures ouv r&#233;es.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="s-cta">
+  <div class="s-cta-in">
+    <h2>Pr&#234;t &#224; gagner en efficacit&#233;&#160;?</h2>
+    <p>Cr&#233;ez votre compte gratuitement. 15 jours d&#8217;essai, sans carte bancaire, sans engagement. L&#8217;IA produit. L&#8217;humain s&#233;curise.</p>
+    <div class="cta-btns">
+      <a class="btn-p" href="signup.html">D&#233;marrer l&#8217;essai gratuit &#8594;</a>
+      <a class="btn-g" href="login.html">Se connecter</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span style="color:rgba(255,255,255,.25);font-size:12px">&#169; Pope Consulting SAS</span>
+  <span>&#183;</span><a href="legal.html">Mentions l&#233;gales</a>
+  <span>&#183;</span><a href="cgu.html">CGU</a>
+  <span>&#183;</span><a href="cgv.html">CGV</a>
+  <span>&#183;</span><a href="privacy.html">Confidentialit&#233;</a>
+  <span>&#183;</span><a href="pricing.html">Tarifs</a>
+  <span>&#183;</span><a href="about.html">&#192; propos</a>
+  <span>&#183;</span><a href="mailto:contact@pope-online.com">Contact</a>
+</footer>
+
+<script>
+var burger = document.getElementById('burger');
+var menu   = document.getElementById('mobileMenu');
+var isOpen = false;
+
+function openMenu() {
+  isOpen = true;
+  menu.style.display = 'flex';
+  var s = burger.querySelectorAll('span');
+  s[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+  s[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+  s[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMenu() {
+  isOpen = false;
+  menu.style.display = 'none';
+  var s = burger.querySelectorAll('span');
+  s[0].style.cssText = s[1].style.cssText = s[2].style.cssText = '';
+  document.body.style.overflow = '';
+}
+
+burger.addEventListener('click', function() {
+  if (isOpen) closeMenu(); else openMenu();
+});
+
+// Masquer le menu desktop sous 860px via JS (filet de sécurité)
+function checkNav() {
+  var nav = document.getElementById('navLinks');
+  if (window.innerWidth <= 860) {
+    nav.style.display = 'none';
+    burger.style.display = 'flex';
+  } else {
+    nav.style.display = 'flex';
+    burger.style.display = 'none';
+    closeMenu();
+  }
+}
+checkNav();
+window.addEventListener('resize', checkNav);
+</script>
 </body>
 </html>
