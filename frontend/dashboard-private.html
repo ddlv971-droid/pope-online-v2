@@ -128,14 +128,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>IA + Expertise</small>
+        <small>Conseil &amp; Expertise</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub">Espace privé</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="app-private.html">⚡ Générer</a>
-      <a class="v40-topbar-btn" href="expert-private.html">✍️ Relecture</a>
+      <a class="v40-topbar-btn" href="app-private.html">🛠️ Outil IA</a>
+      <a class="v40-topbar-btn" href="expert-private.html">🎯 Conseil Expert</a>
       <a class="v40-topbar-btn" href="vault.html?space=private&return=dashboard-private.html">📂 Dépôt</a>
       <a class="v40-topbar-btn" href="referral.html">🎁 Parrainage</a>
       <a class="v40-topbar-btn" href="profile.html">Mon compte</a>
@@ -147,8 +147,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="app-private.html">⚡ Générer</a>
-  <a href="expert-private.html">✍️ Relecture</a>
+  <a href="app-private.html">🛠️ Outil IA</a>
+  <a href="expert-private.html">🎯 Conseil Expert</a>
   <a href="vault.html?space=private&return=dashboard-private.html">📂 Dépôt</a>
   <a href="referral.html">🎁 Parrainage</a>
   <a href="profile.html">👤 Mon compte</a>
@@ -165,12 +165,12 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v37-dash-hero-text">
       <div class="eyebrow">🏛️ 🔒 Espace privé — Artisans &amp; indépendants</div>
       <h1 id="dashWelcome">Bonjour, bienvenue sur POPE Online</h1>
-      <p>Produisez, sécurisez et faites relire vos livrables professionnels par des conseillers experts.</p>
+      <p>Décrivez votre situation, choisissez votre domaine d'expertise et un conseiller POPE Online prend en charge votre dossier.</p>
     </div>
     <div class="v37-dash-hero-stats">
       <div class="v37-stat-pill" id="statExpert">
         <div class="n" id="expertLeftN">—</div>
-        <div class="l">Relectures restantes</div>
+        <div class="l">Conseils Expert disponibles</div>
       </div>
       <div class="v37-stat-pill" id="statPlan">
         <div class="n" id="planN">—</div>
@@ -182,13 +182,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <!-- Services principaux -->
   <div class="v37-dash-grid">
     <div class="v37-service-card main">
-      <div class="v37-service-tag blue">⚡ Génération IA</div>
+      <div class="v37-service-tag blue">⚡ Outil de rédaction IA</div>
       <h2>Produire un livrable sécurisé</h2>
       <p>Courriers URSSAF, formalités, réponses aux marchés, devis, formalités RH — générés et structurés par l'IA, prêts à valider.</p>
       <a class="v37-service-cta primary" href="app-private.html">Générer un livrable →</a>
     </div>
     <div class="v37-service-card">
-      <div class="v37-service-tag green">✍️ Relecture experte</div>
+      <div class="v37-service-tag green">✍️ Conseil Expert</div>
       <h2>Faire valider par un conseiller</h2>
       <p>Un expert POPE Online analyse le fond, la forme et les risques de votre document sous 48h ouvrées.</p>
       <a class="v37-service-cta secondary" href="expert-private.html">Demander une relecture</a>
@@ -196,8 +196,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v37-service-card">
       <div class="v37-service-tag amber">🎯 Sur mesure</div>
       <h2>Accompagnement approfondi</h2>
-      <p>Dossier complexe ou besoin multi-étapes ? Nous cadrons et vous accompagnons de A à Z.</p>
-      <a class="v37-service-cta secondary" href="mission-private.html">Qualifier mon besoin</a>
+      <p>Votre dossier nécessite un accompagnement dans la durée ou une mobilisation experte prolongée ? C'est le Sur Mesure.</p>
+      <a class="v37-service-cta secondary" href="mission-private.html">Accéder au Sur Mesure</a>
     </div>
   </div>
 
@@ -334,7 +334,7 @@ wireLogout();
       alertVnt.removeAttribute('hidden');
       alertVnt.style.background = 'linear-gradient(to right,#f0f9ff,#e0f2fe)';
       alertVnt.style.borderColor = '#bae6fd';
-      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 relectures expertes par mois';
+      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert offerts (une seule fois)';
       document.getElementById('trialAlertBody').textContent = 'Vous bénéficiez de l\'offre gratuite permanente. La génération IA est illimitée. Passez à Starter ou Pro pour plus de relectures expertes.';
     }
   } catch {}

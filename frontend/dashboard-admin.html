@@ -531,7 +531,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <div id="tabRelectures" hidden>
         <div class="adm-card">
           <div class="adm-card-head">
-            <div class="adm-card-title">✍️ Relectures expertes en attente</div>
+            <div class="adm-card-title">🎯 Conseil Experts expertes en attente</div>
             <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertBtn">🔄 Actualiser</button>
           </div>
           <div class="adm-card-body" id="expertList">
@@ -759,6 +759,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   <div class="adm-user-panel-body">
     <div class="adm-tabs">
       <button class="adm-tab active" data-ptab="info">Infos</button>
+      <button class="adm-tab" data-ptab="fiche">📋 Fiche</button>
       <button class="adm-tab" data-ptab="actions">Actions</button>
       <button class="adm-tab" data-ptab="satisfaction">Satisfaction</button>
     </div>
@@ -781,6 +782,116 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
           <button class="adm-btn adm-btn-ghost adm-btn-xs" id="btnEditTrial" title="Modifier la date d'expiration" style="margin-left:8px;font-size:11px;padding:2px 8px">✏️</button>
         </div>
       </div>
+    </div>
+
+    <!-- Tab Fiche client -->
+    <div id="ptabFiche" hidden>
+
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">🏢 Identification</div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Dénomination</span><input class="adm-input" id="ficheNom" placeholder="Nom officiel complet" style="flex:1;font-size:12px"/></div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Catégorie</span>
+          <select class="adm-input" id="ficheCategorie" style="flex:1;font-size:12px">
+            <option value="">— Sélectionner —</option>
+            <optgroup label="Public"><option>Commune / EPCI</option><option>Département / Région</option><option>Établissement public</option><option>SEM / SPL</option><option>Opérateur public</option></optgroup>
+            <optgroup label="Privé"><option>SA / SAS / SARL</option><option>Association / Fondation</option><option>TPE / PME</option><option>Profession libérale</option><option>Auto-entrepreneur / Artisan</option></optgroup>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Territoire</span><input class="adm-input" id="ficheTerritoire" placeholder="Périmètre d'intervention" style="flex:1;font-size:12px"/></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Population / CA</span><input class="adm-input" id="ficheSize" placeholder="Ordre de grandeur" style="flex:1;font-size:12px"/></div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Interlocuteur</span><input class="adm-input" id="ficheContact" placeholder="Nom, titre, fonction" style="flex:1;font-size:12px"/></div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Niveau décis.</span>
+          <select class="adm-input" id="ficheNiveau" style="flex:1;font-size:12px">
+            <option value="">—</option>
+            <option>Exécutif élu / Président</option><option>DGS / DGA</option><option>Direction métier</option><option>DG / DAF / DRH</option><option>Comité de direction</option><option>Dirigeant / Gérant</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">🎯 Besoin & Périmètre</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;padding:0 0 8px">
+          <span style="font-size:11px;font-weight:600;color:var(--muted);width:100%;margin-bottom:4px">Domaines Pope Consulting</span>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Stratégie"/> Stratégie &amp; Gouvernance</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Finance"/> Ingénierie Financière</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Transformation"/> Transformation &amp; Performance</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="AMO"/> Grands Projets &amp; AMO</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Territorial"/> Développement Territorial</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Droit"/> Droit &amp; Juridique</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="RH"/> RH &amp; Social</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Marches"/> Marchés Publics</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Numerique"/> Numérique &amp; IA</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Autre"/> Autre</label>
+        </div>
+        <div style="margin-bottom:8px"><textarea class="adm-input" id="ficheBesoins" rows="3" placeholder="Description libre du besoin client" style="width:100%;font-size:12px;resize:vertical"></textarea></div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Mode</span>
+          <select class="adm-input" id="ficheMode" style="flex:1;font-size:12px">
+            <option value="">—</option><option>Conseil Expert (ponctuel)</option><option>AMO</option><option>Diagnostic / Audit</option><option>Accompagnement pluriannuel (Sur Mesure)</option><option>Non défini</option>
+          </select>
+        </div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Urgence</span>
+          <select class="adm-input" id="ficheUrgence" style="flex:1;font-size:12px">
+            <option value="">—</option><option>Immédiate (&lt; 1 mois)</option><option>Court terme (1–3 mois)</option><option>Moyen terme (3–6 mois)</option><option>Long terme (&gt; 6 mois)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">⭐ Qualification Pope</div>
+        <div class="adm-detail-row"><span class="adm-detail-key">Maturité client</span><div style="display:flex;gap:10px">${[1,2,3,4,5].map(n=>`<label style='font-size:12px'><input type='radio' name='fiche-maturite' value='${n}'/> ${n}</label>`).join('')}</div></div>
+        <div class="adm-detail-row" style="margin-top:6px"><span class="adm-detail-key">Complexité</span><div style="display:flex;gap:10px">
+          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="1"/> 1</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="2"/> 2</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="3"/> 3</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="4"/> 4</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="5"/> 5</label>
+        </div></div>
+        <div class="adm-detail-row" style="margin-top:6px"><span class="adm-detail-key">Potentiel Pope</span><div style="display:flex;gap:10px">
+          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="1"/> 1</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="2"/> 2</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="3"/> 3</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="4"/> 4</label>
+          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="5"/> 5</label>
+        </div></div>
+        <div class="adm-detail-row" style="margin-top:6px">
+          <span class="adm-detail-key">Décision</span>
+          <select class="adm-input" id="ficheDecision" style="flex:1;font-size:12px">
+            <option value="">— Sélectionner —</option>
+            <option value="go">✅ GO — Mission qualifiée</option>
+            <option value="complement">🔵 Compléments nécessaires</option>
+            <option value="hors">❌ Hors périmètre — redirection</option>
+            <option value="attente">⏳ En attente</option>
+          </select>
+        </div>
+        <div style="margin-top:8px"><textarea class="adm-input" id="ficheNotes" rows="3" placeholder="Notes internes Pope — éléments contextuels, alertes…" style="width:100%;font-size:12px;resize:vertical"></textarea></div>
+      </div>
+
+      <div class="adm-detail-section">
+        <div class="adm-detail-section-title">💰 Enjeux financiers</div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Budget</span>
+          <select class="adm-input" id="ficheBudget" style="flex:1;font-size:12px">
+            <option value="">—</option><option>&lt; 10 000 €</option><option>10 000 – 30 000 €</option><option>30 000 – 80 000 €</option><option>80 000 – 200 000 €</option><option>&gt; 200 000 €</option><option>Non défini</option>
+          </select>
+        </div>
+        <div class="adm-detail-row">
+          <span class="adm-detail-key">Financement</span>
+          <select class="adm-input" id="ficheFinancement" style="flex:1;font-size:12px">
+            <option value="">—</option><option>Budget propre</option><option>Marché public</option><option>Subvention</option><option>UGAP / centrale d'achat</option><option>Non défini</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="saveFicheClient()">💾 Enregistrer la fiche</button>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="exportFicheClient()">📄 Exporter PDF</button>
+      </div>
+      <div class="adm-msg" id="ficheMsg" style="margin-top:8px"></div>
     </div>
 
     <!-- Tab Actions -->
@@ -1042,6 +1153,7 @@ function openPanel(id) {
   switchPtab('info');
   el('userPanel').classList.add('open');
   el('panelOverlay').classList.add('open');
+  loadFicheClient(id);
 }
 
 window.openPanel = openPanel;
@@ -1464,7 +1576,7 @@ window.openExpertPortfolio = async (expertId, expertName) => {
   const title    = el('expertPortfolioTitle');
   const reqTitle = el('expertRequestsTitle');
   if (title)    title.textContent    = '📋 Portefeuille de ' + expertName;
-  if (reqTitle) reqTitle.textContent = '✍️ Relectures de '   + expertName;
+  if (reqTitle) reqTitle.textContent = '🎯 Conseil Experts de '   + expertName;
   el('expertPortfolioCard').hidden = false;
   el('expertRequestsCard').hidden  = false;
   el('expertPortfolioCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1660,6 +1772,115 @@ if (getToken()) {
   sideOverlay.addEventListener('click', closeSB);
   sidebar.querySelectorAll('.adm-nav-item').forEach(function(btn) { btn.addEventListener('click', closeSB); });
 })();
+
+
+// ── Fiche client ────────────────────────────────────────────
+function saveFicheClient() {
+  if (!selectedUser) return;
+  const domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(c => c.value);
+  const data = {
+    userId:       selectedUser.id,
+    nom:          el('ficheNom')?.value || '',
+    categorie:    el('ficheCategorie')?.value || '',
+    territoire:   el('ficheTerritoire')?.value || '',
+    size:         el('ficheSize')?.value || '',
+    contact:      el('ficheContact')?.value || '',
+    niveau:       el('ficheNiveau')?.value || '',
+    domaines,
+    besoins:      el('ficheBesoins')?.value || '',
+    mode:         el('ficheMode')?.value || '',
+    urgence:      el('ficheUrgence')?.value || '',
+    maturite:     document.querySelector('input[name="fiche-maturite"]:checked')?.value || '',
+    complexite:   document.querySelector('input[name="fiche-complexite"]:checked')?.value || '',
+    potentiel:    document.querySelector('input[name="fiche-potentiel"]:checked')?.value || '',
+    decision:     el('ficheDecision')?.value || '',
+    notes:        el('ficheNotes')?.value || '',
+    budget:       el('ficheBudget')?.value || '',
+    financement:  el('ficheFinancement')?.value || '',
+  };
+  // Sauvegarder en localStorage (clé par userId)
+  try {
+    const key = 'pope_fiche_' + selectedUser.id;
+    localStorage.setItem(key, JSON.stringify(data));
+    const msg = el('ficheMsg');
+    if (msg) { msg.textContent = '✅ Fiche enregistrée localement.'; msg.className = 'adm-msg adm-msg-ok'; }
+    showToast('Fiche client enregistrée', 'ok');
+  } catch(e) {
+    const msg = el('ficheMsg');
+    if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
+  }
+}
+
+function loadFicheClient(userId) {
+  try {
+    const key = 'pope_fiche_' + userId;
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (el('ficheNom'))        el('ficheNom').value       = data.nom        || '';
+    if (el('ficheCategorie'))  el('ficheCategorie').value = data.categorie  || '';
+    if (el('ficheTerritoire')) el('ficheTerritoire').value= data.territoire || '';
+    if (el('ficheSize'))       el('ficheSize').value      = data.size       || '';
+    if (el('ficheContact'))    el('ficheContact').value   = data.contact    || '';
+    if (el('ficheNiveau'))     el('ficheNiveau').value    = data.niveau     || '';
+    if (el('ficheBesoins'))    el('ficheBesoins').value   = data.besoins    || '';
+    if (el('ficheMode'))       el('ficheMode').value      = data.mode       || '';
+    if (el('ficheUrgence'))    el('ficheUrgence').value   = data.urgence    || '';
+    if (el('ficheDecision'))   el('ficheDecision').value  = data.decision   || '';
+    if (el('ficheNotes'))      el('ficheNotes').value     = data.notes      || '';
+    if (el('ficheBudget'))     el('ficheBudget').value    = data.budget     || '';
+    if (el('ficheFinancement'))el('ficheFinancement').value = data.financement || '';
+    // Domaines
+    document.querySelectorAll('.fiche-domaine').forEach(cb => {
+      cb.checked = (data.domaines || []).includes(cb.value);
+    });
+    // Radios
+    if (data.maturite)  { const r = document.querySelector('input[name="fiche-maturite"][value="'+data.maturite+'"]');  if(r) r.checked = true; }
+    if (data.complexite){ const r = document.querySelector('input[name="fiche-complexite"][value="'+data.complexite+'"]'); if(r) r.checked = true; }
+    if (data.potentiel) { const r = document.querySelector('input[name="fiche-potentiel"][value="'+data.potentiel+'"]'); if(r) r.checked = true; }
+  } catch(e) { console.warn('loadFicheClient:', e); }
+}
+
+function exportFicheClient() {
+  if (!selectedUser) return;
+  const key = 'pope_fiche_' + selectedUser.id;
+  const raw = localStorage.getItem(key);
+  const data = raw ? JSON.parse(raw) : {};
+  const lines = [
+    'FICHE CLIENT POPE CONSULTING',
+    '============================',
+    'Client : ' + (selectedUser.full_name || selectedUser.email),
+    'Organisation : ' + (data.nom || '—'),
+    'Catégorie : ' + (data.categorie || '—'),
+    'Territoire : ' + (data.territoire || '—'),
+    'Interlocuteur : ' + (data.contact || '—'),
+    'Niveau décisionnel : ' + (data.niveau || '—'),
+    '',
+    'BESOIN',
+    'Domaines : ' + (data.domaines || []).join(', '),
+    'Description : ' + (data.besoins || '—'),
+    'Mode : ' + (data.mode || '—'),
+    'Urgence : ' + (data.urgence || '—'),
+    '',
+    'QUALIFICATION POPE',
+    'Maturité client : ' + (data.maturite || '—') + '/5',
+    'Complexité : ' + (data.complexite || '—') + '/5',
+    'Potentiel : ' + (data.potentiel || '—') + '/5',
+    'Décision : ' + (data.decision || '—'),
+    'Notes : ' + (data.notes || '—'),
+    '',
+    'FINANCIER',
+    'Budget : ' + (data.budget || '—'),
+    'Financement : ' + (data.financement || '—'),
+    '',
+    'Exporté le ' + new Date().toLocaleDateString('fr-FR'),
+  ];
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fiche-client-' + (selectedUser.id || 'export') + '.txt';
+  a.click();
+}
 </script>
 </body>
 </html>
