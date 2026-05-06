@@ -1166,10 +1166,13 @@ function closePanel() {
 
 function switchPtab(tab) {
   currentPtab = tab;
-  ['info','actions','satisfaction'].forEach(t => {
-    el('ptab'+t.charAt(0).toUpperCase()+t.slice(1)).hidden = t !== tab;
+  ['info','fiche','actions','satisfaction'].forEach(t => {
+    var panelId = 'ptab'+t.charAt(0).toUpperCase()+t.slice(1);
+    var panel = el(panelId);
+    if (panel) panel.hidden = t !== tab;
   });
   document.querySelectorAll('[data-ptab]').forEach(b => b.classList.toggle('active', b.dataset.ptab === tab));
+  if (tab === 'fiche' && selectedUser) loadFicheClient(selectedUser.id);
 }
 
 el('panelCloseBtn').onclick = closePanel;
