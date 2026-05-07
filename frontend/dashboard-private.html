@@ -852,7 +852,7 @@ wireLogout();
       alertVnt.removeAttribute('hidden');
       alertVnt.style.background = 'linear-gradient(to right,#f0f9ff,#e0f2fe)';
       alertVnt.style.borderColor = '#bae6fd';
-      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert par mois';
+      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert offerts (une seule fois)';
       document.getElementById('trialAlertBody').textContent = 'Vous bénéficiez de l\'offre gratuite permanente. La génération IA est illimitée. Passez à Starter ou Pro pour plus de Conseils Expert.';
     }
   } catch {}
@@ -1022,6 +1022,14 @@ function renderRequests(container, reqs) {
       + '</div>';
   }).join('');
 }
+
+// Exposer sur window — nécessaire quand la page contient un <script type="module">
+window.switchTab      = switchTab;
+window.goStep         = goStep;
+window.selectDomain   = selectDomain;
+window.updateBesoType = updateBesoType;
+window.submitBesoin   = submitBesoin;
+window.loadRequests   = loadRequests;
 </script>
 </body>
 </html>
