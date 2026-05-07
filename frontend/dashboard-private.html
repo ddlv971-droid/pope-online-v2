@@ -981,7 +981,7 @@ function submitBesoin() {
   var desc  = (document.getElementById('besoInDesc')  || {}).value || '';
   var msgEl = document.getElementById('msgBesoin');
   if (!title.trim() || !desc.trim()) {
-    if (msgEl) { msgEl.textContent = '⚠️ Veuillez remplir l'objet et la description à l'étape 2.'; msgEl.className = 'v5-msg err-show'; }
+    if (msgEl) { msgEl.textContent = '⚠️ Veuillez remplir l\'objet et la description (étape 2).'; msgEl.className = 'v5-msg err-show'; }
     return;
   }
   if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }
