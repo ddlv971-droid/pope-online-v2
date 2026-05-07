@@ -1,1 +1,0 @@
-POPE Online V5.1\n- Couleur du header corrigée en bleu marine\n- Boucle d’animation 3s mosaïque / 3s logo\n- Textes des espaces privé/public remplacés\n- Footer avec mentions légales\n- Pop-up premium de gestion des cookies\n- Page legal.html ajoutée\n
