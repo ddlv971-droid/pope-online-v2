@@ -205,8 +205,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v5-hero-bar::after{
   content:''; position:absolute; top:-30px; right:-30px;
   width:200px; height:200px; border-radius:50%;
-  background:rgba(0,121,193,.15); pointer-events:none;
-}
+  background:rgba(0,121,193,.15); }
 .v5-hero-text{ flex:1; }
 .v5-hero-eyebrow{ font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:8px; }
 .v5-hero-title{ font-size:clamp(22px,3vw,30px); font-weight:800; color:#fff; margin:0 0 8px; letter-spacing:-.02em; }
@@ -360,7 +359,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 .v5-btn-primary:hover{ background:#0068a8; transform:translateY(-1px); }
 .v5-btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
-.v5-btn-locked{ opacity:.45; cursor:not-allowed; pointer-events:none; }
+.v5-btn-locked{ opacity:.45; cursor:not-allowed; }
 .v5-btn-send{ background:linear-gradient(135deg,var(--blue),var(--cyan)); font-size:15px; padding:14px 28px; }
 .v5-btn-ghost{
   display:inline-flex; align-items:center; gap:8px;
@@ -617,7 +616,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <button class="v5-domain-pill" data-domain="Autre" onclick="selectDomain(this)">➕ Autre domaine</button>
       </div>
       <div class="v5-step-footer">
-        <button class="v5-btn-primary v5-btn-locked" id="btnStep1Next" onclick="if(!this.classList.contains('v5-btn-locked'))goStep(2)">Continuer →</button>
+        <button class="v5-btn-primary v5-btn-locked" id="btnStep1Next" onclick="goStep(2)">Continuer →</button>
       </div>
     </div>
 
@@ -1019,7 +1018,12 @@ function switchTab(tab) {
 
 // ── Parcours étapes ─────────────────────────────────────────
 function goStep(n) {
-  if (n === 2 && !_selectedDomain) return;
+  if (n === 2 && !_selectedDomain) {
+    // Feedback visuel: faire clignoter la grille
+    var grid = document.getElementById('domainGrid');
+    if (grid) { grid.style.outline = '2px solid #ef4444'; grid.style.borderRadius = '12px'; setTimeout(function(){ grid.style.outline = ''; }, 1200); }
+    return;
+  }
   _currentStep = n;
   document.querySelectorAll('.v5-step-panel').forEach(function(p) {
     p.classList.toggle('active', p.id === 'step-panel-' + n);
