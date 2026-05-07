@@ -373,6 +373,90 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   .adm-login { margin: 20px 12px; padding: 24px 16px; border-radius: 18px; }
 }
 </style>
+
+<style id="fiche-client-style">
+/* ══ FICHE CLIENT — PLEIN ÉCRAN + DARK THEME ═════════════ */
+
+/* Panel élargi pour la fiche */
+#userPanel { width: min(92vw, 860px) !important; }
+
+/* Sections */
+.fiche-section {
+  margin-bottom: 24px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.fiche-section-title {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: #0099e6;
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* Grilles */
+.fiche-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fiche-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media(max-width: 700px) {
+  .fiche-grid-2, .fiche-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Champs */
+.fiche-field { display: flex; flex-direction: column; gap: 5px; }
+.fiche-label {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.fiche-hint { font-size: 10px; color: rgba(255,255,255,.35); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.fiche-input {
+  width: 100%; padding: 9px 12px;
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 9px;
+  color: #fff; font-size: 13px;
+  transition: .15s; box-sizing: border-box;
+  font-family: inherit;
+}
+.fiche-input:focus {
+  outline: none;
+  border-color: #0099e6;
+  background: rgba(0,153,230,.1);
+  box-shadow: 0 0 0 3px rgba(0,153,230,.15);
+}
+.fiche-input option { background: #0d1e30; color: #fff; }
+.fiche-input optgroup { background: #07162a; color: rgba(255,255,255,.5); }
+.fiche-textarea { min-height: 90px; resize: vertical; }
+
+/* Chips domaines */
+.fiche-chips-grid {
+  display: flex; flex-wrap: wrap; gap: 7px;
+}
+.fiche-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75);
+  cursor: pointer; transition: .15s; user-select: none;
+}
+.fiche-chip:hover { border-color: #0099e6; color: #7dcfff; }
+.fiche-chip:has(input:checked) {
+  background: rgba(0,153,230,.2);
+  border-color: #0099e6;
+  color: #7dcfff;
+}
+.fiche-chip input { display: none; }
+
+/* Étoiles notation */
+.fiche-stars { display: flex; gap: 4px; margin: 4px 0; }
+.fiche-star {
+  font-size: 26px; background: none; border: none;
+  color: rgba(255,255,255,.2); cursor: pointer;
+  padding: 0; line-height: 1; transition: .1s;
+}
+.fiche-star:hover, .fiche-star.on { color: #f59e0b; }
+</style>
 </head>
 <body>
 
@@ -787,111 +871,342 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
     <!-- Tab Fiche client -->
     <div id="ptabFiche" hidden>
 
-      <div class="adm-detail-section">
-        <div class="adm-detail-section-title">🏢 Identification</div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Dénomination</span><input class="adm-input" id="ficheNom" placeholder="Nom officiel complet" style="flex:1;font-size:12px"/></div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Catégorie</span>
-          <select class="adm-input" id="ficheCategorie" style="flex:1;font-size:12px">
-            <option value="">— Sélectionner —</option>
-            <optgroup label="Public"><option>Commune / EPCI</option><option>Département / Région</option><option>Établissement public</option><option>SEM / SPL</option><option>Opérateur public</option></optgroup>
-            <optgroup label="Privé"><option>SA / SAS / SARL</option><option>Association / Fondation</option><option>TPE / PME</option><option>Profession libérale</option><option>Auto-entrepreneur / Artisan</option></optgroup>
-            <option>Autre</option>
-          </select>
+      <!-- ── En-tête fiche ─────────────────────────────── -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px">Grille d'analyse Pope Consulting</div>
+          <div style="font-size:14px;font-weight:700;color:#fff" id="ficheTitleBar">Fiche client</div>
         </div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Territoire</span><input class="adm-input" id="ficheTerritoire" placeholder="Périmètre d'intervention" style="flex:1;font-size:12px"/></div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Population / CA</span><input class="adm-input" id="ficheSize" placeholder="Ordre de grandeur" style="flex:1;font-size:12px"/></div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Interlocuteur</span><input class="adm-input" id="ficheContact" placeholder="Nom, titre, fonction" style="flex:1;font-size:12px"/></div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Niveau décis.</span>
-          <select class="adm-input" id="ficheNiveau" style="flex:1;font-size:12px">
-            <option value="">—</option>
-            <option>Exécutif élu / Président</option><option>DGS / DGA</option><option>Direction métier</option><option>DG / DAF / DRH</option><option>Comité de direction</option><option>Dirigeant / Gérant</option>
-          </select>
+        <div style="display:flex;gap:8px">
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="saveFicheClient()">💾 Enregistrer</button>
+          <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="exportFicheClient()">📄 Export</button>
+        </div>
+      </div>
+      <div class="adm-msg" id="ficheMsg" style="margin-bottom:12px"></div>
+
+      <!-- ── SECTION 1 : IDENTIFICATION ─────────────────── -->
+      <div class="fiche-section">
+        <div class="fiche-section-title">🏢 Identification & Interlocuteur</div>
+        <div class="fiche-grid-2">
+          <div class="fiche-field">
+            <label class="fiche-label">Dénomination officielle</label>
+            <input class="fiche-input" id="ficheNom" placeholder="Nom légal complet"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Catégorie</label>
+            <select class="fiche-input" id="ficheCategorie">
+              <option value="">— Sélectionner —</option>
+              <optgroup label="Secteur public">
+                <option>Commune (&lt; 5 000 hab.)</option>
+                <option>Commune (5 000 – 50 000 hab.)</option>
+                <option>Commune (&gt; 50 000 hab.)</option>
+                <option>EPCI / Intercommunalité</option>
+                <option>Département</option>
+                <option>Région</option>
+                <option>Établissement public (EP, EPIC, EPA)</option>
+                <option>SEM / SPL / SEML</option>
+                <option>Opérateur public (OPH, agence…)</option>
+                <option>État / Ministère / Préfecture</option>
+              </optgroup>
+              <optgroup label="Secteur privé">
+                <option>SA / SAS</option>
+                <option>SARL / EURL</option>
+                <option>Association / Fondation</option>
+                <option>GIE / Groupement</option>
+                <option>TPE / Micro-entreprise</option>
+                <option>Profession libérale</option>
+                <option>Artisan / Commerçant</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Territoire / Localisation</label>
+            <input class="fiche-input" id="ficheTerritoire" placeholder="Département, région, périmètre d'intervention"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Taille (population ou CA)</label>
+            <input class="fiche-input" id="ficheSize" placeholder="Ex: 12 000 hab. / 2,4 M€ de CA"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Interlocuteur principal</label>
+            <input class="fiche-input" id="ficheContact" placeholder="Prénom Nom — Titre / Fonction"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Niveau décisionnel</label>
+            <select class="fiche-input" id="ficheNiveau">
+              <option value="">— Sélectionner —</option>
+              <option>Élu (Maire, Président, VP…)</option>
+              <option>DGS / Secrétaire Général</option>
+              <option>DGA / Directeur adjoint</option>
+              <option>Directeur de service métier</option>
+              <option>DAF / DRH / DSI</option>
+              <option>Chef de service / Responsable</option>
+              <option>Dirigeant / Gérant / PDG</option>
+              <option>Comité de direction</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Contact direct (tél / email)</label>
+            <input class="fiche-input" id="ficheContactDirect" placeholder="06 XX XX XX XX / email@org.fr"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Source du contact</label>
+            <select class="fiche-input" id="ficheSource">
+              <option value="">—</option>
+              <option>Recommandation client</option>
+              <option>Réseau professionnel</option>
+              <option>POPE Online (inscription)</option>
+              <option>Événement / Conférence</option>
+              <option>Site web / SEO</option>
+              <option>Appel entrant</option>
+              <option>Appel sortant (prospection)</option>
+              <option>Partenaire</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div class="adm-detail-section">
-        <div class="adm-detail-section-title">🎯 Besoin & Périmètre</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;padding:0 0 8px">
-          <span style="font-size:11px;font-weight:600;color:var(--muted);width:100%;margin-bottom:4px">Domaines Pope Consulting</span>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Stratégie"/> Stratégie &amp; Gouvernance</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Finance"/> Ingénierie Financière</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Transformation"/> Transformation &amp; Performance</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="AMO"/> Grands Projets &amp; AMO</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Territorial"/> Développement Territorial</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Droit"/> Droit &amp; Juridique</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="RH"/> RH &amp; Social</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Marches"/> Marchés Publics</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Numerique"/> Numérique &amp; IA</label>
-          <label style="font-size:11px;display:flex;align-items:center;gap:4px;background:var(--bg2);padding:3px 8px;border-radius:6px;cursor:pointer"><input type="checkbox" class="fiche-domaine" value="Autre"/> Autre</label>
+      <!-- ── SECTION 2 : BESOIN & PÉRIMÈTRE ─────────────── -->
+      <div class="fiche-section">
+        <div class="fiche-section-title">🎯 Besoin &amp; Périmètre d'intervention</div>
+
+        <div class="fiche-field" style="margin-bottom:14px">
+          <label class="fiche-label">Domaines Pope Consulting concernés</label>
+          <div class="fiche-chips-grid">
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Stratégie &amp; Gouvernance"/> Stratégie &amp; Gouvernance</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Ingénierie Financière"/> Ingénierie Financière</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Transformation &amp; Performance"/> Transformation &amp; Performance</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Grands Projets &amp; AMO"/> Grands Projets &amp; AMO</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Développement Territorial"/> Développement Territorial</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Droit &amp; Juridique"/> Droit &amp; Juridique</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="RH &amp; Social"/> RH &amp; Social</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Marchés Publics"/> Marchés Publics</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Numérique &amp; IA"/> Numérique &amp; IA</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Transition Écologique"/> Transition Écologique</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Communication"/> Communication</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Audit &amp; Contrôle"/> Audit &amp; Contrôle</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Cybersécurité &amp; SI"/> Cybersécurité &amp; SI</label>
+            <label class="fiche-chip"><input type="checkbox" class="fiche-domaine" value="Autre"/> Autre</label>
+          </div>
         </div>
-        <div style="margin-bottom:8px"><textarea class="adm-input" id="ficheBesoins" rows="3" placeholder="Description libre du besoin client" style="width:100%;font-size:12px;resize:vertical"></textarea></div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Mode</span>
-          <select class="adm-input" id="ficheMode" style="flex:1;font-size:12px">
-            <option value="">—</option><option>Conseil Expert (ponctuel)</option><option>AMO</option><option>Diagnostic / Audit</option><option>Accompagnement pluriannuel (Sur Mesure)</option><option>Non défini</option>
-          </select>
+
+        <div class="fiche-field">
+          <label class="fiche-label">Description du besoin client <span style="color:#ef4444">★</span></label>
+          <textarea class="fiche-input fiche-textarea" id="ficheBesoins" placeholder="Décrivez la demande du client avec précision : contexte, enjeux, contraintes, niveau de sensibilité, livrables attendus…"></textarea>
         </div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Urgence</span>
-          <select class="adm-input" id="ficheUrgence" style="flex:1;font-size:12px">
-            <option value="">—</option><option>Immédiate (&lt; 1 mois)</option><option>Court terme (1–3 mois)</option><option>Moyen terme (3–6 mois)</option><option>Long terme (&gt; 6 mois)</option>
-          </select>
+
+        <div class="fiche-grid-3">
+          <div class="fiche-field">
+            <label class="fiche-label">Mode d'intervention</label>
+            <select class="fiche-input" id="ficheMode">
+              <option value="">—</option>
+              <option>Conseil Expert (ponctuel, &lt; 48h)</option>
+              <option>Diagnostic / Audit flash</option>
+              <option>AMO (Assistance à Maîtrise d'Ouvrage)</option>
+              <option>Étude / Analyse approfondie</option>
+              <option>Accompagnement sur mesure (Sur Mesure)</option>
+              <option>Formation / Transfert de compétences</option>
+              <option>Pilotage de projet (PMO)</option>
+              <option>Non défini — à co-construire</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Délai / Urgence</label>
+            <select class="fiche-input" id="ficheUrgence">
+              <option value="">—</option>
+              <option>🔴 Urgence absolue (&lt; 48h)</option>
+              <option>🟠 Immédiate (1 semaine)</option>
+              <option>🟡 Court terme (1 mois)</option>
+              <option>🟢 Moyen terme (1–3 mois)</option>
+              <option>⚪ Long terme (&gt; 3 mois)</option>
+              <option>⚪ Non défini</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Stade de la demande</label>
+            <select class="fiche-input" id="ficheStade">
+              <option value="">—</option>
+              <option>Réflexion préliminaire</option>
+              <option>Besoin qualifié, décision imminente</option>
+              <option>Consultation en cours (multi-prestataires)</option>
+              <option>Attribution Pope — démarrage à planifier</option>
+              <option>Mission en cours</option>
+              <option>Mission terminée — suivi</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div class="adm-detail-section">
-        <div class="adm-detail-section-title">⭐ Qualification Pope</div>
-        <div class="adm-detail-row"><span class="adm-detail-key">Maturité client</span><div style="display:flex;gap:10px">${[1,2,3,4,5].map(n=>`<label style='font-size:12px'><input type='radio' name='fiche-maturite' value='${n}'/> ${n}</label>`).join('')}</div></div>
-        <div class="adm-detail-row" style="margin-top:6px"><span class="adm-detail-key">Complexité</span><div style="display:flex;gap:10px">
-          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="1"/> 1</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="2"/> 2</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="3"/> 3</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="4"/> 4</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-complexite" value="5"/> 5</label>
-        </div></div>
-        <div class="adm-detail-row" style="margin-top:6px"><span class="adm-detail-key">Potentiel Pope</span><div style="display:flex;gap:10px">
-          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="1"/> 1</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="2"/> 2</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="3"/> 3</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="4"/> 4</label>
-          <label style="font-size:12px"><input type="radio" name="fiche-potentiel" value="5"/> 5</label>
-        </div></div>
-        <div class="adm-detail-row" style="margin-top:6px">
-          <span class="adm-detail-key">Décision</span>
-          <select class="adm-input" id="ficheDecision" style="flex:1;font-size:12px">
-            <option value="">— Sélectionner —</option>
-            <option value="go">✅ GO — Mission qualifiée</option>
-            <option value="complement">🔵 Compléments nécessaires</option>
-            <option value="hors">❌ Hors périmètre — redirection</option>
-            <option value="attente">⏳ En attente</option>
-          </select>
+      <!-- ── SECTION 3 : QUALIFICATION POPE ─────────────── -->
+      <div class="fiche-section">
+        <div class="fiche-section-title">⭐ Qualification interne Pope Consulting</div>
+        <div class="fiche-grid-2">
+
+          <div class="fiche-field">
+            <label class="fiche-label">Maturité client <span class="fiche-hint">(1 = débutant · 5 = expert)</span></label>
+            <div class="fiche-stars" id="stars-maturite" data-name="fiche-maturite">
+              <button type="button" class="fiche-star" data-val="1" onclick="setStar('maturite',1)">★</button>
+              <button type="button" class="fiche-star" data-val="2" onclick="setStar('maturite',2)">★</button>
+              <button type="button" class="fiche-star" data-val="3" onclick="setStar('maturite',3)">★</button>
+              <button type="button" class="fiche-star" data-val="4" onclick="setStar('maturite',4)">★</button>
+              <button type="button" class="fiche-star" data-val="5" onclick="setStar('maturite',5)">★</button>
+            </div>
+            <input type="hidden" id="val-maturite" value=""/>
+          </div>
+
+          <div class="fiche-field">
+            <label class="fiche-label">Complexité mission <span class="fiche-hint">(1 = simple · 5 = très complexe)</span></label>
+            <div class="fiche-stars" id="stars-complexite" data-name="fiche-complexite">
+              <button type="button" class="fiche-star" data-val="1" onclick="setStar('complexite',1)">★</button>
+              <button type="button" class="fiche-star" data-val="2" onclick="setStar('complexite',2)">★</button>
+              <button type="button" class="fiche-star" data-val="3" onclick="setStar('complexite',3)">★</button>
+              <button type="button" class="fiche-star" data-val="4" onclick="setStar('complexite',4)">★</button>
+              <button type="button" class="fiche-star" data-val="5" onclick="setStar('complexite',5)">★</button>
+            </div>
+            <input type="hidden" id="val-complexite" value=""/>
+          </div>
+
+          <div class="fiche-field">
+            <label class="fiche-label">Potentiel Pope <span class="fiche-hint">(1 = faible · 5 = stratégique)</span></label>
+            <div class="fiche-stars" id="stars-potentiel" data-name="fiche-potentiel">
+              <button type="button" class="fiche-star" data-val="1" onclick="setStar('potentiel',1)">★</button>
+              <button type="button" class="fiche-star" data-val="2" onclick="setStar('potentiel',2)">★</button>
+              <button type="button" class="fiche-star" data-val="3" onclick="setStar('potentiel',3)">★</button>
+              <button type="button" class="fiche-star" data-val="4" onclick="setStar('potentiel',4)">★</button>
+              <button type="button" class="fiche-star" data-val="5" onclick="setStar('potentiel',5)">★</button>
+            </div>
+            <input type="hidden" id="val-potentiel" value=""/>
+          </div>
+
+          <div class="fiche-field">
+            <label class="fiche-label">Fidélité / Récurrence <span class="fiche-hint">(1 = ponctuel · 5 = compte clé)</span></label>
+            <div class="fiche-stars" id="stars-fidelite" data-name="fiche-fidelite">
+              <button type="button" class="fiche-star" data-val="1" onclick="setStar('fidelite',1)">★</button>
+              <button type="button" class="fiche-star" data-val="2" onclick="setStar('fidelite',2)">★</button>
+              <button type="button" class="fiche-star" data-val="3" onclick="setStar('fidelite',3)">★</button>
+              <button type="button" class="fiche-star" data-val="4" onclick="setStar('fidelite',4)">★</button>
+              <button type="button" class="fiche-star" data-val="5" onclick="setStar('fidelite',5)">★</button>
+            </div>
+            <input type="hidden" id="val-fidelite" value=""/>
+          </div>
+
         </div>
-        <div style="margin-top:8px"><textarea class="adm-input" id="ficheNotes" rows="3" placeholder="Notes internes Pope — éléments contextuels, alertes…" style="width:100%;font-size:12px;resize:vertical"></textarea></div>
+
+        <div class="fiche-grid-2" style="margin-top:14px">
+          <div class="fiche-field">
+            <label class="fiche-label">Décision interne <span style="color:#ef4444">★</span></label>
+            <select class="fiche-input" id="ficheDecision">
+              <option value="">— Sélectionner —</option>
+              <option value="go">✅ GO — Mission qualifiée, à démarrer</option>
+              <option value="proposition">📝 À proposer — devis à envoyer</option>
+              <option value="complement">🔵 Compléments nécessaires</option>
+              <option value="attente">⏳ En attente de décision client</option>
+              <option value="hors">❌ Hors périmètre Pope — redirection</option>
+              <option value="perdu">🚫 Perdu / Abandonné</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Responsable Pope assigné</label>
+            <input class="fiche-input" id="ficheResponsable" placeholder="Nom du consultant Pope référent"/>
+          </div>
+        </div>
+
+        <div class="fiche-field" style="margin-top:14px">
+          <label class="fiche-label">Notes internes &amp; points de vigilance</label>
+          <textarea class="fiche-input fiche-textarea" id="ficheNotes" placeholder="Éléments contextuels, alertes, risques identifiés, historique des échanges informels, recommandations internes…"></textarea>
+        </div>
       </div>
 
-      <div class="adm-detail-section">
-        <div class="adm-detail-section-title">💰 Enjeux financiers</div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Budget</span>
-          <select class="adm-input" id="ficheBudget" style="flex:1;font-size:12px">
-            <option value="">—</option><option>&lt; 10 000 €</option><option>10 000 – 30 000 €</option><option>30 000 – 80 000 €</option><option>80 000 – 200 000 €</option><option>&gt; 200 000 €</option><option>Non défini</option>
-          </select>
-        </div>
-        <div class="adm-detail-row">
-          <span class="adm-detail-key">Financement</span>
-          <select class="adm-input" id="ficheFinancement" style="flex:1;font-size:12px">
-            <option value="">—</option><option>Budget propre</option><option>Marché public</option><option>Subvention</option><option>UGAP / centrale d'achat</option><option>Non défini</option>
-          </select>
+      <!-- ── SECTION 4 : ENJEUX FINANCIERS ──────────────── -->
+      <div class="fiche-section">
+        <div class="fiche-section-title">💰 Enjeux financiers &amp; contractuels</div>
+        <div class="fiche-grid-3">
+          <div class="fiche-field">
+            <label class="fiche-label">Budget envisagé (HT)</label>
+            <select class="fiche-input" id="ficheBudget">
+              <option value="">—</option>
+              <option>&lt; 5 000 €</option>
+              <option>5 000 – 15 000 €</option>
+              <option>15 000 – 30 000 €</option>
+              <option>30 000 – 80 000 €</option>
+              <option>80 000 – 200 000 €</option>
+              <option>&gt; 200 000 €</option>
+              <option>Non défini / À estimer</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Mode de financement</label>
+            <select class="fiche-input" id="ficheFinancement">
+              <option value="">—</option>
+              <option>Budget propre / Gré à gré</option>
+              <option>Marché public formalisé (AO)</option>
+              <option>MAPA (&lt; 40k€)</option>
+              <option>UGAP / Centrale d'achat</option>
+              <option>Subvention publique</option>
+              <option>Co-financement (DETR, DSIL…)</option>
+              <option>Non défini</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Durée estimée mission</label>
+            <select class="fiche-input" id="ficheDuree">
+              <option value="">—</option>
+              <option>Ponctuel (Conseil Expert, &lt; 48h)</option>
+              <option>Courte (1–4 semaines)</option>
+              <option>Moyenne (1–3 mois)</option>
+              <option>Longue (3–6 mois)</option>
+              <option>Pluriannuelle (&gt; 6 mois)</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <!-- ── SECTION 5 : SUIVI CRM ────────────────────────── -->
+      <div class="fiche-section">
+        <div class="fiche-section-title">📈 Suivi CRM &amp; Relation client</div>
+        <div class="fiche-grid-3">
+          <div class="fiche-field">
+            <label class="fiche-label">Statut CRM</label>
+            <select class="fiche-input" id="ficheCrmStatut">
+              <option value="">—</option>
+              <option>🆕 Nouveau prospect</option>
+              <option>🔄 En cours de qualification</option>
+              <option>📤 Proposition envoyée</option>
+              <option>🤝 Client actif</option>
+              <option>⭐ Compte clé</option>
+              <option>🔁 Client récurrent</option>
+              <option>⏸️ Inactif — à relancer</option>
+              <option>❌ Perdu / Injoignable</option>
+            </select>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Prochain contact prévu</label>
+            <input class="fiche-input" type="date" id="ficheProchainContact"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Canal de communication préféré</label>
+            <select class="fiche-input" id="ficheCanalPref">
+              <option value="">—</option>
+              <option>Email</option>
+              <option>Téléphone</option>
+              <option>Visioconférence</option>
+              <option>Présentiel</option>
+              <option>POPE Online (messagerie)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fiche-field" style="margin-top:14px">
+          <label class="fiche-label">Actions &amp; relances à prévoir</label>
+          <textarea class="fiche-input" id="ficheActions" rows="2" style="min-height:70px" placeholder="Ex: Relancer le 15/06 pour suivi proposition — Envoyer la convention cadre…"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Footer fiche ───────────────────────────────── -->
+      <div style="display:flex;gap:10px;margin-top:8px;justify-content:flex-end;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)">
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="resetFicheClient()">🔄 Réinitialiser</button>
+        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="exportFicheClient()">📄 Exporter TXT</button>
         <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="saveFicheClient()">💾 Enregistrer la fiche</button>
-        <button class="adm-btn adm-btn-ghost adm-btn-sm" onclick="exportFicheClient()">📄 Exporter PDF</button>
       </div>
-      <div class="adm-msg" id="ficheMsg" style="margin-top:8px"></div>
     </div>
 
     <!-- Tab Actions -->
@@ -1882,6 +2197,184 @@ function exportFicheClient() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'fiche-client-' + (selectedUser.id || 'export') + '.txt';
+  a.click();
+}
+</script>
+
+<script id="fiche-js-new">
+// ── Étoiles notation ────────────────────────────────────────
+function setStar(field, val) {
+  var hidden = document.getElementById('val-' + field);
+  if (hidden) hidden.value = val;
+  var stars = document.querySelectorAll('#stars-' + field + ' .fiche-star');
+  stars.forEach(function(s, i) { s.classList.toggle('on', i < val); });
+}
+
+function loadStars(field, val) {
+  if (!val) return;
+  setStar(field, parseInt(val));
+}
+
+// ── Sauvegarder la fiche ─────────────────────────────────────
+function saveFicheClient() {
+  if (!selectedUser) return;
+  var domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(function(c) { return c.value; });
+  var data = {
+    nom:            (el('ficheNom')           || {}).value || '',
+    categorie:      (el('ficheCategorie')     || {}).value || '',
+    territoire:     (el('ficheTerritoire')    || {}).value || '',
+    size:           (el('ficheSize')          || {}).value || '',
+    contact:        (el('ficheContact')       || {}).value || '',
+    contactDirect:  (el('ficheContactDirect') || {}).value || '',
+    niveau:         (el('ficheNiveau')        || {}).value || '',
+    source:         (el('ficheSource')        || {}).value || '',
+    domaines:       domaines,
+    besoins:        (el('ficheBesoins')       || {}).value || '',
+    mode:           (el('ficheMode')          || {}).value || '',
+    urgence:        (el('ficheUrgence')       || {}).value || '',
+    stade:          (el('ficheStade')         || {}).value || '',
+    maturite:       (el('val-maturite')       || {}).value || '',
+    complexite:     (el('val-complexite')     || {}).value || '',
+    potentiel:      (el('val-potentiel')      || {}).value || '',
+    fidelite:       (el('val-fidelite')       || {}).value || '',
+    decision:       (el('ficheDecision')      || {}).value || '',
+    responsable:    (el('ficheResponsable')   || {}).value || '',
+    notes:          (el('ficheNotes')         || {}).value || '',
+    budget:         (el('ficheBudget')        || {}).value || '',
+    financement:    (el('ficheFinancement')   || {}).value || '',
+    duree:          (el('ficheDuree')         || {}).value || '',
+    crmStatut:      (el('ficheCrmStatut')     || {}).value || '',
+    prochainContact:(el('ficheProchainContact')|| {}).value || '',
+    canalPref:      (el('ficheCanalPref')     || {}).value || '',
+    actions:        (el('ficheActions')       || {}).value || '',
+    savedAt:        new Date().toISOString(),
+  };
+  try {
+    localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data));
+    var msg = el('ficheMsg');
+    if (msg) { msg.textContent = '✅ Fiche enregistrée — ' + new Date().toLocaleString('fr-FR'); msg.className = 'adm-msg adm-msg-ok'; }
+    showToast('Fiche client enregistrée', 'ok');
+  } catch(e) {
+    var msg = el('ficheMsg');
+    if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
+  }
+}
+
+// ── Charger la fiche ─────────────────────────────────────────
+function loadFicheClient(userId) {
+  // Mettre à jour le titre de la fiche
+  var titleBar = el('ficheTitleBar');
+  if (titleBar && selectedUser) {
+    titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
+  }
+  try {
+    var raw = localStorage.getItem('pope_fiche_' + userId);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    var fields = ['ficheNom','ficheCategorie','ficheTerritoire','ficheSize','ficheContact',
+      'ficheContactDirect','ficheNiveau','ficheSource','ficheBesoins','ficheMode','ficheUrgence',
+      'ficheStade','ficheDecision','ficheResponsable','ficheNotes','ficheBudget',
+      'ficheFinancement','ficheDuree','ficheCrmStatut','ficheProchainContact','ficheCanalPref','ficheActions'];
+    var map = {ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',
+      ficheSize:'size',ficheContact:'contact',ficheContactDirect:'contactDirect',
+      ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',ficheMode:'mode',
+      ficheUrgence:'urgence',ficheStade:'stade',ficheDecision:'decision',
+      ficheResponsable:'responsable',ficheNotes:'notes',ficheBudget:'budget',
+      ficheFinancement:'financement',ficheDuree:'duree',ficheCrmStatut:'crmStatut',
+      ficheProchainContact:'prochainContact',ficheCanalPref:'canalPref',ficheActions:'actions'};
+    fields.forEach(function(id) { var f = el(id); if (f && d[map[id]]) f.value = d[map[id]]; });
+    // Domaines
+    document.querySelectorAll('.fiche-domaine').forEach(function(cb) {
+      cb.checked = (d.domaines || []).includes(cb.value);
+    });
+    // Étoiles
+    ['maturite','complexite','potentiel','fidelite'].forEach(function(k) {
+      if (d[k]) loadStars(k, d[k]);
+    });
+    // Msg date
+    if (d.savedAt) {
+      var msg = el('ficheMsg');
+      if (msg) { msg.textContent = '📅 Dernière sauvegarde : ' + new Date(d.savedAt).toLocaleString('fr-FR'); msg.className = 'adm-msg'; msg.style.display = 'block'; }
+    }
+  } catch(e) { console.warn('loadFicheClient:', e); }
+}
+
+// ── Réinitialiser la fiche ────────────────────────────────────
+function resetFicheClient() {
+  if (!confirm('Réinitialiser toute la fiche client ?')) return;
+  document.querySelectorAll('#ptabFiche input, #ptabFiche select, #ptabFiche textarea').forEach(function(f) {
+    if (f.type === 'checkbox' || f.type === 'radio') f.checked = false;
+    else if (f.type === 'hidden') f.value = '';
+    else f.value = '';
+  });
+  document.querySelectorAll('.fiche-star').forEach(function(s) { s.classList.remove('on'); });
+  var msg = el('ficheMsg');
+  if (msg) { msg.textContent = 'Fiche réinitialisée.'; msg.className = 'adm-msg'; msg.style.display = 'block'; }
+}
+
+// ── Exporter la fiche en TXT ──────────────────────────────────
+function exportFicheClient() {
+  if (!selectedUser) return;
+  var raw = localStorage.getItem('pope_fiche_' + selectedUser.id);
+  var d = raw ? JSON.parse(raw) : {};
+  var sep = '─'.repeat(50);
+  var lines = [
+    'FICHE CLIENT — POPE CONSULTING',
+    sep,
+    'Client       : ' + (selectedUser.full_name || '—'),
+    'Email        : ' + (selectedUser.email || '—'),
+    'Organisation : ' + (d.nom || '—'),
+    'Catégorie    : ' + (d.categorie || '—'),
+    'Territoire   : ' + (d.territoire || '—'),
+    'Taille       : ' + (d.size || '—'),
+    'Interlocuteur: ' + (d.contact || '—'),
+    'Contact dir. : ' + (d.contactDirect || '—'),
+    'Niveau décis.: ' + (d.niveau || '—'),
+    'Source       : ' + (d.source || '—'),
+    '',
+    sep,
+    'BESOIN & PÉRIMÈTRE',
+    sep,
+    'Domaines     : ' + (d.domaines || []).join(', '),
+    'Description  : ' + (d.besoins || '—'),
+    'Mode         : ' + (d.mode || '—'),
+    'Urgence      : ' + (d.urgence || '—'),
+    'Stade        : ' + (d.stade || '—'),
+    '',
+    sep,
+    'QUALIFICATION POPE',
+    sep,
+    'Maturité client : ' + (d.maturite ? '★'.repeat(parseInt(d.maturite)) + '☆'.repeat(5-parseInt(d.maturite)) + ' (' + d.maturite + '/5)' : '—'),
+    'Complexité      : ' + (d.complexite ? '★'.repeat(parseInt(d.complexite)) + '☆'.repeat(5-parseInt(d.complexite)) + ' (' + d.complexite + '/5)' : '—'),
+    'Potentiel Pope  : ' + (d.potentiel ? '★'.repeat(parseInt(d.potentiel)) + '☆'.repeat(5-parseInt(d.potentiel)) + ' (' + d.potentiel + '/5)' : '—'),
+    'Fidélité        : ' + (d.fidelite ? '★'.repeat(parseInt(d.fidelite)) + '☆'.repeat(5-parseInt(d.fidelite)) + ' (' + d.fidelite + '/5)' : '—'),
+    'Décision        : ' + (d.decision || '—'),
+    'Responsable     : ' + (d.responsable || '—'),
+    'Notes internes  : ' + (d.notes || '—'),
+    '',
+    sep,
+    'ENJEUX FINANCIERS',
+    sep,
+    'Budget     : ' + (d.budget || '—'),
+    'Financement: ' + (d.financement || '—'),
+    'Durée      : ' + (d.duree || '—'),
+    '',
+    sep,
+    'SUIVI CRM',
+    sep,
+    'Statut CRM       : ' + (d.crmStatut || '—'),
+    'Prochain contact : ' + (d.prochainContact || '—'),
+    'Canal préféré    : ' + (d.canalPref || '—'),
+    'Actions à prévoir: ' + (d.actions || '—'),
+    '',
+    sep,
+    'Exporté le ' + new Date().toLocaleString('fr-FR'),
+    'POPE Consulting — Document confidentiel',
+  ];
+  var blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fiche-pope-' + (selectedUser.id || 'client') + '-' + new Date().toISOString().slice(0,10) + '.txt';
   a.click();
 }
 </script>

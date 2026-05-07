@@ -359,6 +359,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 .v5-btn-primary:hover{ background:#0068a8; transform:translateY(-1px); }
 .v5-btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+.v5-btn-locked{ opacity:.45; cursor:not-allowed; pointer-events:none; }
 .v5-btn-send{ background:linear-gradient(135deg,var(--blue),var(--cyan)); font-size:15px; padding:14px 28px; }
 .v5-btn-ghost{
   display:inline-flex; align-items:center; gap:8px;
@@ -612,7 +613,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <button class="v5-domain-pill" data-domain="Autre" onclick="selectDomain(this)">➕ Autre domaine</button>
       </div>
       <div class="v5-step-footer">
-        <button class="v5-btn-primary" id="btnStep1Next" onclick="goStep(2)" disabled>Continuer →</button>
+        <button class="v5-btn-primary v5-btn-locked" id="btnStep1Next" onclick="if(!this.classList.contains('v5-btn-locked'))goStep(2)">Continuer →</button>
       </div>
     </div>
 
@@ -1030,7 +1031,8 @@ function selectDomain(btn) {
   document.querySelectorAll('.v5-domain-pill').forEach(function(b) { b.classList.remove('selected'); });
   btn.classList.add('selected');
   _selectedDomain = btn.dataset.domain;
-  document.getElementById('btnStep1Next').disabled = false;
+  var btn = document.getElementById('btnStep1Next');
+  if (btn) btn.classList.remove('v5-btn-locked');
 }
 
 // ── Type de besoin ──────────────────────────────────────────
