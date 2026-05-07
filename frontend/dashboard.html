@@ -121,339 +121,318 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 </style>
 
-<style id="v5-workspace-style">
-/* ══ VARIABLES ══════════════════════════════════ */
+<style id="v5-workspace-css">
 :root{
-  --navy:#07162a; --blue:#0079c1; --cyan:#03a0d7; --pink:#c22e83;
-  --green:#16a34a; --orange:#d97706; --red:#dc2626;
-  --ink:#0d1e30; --muted:#566477; --border:rgba(13,30,48,.1);
-  --bg:#f8fafc; --bg2:#f1f5f9; --white:#fff;
-  --radius:16px; --shadow:0 2px 12px rgba(13,30,48,.08);
+  --navy:#07162a;--blue:#0079c1;--cyan:#03a0d7;--pink:#c22e83;
+  --green:#16a34a;--red:#dc2626;--orange:#d97706;
+  --ink:#0d1e30;--muted:#566477;--border:rgba(13,30,48,.1);
+  --bg:#f8fafc;--bg2:#f1f5f9;--white:#fff;
+  --r:16px;--sh:0 2px 12px rgba(13,30,48,.08);
 }
+.v5-workspace{background:var(--bg);min-height:100vh;padding-bottom:60px;}
 
-/* ══ WORKSPACE GLOBAL ═══════════════════════════ */
-.v5-workspace{
-  background:var(--bg); min-height:100vh;
-  padding-bottom:60px;
-}
-
-/* ══ TABS BAR ═══════════════════════════════════ */
+/* TABS */
 .v5-tabs-bar{
-  background:var(--white);
-  border-bottom:2px solid var(--border);
-  display:flex; align-items:stretch;
-  padding:0 24px; gap:4px;
-  position:sticky; top:58px; z-index:90;
+  background:var(--white);border-bottom:2px solid var(--border);
+  display:flex;align-items:stretch;padding:0 24px;gap:2px;
+  position:sticky;top:58px;z-index:90;
   box-shadow:0 2px 8px rgba(13,30,48,.06);
+  overflow-x:auto;
 }
 .v5-tab{
-  display:flex; align-items:center; gap:8px;
-  padding:14px 18px; border:none; background:none;
-  cursor:pointer; font-size:13px; font-weight:600;
-  color:var(--muted); border-bottom:3px solid transparent;
-  margin-bottom:-2px; transition:.2s; white-space:nowrap;
+  display:flex;align-items:center;gap:7px;
+  padding:14px 16px;border:none;background:none;
+  cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--muted);border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:.2s;white-space:nowrap;
+  font-family:inherit;
 }
-.v5-tab:hover{ color:var(--blue); }
-.v5-tab.active{ color:var(--blue); border-bottom-color:var(--blue); }
-.v5-tab-ico{ font-size:16px; }
-@media(max-width:600px){
-  .v5-tabs-bar{ padding:0 8px; }
-  .v5-tab{ padding:12px 10px; font-size:11px; gap:5px; }
-  .v5-tab-ico{ font-size:14px; }
-}
+.v5-tab:hover{color:var(--blue);}
+.v5-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.v5-tab-ico{font-size:15px;}
 
-/* ══ TAB CONTENT ════════════════════════════════ */
-.v5-tab-content{ padding:28px 24px; max-width:900px; margin:0 auto; }
-.v5-tab-content[hidden]{ display:none; }
-@media(max-width:600px){ .v5-tab-content{ padding:20px 16px; } }
+/* TAB CONTENT */
+.v5-tab-content{padding:24px;max-width:920px;margin:0 auto;}
+.v5-tab-content[hidden]{display:none!important;}
 
-/* ══ TRIAL ALERTS ═══════════════════════════════ */
+/* ALERTS */
 .v5-trial-alert{
-  display:flex; align-items:center; gap:14px;
+  display:flex;align-items:center;gap:14px;
   background:linear-gradient(to right,#fffbeb,#fff8f0);
-  border:1.5px solid #fde68a; border-radius:14px;
-  padding:16px 20px; margin:16px 24px 0;
+  border:1.5px solid #fde68a;border-radius:14px;
+  padding:14px 18px;margin:12px 24px 0;
 }
-.v5-trial-text{ flex:1; }
-.v5-trial-text strong{ font-size:14px; color:var(--ink); }
-.v5-trial-text div{ font-size:13px; color:var(--muted); margin-top:2px; }
+.v5-trial-alert strong{font-size:14px;color:var(--ink);}
+.v5-trial-alert div{font-size:13px;color:var(--muted);margin-top:2px;}
 .v5-trial-cta{
-  background:var(--blue); color:#fff; border-radius:10px;
-  padding:8px 16px; font-size:13px; font-weight:700;
-  text-decoration:none; white-space:nowrap;
+  background:var(--blue);color:#fff;border-radius:10px;
+  padding:7px 14px;font-size:13px;font-weight:700;
+  text-decoration:none;white-space:nowrap;margin-left:auto;
 }
 .v5-expired-overlay{
-  position:fixed; inset:0; z-index:9999;
-  background:rgba(11,36,64,.88); backdrop-filter:blur(6px);
-  display:flex; align-items:center; justify-content:center; padding:24px;
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(7,22,42,.9);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
 }
 .v5-expired-card{
-  background:#fff; border-radius:24px; padding:40px 36px;
-  max-width:480px; width:100%; text-align:center;
-  box-shadow:0 24px 64px rgba(0,0,0,.25);
+  background:#fff;border-radius:22px;padding:36px;
+  max-width:460px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
 }
-.v5-expired-card h2{ font-size:20px; font-weight:800; color:var(--ink); margin:0 0 12px; }
-.v5-expired-card p{ font-size:14px; color:var(--muted); line-height:1.65; margin:0 0 28px; }
+.v5-expired-card h2{font-size:20px;font-weight:800;color:var(--ink);margin:0 0 10px;}
+.v5-expired-card p{font-size:14px;color:var(--muted);line-height:1.65;margin:0 0 24px;}
 
-/* ══ HERO BAR ═══════════════════════════════════ */
+/* HERO BAR */
 .v5-hero-bar{
-  display:flex; align-items:flex-start; gap:24px;
-  background:linear-gradient(135deg,var(--navy) 0%,#0d3460 100%);
-  border-radius:20px; padding:28px 32px; margin-bottom:28px;
-  position:relative; overflow:hidden;
+  display:flex;align-items:flex-start;gap:20px;
+  background:linear-gradient(135deg,var(--navy),#0d3460);
+  border-radius:18px;padding:24px 28px;margin-bottom:24px;
+  position:relative;overflow:hidden;
 }
 .v5-hero-bar::after{
-  content:''; position:absolute; top:-30px; right:-30px;
-  width:200px; height:200px; border-radius:50%;
-  background:rgba(0,121,193,.15); }
-.v5-hero-text{ flex:1; }
-.v5-hero-eyebrow{ font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:8px; }
-.v5-hero-title{ font-size:clamp(22px,3vw,30px); font-weight:800; color:#fff; margin:0 0 8px; letter-spacing:-.02em; }
-.v5-hero-sub{ font-size:14px; color:rgba(255,255,255,.65); line-height:1.6; margin:0; }
-.v5-kpi-row{ display:flex; gap:16px; flex-shrink:0; }
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(0,121,193,.12);pointer-events:none;
+}
+.v5-hero-text{flex:1;}
+.v5-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px;}
+.v5-hero-title{font-size:clamp(20px,2.5vw,26px);font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.02em;}
+.v5-hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin:0;}
+.v5-kpi-row{display:flex;gap:12px;flex-shrink:0;}
 .v5-kpi{
-  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15);
-  border-radius:14px; padding:16px 20px; text-align:center; min-width:80px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:14px 16px;text-align:center;min-width:76px;
 }
-.v5-kpi-n{ font-size:28px; font-weight:800; color:#fff; line-height:1; margin-bottom:4px; }
-.v5-kpi-l{ font-size:11px; color:rgba(255,255,255,.55); line-height:1.4; }
-@media(max-width:700px){
-  .v5-hero-bar{ flex-direction:column; gap:16px; padding:22px 20px; }
-  .v5-kpi-row{ width:100%; }
-  .v5-kpi{ flex:1; }
-}
+.v5-kpi-n{font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;}
+.v5-kpi-l{font-size:10px;color:rgba(255,255,255,.5);line-height:1.4;}
 
-/* ══ JOURNEY + STEPS ════════════════════════════ */
-.v5-journey{ background:var(--white); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
+/* JOURNEY */
+.v5-journey{background:var(--white);border-radius:18px;box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;}
+
+/* STEPS NAV */
 .v5-steps{
-  display:flex; align-items:center; gap:0;
-  padding:20px 28px; background:var(--bg2);
-  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:16px 24px;background:var(--bg2);
+  border-bottom:1px solid var(--border);gap:0;
 }
 .v5-step{
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-  cursor:pointer; padding:0 4px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;padding:0 2px;
 }
 .v5-step-n{
-  width:32px; height:32px; border-radius:50%;
-  background:var(--border); color:var(--muted);
-  font-size:13px; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  transition:.2s;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.08);color:var(--muted);
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
 }
-.v5-step.active .v5-step-n{ background:var(--blue); color:#fff; }
-.v5-step.done .v5-step-n{ background:var(--green); color:#fff; }
-.v5-step-label{ font-size:11px; font-weight:600; color:var(--muted); }
-.v5-step.active .v5-step-label{ color:var(--blue); }
-.v5-step-line{ flex:1; height:2px; background:var(--border); margin:0 8px; margin-bottom:18px; }
-@media(max-width:500px){
-  .v5-steps{ padding:16px; }
-  .v5-step-label{ display:none; }
-  .v5-step-n{ width:28px; height:28px; font-size:12px; }
-}
+.v5-step.active .v5-step-n{background:var(--blue);color:#fff;}
+.v5-step.done .v5-step-n{background:var(--green);color:#fff;}
+.v5-step-label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.v5-step.active .v5-step-label{color:var(--blue);}
+.v5-step-line{flex:1;height:2px;background:var(--border);margin:0 6px;margin-bottom:15px;}
 
-/* ══ STEP PANELS ════════════════════════════════ */
-.v5-step-panel{ padding:28px; display:none; }
-.v5-step-panel.active{ display:block; }
-.v5-panel-head{ margin-bottom:24px; }
-.v5-panel-head h2{ font-size:18px; font-weight:800; color:var(--ink); margin:0 0 6px; }
-.v5-panel-head p{ font-size:14px; color:var(--muted); margin:0; }
-@media(max-width:600px){ .v5-step-panel{ padding:20px 18px; } }
+/* PANELS */
+.v5-step-panel{padding:24px;display:none;}
+.v5-step-panel.active{display:block;}
+.v5-panel-head{margin-bottom:20px;}
+.v5-panel-head h2{font-size:17px;font-weight:800;color:var(--ink);margin:0 0 5px;}
+.v5-panel-head p{font-size:13px;color:var(--muted);margin:0;}
 
-/* ══ DOMAIN GRID ════════════════════════════════ */
+/* DOMAIN GRID */
 .v5-domain-grid{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:10px; margin-bottom:24px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:10px;margin-bottom:20px;
 }
 .v5-domain-pill{
-  display:flex; align-items:center; gap:8px;
-  padding:12px 16px; border-radius:12px;
-  border:2px solid var(--border); background:var(--white);
-  font-size:13px; font-weight:600; color:var(--ink);
-  cursor:pointer; text-align:left; transition:.15s;
+  display:flex;align-items:center;gap:8px;
+  padding:12px 14px;border-radius:12px;
+  border:2px solid var(--border);background:var(--white);
+  font-size:13px;font-weight:600;color:var(--ink);
+  cursor:pointer;text-align:left;transition:.15s;
+  font-family:inherit;
 }
-.v5-domain-pill:hover{ border-color:var(--blue); color:var(--blue); background:#f0f8ff; }
-.v5-domain-pill.selected{ border-color:var(--blue); background:var(--blue); color:#fff; }
-@media(max-width:500px){
-  .v5-domain-grid{ grid-template-columns:1fr 1fr; gap:8px; }
-  .v5-domain-pill{ font-size:12px; padding:10px 12px; }
-}
+.v5-domain-pill:hover{border-color:var(--blue);color:var(--blue);background:#f0f8ff;}
+.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
 
-/* ══ FIELDS ═════════════════════════════════════ */
-.v5-field-group{ margin-bottom:18px; }
-.v5-label{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px; }
-.v5-req{ color:var(--blue); }
+/* FIELDS */
+.v5-field-group{margin-bottom:16px;}
+.v5-label{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.v5-req{color:var(--blue);}
 .v5-input{
-  width:100%; padding:12px 14px; border:1.5px solid var(--border);
-  border-radius:10px; font-size:14px; color:var(--ink);
-  background:var(--white); transition:.15s; box-sizing:border-box;
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;color:var(--ink);
+  background:var(--white);transition:.15s;box-sizing:border-box;
 }
-.v5-input:focus{ outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,121,193,.1); }
+.v5-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
 .v5-textarea{
-  width:100%; padding:12px 14px; border:1.5px solid var(--border);
-  border-radius:10px; font-size:14px; color:var(--ink);
-  background:var(--white); resize:vertical; min-height:120px;
-  transition:.15s; box-sizing:border-box; font-family:inherit;
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;color:var(--ink);
+  background:var(--white);resize:vertical;min-height:110px;
+  transition:.15s;box-sizing:border-box;font-family:inherit;
 }
-.v5-textarea:focus{ outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,121,193,.1); }
+.v5-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
 
-/* ══ IA OPTIONAL BLOCK ══════════════════════════ */
-.v5-ia-optional{
-  background:linear-gradient(135deg,#f0f8ff,#e8f4fb);
-  border:1.5px solid rgba(0,121,193,.2); border-radius:14px;
-  padding:18px 20px;
+/* IA BLOCK */
+.v5-ia-block{
+  background:#f0f8ff;border:1.5px solid rgba(0,121,193,.2);
+  border-radius:13px;padding:16px;margin-bottom:16px;
 }
-.v5-ia-header{ margin-bottom:14px; }
-.v5-ia-header>div{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
-.v5-ia-header strong{ font-size:14px; color:var(--ink); }
-.v5-ia-badge{ font-size:11px; background:var(--blue); color:#fff; padding:2px 8px; border-radius:99px; font-weight:600; }
-.v5-ia-header p{ font-size:13px; color:var(--muted); margin:0; }
-.v5-btn-ia{
-  display:inline-flex; align-items:center; gap:6px;
-  background:var(--white); border:1.5px solid var(--blue);
-  color:var(--blue); border-radius:10px; padding:9px 18px;
-  font-size:13px; font-weight:700; text-decoration:none; transition:.15s;
-}
-.v5-btn-ia:hover{ background:var(--blue); color:#fff; }
+.v5-ia-block strong{font-size:13px;color:var(--ink);}
+.v5-ia-badge{font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:99px;font-weight:600;margin-left:8px;}
+.v5-ia-block p{font-size:12px;color:var(--muted);margin:4px 0 10px;}
 
-/* ══ CHOICE ROW ═════════════════════════════════ */
-.v5-choice-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+/* CHOICE */
+.v5-choice-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .v5-choice{
-  display:flex; align-items:flex-start; gap:12px;
-  border:2px solid var(--border); border-radius:12px;
-  padding:14px 16px; cursor:pointer; transition:.15s;
+  display:flex;align-items:flex-start;gap:10px;
+  border:2px solid var(--border);border-radius:12px;
+  padding:13px 14px;cursor:pointer;transition:.15s;
 }
-.v5-choice:has(input:checked){ border-color:var(--blue); background:#f0f8ff; }
-.v5-choice input{ margin-top:3px; flex-shrink:0; accent-color:var(--blue); }
-.v5-choice-inner strong{ display:block; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:4px; }
-.v5-choice-inner span{ font-size:12px; color:var(--muted); }
-@media(max-width:500px){ .v5-choice-row{ grid-template-columns:1fr; } }
+.v5-choice:has(input:checked){border-color:var(--blue);background:#f0f8ff;}
+.v5-choice input{margin-top:2px;flex-shrink:0;accent-color:var(--blue);}
+.v5-choice strong{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.v5-choice span{font-size:11px;color:var(--muted);}
 
-/* ══ ATTACH SECTIONS ════════════════════════════ */
-.v5-attach-section{ border:1.5px solid var(--border); border-radius:14px; padding:18px; margin-bottom:14px; }
-.v5-attach-header{ display:flex; align-items:flex-start; gap:14px; margin-bottom:14px; }
-.v5-attach-ico{ font-size:22px; flex-shrink:0; width:44px; height:44px; background:var(--bg2); border-radius:12px; display:flex; align-items:center; justify-content:center; }
-.v5-attach-header strong{ font-size:14px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px; }
-.v5-attach-header p{ font-size:12px; color:var(--muted); margin:0; }
-.v5-attach-preview{ background:var(--bg2); border-radius:10px; padding:12px; margin-top:10px; font-size:13px; }
-.v5-vault-list{ font-size:13px; color:var(--muted); }
+/* ATTACH */
+.v5-attach-box{border:1.5px solid var(--border);border-radius:13px;padding:16px;margin-bottom:12px;}
+.v5-attach-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.v5-attach-ico{font-size:20px;width:40px;height:40px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.v5-attach-head strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.v5-attach-head p{font-size:12px;color:var(--muted);margin:0;}
 
-/* ══ RECAP CARD ═════════════════════════════════ */
-.v5-recap-card{ border:1.5px solid var(--border); border-radius:14px; padding:20px; margin-bottom:20px; }
-.v5-recap-row{ display:flex; gap:16px; padding:10px 0; border-bottom:1px solid var(--border); align-items:baseline; }
-.v5-recap-row:last-child{ border-bottom:none; }
-.v5-recap-key{ font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; min-width:100px; flex-shrink:0; }
-.v5-recap-val{ font-size:14px; color:var(--ink); font-weight:500; }
+/* RECAP */
+.v5-recap-card{border:1.5px solid var(--border);border-radius:13px;padding:18px;margin-bottom:18px;}
+.v5-recap-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);align-items:baseline;}
+.v5-recap-row:last-child{border-bottom:none;}
+.v5-recap-key{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:90px;flex-shrink:0;}
+.v5-recap-val{font-size:13px;color:var(--ink);font-weight:500;}
 
-/* ══ STEP FOOTER ════════════════════════════════ */
-.v5-step-footer{ display:flex; gap:10px; justify-content:flex-end; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+/* STEP FOOTER */
+.v5-step-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 
-/* ══ BUTTONS ════════════════════════════════════ */
+/* BUTTONS */
 .v5-btn-primary{
-  display:inline-flex; align-items:center; gap:8px;
-  background:var(--blue); color:#fff; border:none;
-  border-radius:12px; padding:12px 22px;
-  font-size:14px; font-weight:700; cursor:pointer;
-  text-decoration:none; transition:.2s;
-  box-shadow:0 4px 14px rgba(0,121,193,.3);
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:11px;padding:11px 20px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  text-decoration:none;transition:.2s;font-family:inherit;
+  box-shadow:0 4px 12px rgba(0,121,193,.28);
 }
-.v5-btn-primary:hover{ background:#0068a8; transform:translateY(-1px); }
-.v5-btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
-.v5-btn-locked{ opacity:.45; cursor:not-allowed; }
-.v5-btn-send{ background:linear-gradient(135deg,var(--blue),var(--cyan)); font-size:15px; padding:14px 28px; }
+.v5-btn-primary:hover{background:#0068a8;transform:translateY(-1px);}
+.v5-btn-primary-send{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  padding:13px 26px;font-size:14px;
+}
 .v5-btn-ghost{
-  display:inline-flex; align-items:center; gap:8px;
-  background:transparent; color:var(--muted);
-  border:1.5px solid var(--border); border-radius:12px;
-  padding:12px 20px; font-size:14px; font-weight:600;
-  cursor:pointer; transition:.15s; text-decoration:none;
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:var(--muted);
+  border:1.5px solid var(--border);border-radius:11px;
+  padding:11px 18px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
 }
-.v5-btn-ghost:hover{ border-color:var(--ink); color:var(--ink); }
+.v5-btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
 .v5-btn-ghost-sm{
-  display:inline-flex; align-items:center; gap:6px;
-  background:transparent; color:var(--muted);
-  border:1px solid var(--border); border-radius:8px;
-  padding:6px 12px; font-size:12px; font-weight:600;
-  cursor:pointer; transition:.15s; text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;
+  padding:5px 10px;font-size:11px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
 }
-.v5-btn-ghost-sm:hover{ color:var(--ink); border-color:var(--ink); }
+.v5-btn-locked-visual{opacity:.45;cursor:not-allowed;}
 
-/* ══ MSG ════════════════════════════════════════ */
-.v5-msg{ font-size:14px; padding:12px 16px; border-radius:10px; display:none; }
-.v5-msg.ok{ background:#d1fae5; color:#065f46; display:block; }
-.v5-msg.err{ background:#fee2e2; color:#991b1b; display:block; }
+/* MESSAGES */
+.v5-msg{font-size:13px;padding:10px 14px;border-radius:9px;display:none;margin-bottom:12px;}
+.v5-msg.err-show{background:#fee2e2;color:#991b1b;display:block;}
+.v5-msg.ok-show{background:#d1fae5;color:#065f46;display:block;}
 
-/* ══ SECTION HEAD ═══════════════════════════════ */
-.v5-section-head{ margin-bottom:24px; display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; }
-.v5-section-head h2{ font-size:20px; font-weight:800; color:var(--ink); margin:0 0 4px; flex:1; min-width:200px; }
-.v5-section-head p{ font-size:14px; color:var(--muted); margin:0; width:100%; }
-.v5-section-sub{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:12px; }
+/* SECTION HEAD */
+.v5-section-head{margin-bottom:20px;}
+.v5-section-head h2{font-size:19px;font-weight:800;color:var(--ink);margin:0 0 4px;}
+.v5-section-head p{font-size:13px;color:var(--muted);margin:0;}
 
-/* ══ REQUESTS LIST ══════════════════════════════ */
-.v5-requests-list{ display:flex; flex-direction:column; gap:12px; }
+/* REQUESTS */
+.v5-requests-list{display:flex;flex-direction:column;gap:10px;}
 .v5-request-card{
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:16px; padding:18px 20px;
-  display:flex; align-items:flex-start; gap:14px;
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
 }
-.v5-request-card.replied{ border-left:4px solid var(--green); }
-.v5-request-card.pending{ border-left:4px solid var(--orange); }
-.v5-req-domain{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--blue); background:#e0f2fe; padding:3px 8px; border-radius:6px; white-space:nowrap; }
-.v5-req-title{ font-size:14px; font-weight:700; color:var(--ink); margin:6px 0 4px; }
-.v5-req-date{ font-size:12px; color:var(--muted); }
-.v5-req-reply{ background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-top:10px; font-size:13px; color:#065f46; line-height:1.6; }
+.v5-request-card.replied{border-left:4px solid var(--green);}
+.v5-request-card.pending{border-left:4px solid var(--orange);}
+.v5-req-domain{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);background:#e0f2fe;padding:2px 7px;border-radius:5px;display:inline-block;}
+.v5-req-title{font-size:13px;font-weight:700;color:var(--ink);margin:5px 0 3px;}
+.v5-req-date{font-size:11px;color:var(--muted);}
+.v5-req-reply{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-top:8px;font-size:12px;color:#065f46;line-height:1.6;}
 
-/* ══ EMPTY STATE ════════════════════════════════ */
+/* EMPTY STATE */
 .v5-empty-state{
-  text-align:center; padding:48px 24px;
-  border:2px dashed var(--border); border-radius:20px;
-  background:var(--white);
+  text-align:center;padding:44px 24px;
+  border:2px dashed var(--border);border-radius:18px;background:var(--white);
 }
-.v5-empty-ico{ font-size:40px; margin-bottom:12px; }
-.v5-empty-state strong{ display:block; font-size:16px; color:var(--ink); margin-bottom:8px; }
-.v5-empty-state p{ font-size:14px; color:var(--muted); margin:0 0 20px; }
+.v5-empty-ico{font-size:38px;margin-bottom:10px;}
+.v5-empty-state strong{display:block;font-size:15px;color:var(--ink);margin-bottom:6px;}
+.v5-empty-state p{font-size:13px;color:var(--muted);margin:0 0 18px;}
 
-/* ══ SUR MESURE ═════════════════════════════════ */
-.v5-surmesure-intro{ display:flex; flex-direction:column; gap:16px; }
-.v5-sm-card{ background:var(--white); border:1.5px solid var(--border); border-radius:16px; padding:20px; display:flex; gap:16px; align-items:flex-start; }
-.v5-sm-ico{ font-size:28px; flex-shrink:0; }
-.v5-sm-card strong{ display:block; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px; }
-.v5-sm-card p{ font-size:13px; color:var(--muted); margin:0 0 8px; line-height:1.65; }
-.v5-sm-differ{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.v5-sm-col{ background:var(--white); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; }
-.v5-sm-col-head{ padding:12px 16px; font-size:13px; font-weight:700; }
-.v5-sm-col-head.green{ background:#d1fae5; color:#065f46; }
-.v5-sm-col-head.blue{ background:#dbeafe; color:#1e40af; }
-.v5-sm-col ul{ list-style:none; margin:0; padding:12px 16px; display:flex; flex-direction:column; gap:8px; }
-.v5-sm-col ul li{ font-size:13px; color:var(--muted); padding-left:16px; position:relative; }
-.v5-sm-col ul li::before{ content:'•'; position:absolute; left:0; color:var(--blue); }
-@media(max-width:500px){ .v5-sm-differ{ grid-template-columns:1fr; } }
+/* SUR MESURE */
+.v5-sm-intro{display:flex;flex-direction:column;gap:14px;}
+.v5-sm-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;display:flex;gap:14px;align-items:flex-start;}
+.v5-sm-ico{font-size:26px;flex-shrink:0;}
+.v5-sm-card strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.v5-sm-card p{font-size:12px;color:var(--muted);margin:0 0 6px;line-height:1.6;}
+.v5-sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v5-sm-col{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.v5-sm-col-head{padding:10px 14px;font-size:12px;font-weight:700;}
+.v5-sm-col-head.green{background:#d1fae5;color:#065f46;}
+.v5-sm-col-head.blue{background:#dbeafe;color:#1e40af;}
+.v5-sm-col ul{list-style:none;margin:0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+.v5-sm-col ul li{font-size:12px;color:var(--muted);padding-left:14px;position:relative;}
+.v5-sm-col ul li::before{content:'•';position:absolute;left:0;color:var(--blue);}
 
-/* ══ ESPACE GRID ════════════════════════════════ */
-.v5-espace-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+/* ESPACE GRID */
+.v5-espace-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .v5-espace-card{
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:16px; padding:22px 18px; text-align:center;
-  text-decoration:none; transition:.2s;
-  display:flex; flex-direction:column; align-items:center; gap:8px;
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:20px 16px;text-align:center;
+  text-decoration:none;transition:.2s;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
 }
-.v5-espace-card:hover{ border-color:var(--blue); box-shadow:0 6px 20px rgba(0,121,193,.1); transform:translateY(-2px); }
-.v5-espace-ico{ font-size:28px; }
-.v5-espace-card strong{ font-size:14px; font-weight:700; color:var(--ink); }
-.v5-espace-card span{ font-size:12px; color:var(--muted); text-align:center; }
-@media(max-width:600px){ .v5-espace-grid{ grid-template-columns:1fr 1fr; } }
+.v5-espace-card:hover{border-color:var(--blue);box-shadow:0 4px 18px rgba(0,121,193,.1);transform:translateY(-2px);}
+.v5-espace-ico{font-size:26px;}
+.v5-espace-card strong{font-size:13px;font-weight:700;color:var(--ink);}
+.v5-espace-card span{font-size:11px;color:var(--muted);text-align:center;}
 
-/* ══ QUICK LINKS ════════════════════════════════ */
-.v5-quick-links{ display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+/* QUICK LINKS */
+.v5-quick-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px;}
 .v5-quick{
-  display:inline-flex; align-items:center; gap:6px;
-  background:var(--white); border:1px solid var(--border);
-  border-radius:8px; padding:7px 12px;
-  font-size:12px; font-weight:600; color:var(--muted);
-  text-decoration:none; transition:.15s;
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:6px 11px;font-size:11px;font-weight:600;
+  color:var(--muted);text-decoration:none;transition:.15s;
 }
-.v5-quick:hover{ color:var(--blue); border-color:var(--blue); }
-.v5-muted{ color:var(--muted); font-size:13px; }
+.v5-quick:hover{color:var(--blue);border-color:var(--blue);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .v5-tabs-bar{padding:0 8px;}
+  .v5-tab{padding:12px 10px;font-size:11px;gap:4px;}
+  .v5-tab-ico{font-size:14px;}
+  .v5-tab-content{padding:16px;}
+  .v5-hero-bar{flex-direction:column;gap:14px;padding:18px;}
+  .v5-kpi-row{width:100%;}
+  .v5-kpi{flex:1;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .v5-domain-pill{font-size:12px;padding:10px 11px;}
+  .v5-choice-row{grid-template-columns:1fr;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+  .v5-sm-grid{grid-template-columns:1fr;}
+  .v5-steps{padding:12px 16px;}
+  .v5-step-label{font-size:9px;}
+  .v5-step-panel{padding:18px 14px;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body data-logout-target="public.html" class="bg po-v14-dashboard">
@@ -469,7 +448,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub">Espace public</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="app.html">⚡ Accéder à l'outil</a>
+      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
       <a class="v40-topbar-btn" href="expert.html">🎯 Conseil Expert</a>
       <a class="v40-topbar-btn" href="vault.html?space=public&return=dashboard.html">📂 Dépôt</a>
       <a class="v40-topbar-btn" href="clausier.html">📚 Clausier</a>
@@ -483,7 +462,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="app.html">⚡ Accéder à l'outil</a>
+  <a href="app.html">⚡ Générer</a>
   <a href="expert.html">🎯 Conseil Expert</a>
   <a href="vault.html?space=public&return=dashboard.html">📂 Dépôt</a>
   <a href="clausier.html">📚 Clausier</a>
@@ -497,59 +476,46 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <main class="v5-workspace">
 
-<!-- ══════════════════════════════════════════════
-     NAVIGATION PRINCIPALE V5 — 4 onglets
-═══════════════════════════════════════════════ -->
+<!-- Variables JS selon espace -->
+<script>var EXPERT_PAGE='expert.html';var EXPERT_PAGE_MISSION='mission.html';</script>
+
+<!-- Tabs -->
 <div class="v5-tabs-bar">
-  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')">
-    <span class="v5-tab-ico">🎯</span>
-    <span class="v5-tab-label">Mon Besoin</span>
-  </button>
-  <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')">
-    <span class="v5-tab-ico">👤</span>
-    <span class="v5-tab-label">Mes Experts</span>
-  </button>
-  <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')">
-    <span class="v5-tab-ico">📋</span>
-    <span class="v5-tab-label">Sur Mesure</span>
-  </button>
-  <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')">
-    <span class="v5-tab-ico">⚙️</span>
-    <span class="v5-tab-label">Mon Espace</span>
-  </button>
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
+  <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
+  <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
 </div>
 
-<!-- ══ ALERTE TRIAL (affichée si besoin) ═════ -->
+<!-- Alerte trial -->
 <div id="trialAlert" hidden class="v5-trial-alert">
-  <span style="font-size:22px">⏳</span>
-  <div class="v5-trial-text">
+  <span style="font-size:20px">⏳</span>
+  <div>
     <strong id="trialAlertTitle">Période d'essai</strong>
     <div id="trialAlertBody"></div>
   </div>
   <a href="pricing.html" class="v5-trial-cta">Voir les plans →</a>
 </div>
 
-<!-- ══ OVERLAY TRIAL EXPIRÉ ══════════════════ -->
+<!-- Overlay expiré -->
 <div id="trialExpiredOverlay" hidden class="v5-expired-overlay">
   <div class="v5-expired-card">
-    <div style="font-size:44px;margin-bottom:16px">⏰</div>
+    <div style="font-size:42px;margin-bottom:14px">⏰</div>
     <h2>Votre période d'essai est terminée</h2>
-    <p>L'accès aux Conseils Expert est suspendu. Choisissez un plan pour reprendre immédiatement — sans perte de données.</p>
-    <a href="pricing.html" class="v5-btn-primary">🚀 Voir les offres et s'abonner</a>
-    <button onclick="document.getElementById('trialExpiredOverlay').setAttribute('hidden','')" class="v5-btn-ghost-sm">Continuer sans abonnement (accès limité)</button>
+    <p>L'accès au Conseil Expert est suspendu. Choisissez un plan pour reprendre immédiatement.</p>
+    <a href="pricing.html" class="v5-btn-primary" style="display:inline-flex;margin-bottom:10px">🚀 Voir les offres</a><br>
+    <button onclick="document.getElementById('trialExpiredOverlay').setAttribute('hidden','')" class="v5-btn-ghost-sm">Continuer en accès limité</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ONGLET 1 — MON BESOIN (point d'entrée)
-═══════════════════════════════════════════════ -->
-<div id="tab-besoin" class="v5-tab-content active">
+<!-- ══ ONGLET MON BESOIN ══ -->
+<div id="tab-besoin" class="v5-tab-content">
 
-  <!-- Bienvenue + KPIs -->
+  <!-- Hero KPIs -->
   <div class="v5-hero-bar">
     <div class="v5-hero-text">
       <div class="v5-hero-eyebrow">🏛️ Espace public — Collectivités &amp; organisations</div>
-      <h1 id="dashWelcome" class="v5-hero-title">Bonjour</h1>
+      <h1 id="dashWelcome" class="v5-hero-title">Bonjour 👋</h1>
       <p class="v5-hero-sub">Exprimez votre besoin. Un expert qualifié prend en charge votre dossier sous 48h ouvrées.</p>
     </div>
     <div class="v5-kpi-row">
@@ -561,17 +527,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <div class="v5-kpi-n" id="planN">—</div>
         <div class="v5-kpi-l">Plan actif</div>
       </div>
-      <div class="v5-kpi">
-        <div class="v5-kpi-n" id="kpiPending">—</div>
-        <div class="v5-kpi-l">En cours<br>de traitement</div>
-      </div>
     </div>
   </div>
 
-  <!-- ── PARCOURS 4 ÉTAPES ──────────────────── -->
+  <!-- Parcours 4 étapes -->
   <div class="v5-journey">
 
-    <!-- Étapes visuelles -->
+    <!-- Indicateur d'étapes -->
     <div class="v5-steps">
       <div class="v5-step active" data-step="1" onclick="goStep(1)">
         <div class="v5-step-n">1</div>
@@ -594,33 +556,35 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </div>
 
-    <!-- ── ÉTAPE 1 : Domaine ─────────────────── -->
+    <!-- Étape 1: Domaine -->
     <div class="v5-step-panel active" id="step-panel-1">
       <div class="v5-panel-head">
         <h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
         <p>Sélectionnez le domaine le plus proche de votre situation.</p>
       </div>
       <div class="v5-domain-grid" id="domainGrid">
-        <button class="v5-domain-pill" data-domain="Droit &amp; Juridique" onclick="selectDomain(this)">⚖️ Droit &amp; Juridique</button>
-        <button class="v5-domain-pill" data-domain="Marchés publics" onclick="selectDomain(this)">🏛️ Marchés publics</button>
-        <button class="v5-domain-pill" data-domain="Travaux &amp; MOA" onclick="selectDomain(this)">🏗️ Travaux &amp; MOA</button>
-        <button class="v5-domain-pill" data-domain="Management &amp; Stratégie" onclick="selectDomain(this)">📊 Management &amp; Stratégie</button>
-        <button class="v5-domain-pill" data-domain="Finances &amp; Gestion" onclick="selectDomain(this)">💰 Finances &amp; Gestion</button>
+        <button class="v5-domain-pill" data-domain="Droit et Juridique" onclick="selectDomain(this)">⚖️ Droit &amp; Juridique</button>
+        <button class="v5-domain-pill" data-domain="Marches publics" onclick="selectDomain(this)">🏛️ Marchés publics</button>
+        <button class="v5-domain-pill" data-domain="Travaux et MOA" onclick="selectDomain(this)">🏗️ Travaux &amp; MOA</button>
+        <button class="v5-domain-pill" data-domain="Management et Strategie" onclick="selectDomain(this)">📊 Management &amp; Stratégie</button>
+        <button class="v5-domain-pill" data-domain="Finances et Gestion" onclick="selectDomain(this)">💰 Finances &amp; Gestion</button>
         <button class="v5-domain-pill" data-domain="Ressources humaines" onclick="selectDomain(this)">👥 Ressources humaines</button>
-        <button class="v5-domain-pill" data-domain="Audit des organisations" onclick="selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
-        <button class="v5-domain-pill" data-domain="Cybersécurité &amp; SI" onclick="selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
-        <button class="v5-domain-pill" data-domain="Transition écologique" onclick="selectDomain(this)">🌿 Transition écologique</button>
+        <button class="v5-domain-pill" data-domain="Audit et Diagnostic" onclick="selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
+        <button class="v5-domain-pill" data-domain="Cybersecurite et SI" onclick="selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
+        <button class="v5-domain-pill" data-domain="Transition ecologique" onclick="selectDomain(this)">🌿 Transition écologique</button>
         <button class="v5-domain-pill" data-domain="Communication" onclick="selectDomain(this)">📣 Communication</button>
-        <button class="v5-domain-pill" data-domain="Médiation &amp; Conflits" onclick="selectDomain(this)">🤝 Médiation &amp; Conflits</button>
+        <button class="v5-domain-pill" data-domain="Mediation et Conflits" onclick="selectDomain(this)">🤝 Médiation &amp; Conflits</button>
         <button class="v5-domain-pill" data-domain="Intelligence artificielle" onclick="selectDomain(this)">🤖 Intelligence artificielle</button>
-        <button class="v5-domain-pill" data-domain="Autre" onclick="selectDomain(this)">➕ Autre domaine</button>
+        <button class="v5-domain-pill" data-domain="Autre domaine" onclick="selectDomain(this)">➕ Autre domaine</button>
       </div>
       <div class="v5-step-footer">
-        <button class="v5-btn-primary v5-btn-locked" id="btnStep1Next" onclick="goStep(2)">Continuer →</button>
+        <button class="v5-btn-primary v5-btn-locked-visual" id="btnStep1Next"
+          style="opacity:.4;cursor:not-allowed"
+          onclick="goStep(2)">Continuer →</button>
       </div>
     </div>
 
-    <!-- ── ÉTAPE 2 : Description du besoin ───── -->
+    <!-- Étape 2: Description -->
     <div class="v5-step-panel" id="step-panel-2">
       <div class="v5-panel-head">
         <h2>Décrivez votre besoin</h2>
@@ -628,85 +592,64 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
       <div class="v5-field-group">
         <label class="v5-label">En quelques mots <span class="v5-req">★</span></label>
-        <input class="v5-input" id="besoInTitle" placeholder="Ex: besoin d'un avis juridique sur mon contrat de marché public…" maxlength="120"/>
+        <input class="v5-input" id="besoInTitle" placeholder="Ex: avis juridique sur un contrat de marché public…" maxlength="120"/>
       </div>
       <div class="v5-field-group">
-        <label class="v5-label">Description complète de votre situation <span class="v5-req">★</span></label>
-        <textarea class="v5-textarea" id="besoInDesc" rows="5" placeholder="Décrivez votre organisation, le contexte de votre demande, les enjeux et délais éventuels. Plus vous êtes précis, meilleure sera la réponse de votre expert."></textarea>
+        <label class="v5-label">Description complète <span class="v5-req">★</span></label>
+        <textarea class="v5-textarea" id="besoInDesc" rows="5" placeholder="Décrivez votre organisation, le contexte, les enjeux et délais éventuels…"></textarea>
       </div>
-
-      <!-- Outil IA optionnel -->
-      <div class="v5-ia-optional">
-        <div class="v5-ia-header">
-          <div>
-            <strong>🛠️ Générer un draft avec l'outil IA</strong>
-            <span class="v5-ia-badge">Optionnel — Illimité</span>
-          </div>
-          <p>L'outil IA peut vous aider à structurer votre demande avant de la soumettre à votre expert.</p>
-        </div>
-        <a href="app.html" class="v5-btn-ia">Accéder à l'outil de rédaction →</a>
+      <div class="v5-ia-block">
+        <div><strong>🛠️ Outil de rédaction IA</strong><span class="v5-ia-badge">Illimité &amp; optionnel</span></div>
+        <p>Utilisez l'outil pour préparer un draft avant de le soumettre à votre expert.</p>
+        <a href="app.html" class="v5-btn-ghost" style="font-size:12px;padding:7px 13px">Accéder à l'outil →</a>
       </div>
-
-      <!-- Type de besoin -->
-      <div class="v5-field-group" style="margin-top:20px">
+      <div class="v5-field-group">
         <label class="v5-label">Niveau de complexité</label>
         <div class="v5-choice-row">
-          <label class="v5-choice" id="choicePonctuel">
-            <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()"/> 
-            <div class="v5-choice-inner">
-              <strong>🎯 Besoin ponctuel</strong>
-              <span>Avis expert sous 48h — Conseil Expert</span>
-            </div>
+          <label class="v5-choice">
+            <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
+            <div><strong>🎯 Besoin ponctuel</strong><span>Conseil Expert sous 48h</span></div>
           </label>
-          <label class="v5-choice" id="choiceComplexe">
+          <label class="v5-choice">
             <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
-            <div class="v5-choice-inner">
-              <strong>📋 Dossier complexe</strong>
-              <span>Accompagnement long — Sur Mesure</span>
-            </div>
+            <div><strong>📋 Dossier complexe</strong><span>Accompagnement Sur Mesure</span></div>
           </label>
         </div>
       </div>
-
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" onclick="goStep(1)">← Retour</button>
         <button class="v5-btn-primary" onclick="goStep(3)">Continuer →</button>
       </div>
     </div>
 
-    <!-- ── ÉTAPE 3 : Documents (optionnel) ───── -->
+    <!-- Étape 3: Documents -->
     <div class="v5-step-panel" id="step-panel-3">
       <div class="v5-panel-head">
-        <h2>Joindre des documents <span style="font-size:14px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
-        <p>Déposez les fichiers utiles à l'analyse de votre expert. Dépôt chiffré bout en bout.</p>
+        <h2>Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
+        <p>Déposez les fichiers utiles à l'analyse de votre expert. Dépôt chiffré.</p>
       </div>
-      <!-- Génération archivée -->
-      <div class="v5-attach-section" id="generationAttachCard">
-        <div class="v5-attach-header">
+      <div class="v5-attach-box">
+        <div class="v5-attach-head">
           <div class="v5-attach-ico">🛠️</div>
           <div>
-            <strong>Joindre un draft généré avec l'outil IA</strong>
-            <p>Si vous avez préparé un draft, joignez-le à votre demande.</p>
+            <strong>Joindre un draft IA</strong>
+            <p>Si vous avez préparé un draft, joignez-le à votre demande expert.</p>
           </div>
         </div>
-        <select class="v5-input" id="archiveAttachSelect">
+        <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0">
           <option value="">Ne pas joindre de draft</option>
         </select>
-        <div id="attachmentPreview" class="v5-attach-preview" hidden></div>
       </div>
-      <!-- Pièces sécurisées -->
-      <div class="v5-attach-section">
-        <div class="v5-attach-header">
+      <div class="v5-attach-box">
+        <div class="v5-attach-head">
           <div class="v5-attach-ico">📎</div>
           <div>
             <strong>Pièces du dépôt sécurisé 48h</strong>
-            <p>Joignez des pièces complémentaires à votre demande.</p>
+            <p>Joignez des documents complémentaires à votre demande.</p>
           </div>
-          <a href="vault.html?space=public&return=dashboard.html" class="v5-btn-ghost-sm">Gérer mes pièces</a>
+          <a href="vault.html?space=public&return=dashboard.html" class="v5-btn-ghost-sm" style="flex-shrink:0">Gérer →</a>
         </div>
-        <div id="vaultExpertList" class="v5-vault-list">
-          <p class="v5-muted">Aucune pièce temporaire disponible.</p>
-        </div>
+        <div id="vaultExpertList" class="v5-muted" style="font-size:12px;margin-top:4px">Aucune pièce disponible.</div>
       </div>
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" onclick="goStep(2)">← Retour</button>
@@ -714,7 +657,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </div>
 
-    <!-- ── ÉTAPE 4 : Récapitulatif + Envoi ───── -->
+    <!-- Étape 4: Envoi -->
     <div class="v5-step-panel" id="step-panel-4">
       <div class="v5-panel-head">
         <h2>Récapitulatif de votre demande</h2>
@@ -724,18 +667,18 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <div class="v5-recap-row"><span class="v5-recap-key">Domaine</span><span class="v5-recap-val" id="recapDomain">—</span></div>
         <div class="v5-recap-row"><span class="v5-recap-key">Objet</span><span class="v5-recap-val" id="recapTitle">—</span></div>
         <div class="v5-recap-row"><span class="v5-recap-key">Type</span><span class="v5-recap-val" id="recapType">—</span></div>
-        <div class="v5-recap-row"><span class="v5-recap-key">Quota restant</span><span class="v5-recap-val" id="recapQuota">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Quota</span><span class="v5-recap-val" id="recapQuota">—</span></div>
       </div>
-      <div class="v5-msg" id="msg"></div>
+      <div class="v5-msg" id="msgBesoin"></div>
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" onclick="goStep(3)">← Retour</button>
-        <button class="v5-btn-primary v5-btn-send" id="btnSend" onclick="submitBesoin()">🎯 Soumettre à un expert</button>
+        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend" onclick="submitBesoin()">🎯 Soumettre à un expert</button>
       </div>
     </div>
 
   </div><!-- /v5-journey -->
 
-  <!-- Accès rapides discrets -->
+  <!-- Liens rapides -->
   <div class="v5-quick-links">
     <a href="vault.html?space=public&return=dashboard.html" class="v5-quick">📂 Dépôt sécurisé</a>
     <a href="clausier.html" class="v5-quick">📚 Clausier</a>
@@ -745,49 +688,43 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 </div><!-- /tab-besoin -->
 
-<!-- ══════════════════════════════════════════════
-     ONGLET 2 — MES EXPERTS (historique échanges)
-═══════════════════════════════════════════════ -->
+<!-- ══ ONGLET MES EXPERTS ══ -->
 <div id="tab-experts" class="v5-tab-content" hidden>
   <div class="v5-section-head">
     <h2>Mes échanges experts</h2>
     <p>Historique de vos dossiers soumis et réponses de vos conseillers.</p>
-    <button class="v5-btn-ghost-sm" onclick="loadRequests()">🔄 Actualiser</button>
+    <button class="v5-btn-ghost-sm" onclick="loadRequests()" style="margin-top:8px">🔄 Actualiser</button>
   </div>
   <div id="expertRequestsList" class="v5-requests-list">
     <div class="v5-empty-state">
       <div class="v5-empty-ico">👤</div>
       <strong>Aucun échange expert pour le moment.</strong>
-      <p>Soumettez votre premier besoin depuis l'onglet "Mon Besoin".</p>
-      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin →</button>
+      <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
+      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ONGLET 3 — SUR MESURE
-═══════════════════════════════════════════════ -->
+<!-- ══ ONGLET SUR MESURE ══ -->
 <div id="tab-surmesure" class="v5-tab-content" hidden>
   <div class="v5-section-head">
     <h2>Sur Mesure</h2>
     <p>Pour les dossiers complexes qui nécessitent un accompagnement dans la durée.</p>
   </div>
-  <div class="v5-surmesure-intro">
+  <div class="v5-sm-intro">
     <div class="v5-sm-card">
       <div class="v5-sm-ico">📋</div>
       <div>
         <strong>Qu'est-ce que le Sur Mesure ?</strong>
-        <p>Le Sur Mesure s'adresse aux dossiers qui dépassent le cadre d'un Conseil Expert ponctuel : dossiers multi-étapes, accompagnement sur plusieurs semaines, pilotage de projet complexe, AMO.</p>
-        <p>Un expert POPE Online est mobilisé sur la durée et construit avec vous la réponse adaptée à votre situation.</p>
+        <p>Pour les dossiers multi-étapes, les accompagnements sur plusieurs semaines ou le pilotage de projet complexe. Un expert Pope Online est mobilisé sur la durée.</p>
       </div>
     </div>
-    <div class="v5-sm-differ">
+    <div class="v5-sm-grid">
       <div class="v5-sm-col">
         <div class="v5-sm-col-head green">🎯 Conseil Expert</div>
         <ul>
           <li>Besoin ponctuel identifié</li>
           <li>Avis sous 48h ouvrées</li>
-          <li>1 échange = 1 Conseil Expert</li>
           <li>Inclus dans votre offre</li>
         </ul>
       </div>
@@ -795,59 +732,27 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <div class="v5-sm-col-head blue">📋 Sur Mesure</div>
         <ul>
           <li>Dossier complexe, multi-étapes</li>
-          <li>Accompagnement sur la durée</li>
           <li>Expert mobilisé en continu</li>
           <li>Devis personnalisé</li>
         </ul>
       </div>
     </div>
-  </div>
-  <div style="text-align:center;margin-top:28px">
-    <a href="mission.html" class="v5-btn-primary">📋 Qualifier mon besoin Sur Mesure →</a>
-  </div>
-  <div id="missionsList" class="v5-requests-list" style="margin-top:32px">
-    <div class="v5-section-sub">Vos dossiers Sur Mesure</div>
+    <div style="text-align:center;margin-top:8px">
+      <a href="mission.html" class="v5-btn-primary">📋 Qualifier mon besoin Sur Mesure →</a>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ONGLET 4 — MON ESPACE
-═══════════════════════════════════════════════ -->
+<!-- ══ ONGLET MON ESPACE ══ -->
 <div id="tab-espace" class="v5-tab-content" hidden>
-  <div class="v5-section-head">
-    <h2>Mon Espace</h2>
-  </div>
+  <div class="v5-section-head"><h2>Mon Espace</h2></div>
   <div class="v5-espace-grid">
-    <a href="profile.html" class="v5-espace-card">
-      <div class="v5-espace-ico">👤</div>
-      <strong>Mon profil</strong>
-      <span>Informations personnelles, sécurité</span>
-    </a>
-    <a href="profile.html#abonnement" class="v5-espace-card">
-      <div class="v5-espace-ico">💎</div>
-      <strong>Mon abonnement</strong>
-      <span>Plan actif, factures, résiliation</span>
-    </a>
-    <a href="vault.html?space=public&return=dashboard.html" class="v5-espace-card">
-      <div class="v5-espace-ico">📂</div>
-      <strong>Dépôt sécurisé</strong>
-      <span>Mes documents 48h</span>
-    </a>
-    <a href="app.html" class="v5-espace-card">
-      <div class="v5-espace-ico">🛠️</div>
-      <strong>Outil de rédaction IA</strong>
-      <span>Générer un draft — illimité</span>
-    </a>
-    <a href="clausier.html" class="v5-espace-card">
-      <div class="v5-espace-ico">📚</div>
-      <strong>Clausier documentaire</strong>
-      <span>Modèles officiels</span>
-    </a>
-    <a href="referral.html" class="v5-espace-card">
-      <div class="v5-espace-ico">🎁</div>
-      <strong>Parrainage</strong>
-      <span>Inviter mes contacts</span>
-    </a>
+    <a href="profile.html" class="v5-espace-card"><div class="v5-espace-ico">👤</div><strong>Mon profil</strong><span>Informations, sécurité</span></a>
+    <a href="profile.html#abonnement" class="v5-espace-card"><div class="v5-espace-ico">💎</div><strong>Mon abonnement</strong><span>Plan, factures, résiliation</span></a>
+    <a href="vault.html?space=public&return=dashboard.html" class="v5-espace-card"><div class="v5-espace-ico">📂</div><strong>Dépôt sécurisé</strong><span>Mes documents 48h</span></a>
+    <a href="app.html" class="v5-espace-card"><div class="v5-espace-ico">🛠️</div><strong>Outil de rédaction IA</strong><span>Préparer un draft — illimité</span></a>
+    <a href="clausier.html" class="v5-espace-card"><div class="v5-espace-ico">📚</div><strong>Clausier documentaire</strong><span>Modèles officiels</span></a>
+    <a href="referral.html" class="v5-espace-card"><div class="v5-espace-ico">🎁</div><strong>Parrainage</strong><span>Inviter mes contacts</span></a>
   </div>
 </div>
 
@@ -944,15 +849,15 @@ wireLogout();
       if (_overlay) _overlay.removeAttribute('hidden');
       var _expEnd = w.trial_expires_at ? new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
       document.getElementById('trialAlertTitle').textContent = 'Période d\'essai terminée' + (_expEnd ? ' le ' + _expEnd : '');
-      document.getElementById('trialAlertBody').textContent = 'Génération et relectures expertes suspendues. Choisissez un plan pour reprendre immédiatement.';
+      document.getElementById('trialAlertBody').textContent = 'Génération et Conseils Expert suspendues. Choisissez un plan pour reprendre immédiatement.';
     } else if (w.status === 'verified_no_trial') {
       // Offre gratuite permanente — afficher un bandeau informatif discret
       const alertVnt = document.getElementById('trialAlert');
       alertVnt.removeAttribute('hidden');
       alertVnt.style.background = 'linear-gradient(to right,#f0f9ff,#e0f2fe)';
       alertVnt.style.borderColor = '#bae6fd';
-      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert offerts (une seule fois)';
-      document.getElementById('trialAlertBody').textContent = 'Vous bénéficiez de l\'offre gratuite permanente. La génération IA est illimitée. Passez à Starter ou Pro pour plus de relectures expertes.';
+      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert par mois';
+      document.getElementById('trialAlertBody').textContent = 'Vous bénéficiez de l\'offre gratuite permanente. La génération IA est illimitée. Passez à Starter ou Pro pour plus de Conseils Expert.';
     }
   } catch {}
 })();
@@ -999,36 +904,46 @@ wireLogout();
 
 </script>
 
-<script id="v5-workspace-js">
-// ── Variables globales ─────────────────────────────────────
-var _selectedDomain = '';
+<script id="v5-js">
+// Variables
+var _domain = '';
 var _besoType = 'conseil';
-var _currentStep = 1;
+var _step = 1;
 
-// ── switchTab ─────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.v5-tab').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.tab === tab);
+// Changer d'onglet
+function switchTab(name) {
+  document.querySelectorAll('.v5-tab').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === name);
   });
-  document.querySelectorAll('.v5-tab-content').forEach(function(c) {
-    c.hidden = c.id !== 'tab-' + tab;
+  document.querySelectorAll('.v5-tab-content').forEach(function(c){
+    if (c.id === 'tab-' + name) {
+      c.removeAttribute('hidden');
+    } else {
+      c.setAttribute('hidden', '');
+    }
   });
-  if (tab === 'experts') loadRequests();
+  if (name === 'experts') loadRequests();
 }
 
-// ── Parcours étapes ─────────────────────────────────────────
+// Aller à une étape
 function goStep(n) {
-  if (n === 2 && !_selectedDomain) {
-    // Feedback visuel: faire clignoter la grille
-    var grid = document.getElementById('domainGrid');
-    if (grid) { grid.style.outline = '2px solid #ef4444'; grid.style.borderRadius = '12px'; setTimeout(function(){ grid.style.outline = ''; }, 1200); }
+  if (n > 1 && !_domain) {
+    var g = document.getElementById('domainGrid');
+    if (g) {
+      g.style.boxShadow = '0 0 0 3px #ef4444';
+      g.style.borderRadius = '14px';
+      setTimeout(function(){ g.style.boxShadow=''; g.style.borderRadius=''; }, 1500);
+    }
     return;
   }
-  _currentStep = n;
-  document.querySelectorAll('.v5-step-panel').forEach(function(p) {
-    p.classList.toggle('active', p.id === 'step-panel-' + n);
-  });
-  document.querySelectorAll('.v5-step').forEach(function(s) {
+  _step = n;
+  // Panels
+  for (var i = 1; i <= 4; i++) {
+    var p = document.getElementById('step-panel-' + i);
+    if (p) p.classList.toggle('active', i === n);
+  }
+  // Steps visuels
+  document.querySelectorAll('.v5-step').forEach(function(s){
     var sn = parseInt(s.dataset.step);
     s.classList.toggle('active', sn === n);
     s.classList.toggle('done', sn < n);
@@ -1036,99 +951,88 @@ function goStep(n) {
   if (n === 4) updateRecap();
 }
 
-// ── Sélection domaine ───────────────────────────────────────
+// Sélectionner un domaine
 function selectDomain(btn) {
-  document.querySelectorAll('.v5-domain-pill').forEach(function(b) { b.classList.remove('selected'); });
+  document.querySelectorAll('.v5-domain-pill').forEach(function(b){
+    b.classList.remove('selected');
+  });
   btn.classList.add('selected');
-  _selectedDomain = btn.dataset.domain;
-  var btn = document.getElementById('btnStep1Next');
-  if (btn) btn.classList.remove('v5-btn-locked');
+  _domain = btn.getAttribute('data-domain');
+  // Activer le bouton Continuer visuellement
+  var nextBtn = document.getElementById('btnStep1Next');
+  if (nextBtn) {
+    nextBtn.classList.remove('v5-btn-locked-visual');
+    nextBtn.style.opacity = '1';
+    nextBtn.style.cursor = 'pointer';
+  }
 }
 
-// ── Type de besoin ──────────────────────────────────────────
+// Maj type de besoin
 function updateBesoType() {
-  var checked = document.querySelector('input[name="besoType"]:checked');
-  if (checked) _besoType = checked.value;
+  var r = document.querySelector('input[name="besoType"]:checked');
+  if (r) _besoType = r.value;
 }
 
-// ── Récapitulatif ───────────────────────────────────────────
+// Récapitulatif
 function updateRecap() {
   var title  = (document.getElementById('besoInTitle') || {}).value || '—';
-  var left   = document.getElementById('expertLeftN');
-  var quota  = left ? left.textContent : '—';
-  var typeLabel = _besoType === 'surmesure' ? '📋 Sur Mesure (accompagnement long)' : '🎯 Conseil Expert (ponctuel, 48h)';
-  document.getElementById('recapDomain').textContent = _selectedDomain || '—';
-  document.getElementById('recapTitle').textContent  = title || '—';
-  document.getElementById('recapType').textContent   = typeLabel;
-  document.getElementById('recapQuota').textContent  = quota + ' Conseil(s) Expert restant(s)';
+  var leftEl = document.getElementById('expertLeftN');
+  var quota  = leftEl ? leftEl.textContent : '—';
+  var tLabel = _besoType === 'surmesure' ? '📋 Sur Mesure' : '🎯 Conseil Expert (48h)';
+  var r = function(id, v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+  r('recapDomain', _domain || '—');
+  r('recapTitle',  title);
+  r('recapType',   tLabel);
+  r('recapQuota',  quota + ' Conseil(s) Expert disponible(s)');
 }
 
-// ── Soumission ──────────────────────────────────────────────
-async function submitBesoin() {
-  var title   = (document.getElementById('besoInTitle') || {}).value || '';
-  var desc    = (document.getElementById('besoInDesc')  || {}).value || '';
-  var btn     = document.getElementById('btnSend');
-  var msgEl   = document.getElementById('msg');
+// Soumettre le besoin
+function submitBesoin() {
+  var title = (document.getElementById('besoInTitle') || {}).value || '';
+  var desc  = (document.getElementById('besoInDesc')  || {}).value || '';
+  var msgEl = document.getElementById('msgBesoin');
   if (!title.trim() || !desc.trim()) {
-    msgEl.textContent = 'Veuillez remplir au minimum l'objet et la description (étape 2).';
-    msgEl.className = 'v5-msg err'; return;
+    if (msgEl) { msgEl.textContent = '⚠️ Veuillez remplir l'objet et la description à l'étape 2.'; msgEl.className = 'v5-msg err-show'; }
+    return;
   }
-  if (_besoType === 'surmesure') {
-    window.location.href = 'mission.html'; return;
-  }
-  // Rediriger vers expert.html avec pré-remplissage via sessionStorage
+  if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }
   try {
-    sessionStorage.setItem('v5_besoin', JSON.stringify({
-      domain: _selectedDomain, subject: title, context: desc
-    }));
+    sessionStorage.setItem('v5_prefill', JSON.stringify({ domain: _domain, subject: title, context: desc }));
   } catch(e) {}
-  btn.disabled = true;
-  window.location.href = 'expert.html';
+  window.location.href = EXPERT_PAGE;
 }
 
-// ── Charger les demandes experts ────────────────────────────
-async function loadRequests() {
+// Charger historique experts
+function loadRequests() {
   var container = document.getElementById('expertRequestsList');
   if (!container) return;
-  try {
-    var { apiFetch } = await import('./api.js').catch(function() { return {}; });
-    if (!apiFetch) { renderRequests(container, []); return; }
-    var data = await apiFetch('/expert/my-requests');
-    var reqs = Array.isArray(data) ? data : (data.requests || []);
-    renderRequests(container, reqs);
-  } catch(e) { renderRequests(container, []); }
+  var token = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
+  var base = (window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com').replace(/\/$/, '');
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  fetch(base + '/expert/my-requests', { headers: headers, credentials: 'include' })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(data){ renderRequests(container, Array.isArray(data) ? data : (data.requests || [])); })
+    .catch(function(){ renderRequests(container, []); });
 }
 
 function renderRequests(container, reqs) {
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet "Mon Besoin".</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin →</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
     return;
   }
-  container.innerHTML = reqs.map(function(r) {
-    var hasReply = r.reply_text && r.reply_text.trim();
+  container.innerHTML = reqs.map(function(r){
+    var ok = r.reply_text && r.reply_text.trim();
     var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '—';
-    return '<div class="v5-request-card ' + (hasReply ? 'replied' : 'pending') + '">'
-      + '<div style="flex:1">'
-      + '<div class="v5-req-domain">' + (r.domain || 'Expert') + '</div>'
+    return '<div class="v5-request-card ' + (ok ? 'replied' : 'pending') + '">'
+      + '<div class="v5-req-domain">' + esc(r.domain || 'Expert') + '</div>'
       + '<div class="v5-req-title">' + esc(r.subject || r.content || '—') + '</div>'
-      + '<div class="v5-req-date">' + (hasReply ? '✅ Répondu' : '⏳ En attente') + ' · ' + date + '</div>'
-      + (hasReply ? '<div class="v5-req-reply">' + esc(r.reply_text).substring(0,300) + (r.reply_text.length > 300 ? '…' : '') + '</div>' : '')
-      + '</div></div>';
+      + '<div class="v5-req-date">' + (ok ? '✅ Répondu' : '⏳ En attente') + ' · ' + date + '</div>'
+      + (ok ? '<div class="v5-req-reply">' + esc(r.reply_text).substring(0,300) + (r.reply_text.length>300?'…':'') + '</div>' : '')
+      + '</div>';
   }).join('');
 }
-
-function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ── Init au chargement ──────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  // Pré-remplir depuis sessionStorage si redirection depuis V5
-  try {
-    var pre = sessionStorage.getItem('v5_besoin_prefill');
-    if (pre) { var d = JSON.parse(pre); /* pour expert.html */ }
-  } catch(e) {}
-});
 </script>
 </body>
 </html>
