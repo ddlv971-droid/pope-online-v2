@@ -339,7 +339,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   padding:5px 10px;font-size:11px;font-weight:600;
   cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
 }
-.v5-btn-locked-visual{opacity:.45;cursor:not-allowed;}
+
 
 /* MESSAGES */
 .v5-msg{font-size:13px;padding:10px 14px;border-radius:9px;display:none;margin-bottom:12px;}
@@ -576,9 +576,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <button class="v5-domain-pill" data-domain="Autre domaine" onclick="selectDomain(this)">➕ Autre domaine</button>
       </div>
       <div class="v5-step-footer">
-        <button class="v5-btn-primary v5-btn-locked-visual" id="btnStep1Next"
-          style="opacity:.4;cursor:not-allowed"
-          onclick="goStep(2)">Continuer →</button>
+        <button class="v5-btn-primary" id="btnStep1Next" onclick="goStep(2)">Continuer →</button>
       </div>
     </div>
 
@@ -956,13 +954,6 @@ function selectDomain(btn) {
   });
   btn.classList.add('selected');
   _domain = btn.getAttribute('data-domain');
-  // Activer le bouton Continuer visuellement
-  var nextBtn = document.getElementById('btnStep1Next');
-  if (nextBtn) {
-    nextBtn.classList.remove('v5-btn-locked-visual');
-    nextBtn.style.opacity = '1';
-    nextBtn.style.cursor = 'pointer';
-  }
 }
 
 // Maj type de besoin
