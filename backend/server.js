@@ -12,6 +12,7 @@ import usageRoutes from './routes/usage.js';
 import adminRoutes from './routes/admin.js';
 import clientRoutes from './routes/client.js';
 import vaultRoutes from './routes/vault.js';
+import clientFicheRoutes from './routes/client_fiche.js'; // ← AJOUT V5
 import { localizeApiBody } from './services/i18n.js';
 import { pool } from './db/index.js';
 
@@ -67,7 +68,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🔥 CORS CORRIGÉ
+// 🔥 CORS
 const allowedOrigins = (process.env.CORS_ORIGIN || '')
   .split(',')
   .map(s => s.trim())
@@ -78,7 +79,7 @@ console.log('Allowed origins =', allowedOrigins);
 
 const corsOptions = {
   origin(origin, cb) {
-    if (!origin) return cb(null, true); // mobile / curl
+    if (!origin) return cb(null, true);
     if (allowedOrigins.length === 0) return cb(new Error('CORS not configured'), false);
     if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS blocked: ${origin}`), false);
@@ -90,7 +91,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // 🔥 FIX PRE-FLIGHT
+app.options('*', cors(corsOptions));
 
 // 🚦 Rate limit
 app.use(rateLimit({
@@ -102,18 +103,19 @@ app.use(rateLimit({
 }));
 
 // ❤️ Health check
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'beta3-admin-fr-export-v5' }));
 
 // 🔗 Routes
-app.use('/auth', authRoutes);
-app.use('/ai', aiRoutes);
-app.use('/expert', expertRoutes);
+app.use('/auth',    authRoutes);
+app.use('/ai',      aiRoutes);
+app.use('/expert',  expertRoutes);
 app.use('/mission', missionRoutes);
 app.use('/billing', billingRoutes);
-app.use('/usage', usageRoutes);
-app.use('/admin', adminRoutes);
-app.use('/client', clientRoutes);
-app.use('/vault', vaultRoutes);
+app.use('/usage',   usageRoutes);
+app.use('/admin',   adminRoutes);
+app.use('/admin',   clientFicheRoutes); // ← AJOUT V5 : fiches client
+app.use('/client',  clientRoutes);
+app.use('/vault',   vaultRoutes);
 
 // ❌ Gestion erreurs
 app.use((err, _req, res, _next) => {
@@ -126,11 +128,10 @@ app.use((err, _req, res, _next) => {
 
 // 🚀 Start
 const port = process.env.PORT || 8787;
-// ── Job : emails fin de période d'essai (toutes les 6h) ─────────────
 
 app.listen(port, () => console.log(`POPE Online API listening on :${port}`));
+
 // ── Job nocturne : emails de fin de période d'essai ─────────────────────────
-// Lancé 30s après le démarrage du serveur, puis toutes les 6h
 async function runTrialExpiryJob() {
   try {
     const expiredAccounts = await pool.query(`
@@ -152,7 +153,6 @@ async function runTrialExpiryJob() {
 
     for (const row of expiredAccounts.rows) {
       try {
-        // Marquer expiré AVANT l'envoi mail (évite double envoi si mail échoue)
         await pool.query(
           `UPDATE wallets SET status='trial_expired', updated_at=NOW() WHERE user_id=$1 AND status='trial_active'`,
           [row.id]
@@ -179,9 +179,7 @@ async function runTrialExpiryJob() {
   }
 }
 
-// Lancer 30s après le démarrage puis toutes les 6h
 setTimeout(() => {
   runTrialExpiryJob();
   setInterval(runTrialExpiryJob, 6 * 60 * 60 * 1000);
 }, 30000);
-

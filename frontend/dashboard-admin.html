@@ -2093,70 +2093,114 @@ if (getToken()) {
 
 
 // ── Fiche client ────────────────────────────────────────────
-function saveFicheClient() {
+async function saveFicheClient() {
   if (!selectedUser) return;
   const domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(c => c.value);
   const data = {
-    userId:       selectedUser.id,
-    nom:          el('ficheNom')?.value || '',
-    categorie:    el('ficheCategorie')?.value || '',
-    territoire:   el('ficheTerritoire')?.value || '',
-    size:         el('ficheSize')?.value || '',
-    contact:      el('ficheContact')?.value || '',
-    niveau:       el('ficheNiveau')?.value || '',
+    nom:             (el('ficheNom')            || {}).value || '',
+    categorie:       (el('ficheCategorie')      || {}).value || '',
+    territoire:      (el('ficheTerritoire')     || {}).value || '',
+    size:            (el('ficheSize')           || {}).value || '',
+    contact:         (el('ficheContact')        || {}).value || '',
+    contact_direct:  (el('ficheContactDirect')  || {}).value || '',
+    niveau:          (el('ficheNiveau')         || {}).value || '',
+    source:          (el('ficheSource')         || {}).value || '',
     domaines,
-    besoins:      el('ficheBesoins')?.value || '',
-    mode:         el('ficheMode')?.value || '',
-    urgence:      el('ficheUrgence')?.value || '',
-    maturite:     document.querySelector('input[name="fiche-maturite"]:checked')?.value || '',
-    complexite:   document.querySelector('input[name="fiche-complexite"]:checked')?.value || '',
-    potentiel:    document.querySelector('input[name="fiche-potentiel"]:checked')?.value || '',
-    decision:     el('ficheDecision')?.value || '',
-    notes:        el('ficheNotes')?.value || '',
-    budget:       el('ficheBudget')?.value || '',
-    financement:  el('ficheFinancement')?.value || '',
+    besoins:         (el('ficheBesoins')        || {}).value || '',
+    mode:            (el('ficheMode')           || {}).value || '',
+    urgence:         (el('ficheUrgence')        || {}).value || '',
+    stade:           (el('ficheStade')          || {}).value || '',
+    maturite:        (el('val-maturite')        || {}).value || '',
+    complexite:      (el('val-complexite')      || {}).value || '',
+    potentiel:       (el('val-potentiel')       || {}).value || '',
+    fidelite:        (el('val-fidelite')        || {}).value || '',
+    decision:        (el('ficheDecision')       || {}).value || '',
+    responsable:     (el('ficheResponsable')    || {}).value || '',
+    notes:           (el('ficheNotes')          || {}).value || '',
+    budget:          (el('ficheBudget')         || {}).value || '',
+    financement:     (el('ficheFinancement')    || {}).value || '',
+    duree:           (el('ficheDuree')          || {}).value || '',
+    crm_statut:      (el('ficheCrmStatut')      || {}).value || '',
+    prochain_contact:(el('ficheProchainContact')|| {}).value || '',
+    canal_pref:      (el('ficheCanalPref')      || {}).value || '',
+    actions:         (el('ficheActions')        || {}).value || '',
   };
-  // Sauvegarder en localStorage (clé par userId)
+  const msg = el('ficheMsg');
   try {
-    const key = 'pope_fiche_' + selectedUser.id;
-    localStorage.setItem(key, JSON.stringify(data));
-    const msg = el('ficheMsg');
-    if (msg) { msg.textContent = '✅ Fiche enregistrée localement.'; msg.className = 'adm-msg adm-msg-ok'; }
+    // Sauvegarder via API backend
+    const res = await apiFetch('/admin/client-fiche/' + selectedUser.id, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    // Fallback localStorage aussi pour accès offline
+    try { localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data)); } catch(e) {}
+    if (msg) { msg.textContent = '✅ Fiche enregistrée en base de données.'; msg.className = 'adm-msg adm-msg-ok'; }
     showToast('Fiche client enregistrée', 'ok');
   } catch(e) {
-    const msg = el('ficheMsg');
-    if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
+    // Fallback localStorage si API échoue
+    try {
+      localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data));
+      if (msg) { msg.textContent = '⚠️ Sauvegardé localement (API indisponible).'; msg.className = 'adm-msg'; }
+    } catch(e2) {
+      if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
+    }
   }
 }
 
-function loadFicheClient(userId) {
+async function loadFicheClient(userId) {
+  const titleBar = el('ficheTitleBar');
+  if (titleBar && selectedUser) {
+    titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
+  }
+  let data = null;
   try {
-    const key = 'pope_fiche_' + userId;
-    const raw = localStorage.getItem(key);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (el('ficheNom'))        el('ficheNom').value       = data.nom        || '';
-    if (el('ficheCategorie'))  el('ficheCategorie').value = data.categorie  || '';
-    if (el('ficheTerritoire')) el('ficheTerritoire').value= data.territoire || '';
-    if (el('ficheSize'))       el('ficheSize').value      = data.size       || '';
-    if (el('ficheContact'))    el('ficheContact').value   = data.contact    || '';
-    if (el('ficheNiveau'))     el('ficheNiveau').value    = data.niveau     || '';
-    if (el('ficheBesoins'))    el('ficheBesoins').value   = data.besoins    || '';
-    if (el('ficheMode'))       el('ficheMode').value      = data.mode       || '';
-    if (el('ficheUrgence'))    el('ficheUrgence').value   = data.urgence    || '';
-    if (el('ficheDecision'))   el('ficheDecision').value  = data.decision   || '';
-    if (el('ficheNotes'))      el('ficheNotes').value     = data.notes      || '';
-    if (el('ficheBudget'))     el('ficheBudget').value    = data.budget     || '';
-    if (el('ficheFinancement'))el('ficheFinancement').value = data.financement || '';
-    // Domaines
-    document.querySelectorAll('.fiche-domaine').forEach(cb => {
-      cb.checked = (data.domaines || []).includes(cb.value);
-    });
-    // Radios
-    if (data.maturite)  { const r = document.querySelector('input[name="fiche-maturite"][value="'+data.maturite+'"]');  if(r) r.checked = true; }
-    if (data.complexite){ const r = document.querySelector('input[name="fiche-complexite"][value="'+data.complexite+'"]'); if(r) r.checked = true; }
-    if (data.potentiel) { const r = document.querySelector('input[name="fiche-potentiel"][value="'+data.potentiel+'"]'); if(r) r.checked = true; }
-  } catch(e) { console.warn('loadFicheClient:', e); }
+    // Charger depuis l'API
+    data = await apiFetch('/admin/client-fiche/' + userId);
+  } catch(e) {
+    // Fallback localStorage
+    try {
+      const raw = localStorage.getItem('pope_fiche_' + userId);
+      if (raw) data = JSON.parse(raw);
+    } catch(e2) {}
+  }
+  if (!data) return;
+  const fieldMap = {
+    ficheNom:'nom', ficheCategorie:'categorie', ficheTerritoire:'territoire',
+    ficheSize:'size', ficheContact:'contact', ficheContactDirect:'contact_direct',
+    ficheNiveau:'niveau', ficheSource:'source', ficheBesoins:'besoins',
+    ficheMode:'mode', ficheUrgence:'urgence', ficheStade:'stade',
+    ficheDecision:'decision', ficheResponsable:'responsable', ficheNotes:'notes',
+    ficheBudget:'budget', ficheFinancement:'financement', ficheDuree:'duree',
+    ficheCrmStatut:'crm_statut', ficheProchainContact:'prochain_contact',
+    ficheCanalPref:'canal_pref', ficheActions:'actions'
+  };
+  Object.entries(fieldMap).forEach(([id, key]) => {
+    const f = el(id);
+    if (f && data[key]) f.value = data[key];
+  });
+  const domaines = Array.isArray(data.domaines) ? data.domaines : [];
+  document.querySelectorAll('.fiche-domaine').forEach(cb => {
+    cb.checked = domaines.includes(cb.value);
+  });
+  ['maturite','complexite','potentiel','fidelite'].forEach(k => {
+    const v = data[k];
+    if (v) {
+      const hidden = el('val-' + k);
+      if (hidden) hidden.value = v;
+      document.querySelectorAll('#stars-' + k + ' .fiche-star').forEach((s, i) => {
+        s.classList.toggle('on', i < parseInt(v));
+      });
+    }
+  });
+  if (data.saved_at) {
+    const msg = el('ficheMsg');
+    if (msg) {
+      msg.textContent = '📅 Dernière sauvegarde : ' + new Date(data.saved_at).toLocaleString('fr-FR');
+      msg.className = 'adm-msg';
+      msg.style.display = 'block';
+    }
+  }
 }
 
 function exportFicheClient() {
@@ -2200,7 +2244,15 @@ function exportFicheClient() {
   a.click();
 }
 
-window.saveFicheClient=saveFicheClient;window.loadFicheClient=loadFicheClient;window.exportFicheClient=exportFicheClient;window.resetFicheClient=resetFicheClient;window.setStar=setStar;window.openPanel=openPanel;window.closePanel=closePanel;window.switchPtab=switchPtab;
+// Exposer sur window
+window.saveFicheClient=saveFicheClient;
+window.loadFicheClient=loadFicheClient;
+window.exportFicheClient=exportFicheClient;
+window.resetFicheClient=resetFicheClient;
+window.setStar=setStar;
+window.openPanel=openPanel;
+window.closePanel=closePanel;
+window.switchPtab=switchPtab;
 </script>
 
 <script id="fiche-js-new">
