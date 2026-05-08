@@ -162,7 +162,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <!-- v56: Barre retour dashboard -->
 <div id="v56RetourBar" style="background:#f0f8ff;border-bottom:1.5px solid #c8dff5;padding:10px 20px;display:flex;align-items:center;gap:14px;font-size:13px">
-  <a href="dashboard.html" id="btnRetourDashboard" style="display:inline-flex;align-items:center;gap:6px;background:#0c5ea8;color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;text-decoration:none;font-size:13px">
+  <a href="dashboard.html?from=app&step=2" id="btnRetourDashboard" style="display:inline-flex;align-items:center;gap:6px;background:#0c5ea8;color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;text-decoration:none;font-size:13px">
     ← Retour à mon parcours
   </a>
   <span id="v56RetourInfo" style="color:#516474">Votre saisie est conservée. Une fois le draft généré, revenez pour l'étape suivante.</span>
@@ -294,11 +294,11 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last" id="resultExpertLink">
+        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
           <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last" id="resultMissionLink">
+        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
           <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var badge=document.getElementById('v56DraftReady');
     var info=document.getElementById('v56RetourInfo');
     if(lastId && btn){
-      btn.href='dashboard.html?from=app&attach=last';
+      btn.href='dashboard.html?from=app&attach=last&step=3';
       if(badge) badge.style.display='inline-block';
       if(info) info.textContent='Draft généré ! Revenez à votre parcours pour le joindre à l\'étape 3.';
     }
@@ -485,6 +485,43 @@ document.addEventListener('DOMContentLoaded', function() {
     if(e.key==='pope_v54_generations') _updateRetourBar();
   });
   setTimeout(_updateRetourBar, 1000);
+})();
+</script>
+
+<script>
+// v57: restore dashboard context into app generation form
+(function(){
+  var STATE_KEY = 'pope_v57_state_' + (location.pathname.indexOf('private')>-1?'private':'public');
+  function _restoreCtxInApp(){
+    try{
+      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
+      if(!raw) return;
+      var d = JSON.parse(raw);
+      // Pre-fill context field if empty
+      var ctx = document.getElementById('context');
+      if(ctx && !ctx.value && (d.contexte||d.objectif)){
+        var parts=[];
+        if(d.contexte) parts.push('Contexte : '+d.contexte);
+        if(d.objectif) parts.push('Objectif : '+d.objectif);
+        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
+        if(d.acteurs) parts.push('Acteurs : '+d.acteurs);
+        if(d.pieces) parts.push('Pièces : '+d.pieces);
+        if(d.desc) parts.push(d.desc);
+        ctx.value = parts.join('\n');
+      }
+      // Pre-fill objective if empty
+      var obj = document.getElementById('objective');
+      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
+      // Show domain badge in app
+      if(d.domain){
+        var info=document.getElementById('v56RetourInfo');
+        if(info) info.textContent = 'Domaine : '+d.domain+' — Votre saisie est pré-remplie depuis le parcours.';
+      }
+    }catch(e){}
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(_restoreCtxInApp, 600);
+  });
 })();
 </script>
 </body>

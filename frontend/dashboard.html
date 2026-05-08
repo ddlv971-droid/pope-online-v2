@@ -628,75 +628,43 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <input class="v5-input" id="besoInTitle" placeholder="Ex: avis juridique sur un contrat de marché public…" maxlength="120"/>
       </div>
 
-      <!-- v56: Bloc description structurée (remplace textarea + toggles) -->
-      <div class="v56-desc-block">
-        <div class="v56-desc-header">
-          <span class="v56-desc-title">📝 Description complète <span class="v5-req">★</span></span>
-          <span class="v56-desc-hint">Chaque champ complété améliore la qualité de la réponse experte</span>
-        </div>
-        <div class="v56-desc-grid">
-          <div class="v56-desc-field">
-            <label class="v56-field-label">🏢 Contexte &amp; organisation</label>
-            <textarea class="v56-field-input" id="descContexte" rows="2" placeholder="Qui vous êtes, votre structure, le cadre de la demande…"></textarea>
-          </div>
-          <div class="v56-desc-field">
-            <label class="v56-field-label">🎯 Objectif &amp; résultat attendu</label>
-            <textarea class="v56-field-input" id="descObjectif" rows="2" placeholder="Ce que vous attendez de l'expert, la décision à prendre…"></textarea>
-          </div>
-          <div class="v56-desc-field">
-            <label class="v56-field-label">⚠️ Contraintes &amp; points sensibles</label>
-            <textarea class="v56-field-input" id="descContraintes" rows="2" placeholder="Contraintes légales, politiques, risques, confidentialité…"></textarea>
-          </div>
-          <div class="v56-desc-field">
-            <label class="v56-field-label">👥 Acteurs concernés</label>
-            <input class="v56-field-input-sm" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
-          </div>
-          <div class="v56-desc-field">
-            <label class="v56-field-label">📅 Échéance &amp; urgence</label>
-            <input class="v56-field-input-sm" id="needDeadline" placeholder="Ex : avant vendredi, sous 10 jours, avant le CA du 15…"/>
-          </div>
-          <div class="v56-desc-field">
-            <label class="v56-field-label">📎 Pièces disponibles</label>
-            <input class="v56-field-input-sm" id="descPieces" placeholder="Contrat, rapport, délibération, courrier, devis…"/>
-          </div>
-          <div class="v56-desc-field v56-desc-full">
-            <label class="v56-field-label">💬 Précisions complémentaires</label>
-            <textarea class="v56-field-input" id="besoInDesc" rows="3" placeholder="Tout autre élément utile à l'expert : historique, tentatives précédentes, niveau de détail souhaité…"></textarea>
-          </div>
-        </div>
+      <!-- v57: Description accordéon -->
+      <div id="v57DescContainer" style="margin:16px 0">
+        <!-- Built by dashboard-v54.js JS -->
       </div>
 
-      <!-- v56: Nature du traitement — refonte UI -->
-      <div class="v56-traitement-block">
-        <div class="v56-traitement-title">🔧 Nature du traitement attendu</div>
-        <div class="v56-traitement-grid">
-          <label class="v56-traitement-card">
+      <!-- v57: Nature du traitement -->
+      <div style="margin:16px 0">
+        <div style="font-size:13px;font-weight:800;color:#0b2440;margin-bottom:10px;">🔧 Nature du traitement attendu</div>
+        <div class="v57-trt-grid">
+          <label class="v57-trt-card">
             <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
-            <div class="v56-traitement-content">
+            <div>
               <strong>🎯 Avis expert ponctuel</strong>
               <span>Réponse ciblée, sécurisation, arbitrage — sous 48h ouvrées</span>
             </div>
           </label>
-          <label class="v56-traitement-card">
+          <label class="v57-trt-card">
             <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
-            <div class="v56-traitement-content">
+            <div>
               <strong>📋 Accompagnement approfondi</strong>
-              <span>Dossier sensible, multi-acteurs, cadrage complet Sur Mesure</span>
+              <span>Dossier sensible, multi-acteurs, cadrage Sur Mesure</span>
             </div>
           </label>
         </div>
       </div>
 
-      <!-- v56: Préparer un draft — lien retour amélioré -->
-      <div class="v56-draft-block">
-        <div class="v56-draft-icon">🛠️</div>
-        <div class="v56-draft-body">
+      <!-- v57: Préparer un draft -->
+      <div class="v57-draft">
+        <span style="font-size:22px;flex-shrink:0">🛠️</span>
+        <div class="v57-draft-body">
           <strong>Préparer un draft IA</strong>
-          <span class="v5-ia-badge" style="margin-left:6px">Optionnel</span>
-          <p>Générez un document de travail pour aider votre expert. Votre saisie est conservée.</p>
+          <span style="display:inline-block;background:#0c5ea8;color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;margin-left:6px;vertical-align:middle">Optionnel</span>
+          <p>Générez un document de travail avant de soumettre votre demande. Votre saisie est conservée.</p>
         </div>
-        <a href="app.html" class="v56-draft-btn" id="lnkDraftTool">Accéder →</a>
+        <a href="app.html" id="lnkDraftTool" class="v57-draft-cta">Accéder →</a>
       </div>
+
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" onclick="goStep(1)">← Retour</button>
         <button class="v5-btn-primary" onclick="goStep(3)">Continuer →</button>
@@ -987,7 +955,7 @@ wireLogout();
 
 <script id="v5-js">
 // Variables
-var _domain = '';
+var _domain = ''; window._domain = ''; // v57: shared state
 var _besoType = 'conseil';
 var _step = 1;
 
@@ -1008,6 +976,8 @@ function switchTab(name) {
 
 // Aller à une étape
 function goStep(n) {
+  // v57: also check window._domain (set by state restore) and skip guard if force=true
+  if (n > 1 && !_domain) _domain = window._domain || '';
   if (n > 1 && !_domain) {
     var g = document.getElementById('domainGrid');
     if (g) {
@@ -1039,6 +1009,7 @@ function selectDomain(btn) {
   });
   btn.classList.add('selected');
   _domain = btn.getAttribute('data-domain');
+  window._domain = _domain; // v57: sync
   // v56: mise à jour badge domaine
   var badge = document.getElementById('selectedDomainBadge');
   var label = document.getElementById('selectedDomainLabel');
@@ -1072,7 +1043,6 @@ function updateRecap() {
 // Soumettre le besoin
 function submitBesoin() {
   var title = (document.getElementById('besoInTitle') || {}).value || '';
-  // v56: assemble description from structured fields
   var contexte = (document.getElementById('descContexte') || {}).value || '';
   var objectif = (document.getElementById('descObjectif') || {}).value || '';
   var contraintes = (document.getElementById('descContraintes') || {}).value || '';
@@ -1080,18 +1050,22 @@ function submitBesoin() {
   var deadline = (document.getElementById('needDeadline') || {}).value || '';
   var pieces = (document.getElementById('descPieces') || {}).value || '';
   var complement = (document.getElementById('besoInDesc') || {}).value || '';
-  var descParts = [];
-  if (contexte) descParts.push('Contexte : ' + contexte);
-  if (objectif) descParts.push('Objectif : ' + objectif);
-  if (contraintes) descParts.push('Contraintes : ' + contraintes);
-  if (acteurs) descParts.push('Acteurs concernés : ' + acteurs);
-  if (deadline) descParts.push('Échéance : ' + deadline);
-  if (pieces) descParts.push('Pièces disponibles : ' + pieces);
-  if (complement) descParts.push(complement);
-  var desc = descParts.join('\n');
+  // Build enriched description
+  var parts = [];
+  if(contexte) parts.push('Contexte : ' + contexte);
+  if(objectif) parts.push('Objectif : ' + objectif);
+  if(contraintes) parts.push('Contraintes : ' + contraintes);
+  if(acteurs) parts.push('Acteurs : ' + acteurs);
+  if(deadline) parts.push('Échéance : ' + deadline);
+  if(pieces) parts.push('Pièces disponibles : ' + pieces);
+  if(complement) parts.push(complement);
+  var desc = parts.join('\n');
   var msgEl = document.getElementById('msgBesoin');
   if (!title.trim() || (!contexte.trim() && !objectif.trim() && !desc.trim())) {
-    if (msgEl) { msgEl.textContent = "Remplissez l'objet et au moins le contexte ou l'objectif (étape 2)."; msgEl.className = 'v5-msg err-show'; }
+    if (msgEl) { msgEl.textContent = "Remplissez l'objet et au moins le contexte ou l'objectif."; msgEl.className = 'v5-msg err-show'; }
+    // Open first accordion if closed
+    var first = document.querySelector('.v57-acc:not(.open)');
+    if(first) first.classList.add('open');
     return;
   }
   if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }

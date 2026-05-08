@@ -1477,6 +1477,7 @@ function openPanel(id) {
   const u = usersCache.find(x => x.id === id);
   if (!u) return;
   selectedUser = u;
+  window.selectedUser = u; // v57-fix: sync to window for non-module scripts
   const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
   el('panelAvatar').textContent = initials;
   el('panelName').textContent = u.full_name || u.email;
@@ -1511,6 +1512,7 @@ function closePanel() {
   el('userPanel').classList.remove('open');
   el('panelOverlay').classList.remove('open');
   selectedUser = null;
+  window.selectedUser = null; // v57-fix
 }
 
 function switchPtab(tab) {
@@ -1632,7 +1634,7 @@ el('panelSaveTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; window.selectedUser = u; }
     const dateFmt = newDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
     el('dTrial').textContent = dateFmt;
     el('dTrial').style.color = isExpired ? '#ef4444' : '#22c55e';
@@ -1665,7 +1667,7 @@ el('panelClearTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; window.selectedUser = u; }
     el('dTrial').textContent = 'Aucune';
     el('dTrial').style.color = '';
     el('panelTrialDate').value = '';
