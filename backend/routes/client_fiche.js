@@ -21,6 +21,7 @@ async function ensureClientFicheSchema() {
     ['niveau_decisionnel','text'],['source','text'],['domaines',`text[] NOT NULL DEFAULT '{}'`],['description_besoin','text'],['mode_intervention','text'],['urgence','text'],['stade','text'],
     ['maturite','integer'],['complexite','integer'],['potentiel','integer'],['fidelite','integer'],['decision','text'],['responsable','text'],['responsable_expert_id','uuid'],['notes','text'],
     ['budget','text'],['financement','text'],['duree','text'],['crm_statut','text'],['prochain_contact','date'],['canal_pref','text'],['actions','text'],
+    ['echeance','text'],['livrable','text'],['sensibilite','text'],['public_concerne','text'],['decision_attendue','text'],
     ['created_at','timestamptz NOT NULL DEFAULT now()'],['updated_at','timestamptz NOT NULL DEFAULT now()']
   ];
   for (const [c,t] of cols) await ensureCol('client_fiches', c, t);
@@ -45,7 +46,9 @@ function rowToPayload(r){
     decision:r.decision||'', responsable:r.responsable||'', responsable_expert_id:r.responsable_expert_id||'',
     notes:r.notes||'', budget:r.budget||'', financement:r.financement||'', duree:r.duree||'', crm_statut:r.crm_statut||'',
     prochain_contact:r.prochain_contact ? new Date(r.prochain_contact).toISOString().slice(0,10) : '',
-    canal_pref:r.canal_pref||'', actions:r.actions||'', saved_at:r.updated_at||null
+    canal_pref:r.canal_pref||'', actions:r.actions||'',
+    echeance:r.echeance||'', livrable:r.livrable||'', sensibilite:r.sensibilite||'', public_concerne:r.public_concerne||'', decision_attendue:r.decision_attendue||'',
+    saved_at:r.updated_at||null
   };
 }
 
@@ -94,14 +97,14 @@ router.post('/client-fiche/:userId', requireAdmin, async (req,res)=>{
       await q(`INSERT INTO expert_assignments(expert_id, client_id) VALUES($1,$2) ON CONFLICT(expert_id, client_id) DO UPDATE SET assigned_at=now()`, [expertId, uid]);
     }
     await q(`INSERT INTO client_fiches
-      (user_id, nom, categorie, territoire, taille, contact, contact_email, contact_phone, contact_direct, niveau_decisionnel, source, domaines, description_besoin, mode_intervention, urgence, stade, maturite, complexite, potentiel, fidelite, decision, responsable, responsable_expert_id, notes, budget, financement, duree, crm_statut, prochain_contact, canal_pref, actions)
-      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::text[],$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31)
+      (user_id, nom, categorie, territoire, taille, contact, contact_email, contact_phone, contact_direct, niveau_decisionnel, source, domaines, description_besoin, mode_intervention, urgence, stade, maturite, complexite, potentiel, fidelite, decision, responsable, responsable_expert_id, notes, budget, financement, duree, crm_statut, prochain_contact, canal_pref, actions, echeance, livrable, sensibilite, public_concerne, decision_attendue)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::text[],$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)
       ON CONFLICT(user_id) DO UPDATE SET
        nom=excluded.nom,categorie=excluded.categorie,territoire=excluded.territoire,taille=excluded.taille,contact=excluded.contact,contact_email=excluded.contact_email,contact_phone=excluded.contact_phone,contact_direct=excluded.contact_direct,
        niveau_decisionnel=excluded.niveau_decisionnel,source=excluded.source,domaines=excluded.domaines,description_besoin=excluded.description_besoin,mode_intervention=excluded.mode_intervention,urgence=excluded.urgence,stade=excluded.stade,
        maturite=excluded.maturite,complexite=excluded.complexite,potentiel=excluded.potentiel,fidelite=excluded.fidelite,decision=excluded.decision,responsable=excluded.responsable,responsable_expert_id=excluded.responsable_expert_id,notes=excluded.notes,
-       budget=excluded.budget,financement=excluded.financement,duree=excluded.duree,crm_statut=excluded.crm_statut,prochain_contact=excluded.prochain_contact,canal_pref=excluded.canal_pref,actions=excluded.actions,updated_at=now()`,
-      [uid, clean(d.nom), clean(d.categorie), clean(d.territoire), clean(d.size), clean(d.contact), clean(d.contact_email), clean(d.contact_phone), clean(d.contact_direct), clean(d.niveau), clean(d.source), Array.isArray(d.domaines)?d.domaines:[], clean(d.besoins), clean(d.mode), clean(d.urgence), clean(d.stade), toInt(d.maturite), toInt(d.complexite), toInt(d.potentiel), toInt(d.fidelite), clean(d.decision), expertName, expertId, clean(d.notes), clean(d.budget), clean(d.financement), clean(d.duree), clean(d.crm_statut), cleanDate(d.prochain_contact), clean(d.canal_pref), clean(d.actions)]);
+       budget=excluded.budget,financement=excluded.financement,duree=excluded.duree,crm_statut=excluded.crm_statut,prochain_contact=excluded.prochain_contact,canal_pref=excluded.canal_pref,actions=excluded.actions,echeance=excluded.echeance,livrable=excluded.livrable,sensibilite=excluded.sensibilite,public_concerne=excluded.public_concerne,decision_attendue=excluded.decision_attendue,updated_at=now()`,
+      [uid, clean(d.nom), clean(d.categorie), clean(d.territoire), clean(d.size), clean(d.contact), clean(d.contact_email), clean(d.contact_phone), clean(d.contact_direct), clean(d.niveau), clean(d.source), Array.isArray(d.domaines)?d.domaines:[], clean(d.besoins), clean(d.mode), clean(d.urgence), clean(d.stade), toInt(d.maturite), toInt(d.complexite), toInt(d.potentiel), toInt(d.fidelite), clean(d.decision), expertName, expertId, clean(d.notes), clean(d.budget), clean(d.financement), clean(d.duree), clean(d.crm_statut), cleanDate(d.prochain_contact), clean(d.canal_pref), clean(d.actions), clean(d.echeance), clean(d.livrable), clean(d.sensibilite), clean(d.public_concerne), clean(d.decision_attendue)]);
     res.json({ok:true, saved_at:new Date().toISOString(), responsable:expertName, responsable_expert_id:expertId});
   }catch(e){ console.error('POST client-fiche:', e); res.status(500).json({error:'client_fiche_save_failed', detail:e.message}); }
 });

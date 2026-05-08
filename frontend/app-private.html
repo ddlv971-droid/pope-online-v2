@@ -137,7 +137,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <span class="v40-topbar-sub" id="appSubTitle">Génération privée</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="vault.html?space=private&return=app-private.html">📂 Dépôt</a>
-      <a class="v40-topbar-btn" href="dashboard-private.html">🏠 Dashboard</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
     <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
@@ -146,7 +145,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="dashboard-private.html">🏠 Dashboard</a>
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
@@ -160,6 +158,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-wf-step" id="wfStep2"><span class="v36-wf-num">2</span> Générer</div>
     <div class="v36-wf-step" id="wfStep3"><span class="v36-wf-num">3</span> Exploiter</div>
   </div>
+</div>
+
+<!-- v55 : bouton retour vers dashboard étape 2 -->
+<div style="padding:10px 16px 0;max-width:980px;margin:0 auto">
+  <a href="dashboard-private.html" id="btnRetourDashboard" class="v40-topbar-btn" style="display:inline-flex;align-items:center;gap:6px;background:#f0f7ff;border:1.5px solid #c0d8f0;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:#1a6fa8;text-decoration:none">
+    ← Retour au parcours <span style="font-weight:400;color:#516474">(continuer à l'étape 2)</span>
+  </a>
 </div>
 
 <!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
@@ -287,11 +292,11 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="dashboard-private.html?attach=last" id="resultExpertLink">
+        <a class="v36-next-btn" href="dashboard-private.html?from=app&attach=last" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
           <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard-private.html?attach=last" id="resultMissionLink">
+        <a class="v36-next-btn" href="dashboard-private.html?from=app&attach=last" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
           <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
@@ -452,5 +457,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 <script src="./app-v53-bridge.js"></script>
+
+<script>
+// v55: retour dashboard dynamique — si une génération existe, retour avec attach=last&from=app
+(function(){
+  function updateBackBtn(){
+    var btn=document.getElementById('btnRetourDashboard');
+    if(!btn)return;
+    var gens=[];
+    try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||localStorage.getItem('pope_v53_generations')||'[]');}catch(e){}
+    var lastId=sessionStorage.getItem('pope_v54_last_generation_id')||sessionStorage.getItem('pope_v53_last_generation_id')||(gens.length?(gens[gens.length-1].id||''):'');
+    var dash=btn.getAttribute('href').split('?')[0];
+    if(lastId){
+      btn.href=dash+'?from=app&attach=last';
+      btn.querySelector('span').textContent='(joindre ce draft à ma demande — étape 3)';
+    }
+  }
+  document.addEventListener('DOMContentLoaded', updateBackBtn);
+  document.addEventListener('pope_generation_done', updateBackBtn);
+  // Also listen for storage changes
+  window.addEventListener('storage', function(e){ if(e.key&&e.key.indexOf('pope_v5')===0) updateBackBtn(); });
+  setTimeout(updateBackBtn, 800);
+})();
+</script>
 </body>
 </html>

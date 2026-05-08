@@ -995,7 +995,39 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
           <textarea class="fiche-input fiche-textarea" id="ficheBesoins" placeholder="Décrivez la demande du client avec précision : contexte, enjeux, contraintes, niveau de sensibilité, livrables attendus…"></textarea>
         </div>
 
-        <div class="fiche-grid-3">
+        <!-- v55 : champs de qualification du besoin complémentaires -->
+        <div class="fiche-grid-3" style="margin-top:12px">
+          <div class="fiche-field">
+            <label class="fiche-label">Échéance souhaitée</label>
+            <input class="fiche-input" id="ficheEcheance" placeholder="Ex : avant vendredi / sous 10 jours"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Livrable attendu</label>
+            <input class="fiche-input" id="ficheLivrable" placeholder="Note, courrier, analyse, plan d'action…"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Sensibilité du dossier</label>
+            <select class="fiche-input" id="ficheSensibilite">
+              <option value="">À préciser</option>
+              <option>🟢 Standard — non confidentiel</option>
+              <option>🟡 Sensible — diffusion restreinte</option>
+              <option>🔴 Très sensible — confidentiel interne</option>
+              <option>⚫ Critique — accès limité DG/Élu</option>
+            </select>
+          </div>
+        </div>
+        <div class="fiche-grid-2" style="margin-top:10px">
+          <div class="fiche-field">
+            <label class="fiche-label">Public concerné</label>
+            <input class="fiche-input" id="fichePublic" placeholder="Élu, DG, client, prestataire, service…"/>
+          </div>
+          <div class="fiche-field">
+            <label class="fiche-label">Décision attendue du client</label>
+            <input class="fiche-input" id="ficheDecisionAttendue" placeholder="Valider, arbitrer, sécuriser, répondre…"/>
+          </div>
+        </div>
+
+        <div class="fiche-grid-3" style="margin-top:12px">
           <div class="fiche-field">
             <label class="fiche-label">Mode d'intervention</label>
             <select class="fiche-input" id="ficheMode">
@@ -2093,53 +2125,8 @@ if (getToken()) {
 
 
 // ── Fiche client ────────────────────────────────────────────
-async function saveFicheClient() {
-  if (!selectedUser) return;
-  const domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(c => c.value);
-  const data = {
-    nom:             (el('ficheNom')            ||{}).value||'',
-    categorie:       (el('ficheCategorie')      ||{}).value||'',
-    territoire:      (el('ficheTerritoire')     ||{}).value||'',
-    size:            (el('ficheSize')           ||{}).value||'',
-    contact:         (el('ficheContact')        ||{}).value||'',
-    contact_direct:  (el('ficheContactDirect')  ||{}).value||'',
-    niveau:          (el('ficheNiveau')         ||{}).value||'',
-    source:          (el('ficheSource')         ||{}).value||'',
-    domaines,
-    besoins:         (el('ficheBesoins')        ||{}).value||'',
-    mode:            (el('ficheMode')           ||{}).value||'',
-    urgence:         (el('ficheUrgence')        ||{}).value||'',
-    stade:           (el('ficheStade')          ||{}).value||'',
-    maturite:        (el('val-maturite')        ||{}).value||'',
-    complexite:      (el('val-complexite')      ||{}).value||'',
-    potentiel:       (el('val-potentiel')       ||{}).value||'',
-    fidelite:        (el('val-fidelite')        ||{}).value||'',
-    decision:        (el('ficheDecision')       ||{}).value||'',
-    responsable:     (el('ficheResponsable')    ||{}).value||'',
-    notes:           (el('ficheNotes')          ||{}).value||'',
-    budget:          (el('ficheBudget')         ||{}).value||'',
-    financement:     (el('ficheFinancement')    ||{}).value||'',
-    duree:           (el('ficheDuree')          ||{}).value||'',
-    crm_statut:      (el('ficheCrmStatut')      ||{}).value||'',
-    prochain_contact:(el('ficheProchainContact')||{}).value||'',
-    canal_pref:      (el('ficheCanalPref')      ||{}).value||'',
-    actions:         (el('ficheActions')        ||{}).value||'',
-  };
-  const msg = el('ficheMsg');
-  try {
-    await apiFetch('/admin/client-fiche/' + selectedUser.id, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    try { localStorage.setItem('pope_fiche_'+selectedUser.id, JSON.stringify(data)); } catch(e) {}
-    if (msg) { msg.textContent = '✅ Fiche enregistrée en base de données.'; msg.className = 'adm-msg adm-msg-ok'; msg.style.display='block'; }
-    if(typeof showToast==='function') showToast('Fiche client enregistrée', 'ok');
-  } catch(e) {
-    try { localStorage.setItem('pope_fiche_'+selectedUser.id, JSON.stringify(data)); } catch(e2) {}
-    if (msg) { msg.textContent = '⚠️ Sauvegarde locale uniquement (API: '+e.message+')'; msg.className='adm-msg'; msg.style.display='block'; }
-  }
-}
+// v55-FIX1: première définition supprimée — la version correcte (fichePayload + apiFetch sans JSON.stringify) est plus bas
+// (fonction saveFicheClient unifiée ci-dessous, voir section fichePayload)
 
 async function loadFicheClient(userId) {
   const titleBar = el('ficheTitleBar');
@@ -2229,10 +2216,14 @@ function fichePayload() {
   var domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(function(c) { return c.value; });
   return {
     nom:(el('ficheNom')||{}).value||'', categorie:(el('ficheCategorie')||{}).value||'', territoire:(el('ficheTerritoire')||{}).value||'', size:(el('ficheSize')||{}).value||'',
-    contact:(el('ficheContact')||{}).value||'', contact_direct:(el('ficheContactDirect')||{}).value||'', niveau:(el('ficheNiveau')||{}).value||'', source:(el('ficheSource')||{}).value||'',
+    contact:(el('ficheContact')||{}).value||'', contact_email:(el('ficheContactEmail')||{}).value||'', contact_phone:(el('ficheContactPhone')||{}).value||'',
+    contact_direct:(el('ficheContactDirect')||{}).value||'', niveau:(el('ficheNiveau')||{}).value||'', source:(el('ficheSource')||{}).value||'',
+    echeance:(el('ficheEcheance')||{}).value||'', livrable:(el('ficheLivrable')||{}).value||'', sensibilite:(el('ficheSensibilite')||{}).value||'', public_concerne:(el('fichePublic')||{}).value||'', decision_attendue:(el('ficheDecisionAttendue')||{}).value||'',
     domaines:domaines, besoins:(el('ficheBesoins')||{}).value||'', mode:(el('ficheMode')||{}).value||'', urgence:(el('ficheUrgence')||{}).value||'', stade:(el('ficheStade')||{}).value||'',
     maturite:(el('val-maturite')||{}).value||'', complexite:(el('val-complexite')||{}).value||'', potentiel:(el('val-potentiel')||{}).value||'', fidelite:(el('val-fidelite')||{}).value||'',
-    decision:(el('ficheDecision')||{}).value||'', responsable:(el('ficheResponsable')||{}).value||'', notes:(el('ficheNotes')||{}).value||'', budget:(el('ficheBudget')||{}).value||'', financement:(el('ficheFinancement')||{}).value||'', duree:(el('ficheDuree')||{}).value||'',
+    decision:(el('ficheDecision')||{}).value||'', responsable:(el('ficheResponsable')||{}).value||'',
+    responsable_expert_id:(el('ficheResponsableExpertId')||{}).value||'',
+    notes:(el('ficheNotes')||{}).value||'', budget:(el('ficheBudget')||{}).value||'', financement:(el('ficheFinancement')||{}).value||'', duree:(el('ficheDuree')||{}).value||'',
     crm_statut:(el('ficheCrmStatut')||{}).value||'', prochain_contact:(el('ficheProchainContact')||{}).value||'', canal_pref:(el('ficheCanalPref')||{}).value||'', actions:(el('ficheActions')||{}).value||''
   };
 }
@@ -2253,7 +2244,7 @@ async function saveFicheClient() {
 }
 function applyFicheData(d) {
   if (!d) return;
-  var map = {ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',ficheSize:'size',ficheContact:'contact',ficheContactDirect:'contact_direct',ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',ficheMode:'mode',ficheUrgence:'urgence',ficheStade:'stade',ficheDecision:'decision',ficheResponsable:'responsable',ficheNotes:'notes',ficheBudget:'budget',ficheFinancement:'financement',ficheDuree:'duree',ficheCrmStatut:'crm_statut',ficheProchainContact:'prochain_contact',ficheCanalPref:'canal_pref',ficheActions:'actions'};
+  var map = {ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',ficheSize:'size',ficheContact:'contact',ficheContactEmail:'contact_email',ficheContactPhone:'contact_phone',ficheContactDirect:'contact_direct',ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',ficheMode:'mode',ficheUrgence:'urgence',ficheStade:'stade',ficheDecision:'decision',ficheResponsable:'responsable',ficheEcheance:'echeance',ficheLivrable:'livrable',ficheSensibilite:'sensibilite',fichePublic:'public_concerne',ficheDecisionAttendue:'decision_attendue',ficheNotes:'notes',ficheBudget:'budget',ficheFinancement:'financement',ficheDuree:'duree',ficheCrmStatut:'crm_statut',ficheProchainContact:'prochain_contact',ficheCanalPref:'canal_pref',ficheActions:'actions'};
   Object.keys(map).forEach(function(id){ var f=el(id); var v=d[map[id]]; if(f) f.value = v || ''; });
   document.querySelectorAll('.fiche-domaine').forEach(function(cb){ cb.checked = (d.domaines || []).indexOf(cb.value) !== -1; });
   ['maturite','complexite','potentiel','fidelite'].forEach(function(k){ setStar(k, parseInt(d[k]||0,10)||0); });
