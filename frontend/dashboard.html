@@ -1231,7 +1231,7 @@ window.loadRequests   = loadRequests;
 
 window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain;window.updateBesoType=updateBesoType;window.submitBesoin=submitBesoin;window.loadRequests=loadRequests;
 </script>
-<script type="module" src="./dashboard-v5.js"></script>
+<!-- V61: dashboard-v5.js désactivé pour éviter les conflits d’état -->
 <script>
 // v60: Immediate fallbacks before state scripts load
 function v58Toggle(id){
@@ -1244,5 +1244,7 @@ function restoreDashboardState(){ return false; }
 </script>
 <script src="./pope-state.js"></script>
 <script src="./dashboard-v60.js"></script>
+<script src="./pope-state-v61.js"></script>
+<script src="./dashboard-v61.js"></script>
 </body>
 </html>
