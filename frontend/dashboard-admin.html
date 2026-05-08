@@ -457,6 +457,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .fiche-star:hover, .fiche-star.on { color: #f59e0b; }
 </style>
+<style id="v56-global-clean">.v40-topbar-nav a[href*="app.html"],.v40-topbar-nav a[href*="app-private.html"],#v40MobileMenu a[href*="app.html"],#v40MobileMenu a[href*="app-private.html"],.v40-topbar-nav a[href*="expert"],#v40MobileMenu a[href*="expert"]{display:none!important}</style>
 </head>
 <body>
 
@@ -1337,7 +1338,7 @@ wireLogout();
 const el = (id) => document.getElementById(id);
 mountTurnstile('turnstileBox').catch(() => {});
 let usersCache = [];
-let selectedUser = null;
+let selectedUser = null; window.selectedUser = null; window.__selectedUserId = null; window.selectedUser = null; window.selectedUser = null; window.__selectedUserId = null;
 let currentPtab = 'info';
 
 function esc(v) {
@@ -1474,7 +1475,7 @@ function renderTable(users) {
 function openPanel(id) {
   const u = usersCache.find(x => x.id === id);
   if (!u) return;
-  selectedUser = u;
+  selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id;
   const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
   el('panelAvatar').textContent = initials;
   el('panelName').textContent = u.full_name || u.email;
@@ -1508,7 +1509,7 @@ window.openPanel = openPanel;
 function closePanel() {
   el('userPanel').classList.remove('open');
   el('panelOverlay').classList.remove('open');
-  selectedUser = null;
+  selectedUser = null; window.selectedUser = null; window.__selectedUserId = null;
 }
 
 function switchPtab(tab) {
@@ -1630,7 +1631,7 @@ el('panelSaveTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id; }
     const dateFmt = newDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
     el('dTrial').textContent = dateFmt;
     el('dTrial').style.color = isExpired ? '#ef4444' : '#22c55e';
@@ -1663,7 +1664,7 @@ el('panelClearTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id; }
     el('dTrial').textContent = 'Aucune';
     el('dTrial').style.color = '';
     el('panelTrialDate').value = '';
@@ -2275,5 +2276,6 @@ window.saveFicheClient=saveFicheClient; window.loadFicheClient=loadFicheClient; 
 <script src="./admin-v52.js"></script>
 <script src="./admin-v53.js"></script>
 <script src="./admin-v54.js"></script>
+<script src="./admin-v56.js"></script>
 </body>
 </html>

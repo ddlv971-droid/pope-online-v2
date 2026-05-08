@@ -91,8 +91,8 @@ router.post('/client-fiche/:userId', requireAdmin, async (req,res)=>{
     const expertId = cleanUuid(d.responsable_expert_id);
     let expertName = clean(d.responsable);
     if(expertId){
-      const exp = await q(`SELECT full_name, email FROM users WHERE id=$1 AND role='expert'`, [expertId]);
-      if(!exp.rowCount) return res.status(400).json({error:'expert_not_found', detail:'Expert introuvable ou rôle expert non attribué.'});
+      const exp = await q(`SELECT full_name, email FROM users WHERE id=$1`, [expertId]);
+      if(!exp.rowCount) return res.status(400).json({error:'expert_not_found', detail:'Expert introuvable.'});
       expertName = exp.rows[0].full_name || exp.rows[0].email;
       await q(`INSERT INTO expert_assignments(expert_id, client_id) VALUES($1,$2) ON CONFLICT(expert_id, client_id) DO UPDATE SET assigned_at=now()`, [expertId, uid]);
     }
@@ -105,7 +105,7 @@ router.post('/client-fiche/:userId', requireAdmin, async (req,res)=>{
        maturite=excluded.maturite,complexite=excluded.complexite,potentiel=excluded.potentiel,fidelite=excluded.fidelite,decision=excluded.decision,responsable=excluded.responsable,responsable_expert_id=excluded.responsable_expert_id,notes=excluded.notes,
        budget=excluded.budget,financement=excluded.financement,duree=excluded.duree,crm_statut=excluded.crm_statut,prochain_contact=excluded.prochain_contact,canal_pref=excluded.canal_pref,actions=excluded.actions,echeance=excluded.echeance,livrable=excluded.livrable,sensibilite=excluded.sensibilite,public_concerne=excluded.public_concerne,decision_attendue=excluded.decision_attendue,updated_at=now()`,
       [uid, clean(d.nom), clean(d.categorie), clean(d.territoire), clean(d.size), clean(d.contact), clean(d.contact_email), clean(d.contact_phone), clean(d.contact_direct), clean(d.niveau), clean(d.source), Array.isArray(d.domaines)?d.domaines:[], clean(d.besoins), clean(d.mode), clean(d.urgence), clean(d.stade), toInt(d.maturite), toInt(d.complexite), toInt(d.potentiel), toInt(d.fidelite), clean(d.decision), expertName, expertId, clean(d.notes), clean(d.budget), clean(d.financement), clean(d.duree), clean(d.crm_statut), cleanDate(d.prochain_contact), clean(d.canal_pref), clean(d.actions), clean(d.echeance), clean(d.livrable), clean(d.sensibilite), clean(d.public_concerne), clean(d.decision_attendue)]);
-    res.json({ok:true, saved_at:new Date().toISOString(), responsable:expertName, responsable_expert_id:expertId});
+    res.json({ok:true, saved_at:new Date().toISOString(), responsable:expertName, responsable_expert_id:expertId, user_id: uid});
   }catch(e){ console.error('POST client-fiche:', e); res.status(500).json({error:'client_fiche_save_failed', detail:e.message}); }
 });
 export default router;
