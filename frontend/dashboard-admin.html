@@ -2097,110 +2097,80 @@ async function saveFicheClient() {
   if (!selectedUser) return;
   const domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(c => c.value);
   const data = {
-    nom:             (el('ficheNom')            || {}).value || '',
-    categorie:       (el('ficheCategorie')      || {}).value || '',
-    territoire:      (el('ficheTerritoire')     || {}).value || '',
-    size:            (el('ficheSize')           || {}).value || '',
-    contact:         (el('ficheContact')        || {}).value || '',
-    contact_direct:  (el('ficheContactDirect')  || {}).value || '',
-    niveau:          (el('ficheNiveau')         || {}).value || '',
-    source:          (el('ficheSource')         || {}).value || '',
+    nom:             (el('ficheNom')            ||{}).value||'',
+    categorie:       (el('ficheCategorie')      ||{}).value||'',
+    territoire:      (el('ficheTerritoire')     ||{}).value||'',
+    size:            (el('ficheSize')           ||{}).value||'',
+    contact:         (el('ficheContact')        ||{}).value||'',
+    contact_direct:  (el('ficheContactDirect')  ||{}).value||'',
+    niveau:          (el('ficheNiveau')         ||{}).value||'',
+    source:          (el('ficheSource')         ||{}).value||'',
     domaines,
-    besoins:         (el('ficheBesoins')        || {}).value || '',
-    mode:            (el('ficheMode')           || {}).value || '',
-    urgence:         (el('ficheUrgence')        || {}).value || '',
-    stade:           (el('ficheStade')          || {}).value || '',
-    maturite:        (el('val-maturite')        || {}).value || '',
-    complexite:      (el('val-complexite')      || {}).value || '',
-    potentiel:       (el('val-potentiel')       || {}).value || '',
-    fidelite:        (el('val-fidelite')        || {}).value || '',
-    decision:        (el('ficheDecision')       || {}).value || '',
-    responsable:     (el('ficheResponsable')    || {}).value || '',
-    notes:           (el('ficheNotes')          || {}).value || '',
-    budget:          (el('ficheBudget')         || {}).value || '',
-    financement:     (el('ficheFinancement')    || {}).value || '',
-    duree:           (el('ficheDuree')          || {}).value || '',
-    crm_statut:      (el('ficheCrmStatut')      || {}).value || '',
-    prochain_contact:(el('ficheProchainContact')|| {}).value || '',
-    canal_pref:      (el('ficheCanalPref')      || {}).value || '',
-    actions:         (el('ficheActions')        || {}).value || '',
+    besoins:         (el('ficheBesoins')        ||{}).value||'',
+    mode:            (el('ficheMode')           ||{}).value||'',
+    urgence:         (el('ficheUrgence')        ||{}).value||'',
+    stade:           (el('ficheStade')          ||{}).value||'',
+    maturite:        (el('val-maturite')        ||{}).value||'',
+    complexite:      (el('val-complexite')      ||{}).value||'',
+    potentiel:       (el('val-potentiel')       ||{}).value||'',
+    fidelite:        (el('val-fidelite')        ||{}).value||'',
+    decision:        (el('ficheDecision')       ||{}).value||'',
+    responsable:     (el('ficheResponsable')    ||{}).value||'',
+    notes:           (el('ficheNotes')          ||{}).value||'',
+    budget:          (el('ficheBudget')         ||{}).value||'',
+    financement:     (el('ficheFinancement')    ||{}).value||'',
+    duree:           (el('ficheDuree')          ||{}).value||'',
+    crm_statut:      (el('ficheCrmStatut')      ||{}).value||'',
+    prochain_contact:(el('ficheProchainContact')||{}).value||'',
+    canal_pref:      (el('ficheCanalPref')      ||{}).value||'',
+    actions:         (el('ficheActions')        ||{}).value||'',
   };
   const msg = el('ficheMsg');
   try {
-    // Sauvegarder via API backend
-    const res = await apiFetch('/admin/client-fiche/' + selectedUser.id, {
+    await apiFetch('/admin/client-fiche/' + selectedUser.id, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    // Fallback localStorage aussi pour accès offline
-    try { localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data)); } catch(e) {}
-    if (msg) { msg.textContent = '✅ Fiche enregistrée en base de données.'; msg.className = 'adm-msg adm-msg-ok'; }
-    showToast('Fiche client enregistrée', 'ok');
+    try { localStorage.setItem('pope_fiche_'+selectedUser.id, JSON.stringify(data)); } catch(e) {}
+    if (msg) { msg.textContent = '✅ Fiche enregistrée en base de données.'; msg.className = 'adm-msg adm-msg-ok'; msg.style.display='block'; }
+    if(typeof showToast==='function') showToast('Fiche client enregistrée', 'ok');
   } catch(e) {
-    // Fallback localStorage si API échoue
-    try {
-      localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data));
-      if (msg) { msg.textContent = '⚠️ Sauvegardé localement (API indisponible).'; msg.className = 'adm-msg'; }
-    } catch(e2) {
-      if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
-    }
+    try { localStorage.setItem('pope_fiche_'+selectedUser.id, JSON.stringify(data)); } catch(e2) {}
+    if (msg) { msg.textContent = '⚠️ Sauvegarde locale uniquement (API: '+e.message+')'; msg.className='adm-msg'; msg.style.display='block'; }
   }
 }
 
 async function loadFicheClient(userId) {
   const titleBar = el('ficheTitleBar');
   if (titleBar && selectedUser) {
-    titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
+    titleBar.textContent = 'Fiche — '+(selectedUser.full_name||selectedUser.email||userId);
   }
   let data = null;
   try {
-    // Charger depuis l'API
-    data = await apiFetch('/admin/client-fiche/' + userId);
+    data = await apiFetch('/admin/client-fiche/'+userId);
   } catch(e) {
-    // Fallback localStorage
-    try {
-      const raw = localStorage.getItem('pope_fiche_' + userId);
-      if (raw) data = JSON.parse(raw);
-    } catch(e2) {}
+    try { const raw=localStorage.getItem('pope_fiche_'+userId); if(raw) data=JSON.parse(raw); } catch(e2){}
   }
   if (!data) return;
-  const fieldMap = {
-    ficheNom:'nom', ficheCategorie:'categorie', ficheTerritoire:'territoire',
-    ficheSize:'size', ficheContact:'contact', ficheContactDirect:'contact_direct',
-    ficheNiveau:'niveau', ficheSource:'source', ficheBesoins:'besoins',
-    ficheMode:'mode', ficheUrgence:'urgence', ficheStade:'stade',
-    ficheDecision:'decision', ficheResponsable:'responsable', ficheNotes:'notes',
-    ficheBudget:'budget', ficheFinancement:'financement', ficheDuree:'duree',
-    ficheCrmStatut:'crm_statut', ficheProchainContact:'prochain_contact',
-    ficheCanalPref:'canal_pref', ficheActions:'actions'
+  const map = {
+    ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',
+    ficheSize:'size',ficheContact:'contact',ficheContactDirect:'contact_direct',
+    ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',
+    ficheMode:'mode',ficheUrgence:'urgence',ficheStade:'stade',
+    ficheDecision:'decision',ficheResponsable:'responsable',ficheNotes:'notes',
+    ficheBudget:'budget',ficheFinancement:'financement',ficheDuree:'duree',
+    ficheCrmStatut:'crm_statut',ficheProchainContact:'prochain_contact',
+    ficheCanalPref:'canal_pref',ficheActions:'actions'
   };
-  Object.entries(fieldMap).forEach(([id, key]) => {
-    const f = el(id);
-    if (f && data[key]) f.value = data[key];
+  Object.entries(map).forEach(([id,key])=>{ const f=el(id); if(f&&data[key]) f.value=data[key]; });
+  (data.domaines||[]).forEach(v=>{ document.querySelectorAll('.fiche-domaine').forEach(cb=>{ if(cb.value===v) cb.checked=true; }); });
+  ['maturite','complexite','potentiel','fidelite'].forEach(k=>{
+    const v=data[k]; if(!v) return;
+    const h=el('val-'+k); if(h) h.value=v;
+    document.querySelectorAll('#stars-'+k+' .fiche-star').forEach((s,i)=>s.classList.toggle('on',i<parseInt(v)));
   });
-  const domaines = Array.isArray(data.domaines) ? data.domaines : [];
-  document.querySelectorAll('.fiche-domaine').forEach(cb => {
-    cb.checked = domaines.includes(cb.value);
-  });
-  ['maturite','complexite','potentiel','fidelite'].forEach(k => {
-    const v = data[k];
-    if (v) {
-      const hidden = el('val-' + k);
-      if (hidden) hidden.value = v;
-      document.querySelectorAll('#stars-' + k + ' .fiche-star').forEach((s, i) => {
-        s.classList.toggle('on', i < parseInt(v));
-      });
-    }
-  });
-  if (data.saved_at) {
-    const msg = el('ficheMsg');
-    if (msg) {
-      msg.textContent = '📅 Dernière sauvegarde : ' + new Date(data.saved_at).toLocaleString('fr-FR');
-      msg.className = 'adm-msg';
-      msg.style.display = 'block';
-    }
-  }
+  if(data.saved_at){ const msg=el('ficheMsg'); if(msg){msg.textContent='📅 Dernière sauvegarde : '+new Date(data.saved_at).toLocaleString('fr-FR');msg.className='adm-msg';msg.style.display='block';}}
 }
 
 function exportFicheClient() {
@@ -2244,15 +2214,7 @@ function exportFicheClient() {
   a.click();
 }
 
-// Exposer sur window
-window.saveFicheClient=saveFicheClient;
-window.loadFicheClient=loadFicheClient;
-window.exportFicheClient=exportFicheClient;
-window.resetFicheClient=resetFicheClient;
-window.setStar=setStar;
-window.openPanel=openPanel;
-window.closePanel=closePanel;
-window.switchPtab=switchPtab;
+window.saveFicheClient=saveFicheClient;window.loadFicheClient=loadFicheClient;window.exportFicheClient=exportFicheClient;window.resetFicheClient=resetFicheClient;window.setStar=setStar;window.openPanel=openPanel;window.closePanel=closePanel;window.switchPtab=switchPtab;
 </script>
 
 <script id="fiche-js-new">

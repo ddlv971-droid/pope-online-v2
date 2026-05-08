@@ -1008,7 +1008,7 @@ function loadRequests() {
 function renderRequests(container, reqs) {
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Cliquez sur "Mon Besoin" pour soumettre votre premier dossier.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
     return;
   }
   container.innerHTML = reqs.map(function(r){
@@ -1030,6 +1030,8 @@ window.selectDomain   = selectDomain;
 window.updateBesoType = updateBesoType;
 window.submitBesoin   = submitBesoin;
 window.loadRequests   = loadRequests;
+
+window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain;window.updateBesoType=updateBesoType;window.submitBesoin=submitBesoin;window.loadRequests=loadRequests;
 </script>
 </body>
 </html>
