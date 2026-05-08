@@ -2212,7 +2212,8 @@ window.saveFicheClient=saveFicheClient;window.loadFicheClient=loadFicheClient;wi
 </script>
 
 <script id="fiche-js-new">
-// Fiche client V5.1 — sauvegarde BDD via /admin/client-fiche/:userId, avec secours localStorage uniquement si API indisponible
+// Fiche client V5.1 — V59 fix: el() defined locally (was in module scope)
+function el(id){ return document.getElementById(id); }
 function setStar(field, val) {
   var hidden = document.getElementById('val-' + field);
   if (hidden) hidden.value = val;

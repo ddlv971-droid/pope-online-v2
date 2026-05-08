@@ -209,14 +209,21 @@
     var sel = $('archiveAttachSelect');
     if (!sel) return;
     var gens = loadLocalGenerations();
-    var cur  = sel.value || sessionStorage.getItem('pope_v58_last_gen') || '';
+    var cur  = sel.value || sessionStorage.getItem('pope_v58_last_gen') ||
+               sessionStorage.getItem('pope_v54_last_generation_id') || '';
     sel.innerHTML = '<option value="">Ne pas joindre de draft préparé</option>' +
       gens.map(function (g, i) {
         var lbl = (g.title || g.usecaseLabel || 'Draft préparé') + ' — ' +
                   (g.createdAt ? new Date(g.createdAt).toLocaleString('fr-FR') : '');
         return '<option value="' + (g.id || i) + '">' + lbl + '</option>';
       }).join('');
-    if (cur) sel.value = cur;
+    if (cur && gens.length) sel.value = cur;
+    // Show/hide status
+    var status = $('v59DraftStatus');
+    if (status) status.style.display = (gens.length && sel.value) ? 'block' : 'none';
+    // Update step 3 draft link
+    var lnk = $('lnkDraftStep3');
+    if (lnk && gens.length) lnk.textContent = 'Voir l\'outil →';
   }
 
   window.attachLastDraftToNeed = function () {
@@ -228,6 +235,39 @@
   };
 
   /* ─── Handle return from app ─────────────────────────── */
+  function forceStep(n) {
+    // Directly manipulate panels - bypasses goStep guard issues
+    // First restore domain so guard passes
+    restoreDashboardState();
+    // Allow time for DOM to settle then navigate
+    setTimeout(function(){
+      if (window.switchTab) window.switchTab('besoin');
+      // Set _domain on window if restored
+      var state = loadDashboardState();
+      if (state && state.domain) {
+        window._domain = state.domain;
+        // Mark domain pill as selected
+        document.querySelectorAll('.v5-domain-pill').forEach(function(b){
+          b.classList.toggle('selected', b.dataset.domain === state.domain);
+        });
+      }
+      // Now navigate
+      if (window.goStep) window.goStep(n);
+      else {
+        // Direct panel swap if goStep not yet patched
+        for(var i=1;i<=4;i++){
+          var p=document.getElementById('step-panel-'+i);
+          if(p){ p.classList.toggle('active', i===n); p.style.display = (i===n)?'block':'none'; }
+        }
+        document.querySelectorAll('.v5-step').forEach(function(s){
+          var sn=parseInt(s.dataset.step,10);
+          s.classList.toggle('active',sn===n);
+          s.classList.toggle('done',sn<n);
+        });
+      }
+    }, 100);
+  }
+
   function handleUrlParams() {
     var sp   = new URLSearchParams(location.search);
     var from = sp.get('from');
@@ -236,21 +276,15 @@
 
     if (from === 'app' || from === 'dashboard' || step || attach) {
       setTimeout(function () {
-        if (window.switchTab) window.switchTab('besoin');
-        var restored = restoreDashboardState();
-        var target   = step || (attach ? 3 : 2);
-
         if (attach) {
-          window.attachLastDraftToNeed();
-          sessionStorage.setItem('pope_v58_last_gen',
-            sessionStorage.getItem('pope_v54_last_generation_id') || '');
+          window.attachLastDraftToNeed && window.attachLastDraftToNeed();
+          var lastId = sessionStorage.getItem('pope_v54_last_generation_id') || '';
+          if (lastId) sessionStorage.setItem('pope_v58_last_gen', lastId);
         }
-
-        if (restored || target === 3) {
-          if (window.goStep) window.goStep(target, true);
-        }
-        if (target === 3) populateGenerationSelect();
-      }, 300);
+        var target = step || (attach ? 3 : 2);
+        forceStep(target);
+        if (target === 3) setTimeout(populateGenerationSelect, 200);
+      }, 250);
     }
   }
 

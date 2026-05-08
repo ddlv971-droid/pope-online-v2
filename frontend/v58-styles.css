@@ -197,3 +197,26 @@
 .v40-topbar-nav a[href*="expert"],
 #v40MobileMenu a[href*="app"],
 #v40MobileMenu a[href*="expert"] { display: none !important; }
+
+/* v59 fixes */
+/* Ensure accordion inputs are always interactive */
+.v58-acc-body textarea,
+.v58-acc-body input {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+  cursor: text !important;
+}
+.v58-acc-trigger {
+  position: relative;
+  z-index: 2;
+}
+/* Step 3 enhanced draft box */
+.v5-attach-box .v58-draft-btn {
+  font-size: 12px;
+  padding: 7px 14px;
+}
+/* Header KPI improvement */
+.v5-kpi-n { min-height: 28px; }
+/* Fix any invisible step panels */
+.v5-step-panel.active { display: block !important; visibility: visible !important; }
