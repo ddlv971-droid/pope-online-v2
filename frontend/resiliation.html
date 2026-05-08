@@ -77,7 +77,7 @@ import { apiFetch, getSessionUser } from './api.js';
 async function init() {
   const user = getSessionUser();
   const space = user?.accountSpace || localStorage.getItem('pope_account_space') || 'public';
-  document.getElementById('homeLink').href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+  var homeLink = document.getElementById('homeLink'); if (homeLink) homeLink.href = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
 
   try {
     const me = await apiFetch('/auth/me');
@@ -88,7 +88,7 @@ async function init() {
     const expertLeft = wallet.expert_left ?? 0;
     const expertLimit = wallet.expert_limit ?? 2;
 
-    document.getElementById('planName').textContent = plan;
+    var planName = document.getElementById('planName'); if (planName) planName.textContent = plan;
 
     let details = '';
     if (status === 'trial_active') {
@@ -98,16 +98,16 @@ async function init() {
     } else if (plan !== 'Free') {
       details = expertLeft + ' relecture(s) experte(s) restante(s) ce mois / ' + expertLimit;
     }
-    document.getElementById('planDetails').textContent = details || 'Plan actif';
+    var planDetails = document.getElementById('planDetails'); if (planDetails) planDetails.textContent = details || 'Plan actif';
 
     if (plan !== 'Free' && status !== 'trial_active' && status !== 'trial_expired') {
-      document.getElementById('cancelSection').style.display = 'block';
+      var cancelSection = document.getElementById('cancelSection'); if (cancelSection) cancelSection.style.display = 'block';
     } else {
-      document.getElementById('upgradeSection').style.display = 'block';
+      var upgradeSection = document.getElementById('upgradeSection'); if (upgradeSection) upgradeSection.style.display = 'block';
     }
   } catch(e) {
     document.getElementById('planDetails').textContent = 'Impossible de charger les informations';
-    document.getElementById('upgradeSection').style.display = 'block';
+    var upgradeSection = document.getElementById('upgradeSection'); if (upgradeSection) upgradeSection.style.display = 'block';
   }
 }
 

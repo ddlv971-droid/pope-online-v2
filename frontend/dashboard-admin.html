@@ -2218,181 +2218,68 @@ window.saveFicheClient=saveFicheClient;window.loadFicheClient=loadFicheClient;wi
 </script>
 
 <script id="fiche-js-new">
-// ── Étoiles notation ────────────────────────────────────────
+// Fiche client V5.1 — sauvegarde BDD via /admin/client-fiche/:userId, avec secours localStorage uniquement si API indisponible
 function setStar(field, val) {
   var hidden = document.getElementById('val-' + field);
   if (hidden) hidden.value = val;
-  var stars = document.querySelectorAll('#stars-' + field + ' .fiche-star');
-  stars.forEach(function(s, i) { s.classList.toggle('on', i < val); });
+  document.querySelectorAll('#stars-' + field + ' .fiche-star').forEach(function(s, i) { s.classList.toggle('on', i < val); });
 }
-
-function loadStars(field, val) {
-  if (!val) return;
-  setStar(field, parseInt(val));
-}
-
-// ── Sauvegarder la fiche ─────────────────────────────────────
-function saveFicheClient() {
-  if (!selectedUser) return;
+function loadStars(field, val) { if (val) setStar(field, parseInt(val,10)); }
+function fichePayload() {
   var domaines = Array.from(document.querySelectorAll('.fiche-domaine:checked')).map(function(c) { return c.value; });
-  var data = {
-    nom:            (el('ficheNom')           || {}).value || '',
-    categorie:      (el('ficheCategorie')     || {}).value || '',
-    territoire:     (el('ficheTerritoire')    || {}).value || '',
-    size:           (el('ficheSize')          || {}).value || '',
-    contact:        (el('ficheContact')       || {}).value || '',
-    contactDirect:  (el('ficheContactDirect') || {}).value || '',
-    niveau:         (el('ficheNiveau')        || {}).value || '',
-    source:         (el('ficheSource')        || {}).value || '',
-    domaines:       domaines,
-    besoins:        (el('ficheBesoins')       || {}).value || '',
-    mode:           (el('ficheMode')          || {}).value || '',
-    urgence:        (el('ficheUrgence')       || {}).value || '',
-    stade:          (el('ficheStade')         || {}).value || '',
-    maturite:       (el('val-maturite')       || {}).value || '',
-    complexite:     (el('val-complexite')     || {}).value || '',
-    potentiel:      (el('val-potentiel')      || {}).value || '',
-    fidelite:       (el('val-fidelite')       || {}).value || '',
-    decision:       (el('ficheDecision')      || {}).value || '',
-    responsable:    (el('ficheResponsable')   || {}).value || '',
-    notes:          (el('ficheNotes')         || {}).value || '',
-    budget:         (el('ficheBudget')        || {}).value || '',
-    financement:    (el('ficheFinancement')   || {}).value || '',
-    duree:          (el('ficheDuree')         || {}).value || '',
-    crmStatut:      (el('ficheCrmStatut')     || {}).value || '',
-    prochainContact:(el('ficheProchainContact')|| {}).value || '',
-    canalPref:      (el('ficheCanalPref')     || {}).value || '',
-    actions:        (el('ficheActions')       || {}).value || '',
-    savedAt:        new Date().toISOString(),
+  return {
+    nom:(el('ficheNom')||{}).value||'', categorie:(el('ficheCategorie')||{}).value||'', territoire:(el('ficheTerritoire')||{}).value||'', size:(el('ficheSize')||{}).value||'',
+    contact:(el('ficheContact')||{}).value||'', contact_direct:(el('ficheContactDirect')||{}).value||'', niveau:(el('ficheNiveau')||{}).value||'', source:(el('ficheSource')||{}).value||'',
+    domaines:domaines, besoins:(el('ficheBesoins')||{}).value||'', mode:(el('ficheMode')||{}).value||'', urgence:(el('ficheUrgence')||{}).value||'', stade:(el('ficheStade')||{}).value||'',
+    maturite:(el('val-maturite')||{}).value||'', complexite:(el('val-complexite')||{}).value||'', potentiel:(el('val-potentiel')||{}).value||'', fidelite:(el('val-fidelite')||{}).value||'',
+    decision:(el('ficheDecision')||{}).value||'', responsable:(el('ficheResponsable')||{}).value||'', notes:(el('ficheNotes')||{}).value||'', budget:(el('ficheBudget')||{}).value||'', financement:(el('ficheFinancement')||{}).value||'', duree:(el('ficheDuree')||{}).value||'',
+    crm_statut:(el('ficheCrmStatut')||{}).value||'', prochain_contact:(el('ficheProchainContact')||{}).value||'', canal_pref:(el('ficheCanalPref')||{}).value||'', actions:(el('ficheActions')||{}).value||''
   };
+}
+async function saveFicheClient() {
+  if (!selectedUser) return;
+  var data = fichePayload();
+  var msg = el('ficheMsg');
   try {
-    localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(data));
-    var msg = el('ficheMsg');
-    if (msg) { msg.textContent = '✅ Fiche enregistrée — ' + new Date().toLocaleString('fr-FR'); msg.className = 'adm-msg adm-msg-ok'; }
-    showToast('Fiche client enregistrée', 'ok');
+    var res = await apiFetch('/admin/client-fiche/' + encodeURIComponent(selectedUser.id), { method:'POST', body:data });
+    localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(Object.assign({}, data, {saved_at:(res&&res.saved_at)||new Date().toISOString()})));
+    if (msg) { msg.textContent = '✅ Fiche enregistrée en base — ' + new Date().toLocaleString('fr-FR'); msg.className = 'adm-msg adm-msg-ok'; msg.style.display='block'; }
+    showToast('Fiche client enregistrée en base', 'ok');
   } catch(e) {
-    var msg = el('ficheMsg');
-    if (msg) { msg.textContent = 'Erreur: ' + e.message; msg.className = 'adm-msg adm-msg-err'; }
+    try { localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(Object.assign({}, data, {saved_at:new Date().toISOString()}))); } catch(_e) {}
+    if (msg) { msg.textContent = '⚠️ Sauvegarde locale uniquement : vérifiez la table client_fiches / le backend. Détail : ' + (e.message||e); msg.className = 'adm-msg adm-msg-err'; msg.style.display='block'; }
+    showToast('Fiche non enregistrée en base', 'err');
   }
 }
-
-// ── Charger la fiche ─────────────────────────────────────────
-function loadFicheClient(userId) {
-  // Mettre à jour le titre de la fiche
+function applyFicheData(d) {
+  if (!d) return;
+  var map = {ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',ficheSize:'size',ficheContact:'contact',ficheContactDirect:'contact_direct',ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',ficheMode:'mode',ficheUrgence:'urgence',ficheStade:'stade',ficheDecision:'decision',ficheResponsable:'responsable',ficheNotes:'notes',ficheBudget:'budget',ficheFinancement:'financement',ficheDuree:'duree',ficheCrmStatut:'crm_statut',ficheProchainContact:'prochain_contact',ficheCanalPref:'canal_pref',ficheActions:'actions'};
+  Object.keys(map).forEach(function(id){ var f=el(id); var v=d[map[id]]; if(f) f.value = v || ''; });
+  document.querySelectorAll('.fiche-domaine').forEach(function(cb){ cb.checked = (d.domaines || []).indexOf(cb.value) !== -1; });
+  ['maturite','complexite','potentiel','fidelite'].forEach(function(k){ setStar(k, parseInt(d[k]||0,10)||0); });
+}
+async function loadFicheClient(userId) {
   var titleBar = el('ficheTitleBar');
-  if (titleBar && selectedUser) {
-    titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
-  }
-  try {
-    var raw = localStorage.getItem('pope_fiche_' + userId);
-    if (!raw) return;
-    var d = JSON.parse(raw);
-    var fields = ['ficheNom','ficheCategorie','ficheTerritoire','ficheSize','ficheContact',
-      'ficheContactDirect','ficheNiveau','ficheSource','ficheBesoins','ficheMode','ficheUrgence',
-      'ficheStade','ficheDecision','ficheResponsable','ficheNotes','ficheBudget',
-      'ficheFinancement','ficheDuree','ficheCrmStatut','ficheProchainContact','ficheCanalPref','ficheActions'];
-    var map = {ficheNom:'nom',ficheCategorie:'categorie',ficheTerritoire:'territoire',
-      ficheSize:'size',ficheContact:'contact',ficheContactDirect:'contactDirect',
-      ficheNiveau:'niveau',ficheSource:'source',ficheBesoins:'besoins',ficheMode:'mode',
-      ficheUrgence:'urgence',ficheStade:'stade',ficheDecision:'decision',
-      ficheResponsable:'responsable',ficheNotes:'notes',ficheBudget:'budget',
-      ficheFinancement:'financement',ficheDuree:'duree',ficheCrmStatut:'crmStatut',
-      ficheProchainContact:'prochainContact',ficheCanalPref:'canalPref',ficheActions:'actions'};
-    fields.forEach(function(id) { var f = el(id); if (f && d[map[id]]) f.value = d[map[id]]; });
-    // Domaines
-    document.querySelectorAll('.fiche-domaine').forEach(function(cb) {
-      cb.checked = (d.domaines || []).includes(cb.value);
-    });
-    // Étoiles
-    ['maturite','complexite','potentiel','fidelite'].forEach(function(k) {
-      if (d[k]) loadStars(k, d[k]);
-    });
-    // Msg date
-    if (d.savedAt) {
-      var msg = el('ficheMsg');
-      if (msg) { msg.textContent = '📅 Dernière sauvegarde : ' + new Date(d.savedAt).toLocaleString('fr-FR'); msg.className = 'adm-msg'; msg.style.display = 'block'; }
-    }
-  } catch(e) { console.warn('loadFicheClient:', e); }
+  if (titleBar && selectedUser) titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
+  var data = null;
+  try { data = await apiFetch('/admin/client-fiche/' + encodeURIComponent(userId)); } catch(e) { try { var raw=localStorage.getItem('pope_fiche_'+userId); if(raw) data=JSON.parse(raw); } catch(_e){} }
+  applyFicheData(data);
+  if (data && (data.saved_at || data.updated_at)) { var msg=el('ficheMsg'); if(msg){ msg.textContent='📅 Dernière sauvegarde : '+new Date(data.saved_at||data.updated_at).toLocaleString('fr-FR'); msg.className='adm-msg'; msg.style.display='block'; } }
 }
-
-// ── Réinitialiser la fiche ────────────────────────────────────
 function resetFicheClient() {
   if (!confirm('Réinitialiser toute la fiche client ?')) return;
-  document.querySelectorAll('#ptabFiche input, #ptabFiche select, #ptabFiche textarea').forEach(function(f) {
-    if (f.type === 'checkbox' || f.type === 'radio') f.checked = false;
-    else if (f.type === 'hidden') f.value = '';
-    else f.value = '';
-  });
+  document.querySelectorAll('#ptabFiche input, #ptabFiche select, #ptabFiche textarea').forEach(function(f) { if (f.type === 'checkbox' || f.type === 'radio') f.checked = false; else f.value = ''; });
   document.querySelectorAll('.fiche-star').forEach(function(s) { s.classList.remove('on'); });
-  var msg = el('ficheMsg');
-  if (msg) { msg.textContent = 'Fiche réinitialisée.'; msg.className = 'adm-msg'; msg.style.display = 'block'; }
+  var msg=el('ficheMsg'); if(msg){ msg.textContent='Fiche réinitialisée.'; msg.className='adm-msg'; msg.style.display='block'; }
 }
-
-// ── Exporter la fiche en TXT ──────────────────────────────────
 function exportFicheClient() {
   if (!selectedUser) return;
-  var raw = localStorage.getItem('pope_fiche_' + selectedUser.id);
-  var d = raw ? JSON.parse(raw) : {};
-  var sep = '─'.repeat(50);
-  var lines = [
-    'FICHE CLIENT — POPE CONSULTING',
-    sep,
-    'Client       : ' + (selectedUser.full_name || '—'),
-    'Email        : ' + (selectedUser.email || '—'),
-    'Organisation : ' + (d.nom || '—'),
-    'Catégorie    : ' + (d.categorie || '—'),
-    'Territoire   : ' + (d.territoire || '—'),
-    'Taille       : ' + (d.size || '—'),
-    'Interlocuteur: ' + (d.contact || '—'),
-    'Contact dir. : ' + (d.contactDirect || '—'),
-    'Niveau décis.: ' + (d.niveau || '—'),
-    'Source       : ' + (d.source || '—'),
-    '',
-    sep,
-    'BESOIN & PÉRIMÈTRE',
-    sep,
-    'Domaines     : ' + (d.domaines || []).join(', '),
-    'Description  : ' + (d.besoins || '—'),
-    'Mode         : ' + (d.mode || '—'),
-    'Urgence      : ' + (d.urgence || '—'),
-    'Stade        : ' + (d.stade || '—'),
-    '',
-    sep,
-    'QUALIFICATION POPE',
-    sep,
-    'Maturité client : ' + (d.maturite ? '★'.repeat(parseInt(d.maturite)) + '☆'.repeat(5-parseInt(d.maturite)) + ' (' + d.maturite + '/5)' : '—'),
-    'Complexité      : ' + (d.complexite ? '★'.repeat(parseInt(d.complexite)) + '☆'.repeat(5-parseInt(d.complexite)) + ' (' + d.complexite + '/5)' : '—'),
-    'Potentiel Pope  : ' + (d.potentiel ? '★'.repeat(parseInt(d.potentiel)) + '☆'.repeat(5-parseInt(d.potentiel)) + ' (' + d.potentiel + '/5)' : '—'),
-    'Fidélité        : ' + (d.fidelite ? '★'.repeat(parseInt(d.fidelite)) + '☆'.repeat(5-parseInt(d.fidelite)) + ' (' + d.fidelite + '/5)' : '—'),
-    'Décision        : ' + (d.decision || '—'),
-    'Responsable     : ' + (d.responsable || '—'),
-    'Notes internes  : ' + (d.notes || '—'),
-    '',
-    sep,
-    'ENJEUX FINANCIERS',
-    sep,
-    'Budget     : ' + (d.budget || '—'),
-    'Financement: ' + (d.financement || '—'),
-    'Durée      : ' + (d.duree || '—'),
-    '',
-    sep,
-    'SUIVI CRM',
-    sep,
-    'Statut CRM       : ' + (d.crmStatut || '—'),
-    'Prochain contact : ' + (d.prochainContact || '—'),
-    'Canal préféré    : ' + (d.canalPref || '—'),
-    'Actions à prévoir: ' + (d.actions || '—'),
-    '',
-    sep,
-    'Exporté le ' + new Date().toLocaleString('fr-FR'),
-    'POPE Consulting — Document confidentiel',
-  ];
-  var blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'fiche-pope-' + (selectedUser.id || 'client') + '-' + new Date().toISOString().slice(0,10) + '.txt';
-  a.click();
+  var d = fichePayload();
+  var lines = ['FICHE CLIENT — POPE CONSULTING','──────────────────────────────────────────────────','Client : '+(selectedUser.full_name||'—'),'Email : '+(selectedUser.email||'—'),'Organisation : '+(d.nom||'—'),'Catégorie : '+(d.categorie||'—'),'Territoire : '+(d.territoire||'—'),'','BESOIN & PÉRIMÈTRE','Domaines : '+(d.domaines||[]).join(', '),'Description : '+(d.besoins||'—'),'Mode : '+(d.mode||'—'),'Urgence : '+(d.urgence||'—'),'','QUALIFICATION POPE','Maturité : '+(d.maturite||'—')+'/5','Complexité : '+(d.complexite||'—')+'/5','Potentiel : '+(d.potentiel||'—')+'/5','Fidélité : '+(d.fidelite||'—')+'/5','Décision : '+(d.decision||'—'),'Responsable : '+(d.responsable||'—'),'Notes : '+(d.notes||'—'),'','Exporté le '+new Date().toLocaleString('fr-FR')];
+  var blob = new Blob([lines.join('\n')], { type:'text/plain;charset=utf-8' });
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fiche-pope-'+(selectedUser.id||'client')+'-'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
 }
+window.saveFicheClient=saveFicheClient; window.loadFicheClient=loadFicheClient; window.exportFicheClient=exportFicheClient; window.resetFicheClient=resetFicheClient; window.setStar=setStar;
 </script>
 </body>
 </html>
