@@ -465,6 +465,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v56-draft-btn:hover{background:#0a4fa0;}
 @media(max-width:720px){.v56-desc-grid{grid-template-columns:1fr;}.v56-traitement-grid{grid-template-columns:1fr;}.v56-draft-block{flex-wrap:wrap;}}
 </style>
+<link rel="stylesheet" href="v58-styles.css">
 </head>
 <body data-logout-target="public.html" class="bg po-v14-dashboard">
 <header class="v40-topbar">
@@ -620,49 +621,166 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
             <button type="button" onclick="goStep(1)" style="background:none;border:none;color:#516474;cursor:pointer;font-size:11px;padding:0 0 0 4px">✕ changer</button>
           </span>
         </div>
-        <h2>Décrivez votre besoin</h2>
-        <p>Plus votre description est précise, plus la réponse de votre expert sera pertinente.</p>
+        
+      <div class="v58-domain-badge" id="v58DomainBadge">
+        <span class="v58-domain-badge-icon" id="v58DomainIcon">🎯</span>
+        <span class="v58-domain-badge-text">
+          <span id="v58DomainName">—</span>
+          <span class="v58-domain-badge-sub">Domaine d'expertise sélectionné</span>
+        </span>
+        <button class="v58-domain-change" type="button" onclick="goStep(1)">✕ Changer</button>
       </div>
+
       <div class="v5-field-group">
         <label class="v5-label">En quelques mots <span class="v5-req">★</span></label>
-        <input class="v5-input" id="besoInTitle" placeholder="Ex: avis juridique sur un contrat de marché public…" maxlength="120"/>
+        <input class="v5-input" id="besoInTitle" placeholder="Ex : avis juridique sur un marché public, analyse d'un bail commercial…" maxlength="120"/>
       </div>
 
-      <!-- v57: Description accordéon -->
-      <div id="v57DescContainer" style="margin:16px 0">
-        <!-- Built by dashboard-v54.js JS -->
-      </div>
+      <!-- v58 : Description structurée par accordéons -->
+      <div id="v58DescAccordion">
 
-      <!-- v57: Nature du traitement -->
-      <div style="margin:16px 0">
-        <div style="font-size:13px;font-weight:800;color:#0b2440;margin-bottom:10px;">🔧 Nature du traitement attendu</div>
-        <div class="v57-trt-grid">
-          <label class="v57-trt-card">
+        <div class="v58-acc is-open" id="v58AccCtx" data-field="descContexte">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCtx')">
+            <span class="v58-acc-ico">🏢</span>
+            <span class="v58-acc-lbl">Contexte de la demande<span class="v58-acc-val" id="prevCtx">Qui vous êtes, votre organisation…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Contexte &amp; organisation</label>
+              <textarea class="v58-textarea" id="descContexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel de la demande…"></textarea>
+            </div>
+            <div class="v58-field">
+              <label>Problème à résoudre</label>
+              <textarea class="v58-textarea" id="descProbleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccObj" data-field="descObjectif">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccObj')">
+            <span class="v58-acc-ico">🎯</span>
+            <span class="v58-acc-lbl">Objectif &amp; résultat attendu<span class="v58-acc-val" id="prevObj">Ce que vous attendez de l'expert…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Objectif recherché</label>
+              <textarea class="v58-textarea" id="descObjectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, réponse, arbitrage, rédaction…"></textarea>
+            </div>
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Décision attendue</label>
+                <input type="text" class="v58-input" id="descDecision" placeholder="Valider, refuser, arbitrer, répondre…"/>
+              </div>
+              <div class="v58-field">
+                <label>Livrable attendu</label>
+                <input type="text" class="v58-input" id="descLivrable" placeholder="Note, courrier, analyse, trame, avis…"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccCon" data-field="descContraintes">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCon')">
+            <span class="v58-acc-ico">⚠️</span>
+            <span class="v58-acc-lbl">Contraintes &amp; risques<span class="v58-acc-val" id="prevCon">Délais, sensibilité, points bloquants…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Contraintes connues</label>
+              <textarea class="v58-textarea" id="descContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…"></textarea>
+            </div>
+            <div class="v58-field">
+              <label>Points sensibles ou risques</label>
+              <textarea class="v58-textarea" id="descRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccAct" data-field="descActeurs">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccAct')">
+            <span class="v58-acc-ico">👥</span>
+            <span class="v58-acc-lbl">Acteurs, échéance &amp; pièces<span class="v58-acc-val" id="prevAct">Qui est impliqué, délais, documents…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Acteurs concernés</label>
+                <input type="text" class="v58-input" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
+              </div>
+              <div class="v58-field">
+                <label>Public / destinataire final</label>
+                <input type="text" class="v58-input" id="descPublic" placeholder="Conseil municipal, commission, direction…"/>
+              </div>
+            </div>
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Échéance souhaitée</label>
+                <input type="text" class="v58-input" id="needDeadline" placeholder="Avant vendredi / sous 10 jours…"/>
+              </div>
+              <div class="v58-field">
+                <label>Pièces disponibles</label>
+                <input type="text" class="v58-input" id="descPieces" placeholder="Contrat, rapport, délibération, DCE…"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccPlus" data-field="besoInDesc">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccPlus')">
+            <span class="v58-acc-ico">💬</span>
+            <span class="v58-acc-lbl">Précisions complémentaires<span class="v58-acc-val" id="prevPlus">Niveau de détail, historique…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Niveau de détail souhaité</label>
+              <input type="text" class="v58-input" id="descNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/>
+            </div>
+            <div class="v58-field">
+              <label>Informations complémentaires libres</label>
+              <textarea class="v58-textarea" id="besoInDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /v58DescAccordion -->
+
+      <!-- v58 : Nature du traitement -->
+      <div class="v58-trt">
+        <div class="v58-trt-title">🔧 Nature du traitement attendu</div>
+        <div class="v58-trt-grid">
+          <label class="v58-trt-card">
             <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
-            <div>
-              <strong>🎯 Avis expert ponctuel</strong>
-              <span>Réponse ciblée, sécurisation, arbitrage — sous 48h ouvrées</span>
-            </div>
+            <div class="v58-trt-head">🎯 Conseil Expert ponctuel</div>
+            <div class="v58-trt-desc">Réponse ciblée à un besoin précis, sécurisation juridique ou arbitrage.</div>
+            <div class="v58-trt-tags"><span class="v58-trt-tag">⏱ Sous 48h ouvrées</span><span class="v58-trt-tag">Ponctuel</span></div>
           </label>
-          <label class="v57-trt-card">
+          <label class="v58-trt-card">
             <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
-            <div>
-              <strong>📋 Accompagnement approfondi</strong>
-              <span>Dossier sensible, multi-acteurs, cadrage Sur Mesure</span>
-            </div>
+            <div class="v58-trt-head">📋 Accompagnement approfondi</div>
+            <div class="v58-trt-desc">Dossier sensible, multi-acteurs ou nécessitant un cadrage complet Sur Mesure.</div>
+            <div class="v58-trt-tags"><span class="v58-trt-tag">📅 Planning à définir</span><span class="v58-trt-tag">Sur Mesure</span></div>
           </label>
         </div>
       </div>
 
-      <!-- v57: Préparer un draft -->
-      <div class="v57-draft">
-        <span style="font-size:22px;flex-shrink:0">🛠️</span>
-        <div class="v57-draft-body">
-          <strong>Préparer un draft IA</strong>
-          <span style="display:inline-block;background:#0c5ea8;color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;margin-left:6px;vertical-align:middle">Optionnel</span>
-          <p>Générez un document de travail avant de soumettre votre demande. Votre saisie est conservée.</p>
+      <!-- v58 : Draft IA -->
+      <div class="v58-draft">
+        <span class="v58-draft-ico">🛠️</span>
+        <div class="v58-draft-body">
+          <strong>Préparer un draft IA <span class="v58-draft-badge">Optionnel</span></strong>
+          <p>Générez un document de travail avant de soumettre à votre expert. Votre saisie est conservée et pré-remplie.</p>
         </div>
-        <a href="app.html" id="lnkDraftTool" class="v57-draft-cta">Accéder →</a>
+        <a href="app.html" id="lnkDraftTool" class="v58-draft-btn">Accéder à l'outil →</a>
       </div>
 
       <div class="v5-step-footer">
@@ -1042,36 +1160,21 @@ function updateRecap() {
 
 // Soumettre le besoin
 function submitBesoin() {
-  var title = (document.getElementById('besoInTitle') || {}).value || '';
-  var contexte = (document.getElementById('descContexte') || {}).value || '';
-  var objectif = (document.getElementById('descObjectif') || {}).value || '';
-  var contraintes = (document.getElementById('descContraintes') || {}).value || '';
-  var acteurs = (document.getElementById('descActeurs') || {}).value || '';
-  var deadline = (document.getElementById('needDeadline') || {}).value || '';
-  var pieces = (document.getElementById('descPieces') || {}).value || '';
-  var complement = (document.getElementById('besoInDesc') || {}).value || '';
-  // Build enriched description
-  var parts = [];
-  if(contexte) parts.push('Contexte : ' + contexte);
-  if(objectif) parts.push('Objectif : ' + objectif);
-  if(contraintes) parts.push('Contraintes : ' + contraintes);
-  if(acteurs) parts.push('Acteurs : ' + acteurs);
-  if(deadline) parts.push('Échéance : ' + deadline);
-  if(pieces) parts.push('Pièces disponibles : ' + pieces);
-  if(complement) parts.push(complement);
-  var desc = parts.join('\n');
-  var msgEl = document.getElementById('msgBesoin');
-  if (!title.trim() || (!contexte.trim() && !objectif.trim() && !desc.trim())) {
+  var title = ($('besoInTitle') || {}).value || '';
+  function $(id){ return document.getElementById(id); }
+  var desc = window.buildFullDescription ? window.buildFullDescription() : (($('besoInDesc')||{}).value||'');
+  var msgEl = $('msgBesoin');
+  var ctx = ($('descContexte')||{}).value||'';
+  var obj = ($('descObjectif')||{}).value||'';
+  if (!title.trim() || (!ctx.trim() && !obj.trim() && !desc.trim())) {
     if (msgEl) { msgEl.textContent = "Remplissez l'objet et au moins le contexte ou l'objectif."; msgEl.className = 'v5-msg err-show'; }
-    // Open first accordion if closed
-    var first = document.querySelector('.v57-acc:not(.open)');
-    if(first) first.classList.add('open');
+    var first = document.querySelector('.v58-acc:not(.is-open)');
+    if (first) first.classList.add('is-open');
     return;
   }
+  if (window.saveDashboardState) window.saveDashboardState();
   if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }
-  try {
-    sessionStorage.setItem('v5_prefill', JSON.stringify({ domain: _domain, subject: title, context: desc }));
-  } catch(e) {}
+  try { sessionStorage.setItem('v5_prefill', JSON.stringify({ domain: _domain, subject: title, context: desc })); } catch(e) {}
   window.location.href = EXPERT_PAGE;
 }
 
@@ -1118,6 +1221,6 @@ window.loadRequests   = loadRequests;
 window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain;window.updateBesoType=updateBesoType;window.submitBesoin=submitBesoin;window.loadRequests=loadRequests;
 </script>
 <script type="module" src="./dashboard-v5.js"></script>
-<script src="./dashboard-v54.js"></script>
+<script src="./dashboard-v58.js"></script>
 </body>
 </html>

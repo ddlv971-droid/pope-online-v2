@@ -121,6 +121,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 </style>
 <style id="v54-app-style">.v40-topbar-nav a[href*="expert"],.v40-topbar-nav a[href*="mission"],#v40MobileMenu a[href*="expert"],#v40MobileMenu a[href*="mission"]{display:none!important}</style>
+<link rel="stylesheet" href="v58-styles.css">
 </head>
 <body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
 
@@ -152,6 +153,16 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 </div>
 
 <!-- Barre workflow -->
+<!-- v58: Barre retour parcours -->
+<div class="v58-retour-bar" id="v58RetourBar">
+  <a href="dashboard.html?from=app&step=2" id="btnRetourDashboard" class="v58-retour-btn">
+    ← Retour à mon parcours
+  </a>
+  <span class="v58-retour-info" id="v58RetourInfo">
+    Votre saisie est conservée. Revenez après génération pour joindre le draft.
+  </span>
+  <span class="v58-draft-ready" id="v58DraftReady">✅ Draft prêt à joindre</span>
+</div>
 <div class="v36-workflow-bar">
   <div class="v36-workflow-inner">
     <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
@@ -160,14 +171,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </div>
 
-<!-- v56: Barre retour dashboard -->
-<div id="v56RetourBar" style="background:#f0f8ff;border-bottom:1.5px solid #c8dff5;padding:10px 20px;display:flex;align-items:center;gap:14px;font-size:13px">
-  <a href="dashboard.html?from=app&step=2" id="btnRetourDashboard" style="display:inline-flex;align-items:center;gap:6px;background:#0c5ea8;color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;text-decoration:none;font-size:13px">
-    ← Retour à mon parcours
-  </a>
-  <span id="v56RetourInfo" style="color:#516474">Votre saisie est conservée. Une fois le draft généré, revenez pour l'étape suivante.</span>
-  <span id="v56DraftReady" style="display:none;background:#22c55e;color:#fff;border-radius:6px;padding:4px 12px;font-weight:700;font-size:12px">✅ Draft prêt à joindre</span>
-</div>
+
 
 <!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
 <span id="spaceBadge" hidden></span>
@@ -463,30 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-// v56: barre retour dynamique
-(function(){
-  function _updateRetourBar(){
-    var gens=[]; try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}catch(e){}
-    var lastId=sessionStorage.getItem('pope_v54_last_generation_id')||(gens.length?(gens[0].id||''):'');
-    var btn=document.getElementById('btnRetourDashboard');
-    var badge=document.getElementById('v56DraftReady');
-    var info=document.getElementById('v56RetourInfo');
-    if(lastId && btn){
-      btn.href='dashboard.html?from=app&attach=last&step=3';
-      if(badge) badge.style.display='inline-block';
-      if(info) info.textContent='Draft généré ! Revenez à votre parcours pour le joindre à l\'étape 3.';
-    }
-  }
-  document.addEventListener('DOMContentLoaded', _updateRetourBar);
-  window.addEventListener('pope_generation_done', function(){
-    setTimeout(_updateRetourBar, 500);
-  });
-  window.addEventListener('storage', function(e){
-    if(e.key==='pope_v54_generations') _updateRetourBar();
-  });
-  setTimeout(_updateRetourBar, 1000);
-})();
-</script>
+
 
 <script>
 // v57: restore dashboard context into app generation form
@@ -523,6 +504,60 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(_restoreCtxInApp, 600);
   });
 })();
+</script>
+<script>
+// v58: gestion dynamique barre retour
+(function(){{
+  var DASH = 'dashboard.html';
+  var STATE_KEY = 'pope_v58_state_public';
+  function _init(){{
+    var gens=[]; try{{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}}catch(e){{}}
+    var lastId = sessionStorage.getItem('pope_v54_last_generation_id') || (gens.length?gens[0].id:'');
+    var btn    = document.getElementById('btnRetourDashboard');
+    var badge  = document.getElementById('v58DraftReady');
+    var info   = document.getElementById('v58RetourInfo');
+    if(lastId && btn){{
+      btn.href = DASH + '?from=app&attach=last&step=3';
+      if(badge) badge.classList.add('visible');
+      if(info)  info.textContent = 'Draft généré ! Revenez pour le joindre à l\'étape Documents (étape 3).';
+    }}
+    // Restore context into app form from dashboard state
+    try{{
+      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
+      if(!raw) return;
+      var d = JSON.parse(raw);
+      var ctx = document.getElementById('context');
+      var obj = document.getElementById('objective');
+      if(ctx && !ctx.value){{
+        var parts=[];
+        if(d.contexte)    parts.push('Contexte : '+d.contexte);
+        if(d.probleme)    parts.push('Problème : '+d.probleme);
+        if(d.objectif)    parts.push('Objectif : '+d.objectif);
+        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
+        if(d.risques)     parts.push('Points sensibles : '+d.risques);
+        if(d.acteurs)     parts.push('Acteurs : '+d.acteurs);
+        if(d.deadline)    parts.push('Échéance : '+d.deadline);
+        if(d.pieces)      parts.push('Pièces : '+d.pieces);
+        if(d.desc)        parts.push(d.desc);
+        if(parts.length) ctx.value = parts.join('\n');
+      }}
+      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
+      if(d.domain){{
+        var info2 = document.getElementById('v58RetourInfo');
+        if(info2 && !badge.classList.contains('visible'))
+          info2.textContent = 'Domaine : ' + d.domain + ' — Contexte pré-rempli depuis votre parcours.';
+      }}
+    }}catch(e){{}}
+  }}
+  document.addEventListener('DOMContentLoaded', function(){{ setTimeout(_init, 500); }});
+  window.addEventListener('pope_generation_done', function(){{
+    setTimeout(_init, 300);
+  }});
+  window.addEventListener('storage', function(e){{
+    if(e.key==='pope_v54_generations') _init();
+  }});
+  setTimeout(_init, 800);
+}})();
 </script>
 </body>
 </html>

@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════
+   POPE Online V58 — Design system Premium
+   Dashboard, App, Parcours utilisateur
+═══════════════════════════════════════════════════════════ */
+
+/* Domain badge — étape 2 */
+.v58-domain-badge {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg,#eff6ff,#dbeafe);
+  border: 1.5px solid #93c5fd;
+  border-radius: 12px;
+  padding: 11px 16px;
+  margin-bottom: 18px;
+}
+.v58-domain-badge.visible { display: flex; }
+.v58-domain-badge-icon { font-size: 20px; flex-shrink: 0; }
+.v58-domain-badge-text { flex: 1; font-size: 13px; font-weight: 800; color: #1d4ed8; }
+.v58-domain-badge-sub { display: block; font-size: 11px; font-weight: 400; color: #3b82f6; margin-top: 1px; }
+.v58-domain-change {
+  background: none; border: 1.5px solid #93c5fd; color: #3b82f6;
+  border-radius: 7px; padding: 4px 11px; font-size: 11px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+.v58-domain-change:hover { background: #eff6ff; }
+
+/* Accordion — description structurée */
+.v58-desc-section { margin: 0 0 6px; }
+.v58-desc-label {
+  font-size: 11.5px; font-weight: 800; color: #374151;
+  text-transform: uppercase; letter-spacing: .05em;
+  margin: 0 0 8px; padding: 0;
+}
+
+.v58-acc {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: border-color .2s;
+}
+.v58-acc.is-open { border-color: #93c5fd; }
+.v58-acc.has-value { border-left: 3px solid #22c55e; }
+
+.v58-acc-trigger {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 15px;
+  background: #f8fafc;
+  cursor: pointer; border: none; width: 100%;
+  text-align: left; font-family: inherit;
+  font-size: 13px; font-weight: 700; color: #0f172a;
+  transition: background .15s;
+}
+.v58-acc-trigger:hover { background: #f1f5f9; }
+.v58-acc.is-open .v58-acc-trigger { background: #eff6ff; color: #1d4ed8; }
+
+.v58-acc-ico { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+.v58-acc-lbl { flex: 1; line-height: 1.2; }
+.v58-acc-val {
+  display: block; font-size: 11px; font-weight: 400;
+  color: #94a3b8; max-width: 200px;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.v58-acc.has-value .v58-acc-val { color: #64748b; }
+.v58-acc-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0; display: none;
+}
+.v58-acc.has-value .v58-acc-dot { display: block; }
+.v58-acc-chevron { font-size: 10px; color: #94a3b8; transition: transform .2s; flex-shrink: 0; }
+.v58-acc.is-open .v58-acc-chevron { transform: rotate(90deg); }
+
+.v58-acc-body {
+  display: none;
+  padding: 14px 15px 15px;
+  border-top: 1px solid #f1f5f9;
+}
+.v58-acc.is-open .v58-acc-body { display: block; }
+
+/* Fields */
+.v58-field { margin-bottom: 10px; }
+.v58-field:last-child { margin-bottom: 0; }
+.v58-field > label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: #475569; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.v58-input, .v58-textarea {
+  width: 100%; box-sizing: border-box;
+  border: 1.5px solid #e2e8f0; border-radius: 9px;
+  padding: 9px 12px; font-size: 13px; color: #0f172a;
+  background: #fff; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.v58-textarea { resize: vertical; }
+.v58-input:focus, .v58-textarea:focus {
+  outline: none; border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+.v58-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:600px){ .v58-row { grid-template-columns: 1fr; } }
+
+/* Treatment cards */
+.v58-trt { margin: 20px 0 0; }
+.v58-trt-title {
+  font-size: 11px; font-weight: 800; color: #374151;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+}
+.v58-trt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:600px){ .v58-trt-grid { grid-template-columns: 1fr; } }
+
+.v58-trt-card {
+  position: relative; display: flex; flex-direction: column; gap: 5px;
+  border: 2px solid #e2e8f0; border-radius: 12px;
+  padding: 13px 13px 13px 40px;
+  cursor: pointer; background: #fff;
+  transition: border-color .2s, background .2s;
+  min-height: 90px;
+}
+.v58-trt-card:has(input:checked) {
+  border-color: #3b82f6; background: #eff6ff;
+}
+.v58-trt-card input[type=radio] {
+  position: absolute; left: 13px; top: 14px;
+  accent-color: #3b82f6; width: 16px; height: 16px; cursor: pointer;
+}
+.v58-trt-head { font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+.v58-trt-desc { font-size: 11.5px; color: #64748b; line-height: 1.4; }
+.v58-trt-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.v58-trt-tag {
+  background: #f1f5f9; color: #475569;
+  border-radius: 5px; padding: 2px 8px;
+  font-size: 10px; font-weight: 700;
+}
+.v58-trt-card:has(input:checked) .v58-trt-tag {
+  background: #dbeafe; color: #1d4ed8;
+}
+
+/* Draft CTA block */
+.v58-draft {
+  display: flex; align-items: center; gap: 14px;
+  background: #f0fdf4; border: 1.5px solid #bbf7d0;
+  border-radius: 12px; padding: 14px 16px; margin-top: 20px;
+}
+.v58-draft-ico { font-size: 22px; flex-shrink: 0; }
+.v58-draft-body { flex: 1; }
+.v58-draft-body strong { font-size: 13px; font-weight: 800; color: #14532d; }
+.v58-draft-badge {
+  display: inline-block; background: #16a34a; color: #fff;
+  font-size: 10px; font-weight: 700; border-radius: 4px;
+  padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+}
+.v58-draft-body p { font-size: 12px; color: #166534; margin: 3px 0 0; line-height: 1.4; }
+.v58-draft-btn {
+  background: #16a34a; color: #fff; border-radius: 9px;
+  padding: 10px 18px; font-size: 13px; font-weight: 700;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  display: inline-block;
+}
+.v58-draft-btn:hover { background: #15803d; }
+@media(max-width:600px){
+  .v58-draft { flex-wrap: wrap; }
+  .v58-draft-btn { width: 100%; text-align: center; }
+}
+
+/* Retour bar (app.html) */
+.v58-retour-bar {
+  background: #1e3a5f; color: #fff;
+  padding: 11px 20px; display: flex; align-items: center;
+  gap: 14px; font-size: 13px;
+  position: sticky; top: 0; z-index: 900;
+  border-bottom: 2px solid #2d5282;
+}
+.v58-retour-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; color: #1e3a5f; border-radius: 8px;
+  padding: 8px 16px; font-weight: 800; text-decoration: none;
+  font-size: 13px; flex-shrink: 0; cursor: pointer; border: none;
+  transition: background .15s;
+}
+.v58-retour-btn:hover { background: #e8f0fe; }
+.v58-retour-info { flex: 1; opacity: .75; font-size: 12px; }
+.v58-draft-ready {
+  background: #22c55e; color: #fff;
+  border-radius: 6px; padding: 4px 12px;
+  font-size: 11px; font-weight: 800; display: none;
+}
+.v58-draft-ready.visible { display: inline-block; }
+
+/* v58: hide old app/expert nav links if present */
+.v5-top-nav a[href*="app"],
+.v5-top-nav a[href*="expert"],
+.v40-topbar-nav a[href*="app"],
+.v40-topbar-nav a[href*="expert"],
+#v40MobileMenu a[href*="app"],
+#v40MobileMenu a[href*="expert"] { display: none !important; }

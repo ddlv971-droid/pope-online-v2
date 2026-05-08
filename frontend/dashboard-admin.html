@@ -1338,6 +1338,7 @@ wireLogout();
 const el = (id) => document.getElementById(id);
 mountTurnstile('turnstileBox').catch(() => {});
 let usersCache = [];
+window.usersCache = usersCache; // v58: expose for classic scripts
 let selectedUser = null;
 window.selectedUser = null; // v56-fix: expose pour les scripts non-module
 let currentPtab = 'info';
@@ -1396,6 +1397,7 @@ async function loadUsers() {
       }
     }));
     updateKpis();
+    window.usersCache = usersCache; // v58
     renderTable(usersCache);
   } catch(e) {
     showToast('Erreur chargement: '+getApiMessage(e), 'err');
@@ -2282,6 +2284,57 @@ function exportFicheClient() {
 // v56-fix: showToast guard
 if(typeof showToast==='undefined'){window.showToast=function(msg,type){console.log('[toast]',type,msg);};}
 window.saveFicheClient=saveFicheClient; window.loadFicheClient=loadFicheClient; window.exportFicheClient=exportFicheClient; window.resetFicheClient=resetFicheClient; window.setStar=setStar;
+</script>
+
+<script>
+// v58-ADMIN-SHIM: API + selectedUser bridge (synchronous, before module loads)
+(function(){
+  // Synchronous apiFetch for classic scripts
+  function makeApiFetch(){
+    return async function apiFetchShim(path, opts){
+      opts = opts || {};
+      var base = window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com';
+      var tok = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
+      var headers = Object.assign({'Content-Type':'application/json'}, opts.headers||{});
+      if(tok) headers['Authorization'] = 'Bearer ' + tok;
+      var res = await fetch(base.replace(/\/$/,'') + path, {
+        method: opts.method || 'GET',
+        headers: headers,
+        credentials: 'include',
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+      });
+      var data = null;
+      try { data = await res.json(); } catch(e) { data = {}; }
+      if(!res.ok){
+        var err = new Error((data&&(data.detail||data.message||data.error))||('HTTP '+res.status));
+        err.status = res.status; err.data = data; throw err;
+      }
+      return data;
+    };
+  }
+  // Set immediately
+  if(!window.apiFetch) window.apiFetch = makeApiFetch();
+  // Also re-set when module loads (in case module version is better)
+  window.__pope_apiFetch_shim = makeApiFetch();
+  // selectedUser proxy - always readable
+  if(!window.selectedUser) window.selectedUser = null;
+  // Track panel state
+  window.__pope_panel_userId = '';
+  // Intercept openPanel to reliably capture userId
+  var _origOpen = window.openPanel;
+  function patchOpenPanel(){
+    if(window.openPanel && window.openPanel !== patchOpenPanel._patched){
+      var orig = window.openPanel;
+      window.openPanel = function(id){
+        window.__pope_panel_userId = id || '';
+        orig.apply(this, arguments);
+      };
+      window.openPanel._patched = window.openPanel;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', patchOpenPanel);
+  setTimeout(patchOpenPanel, 500);
+})();
 </script>
 <script src="./admin-v52.js"></script>
 <script src="./admin-v53.js"></script>

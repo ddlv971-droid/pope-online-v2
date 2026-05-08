@@ -2,8 +2,27 @@
 (function(){
   function el(id){return document.getElementById(id);} 
   function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  async function api(path, opts){ return window.apiFetch ? window.apiFetch(path, opts||{}) : Promise.reject(new Error('apiFetch indisponible')); }
-  function selected(){ return window.selectedUser || (typeof selectedUser!=='undefined' ? selectedUser : null); }
+  async function api(path, opts){
+    var fn = window.apiFetch || window.__pope_apiFetch_shim;
+    if(fn) return fn(path, opts||{});
+    // Ultimate fallback: inline fetch
+    opts=opts||{}; var base=window.__POPE_API_BASE__||'https://pope-online-v2.onrender.com';
+    var tok=sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';
+    var h={'Content-Type':'application/json'}; if(tok) h['Authorization']='Bearer '+tok;
+    var r=await fetch(base.replace(/\/$/,'')+path,{method:opts.method||'GET',headers:h,credentials:'include',body:opts.body?JSON.stringify(opts.body):undefined});
+    var d=null; try{d=await r.json();}catch(e){d={};}
+    if(!r.ok){var e=new Error((d&&(d.detail||d.message||d.error))||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}
+    return d;
+  }
+  function selected(){
+    if(window.selectedUser && window.selectedUser.id) return window.selectedUser;
+    // fallback: look up by panel userId
+    if(window.__pope_panel_userId && window.usersCache){
+      var u = window.usersCache.find(function(x){return x.id===window.__pope_panel_userId;});
+      if(u){ window.selectedUser=u; return u; }
+    }
+    return null;
+  }
   async function experts(){ try{ var d=await api('/admin/experts'); return Array.isArray(d)?d:(d.experts||d.users||[]); }catch(e){ return []; } }
   function ensureExpertSelect(){
     var resp=el('ficheResponsable'); if(!resp) return;
