@@ -448,8 +448,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub">Espace public</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
-      <a class="v40-topbar-btn" href="expert.html">🎯 Conseil Expert</a>
       <a class="v40-topbar-btn" href="vault.html?space=public&return=dashboard.html">📂 Dépôt</a>
       <a class="v40-topbar-btn" href="clausier.html">📚 Clausier</a>
       <a class="v40-topbar-btn" href="referral.html">🎁 Parrainage</a>
@@ -462,8 +460,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="app.html">⚡ Générer</a>
-  <a href="expert.html">🎯 Conseil Expert</a>
   <a href="vault.html?space=public&return=dashboard.html">📂 Dépôt</a>
   <a href="clausier.html">📚 Clausier</a>
   <a href="referral.html">🎁 Parrainage</a>
@@ -597,21 +593,24 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <textarea class="v5-textarea" id="besoInDesc" rows="5" placeholder="Décrivez votre organisation, le contexte, les enjeux et délais éventuels…"></textarea>
       </div>
       <div class="v5-ia-block">
-        <div><strong>🛠️ Outil de rédaction IA</strong><span class="v5-ia-badge">Illimité &amp; optionnel</span></div>
-        <p>Utilisez l'outil pour préparer un draft avant de le soumettre à votre expert.</p>
+        <div><strong>🛠️ Préparer un draft</strong><span class="v5-ia-badge">Optionnel</span></div>
+        <p>Préparez un document de travail si cela peut aider l’expert à mieux comprendre votre besoin.</p>
         <a href="app.html" class="v5-btn-ghost" style="font-size:12px;padding:7px 13px">Accéder à l'outil →</a>
       </div>
-      <div class="v5-field-group">
-        <label class="v5-label">Niveau de complexité</label>
-        <div class="v5-choice-row">
-          <label class="v5-choice">
+      <div class="v5-field-group v53-complexity-block">
+        <label class="v5-label">Nature du traitement attendu</label>
+        <div class="v53-choice-grid">
+          <label class="v53-choice-card">
             <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
-            <div><strong>🎯 Besoin ponctuel</strong><span>Conseil Expert sous 48h</span></div>
+            <div><strong>🎯 Avis expert ponctuel</strong><span>Besoin ciblé, réponse ou sécurisation sous 48h ouvrées.</span></div>
           </label>
-          <label class="v5-choice">
+          <label class="v53-choice-card">
             <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
-            <div><strong>📋 Dossier complexe</strong><span>Accompagnement Sur Mesure</span></div>
+            <div><strong>📋 Accompagnement approfondi</strong><span>Dossier sensible, multi-acteurs ou nécessitant un cadrage complet.</span></div>
           </label>
+        </div>
+        <div class="v53-qualification-note">
+          <strong>À préciser dans la description :</strong> enjeu principal, décision attendue, documents disponibles, acteurs concernés, délai, contraintes et points sensibles.
         </div>
       </div>
       <div class="v5-step-footer">

@@ -136,7 +136,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <span class="v40-topbar-sub" id="appSubTitle">Génération privée</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="vault.html?space=private&return=app-private.html">📂 Dépôt</a>
-      <a class="v40-topbar-btn" href="expert-private.html">✍️ Relecture</a>
       <a class="v40-topbar-btn" href="dashboard-private.html">🏠 Dashboard</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
@@ -147,8 +146,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
   <a href="dashboard-private.html">🏠 Dashboard</a>
-  <a href="expert-private.html">✍️ Relecture</a>
-  <a href="mission-private.html">🎯 Sur mesure</a>
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
@@ -289,13 +286,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="expert-private.html" id="resultExpertLink">
+        <a class="v36-next-btn" href="dashboard-private.html?attach=last" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
-          <div class="v36-next-btn-text"><strong>Conseil Expert</strong><span>Faire valider par un conseiller</span></div>
+          <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="mission-private.html" id="resultMissionLink">
+        <a class="v36-next-btn" href="dashboard-private.html?attach=last" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
-          <div class="v36-next-btn-text"><strong>Sur mesure</strong><span>Accompagnement approfondi</span></div>
+          <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
         <button class="v36-next-btn" id="btnRefine" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
           <span class="v36-next-btn-icon">✨</span>
@@ -452,5 +449,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 </script>
+<script src="./app-v53-bridge.js"></script>
 </body>
 </html>

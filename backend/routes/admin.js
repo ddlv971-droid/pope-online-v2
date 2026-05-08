@@ -15,6 +15,19 @@ import { resolveFrontendBaseUrl } from '../services/urls.js';
 const router = express.Router();
 router.use(requireAdmin);
 
+
+async function ensureExpertAssignmentSchema() {
+  await withClient(async (client) => {
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'client'`);
+    await client.query(`CREATE TABLE IF NOT EXISTS expert_assignments (
+      expert_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      client_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      assigned_at timestamptz NOT NULL DEFAULT now(),
+      PRIMARY KEY (expert_id, client_id)
+    )`);
+  });
+}
+
 function requestIp(req) {
   return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
 }
@@ -333,6 +346,7 @@ router.delete('/users/:id', async (req, res) => {
 // ── GET /admin/experts — liste des comptes experts avec count portefeuille ───
 router.get('/experts', async (_req, res) => {
   try {
+    await ensureExpertAssignmentSchema();
     const result = await withClient(async (client) => {
       const q = await client.query(`
         select u.id, u.full_name, u.email, u.organization, u.created_at,
@@ -355,6 +369,7 @@ router.get('/experts', async (_req, res) => {
 // ── GET /admin/expert-assignments/:expertId — portefeuille d'un expert ───────
 router.get('/expert-assignments/:expertId', async (req, res) => {
   try {
+    await ensureExpertAssignmentSchema();
     const result = await withClient(async (client) => {
       const q = await client.query(`
         select u.id, u.full_name, u.email, u.organization, ea.assigned_at,
@@ -378,6 +393,7 @@ router.get('/expert-assignments/:expertId', async (req, res) => {
 
 // ── POST /admin/expert-assignments — assigner un client à un expert ──────────
 router.post('/expert-assignments', async (req, res) => {
+  await ensureExpertAssignmentSchema();
   const { expertId, clientId } = req.body || {};
   if (!expertId || !clientId) return res.status(400).json({ error: 'missing_ids' });
   try {
@@ -401,6 +417,7 @@ router.post('/expert-assignments', async (req, res) => {
 
 // ── DELETE /admin/expert-assignments — retirer un client d'un expert ─────────
 router.delete('/expert-assignments', async (req, res) => {
+  await ensureExpertAssignmentSchema();
   const { expertId, clientId } = req.body || {};
   if (!expertId || !clientId) return res.status(400).json({ error: 'missing_ids' });
   try {
