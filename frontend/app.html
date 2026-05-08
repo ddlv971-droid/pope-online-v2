@@ -121,7 +121,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 </style>
 <style id="v54-app-style">.v40-topbar-nav a[href*="expert"],.v40-topbar-nav a[href*="mission"],#v40MobileMenu a[href*="expert"],#v40MobileMenu a[href*="mission"]{display:none!important}</style>
-<style id="v56-global-clean">.v40-topbar-nav a[href*="app.html"],.v40-topbar-nav a[href*="app-private.html"],#v40MobileMenu a[href*="app.html"],#v40MobileMenu a[href*="app-private.html"],.v40-topbar-nav a[href*="expert"],#v40MobileMenu a[href*="expert"]{display:none!important}</style>
 </head>
 <body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
 
@@ -161,11 +160,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </div>
 
-<!-- v55 : bouton retour vers dashboard étape 2 -->
-<div style="padding:10px 16px 0;max-width:980px;margin:0 auto">
-  <a href="dashboard.html" id="btnRetourDashboard" class="v40-topbar-btn" style="display:inline-flex;align-items:center;gap:6px;background:#f0f7ff;border:1.5px solid #c0d8f0;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:#1a6fa8;text-decoration:none">
-    ← Retour au parcours <span style="font-weight:400;color:#516474">(continuer à l'étape 2)</span>
+<!-- v56: Barre retour dashboard -->
+<div id="v56RetourBar" style="background:#f0f8ff;border-bottom:1.5px solid #c8dff5;padding:10px 20px;display:flex;align-items:center;gap:14px;font-size:13px">
+  <a href="dashboard.html" id="btnRetourDashboard" style="display:inline-flex;align-items:center;gap:6px;background:#0c5ea8;color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;text-decoration:none;font-size:13px">
+    ← Retour à mon parcours
   </a>
+  <span id="v56RetourInfo" style="color:#516474">Votre saisie est conservée. Une fois le draft généré, revenez pour l'étape suivante.</span>
+  <span id="v56DraftReady" style="display:none;background:#22c55e;color:#fff;border-radius:6px;padding:4px 12px;font-weight:700;font-size:12px">✅ Draft prêt à joindre</span>
 </div>
 
 <!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
@@ -459,28 +460,32 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="./app-v53-bridge.js"></script>
 
+
+
 <script>
-// v55: retour dashboard dynamique — si une génération existe, retour avec attach=last&from=app
+// v56: barre retour dynamique
 (function(){
-  function updateBackBtn(){
+  function _updateRetourBar(){
+    var gens=[]; try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}catch(e){}
+    var lastId=sessionStorage.getItem('pope_v54_last_generation_id')||(gens.length?(gens[0].id||''):'');
     var btn=document.getElementById('btnRetourDashboard');
-    if(!btn)return;
-    var gens=[];
-    try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||localStorage.getItem('pope_v53_generations')||'[]');}catch(e){}
-    var lastId=sessionStorage.getItem('pope_v54_last_generation_id')||sessionStorage.getItem('pope_v53_last_generation_id')||(gens.length?(gens[gens.length-1].id||''):'');
-    var dash=btn.getAttribute('href').split('?')[0];
-    if(lastId){
-      btn.href=dash+'?from=app&attach=last';
-      btn.querySelector('span').textContent='(joindre ce draft à ma demande — étape 3)';
+    var badge=document.getElementById('v56DraftReady');
+    var info=document.getElementById('v56RetourInfo');
+    if(lastId && btn){
+      btn.href='dashboard.html?from=app&attach=last';
+      if(badge) badge.style.display='inline-block';
+      if(info) info.textContent='Draft généré ! Revenez à votre parcours pour le joindre à l\'étape 3.';
     }
   }
-  document.addEventListener('DOMContentLoaded', updateBackBtn);
-  document.addEventListener('pope_generation_done', updateBackBtn);
-  // Also listen for storage changes
-  window.addEventListener('storage', function(e){ if(e.key&&e.key.indexOf('pope_v5')===0) updateBackBtn(); });
-  setTimeout(updateBackBtn, 800);
+  document.addEventListener('DOMContentLoaded', _updateRetourBar);
+  window.addEventListener('pope_generation_done', function(){
+    setTimeout(_updateRetourBar, 500);
+  });
+  window.addEventListener('storage', function(e){
+    if(e.key==='pope_v54_generations') _updateRetourBar();
+  });
+  setTimeout(_updateRetourBar, 1000);
 })();
 </script>
-<script src="./app-v56-bridge.js"></script>
 </body>
 </html>

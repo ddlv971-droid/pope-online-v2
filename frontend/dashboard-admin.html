@@ -457,7 +457,6 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .fiche-star:hover, .fiche-star.on { color: #f59e0b; }
 </style>
-<style id="v56-global-clean">.v40-topbar-nav a[href*="app.html"],.v40-topbar-nav a[href*="app-private.html"],#v40MobileMenu a[href*="app.html"],#v40MobileMenu a[href*="app-private.html"],.v40-topbar-nav a[href*="expert"],#v40MobileMenu a[href*="expert"]{display:none!important}</style>
 </head>
 <body>
 
@@ -1331,6 +1330,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 <script type="module">
 import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
+window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
@@ -1338,7 +1338,8 @@ wireLogout();
 const el = (id) => document.getElementById(id);
 mountTurnstile('turnstileBox').catch(() => {});
 let usersCache = [];
-let selectedUser = null; window.selectedUser = null; window.__selectedUserId = null; window.selectedUser = null; window.selectedUser = null; window.__selectedUserId = null;
+let selectedUser = null;
+window.selectedUser = null; // v56-fix: expose pour les scripts non-module
 let currentPtab = 'info';
 
 function esc(v) {
@@ -1475,7 +1476,7 @@ function renderTable(users) {
 function openPanel(id) {
   const u = usersCache.find(x => x.id === id);
   if (!u) return;
-  selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id;
+  selectedUser = u;
   const initials = (u.full_name||u.email||'?').split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
   el('panelAvatar').textContent = initials;
   el('panelName').textContent = u.full_name || u.email;
@@ -1509,7 +1510,7 @@ window.openPanel = openPanel;
 function closePanel() {
   el('userPanel').classList.remove('open');
   el('panelOverlay').classList.remove('open');
-  selectedUser = null; window.selectedUser = null; window.__selectedUserId = null;
+  selectedUser = null;
 }
 
 function switchPtab(tab) {
@@ -1631,7 +1632,7 @@ el('panelSaveTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: newDate.toISOString(), status: newStatus }; u.trial_expires_at = newDate.toISOString(); selectedUser = u; }
     const dateFmt = newDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
     el('dTrial').textContent = dateFmt;
     el('dTrial').style.color = isExpired ? '#ef4444' : '#22c55e';
@@ -1664,7 +1665,7 @@ el('panelClearTrialDate').onclick = async function() {
       }}
     });
     const u = usersCache.find(x => x.id === selectedUser.id);
-    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; window.selectedUser = u; window.__selectedUserId = u && u.id; }
+    if (u) { u.wallet = { ...(u.wallet||{}), trial_expires_at: null, status: 'verified_no_trial' }; u.trial_expires_at = null; selectedUser = u; }
     el('dTrial').textContent = 'Aucune';
     el('dTrial').style.color = '';
     el('panelTrialDate').value = '';
@@ -2162,6 +2163,7 @@ async function loadFicheClient(userId) {
 }
 
 function exportFicheClient() {
+  var selectedUser = window.selectedUser || null; // v56-fix
   if (!selectedUser) return;
   const key = 'pope_fiche_' + selectedUser.id;
   const raw = localStorage.getItem(key);
@@ -2229,10 +2231,12 @@ function fichePayload() {
   };
 }
 async function saveFicheClient() {
+  var selectedUser = window.selectedUser || null; // v56-fix: lecture scope module
   if (!selectedUser) return;
   var data = fichePayload();
   var msg = el('ficheMsg');
   try {
+    var apiFetch = window.apiFetch || (async function(p,o){ var h={'Content-Type':'application/json'}; var tok=sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||''; if(tok) h['Authorization']='Bearer '+tok; var r=await fetch((window.__POPE_API_BASE__||'https://pope-online-v2.onrender.com')+p,{method:(o&&o.method)||'GET',headers:h,body:(o&&o.body)?JSON.stringify(o.body):undefined,credentials:'include'}); var d=await r.json().catch(function(){return {};}); if(!r.ok){var e=new Error(d&&d.error?d.error:'HTTP '+r.status);e.status=r.status;e.data=d;throw e;} return d; });
     var res = await apiFetch('/admin/client-fiche/' + encodeURIComponent(selectedUser.id), { method:'POST', body:data });
     localStorage.setItem('pope_fiche_' + selectedUser.id, JSON.stringify(Object.assign({}, data, {saved_at:(res&&res.saved_at)||new Date().toISOString()})));
     if (msg) { msg.textContent = '✅ Fiche enregistrée en base — ' + new Date().toLocaleString('fr-FR'); msg.className = 'adm-msg adm-msg-ok'; msg.style.display='block'; }
@@ -2251,10 +2255,12 @@ function applyFicheData(d) {
   ['maturite','complexite','potentiel','fidelite'].forEach(function(k){ setStar(k, parseInt(d[k]||0,10)||0); });
 }
 async function loadFicheClient(userId) {
+  var selectedUser = window.selectedUser || null; // v56-fix
   var titleBar = el('ficheTitleBar');
   if (titleBar && selectedUser) titleBar.textContent = 'Fiche — ' + (selectedUser.full_name || selectedUser.email || userId);
   var data = null;
-  try { data = await apiFetch('/admin/client-fiche/' + encodeURIComponent(userId)); } catch(e) { try { var raw=localStorage.getItem('pope_fiche_'+userId); if(raw) data=JSON.parse(raw); } catch(_e){} }
+  var apiFetch2 = window.apiFetch || (async function(p,o){ var h={'Content-Type':'application/json'}; var tok=sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||''; if(tok) h['Authorization']='Bearer '+tok; var r=await fetch((window.__POPE_API_BASE__||'https://pope-online-v2.onrender.com')+p,{method:(o&&o.method)||'GET',headers:h,body:(o&&o.body)?JSON.stringify(o.body):undefined,credentials:'include'}); var d=await r.json().catch(function(){return {};}); if(!r.ok){var e=new Error(d&&d.error?d.error:'HTTP '+r.status);e.status=r.status;e.data=d;throw e;} return d; });
+  try { data = await apiFetch2('/admin/client-fiche/' + encodeURIComponent(userId)); } catch(e) { try { var raw=localStorage.getItem('pope_fiche_'+userId); if(raw) data=JSON.parse(raw); } catch(_e){} }
   applyFicheData(data);
   if (data && (data.saved_at || data.updated_at)) { var msg=el('ficheMsg'); if(msg){ msg.textContent='📅 Dernière sauvegarde : '+new Date(data.saved_at||data.updated_at).toLocaleString('fr-FR'); msg.className='adm-msg'; msg.style.display='block'; } }
 }
@@ -2271,11 +2277,12 @@ function exportFicheClient() {
   var blob = new Blob([lines.join('\n')], { type:'text/plain;charset=utf-8' });
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fiche-pope-'+(selectedUser.id||'client')+'-'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
 }
+// v56-fix: showToast guard
+if(typeof showToast==='undefined'){window.showToast=function(msg,type){console.log('[toast]',type,msg);};}
 window.saveFicheClient=saveFicheClient; window.loadFicheClient=loadFicheClient; window.exportFicheClient=exportFicheClient; window.resetFicheClient=resetFicheClient; window.setStar=setStar;
 </script>
 <script src="./admin-v52.js"></script>
 <script src="./admin-v53.js"></script>
 <script src="./admin-v54.js"></script>
-<script src="./admin-v56.js"></script>
 </body>
 </html>

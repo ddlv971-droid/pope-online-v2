@@ -433,8 +433,38 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   .v5-domain-grid{grid-template-columns:1fr;}
   .v5-espace-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* v56 — Description structurée */
+.v56-desc-block{border:1.5px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;background:var(--bg2);}
+.v56-desc-header{margin-bottom:14px;}
+.v56-desc-title{font-size:14px;font-weight:800;color:var(--ink);}
+.v56-desc-hint{display:block;font-size:11px;color:var(--muted);margin-top:3px;}
+.v56-desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v56-desc-field{display:flex;flex-direction:column;gap:4px;}
+.v56-desc-full{grid-column:1/-1;}
+.v56-field-label{font-size:12px;font-weight:700;color:var(--ink);}
+.v56-field-input{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;resize:vertical;font-family:inherit;box-sizing:border-box;}
+.v56-field-input-sm{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;font-family:inherit;box-sizing:border-box;}
+.v56-field-input:focus,.v56-field-input-sm:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px #dbeafe;}
+/* v56 — Nature du traitement */
+.v56-traitement-block{margin:16px 0;}
+.v56-traitement-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+.v56-traitement-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v56-traitement-card{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;background:#fff;transition:border-color .15s,background .15s;}
+.v56-traitement-card:has(input:checked){border-color:var(--blue);background:#f0f8ff;}
+.v56-traitement-card input{margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--blue);}
+.v56-traitement-content strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.v56-traitement-content span{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+/* v56 — Bloc draft */
+.v56-draft-block{display:flex;align-items:center;gap:14px;border:1.5px solid #d0e8ff;border-radius:12px;padding:14px 16px;margin:16px 0;background:#f5f9ff;}
+.v56-draft-icon{font-size:22px;flex-shrink:0;}
+.v56-draft-body{flex:1;}
+.v56-draft-body strong{font-size:13px;font-weight:800;color:var(--ink);}
+.v56-draft-body p{font-size:12px;color:var(--muted);margin:3px 0 0;line-height:1.4;}
+.v56-draft-btn{background:var(--blue);color:#fff;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;}
+.v56-draft-btn:hover{background:#0a4fa0;}
+@media(max-width:720px){.v56-desc-grid{grid-template-columns:1fr;}.v56-traitement-grid{grid-template-columns:1fr;}.v56-draft-block{flex-wrap:wrap;}}
 </style>
-<style id="v56-global-clean">.v40-topbar-nav a[href*="app.html"],.v40-topbar-nav a[href*="app-private.html"],#v40MobileMenu a[href*="app.html"],#v40MobileMenu a[href*="app-private.html"],.v40-topbar-nav a[href*="expert"],#v40MobileMenu a[href*="expert"]{display:none!important}</style>
 </head>
 <body data-logout-target="private.html" class="bg po-v14-dashboard">
 <header class="v40-topbar">
@@ -580,6 +610,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <!-- Étape 2: Description -->
     <div class="v5-step-panel" id="step-panel-2">
       <div class="v5-panel-head">
+        <!-- v56: Badge domaine sélectionné -->
+        <div id="selectedDomainBadge" style="display:none;margin-bottom:12px">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#e8f4fd;border:1.5px solid #c0d8f0;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;color:#0c5ea8">
+            <span id="selectedDomainIcon">🎯</span>
+            <span id="selectedDomainLabel">—</span>
+            <button type="button" onclick="goStep(1)" style="background:none;border:none;color:#516474;cursor:pointer;font-size:11px;padding:0 0 0 4px">✕ changer</button>
+          </span>
+        </div>
         <h2>Décrivez votre besoin</h2>
         <p>Plus votre description est précise, plus la réponse de votre expert sera pertinente.</p>
       </div>
@@ -587,36 +625,75 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <label class="v5-label">En quelques mots <span class="v5-req">★</span></label>
         <input class="v5-input" id="besoInTitle" placeholder="Ex: avis juridique sur un contrat de marché public…" maxlength="120"/>
       </div>
-      <div class="v5-field-group">
-        <label class="v5-label">Description complète <span class="v5-req">★</span></label>
-        <textarea class="v5-textarea" id="besoInDesc" rows="5" placeholder="Décrivez votre organisation, le contexte, les enjeux et délais éventuels…"></textarea>
-      <div class="v54-inline-help" id="v54InlineHelp" style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px">
-        <button type="button" class="v54-help-chip" data-add-need="Contexte :\nObjectif recherché :\nContraintes connues :\nÉchéance :\nDocuments disponibles :\nLivrable attendu :">➕ Trame complète</button>
-        <button type="button" class="v54-help-chip" data-add-need="Points de vigilance juridique / financier / organisationnel :">⚠️ Points de vigilance</button>
-        <button type="button" class="v54-help-chip" data-add-need="Résultat idéal attendu de l'expert :">🎯 Résultat attendu</button>
-        <button type="button" class="v54-help-chip" data-add-need="Questions précises à trancher :">❓ Questions à trancher</button>
+
+      <!-- v56: Bloc description structurée (remplace textarea + toggles) -->
+      <div class="v56-desc-block">
+        <div class="v56-desc-header">
+          <span class="v56-desc-title">📝 Description complète <span class="v5-req">★</span></span>
+          <span class="v56-desc-hint">Chaque champ complété améliore la qualité de la réponse experte</span>
+        </div>
+        <div class="v56-desc-grid">
+          <div class="v56-desc-field">
+            <label class="v56-field-label">🏢 Contexte &amp; organisation</label>
+            <textarea class="v56-field-input" id="descContexte" rows="2" placeholder="Qui vous êtes, votre structure, le cadre de la demande…"></textarea>
+          </div>
+          <div class="v56-desc-field">
+            <label class="v56-field-label">🎯 Objectif &amp; résultat attendu</label>
+            <textarea class="v56-field-input" id="descObjectif" rows="2" placeholder="Ce que vous attendez de l'expert, la décision à prendre…"></textarea>
+          </div>
+          <div class="v56-desc-field">
+            <label class="v56-field-label">⚠️ Contraintes &amp; points sensibles</label>
+            <textarea class="v56-field-input" id="descContraintes" rows="2" placeholder="Contraintes légales, politiques, risques, confidentialité…"></textarea>
+          </div>
+          <div class="v56-desc-field">
+            <label class="v56-field-label">👥 Acteurs concernés</label>
+            <input class="v56-field-input-sm" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
+          </div>
+          <div class="v56-desc-field">
+            <label class="v56-field-label">📅 Échéance &amp; urgence</label>
+            <input class="v56-field-input-sm" id="needDeadline" placeholder="Ex : avant vendredi, sous 10 jours, avant le CA du 15…"/>
+          </div>
+          <div class="v56-desc-field">
+            <label class="v56-field-label">📎 Pièces disponibles</label>
+            <input class="v56-field-input-sm" id="descPieces" placeholder="Contrat, rapport, délibération, courrier, devis…"/>
+          </div>
+          <div class="v56-desc-field v56-desc-full">
+            <label class="v56-field-label">💬 Précisions complémentaires</label>
+            <textarea class="v56-field-input" id="besoInDesc" rows="3" placeholder="Tout autre élément utile à l'expert : historique, tentatives précédentes, niveau de détail souhaité…"></textarea>
+          </div>
+        </div>
       </div>
-      </div>
-      <div class="v5-ia-block">
-        <div><strong>🛠️ Préparer un draft</strong><span class="v5-ia-badge">Optionnel</span></div>
-        <p>Préparez un document de travail si cela peut aider l’expert à mieux comprendre votre besoin.</p>
-        <a href="app-private.html" class="v5-btn-ghost" style="font-size:12px;padding:7px 13px">Accéder à l'outil →</a>
-      </div>
-      <div class="v5-field-group v53-complexity-block">
-        <label class="v5-label">Nature du traitement attendu</label>
-        <div class="v53-choice-grid">
-          <label class="v53-choice-card">
+
+      <!-- v56: Nature du traitement — refonte UI -->
+      <div class="v56-traitement-block">
+        <div class="v56-traitement-title">🔧 Nature du traitement attendu</div>
+        <div class="v56-traitement-grid">
+          <label class="v56-traitement-card">
             <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
-            <div><strong>🎯 Avis expert ponctuel</strong><span>Besoin ciblé, réponse ou sécurisation sous 48h ouvrées.</span></div>
+            <div class="v56-traitement-content">
+              <strong>🎯 Avis expert ponctuel</strong>
+              <span>Réponse ciblée, sécurisation, arbitrage — sous 48h ouvrées</span>
+            </div>
           </label>
-          <label class="v53-choice-card">
+          <label class="v56-traitement-card">
             <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
-            <div><strong>📋 Accompagnement approfondi</strong><span>Dossier sensible, multi-acteurs ou nécessitant un cadrage complet.</span></div>
+            <div class="v56-traitement-content">
+              <strong>📋 Accompagnement approfondi</strong>
+              <span>Dossier sensible, multi-acteurs, cadrage complet Sur Mesure</span>
+            </div>
           </label>
         </div>
-        <div class="v53-qualification-note">
-          <strong>À préciser dans la description :</strong> enjeu principal, décision attendue, documents disponibles, acteurs concernés, délai, contraintes et points sensibles.
+      </div>
+
+      <!-- v56: Préparer un draft — lien retour amélioré -->
+      <div class="v56-draft-block">
+        <div class="v56-draft-icon">🛠️</div>
+        <div class="v56-draft-body">
+          <strong>Préparer un draft IA</strong>
+          <span class="v5-ia-badge" style="margin-left:6px">Optionnel</span>
+          <p>Générez un document de travail pour aider votre expert. Votre saisie est conservée.</p>
         </div>
+        <a href="app-private.html" class="v56-draft-btn" id="lnkDraftTool">Accéder →</a>
       </div>
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" onclick="goStep(1)">← Retour</button>
@@ -960,6 +1037,15 @@ function selectDomain(btn) {
   });
   btn.classList.add('selected');
   _domain = btn.getAttribute('data-domain');
+  // v56: mise à jour badge domaine
+  var badge = document.getElementById('selectedDomainBadge');
+  var label = document.getElementById('selectedDomainLabel');
+  var icon = document.getElementById('selectedDomainIcon');
+  if (badge && label) {
+    badge.style.display = 'block';
+    label.textContent = _domain || '';
+    if (icon) icon.textContent = btn.textContent.trim().split(' ')[0] || '🎯';
+  }
 }
 
 // Maj type de besoin
@@ -984,10 +1070,26 @@ function updateRecap() {
 // Soumettre le besoin
 function submitBesoin() {
   var title = (document.getElementById('besoInTitle') || {}).value || '';
-  var desc  = (document.getElementById('besoInDesc')  || {}).value || '';
+  // v56: assemble description from structured fields
+  var contexte = (document.getElementById('descContexte') || {}).value || '';
+  var objectif = (document.getElementById('descObjectif') || {}).value || '';
+  var contraintes = (document.getElementById('descContraintes') || {}).value || '';
+  var acteurs = (document.getElementById('descActeurs') || {}).value || '';
+  var deadline = (document.getElementById('needDeadline') || {}).value || '';
+  var pieces = (document.getElementById('descPieces') || {}).value || '';
+  var complement = (document.getElementById('besoInDesc') || {}).value || '';
+  var descParts = [];
+  if (contexte) descParts.push('Contexte : ' + contexte);
+  if (objectif) descParts.push('Objectif : ' + objectif);
+  if (contraintes) descParts.push('Contraintes : ' + contraintes);
+  if (acteurs) descParts.push('Acteurs concernés : ' + acteurs);
+  if (deadline) descParts.push('Échéance : ' + deadline);
+  if (pieces) descParts.push('Pièces disponibles : ' + pieces);
+  if (complement) descParts.push(complement);
+  var desc = descParts.join('\n');
   var msgEl = document.getElementById('msgBesoin');
-  if (!title.trim() || !desc.trim()) {
-    if (msgEl) { msgEl.textContent = "Remplissez l'objet et la description (étape 2)."; msgEl.className = 'v5-msg err-show'; }
+  if (!title.trim() || (!contexte.trim() && !objectif.trim() && !desc.trim())) {
+    if (msgEl) { msgEl.textContent = "Remplissez l'objet et au moins le contexte ou l'objectif (étape 2)."; msgEl.className = 'v5-msg err-show'; }
     return;
   }
   if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }
@@ -1041,6 +1143,5 @@ window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain
 </script>
 <script type="module" src="./dashboard-v5.js"></script>
 <script src="./dashboard-v54.js"></script>
-<script src="./dashboard-v56.js"></script>
 </body>
 </html>

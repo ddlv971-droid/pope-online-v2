@@ -827,6 +827,25 @@ function archiveCurrentGeneration(notifyEmpty = true) {
   }
   const saved = archiveStore.save(record);
   rememberLastGeneration(saved);
+  // v56-fix8: sync to pope_v54_generations so dashboard can display it
+  try {
+    const genKey = 'pope_v54_generations';
+    let gens = [];
+    try { gens = JSON.parse(localStorage.getItem(genKey) || '[]'); } catch(e) {}
+    const genEntry = {
+      id: saved.id || ('gen_' + Date.now()),
+      title: saved.title || saved.usecaseLabel || 'Draft préparé',
+      usecaseLabel: saved.usecaseLabel || 'Draft IA',
+      createdAt: saved.createdAt || new Date().toISOString(),
+      result: saved.result || '',
+      prompt: saved.prompt || {}
+    };
+    // Keep max 20 entries, newest first
+    gens.unshift(genEntry);
+    if (gens.length > 20) gens = gens.slice(0, 20);
+    localStorage.setItem(genKey, JSON.stringify(gens));
+    sessionStorage.setItem('pope_v54_last_generation_id', genEntry.id);
+  } catch(e) {}
   renderArchive();
   showToast('Résultat archivé sur cet appareil', 'ok');
   return saved;
@@ -984,7 +1003,19 @@ async function callAI() {
     setDossierIntel(data.dossierAnalysis || null);
     status('Terminé');
     setTicketsBadge(data.wallet);
-    rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText, dossierAnalysis: data.dossierAnalysis || null });
+    const _autoRecord = { usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText, dossierAnalysis: data.dossierAnalysis || null };
+    rememberLastGeneration(_autoRecord);
+    // v56-fix8: auto-sync generation to pope_v54_generations key for dashboard
+    try {
+      const _genKey = 'pope_v54_generations';
+      let _gens = []; try { _gens = JSON.parse(localStorage.getItem(_genKey)||'[]'); } catch(e) {}
+      const _entry = { id: 'gen_'+Date.now(), title: currentUsecaseLabel(), usecaseLabel: currentUsecaseLabel(), createdAt: new Date().toISOString(), result: resultText, prompt: {context:payload.context,objective:payload.objective,facts:payload.facts} };
+      _gens.unshift(_entry); if(_gens.length>20) _gens=_gens.slice(0,20);
+      localStorage.setItem(_genKey, JSON.stringify(_gens));
+      sessionStorage.setItem('pope_v54_last_generation_id', _entry.id);
+      // Dispatch event so back-button updates
+      try { window.dispatchEvent(new CustomEvent('pope_generation_done', {detail:_entry})); } catch(e) {}
+    } catch(e) {}
     persistFormState();
     if (el('archiveAutoSave').checked) archiveCurrentGeneration(false);
   } catch (e) {
