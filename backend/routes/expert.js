@@ -33,6 +33,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const objective    = clamp(String(req.body?.subject || req.body?.objective || '').trim(), 1200);
     const expectations = clamp(String(req.body?.content || req.body?.expectations || '').trim(), 4000);
     const context      = clamp(String(req.body?.context || '').trim(), 6000);
+    const domain       = clamp(String(req.body?.domain || req.body?.domaine || '').trim(), 180);
     const generationAttachment = req.body?.generation_attachment || null;
     const vaultFileIds = Array.isArray(req.body?.vault_file_ids) ? req.body.vault_file_ids.slice(0, 8) : [];
 
@@ -79,10 +80,10 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
       }
 
       const ins = await client.query(
-        `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status)
-         values($1,$2,$3,$4,$5,$6,'new') returning id`,
+        `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status, domain)
+         values($1,$2,$3,$4,$5,$6,'new',$7) returning id`,
         [userId, email, objective, expectations, context,
-         generationAttachment ? JSON.stringify(generationAttachment) : null]
+         generationAttachment ? JSON.stringify(generationAttachment) : null, domain || null]
       );
       const requestId = ins.rows[0].id;
       let usedTicket = false;
@@ -96,13 +97,14 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
           usedTicket = true;
           await client.query('update wallets set tickets_expert=tickets_expert-1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
         } else {
-          const used  = Number(wallet?.public_dossiers_used  ?? 0);
-          const limit = Number(wallet?.public_dossiers_limit ?? 1);
+          const isPrivate = (req.user?.accountSpace || '').toLowerCase() === 'private';
+          const used  = Number(isPrivate ? (wallet?.private_dossiers_used ?? 0) : (wallet?.public_dossiers_used ?? 0));
+          const limit = Number(isPrivate ? (wallet?.private_dossiers_limit ?? 1) : (wallet?.public_dossiers_limit ?? 1));
           if (used >= limit) {
             await client.query('rollback');
-            return { ok: false, status: 402, body: { error: 'public_dossier_limit_reached' } };
+            return { ok: false, status: 402, body: { error: isPrivate ? 'private_dossier_limit_reached' : 'public_dossier_limit_reached' } };
           }
-          await client.query('update wallets set public_dossiers_used=public_dossiers_used+1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
+          await client.query(`update wallets set ${isPrivate ? 'private_dossiers_used' : 'public_dossiers_used'}=${isPrivate ? 'private_dossiers_used' : 'public_dossiers_used'}+1, expert_used=expert_used+1, updated_at=now() where user_id=$1`, [userId]);
         }
         await client.query(
           'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
@@ -143,7 +145,7 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     await sendMail({
       to: mailTo,
       subject: `POPE Online — Demande EXPERT #${result.requestId.slice(0,8)} (${email})`,
-      text: `Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context||'(non précisé)'}\n\nPJ génération: ${generationAttachment?.result?'OUI':'NON'}\nPJ vault: ${vaultFileIds.length}\nTicket utilisé: ${result.usedTicket?'OUI':'NON'}\n\n→ Répondre via le dashboard admin POPE Online\n\n— POPE Online`,
+      text: `Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\nDomaine: ${domain || '(non précisé)'}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context||'(non précisé)'}\n\nPJ génération: ${generationAttachment?.result?'OUI':'NON'}\nPJ vault: ${vaultFileIds.length}\nTicket utilisé: ${result.usedTicket?'OUI':'NON'}\n\n→ Répondre via le dashboard admin POPE Online\n\n— POPE Online`,
       attachments
     });
 
@@ -160,7 +162,7 @@ router.get('/my-requests', requireAuth, async (req, res) => {
     const userId = req.user.sub;
     const rows = await withClient(async (client) => {
       const r = await client.query(
-        `select id, objective, expectations, context, status,
+        `select id, domain, objective, expectations, context, status,
                 reply_text, reply_by, replied_at, created_at, updated_at
          from expert_requests
          where user_id = $1

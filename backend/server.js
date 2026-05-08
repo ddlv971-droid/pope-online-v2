@@ -75,7 +75,7 @@ app.options('*', cors(corsOptions));
 
 app.use(rateLimit({ windowMs: 60*1000, max: 90, standardHeaders: true, legacyHeaders: false, skip: r => r.method === 'OPTIONS' }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'v5-client-fiche' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'v5.2-full-clean' }));
 
 app.use('/auth',    authRoutes);
 app.use('/ai',      aiRoutes);

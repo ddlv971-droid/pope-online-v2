@@ -1,79 +1,71 @@
-// Dashboard V5 — interactions externes compatibles CSP stricte
+// Dashboard V5.2 — parcours besoin expert, sans redirection doublon
 (function(){
+  'use strict';
   var isPrivate = /dashboard-private\.html$/i.test(location.pathname);
-  var EXPERT_PAGE = isPrivate ? 'expert-private.html' : 'expert.html';
-  var EXPERT_PAGE_MISSION = isPrivate ? 'mission-private.html' : 'mission.html';
   var _domain = '';
   var _besoType = 'conseil';
   function qs(s){ return document.querySelector(s); }
   function qsa(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); }
   function byId(id){ return document.getElementById(id); }
-  function switchTab(name){
-    qsa('.v5-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.tab === name); });
-    qsa('.v5-tab-content').forEach(function(c){ c.id === 'tab-' + name ? c.removeAttribute('hidden') : c.setAttribute('hidden',''); });
-    if(name === 'experts') loadRequests();
-  }
-  function goStep(n){
-    if(n > 1 && !_domain){
-      var g = byId('domainGrid');
-      if(g){ g.style.boxShadow='0 0 0 3px #ef4444'; g.style.borderRadius='14px'; setTimeout(function(){g.style.boxShadow='';g.style.borderRadius='';},1500); }
-      return;
-    }
-    for(var i=1;i<=4;i++){ var p=byId('step-panel-'+i); if(p) p.classList.toggle('active', i===n); }
-    qsa('.v5-step').forEach(function(s){ var sn=parseInt(s.dataset.step,10); s.classList.toggle('active',sn===n); s.classList.toggle('done',sn<n); });
-    if(n===4) updateRecap();
-  }
-  function selectDomain(btn){
-    qsa('.v5-domain-pill').forEach(function(b){ b.classList.remove('selected'); });
-    btn.classList.add('selected');
-    _domain = btn.getAttribute('data-domain') || btn.textContent.trim();
-  }
-  function updateBesoType(){ var r=qs('input[name="besoType"]:checked'); if(r) _besoType = r.value; }
-  function updateRecap(){
-    updateBesoType();
-    var title=(byId('besoInTitle')||{}).value || '—';
-    var quota=(byId('expertLeftN')||{}).textContent || '—';
-    var tLabel=_besoType === 'surmesure' ? '📋 Sur mesure' : '🎯 Conseil Expert (48h)';
-    [['recapDomain',_domain||'—'],['recapTitle',title],['recapType',tLabel],['recapQuota',quota+' Conseil(s) Expert disponible(s)']].forEach(function(x){ var e=byId(x[0]); if(e) e.textContent=x[1]; });
-  }
-  function submitBesoin(){
-    updateBesoType();
-    var title=(byId('besoInTitle')||{}).value || '';
-    var desc=(byId('besoInDesc')||{}).value || '';
-    var msgEl=byId('msgBesoin');
-    if(!title.trim() || !desc.trim()){
-      if(msgEl){ msgEl.textContent="Remplissez l’objet et la description (étape 2)."; msgEl.className='v5-msg err-show'; }
-      return;
-    }
-    if(_besoType === 'surmesure'){ location.href = EXPERT_PAGE_MISSION; return; }
-    try{ sessionStorage.setItem('v5_prefill', JSON.stringify({domain:_domain, subject:title, context:desc})); }catch(e){}
-    location.href = EXPERT_PAGE;
-  }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function getApiBase(){ return String(window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com').replace(/\/$/,''); }
   function getToken(){ return sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || ''; }
-  function loadRequests(){
-    var container=byId('expertRequestsList'); if(!container) return;
-    var headers={'Content-Type':'application/json'}; var token=getToken(); if(token) headers.Authorization='Bearer '+token;
-    fetch(getApiBase() + '/expert/my-requests', {headers:headers, credentials:'include'})
-      .then(function(r){ return r.ok ? r.json() : []; })
-      .then(function(data){ renderRequests(container, Array.isArray(data) ? data : (data.requests || [])); })
-      .catch(function(){ renderRequests(container, []); });
+  async function api(path, opts){
+    opts=opts||{}; var headers=Object.assign({'Content-Type':'application/json'}, opts.headers||{}); var token=getToken(); if(token) headers.Authorization='Bearer '+token;
+    var r=await fetch(getApiBase()+path,{method:opts.method||'GET',headers:headers,credentials:'include',body:opts.body?JSON.stringify(opts.body):undefined});
+    var data=null; try{data=await r.json();}catch(e){}
+    if(!r.ok){ var err=new Error((data&&(data.message||data.detail||data.error))||('HTTP '+r.status)); err.status=r.status; err.data=data; throw err; }
+    return data;
   }
-  function renderRequests(container, reqs){
-    function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    if(!reqs.length){ container.innerHTML='<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l’onglet Mon Besoin.</p><button class="v5-btn-primary" data-tab-target="besoin">🎯 Soumettre un besoin</button></div>'; return; }
-    container.innerHTML=reqs.map(function(r){ var ok=r.reply_text&&r.reply_text.trim(); var date=r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR'):'—'; return '<div class="v5-request-card '+(ok?'replied':'pending')+'"><div class="v5-req-domain">'+esc(r.domain||'Expert')+'</div><div class="v5-req-title">'+esc(r.subject||r.content||'—')+'</div><div class="v5-req-date">'+(ok?'✅ Répondu':'⏳ En attente')+' · '+date+'</div>'+(ok?'<div class="v5-req-reply">'+esc(r.reply_text).substring(0,300)+(r.reply_text.length>300?'…':'')+'</div>':'')+'</div>'; }).join('');
+  function injectNeedAssistant(){
+    var desc=byId('besoInDesc'); if(!desc || byId('needAssistantV52')) return;
+    desc.rows=8;
+    desc.placeholder="Décrivez le contexte, l'objectif, les contraintes, les personnes concernées, l'échéance, les documents disponibles et le résultat attendu…";
+    var wrap=document.createElement('div'); wrap.id='needAssistantV52'; wrap.className='v5-need-assistant';
+    wrap.innerHTML='<style>.v5-need-assistant{margin:14px 0 18px;border:1px solid rgba(0,121,193,.20);border-radius:18px;padding:14px;background:linear-gradient(180deg,#f8fcff,#fff)}.v5-need-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v5-need-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800;color:#16324f}.v5-need-grid input,.v5-need-grid select{border:1px solid #d8e5ef;border-radius:12px;padding:10px;background:#fff}.v5-helpchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.v5-helpchips button{border:1px solid #d6e7f5;background:#fff;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:800;cursor:pointer}.v5-quality-note{font-size:12px;color:#516474;margin:10px 0 0;line-height:1.45}@media(max-width:720px){.v5-need-grid{grid-template-columns:1fr}}</style>'+
+      '<div style="font-weight:900;color:#0b2440;margin-bottom:8px">Assistant de qualification du besoin</div>'+
+      '<div class="v5-need-grid">'+
+      '<label>Échéance souhaitée<input id="needDeadline" placeholder="Ex : avant vendredi / sous 10 jours"></label>'+
+      '<label>Niveau d’urgence<select id="needUrgency"><option value="">À préciser</option><option>Faible</option><option>Normale</option><option>Urgente</option><option>Critique</option></select></label>'+
+      '<label>Livrable attendu<input id="needDeliverable" placeholder="Note, courrier, analyse, plan d’action..."></label>'+
+      '<label>Sensibilité du dossier<select id="needSensitivity"><option value="">À préciser</option><option>Courante</option><option>Sensible</option><option>Très sensible / décision stratégique</option></select></label>'+
+      '<label>Public concerné<input id="needAudience" placeholder="Élu, DG, client, prestataire, service..."></label>'+
+      '<label>Décision attendue<input id="needDecision" placeholder="Valider, arbitrer, sécuriser, répondre..."></label>'+
+      '</div>'+
+      '<div class="v5-helpchips"><button data-add-need="Contexte :\nObjectif recherché :\nContraintes connues :\nÉchéance :\nDocuments disponibles :\nLivrable attendu :">➕ Trame complète</button><button data-add-need="Points de vigilance juridique / financier / organisationnel :">⚠️ Points de vigilance</button><button data-add-need="Résultat idéal attendu de l’expert :">🎯 Résultat attendu</button><button data-add-need="Questions précises à trancher :">❓ Questions à trancher</button></div>'+
+      '<p class="v5-quality-note">Un besoin bien défini permet à l’expert de répondre plus vite, avec moins d’allers-retours et une recommandation plus adaptée.</p>';
+    desc.closest('.v5-field-group').after(wrap);
   }
-  document.addEventListener('click', function(e){
-    var t=e.target.closest('[data-tab-target], .v5-tab, .v5-step, .v5-domain-pill, #btnStep1Next, #btnSend');
-    if(!t) return;
-    if(t.matches('[data-tab-target]')){ e.preventDefault(); switchTab(t.getAttribute('data-tab-target')); return; }
-    if(t.classList.contains('v5-tab')){ e.preventDefault(); switchTab(t.dataset.tab); return; }
-    if(t.classList.contains('v5-step')){ e.preventDefault(); goStep(parseInt(t.dataset.step,10)); return; }
-    if(t.classList.contains('v5-domain-pill')){ e.preventDefault(); selectDomain(t); return; }
-    if(t.id === 'btnStep1Next'){ e.preventDefault(); goStep(2); return; }
-    if(t.id === 'btnSend'){ e.preventDefault(); submitBesoin(); return; }
-  });
-  document.addEventListener('change', function(e){ if(e.target && e.target.name === 'besoType') updateBesoType(); });
+  function buildFullNeed(){
+    var desc=(byId('besoInDesc')||{}).value||'';
+    var extra=[];
+    [['Échéance', 'needDeadline'],['Urgence','needUrgency'],['Livrable attendu','needDeliverable'],['Sensibilité','needSensitivity'],['Public concerné','needAudience'],['Décision attendue','needDecision']].forEach(function(x){var v=(byId(x[1])||{}).value||''; if(v.trim()) extra.push(x[0]+' : '+v.trim());});
+    return [desc.trim(), extra.length?'\nCompléments de qualification :\n- '+extra.join('\n- '):''].join('\n').trim();
+  }
+  function switchTab(name){ qsa('.v5-tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name);}); qsa('.v5-tab-content').forEach(function(c){c.id==='tab-'+name?c.removeAttribute('hidden'):c.setAttribute('hidden','');}); if(name==='experts') loadRequests(); }
+  function goStep(n){ if(n>1&&!_domain){ var g=byId('domainGrid'); if(g){g.style.boxShadow='0 0 0 3px #ef4444';setTimeout(function(){g.style.boxShadow='';},1200);} return; } for(var i=1;i<=4;i++){var p=byId('step-panel-'+i); if(p)p.classList.toggle('active',i===n);} qsa('.v5-step').forEach(function(s){var sn=parseInt(s.dataset.step,10); s.classList.toggle('active',sn===n); s.classList.toggle('done',sn<n);}); if(n===2) injectNeedAssistant(); if(n===4) updateRecap(); }
+  function selectDomain(btn){ qsa('.v5-domain-pill').forEach(function(b){b.classList.remove('selected');}); btn.classList.add('selected'); _domain=btn.getAttribute('data-domain')||btn.textContent.trim(); }
+  function updateBesoType(){ var r=qs('input[name="besoType"]:checked'); if(r)_besoType=r.value; }
+  function updateRecap(){ updateBesoType(); var title=(byId('besoInTitle')||{}).value||'—'; var quota=(byId('expertLeftN')||{}).textContent||'—'; var type=_besoType==='surmesure'?'📋 Accompagnement sur mesure':'🎯 Demande expert qualifiée'; [['recapDomain',_domain||'—'],['recapTitle',title],['recapType',type],['recapQuota',quota+' demande(s) disponible(s)']].forEach(function(x){var e=byId(x[0]); if(e)e.textContent=x[1];}); var panel=byId('step-panel-4'); if(panel && !byId('recapProfessionalV52')){ var card=panel.querySelector('.v5-recap-card'); var pro=document.createElement('div'); pro.id='recapProfessionalV52'; pro.className='v5-recap-card'; pro.style.marginTop='12px'; pro.innerHTML='<div class="v5-recap-row"><span class="v5-recap-key">Statut</span><span class="v5-recap-val">🟡 Brouillon prêt à soumettre</span></div><div class="v5-recap-row"><span class="v5-recap-key">Traitement</span><span class="v5-recap-val">Votre demande créera un dossier de suivi dans “Mes échanges experts”.</span></div><div class="v5-recap-row"><span class="v5-recap-key">Suite</span><span class="v5-recap-val">Un expert POPE Online pourra analyser, répondre et faire évoluer le statut du dossier.</span></div>'; if(card) card.after(pro);} }
+  async function submitBesoin(){
+    updateBesoType(); var title=(byId('besoInTitle')||{}).value||''; var fullNeed=buildFullNeed(); var msg=byId('msgBesoin');
+    if(!title.trim()||!fullNeed.trim()){ if(msg){msg.textContent="Complétez l’objet et la description du besoin."; msg.className='v5-msg err-show';} return; }
+    var btn=byId('btnSend'); if(btn){btn.disabled=true; btn.textContent='Envoi en cours…';}
+    try{
+      var meEmail=''; try{ var me=await api('/auth/me'); meEmail=me.email||me.user?.email||''; }catch(e){}
+      var res=await api('/expert/request',{method:'POST',body:{email:meEmail,domain:_domain,subject:title,objective:title,expectations:fullNeed,context:'Parcours '+(isPrivate?'privé':'public')+' — '+(_besoType==='surmesure'?'accompagnement sur mesure':'demande expert'), type:_besoType}});
+      if(res.wallet) updateWalletIndicators(res.wallet);
+      showSubmitted(res.requestId,res.wallet);
+      await loadRequests();
+    }catch(e){ if(msg){msg.textContent='Erreur d’enregistrement : '+(e.message||e)+'. Vérifiez le quota et la connexion API.'; msg.className='v5-msg err-show';} }
+    finally{ if(btn){btn.disabled=false; btn.textContent='🎯 Soumettre à un expert';} }
+  }
+  function updateWalletIndicators(w){ if(!w)return; var left=byId('expertLeftN'); if(left && w.expert_left!==undefined) left.textContent=String(w.expert_left); }
+  function showSubmitted(id,wallet){ var panel=byId('step-panel-4'); if(!panel)return; panel.innerHTML='<div class="v5-panel-head"><h2>Demande transmise à un expert</h2><p>Votre dossier est maintenant enregistré et suivi dans votre espace.</p></div><div class="v5-recap-card"><div class="v5-recap-row"><span class="v5-recap-key">Statut</span><span class="v5-recap-val">🟢 Reçue par POPE Online</span></div><div class="v5-recap-row"><span class="v5-recap-key">Référence</span><span class="v5-recap-val">'+esc(id||'—')+'</span></div><div class="v5-recap-row"><span class="v5-recap-key">Domaine</span><span class="v5-recap-val">'+esc(_domain||'—')+'</span></div><div class="v5-recap-row"><span class="v5-recap-key">Étape suivante</span><span class="v5-recap-val">Qualification, affectation expert, réponse ou demande de précision.</span></div><div class="v5-recap-row"><span class="v5-recap-key">Demandes restantes</span><span class="v5-recap-val">'+esc(wallet&&wallet.expert_left!==undefined?wallet.expert_left:'—')+'</span></div></div><div class="v5-step-footer"><button class="v5-btn-primary" data-tab-target="experts">Voir mon tableau de suivi →</button></div>'; }
+  function loadRequests(){ var c=byId('expertRequestsList'); if(!c)return; api('/expert/my-requests').then(function(data){ renderRequests(c, Array.isArray(data)?data:(data.requests||[])); }).catch(function(){ renderRequests(c, []); }); }
+  function renderRequests(c,reqs){ if(!reqs.length){c.innerHTML='<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun dossier expert pour le moment.</strong><p>Soumettez un besoin depuis l’onglet Mon Besoin.</p><button class="v5-btn-primary" data-tab-target="besoin">🎯 Soumettre un besoin</button></div>';return;} c.innerHTML=reqs.map(function(r){var ok=r.reply_text&&r.reply_text.trim(); var date=r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR'):'—'; var title=r.objective||r.subject||'Demande expert'; return '<div class="v5-request-card '+(ok?'replied':'pending')+'"><div class="v5-req-domain">'+esc(r.domain||_domain||'Expertise')+'</div><div class="v5-req-title">'+esc(title)+'</div><div class="v5-req-date">'+(ok?'✅ Réponse disponible':'⏳ En cours de traitement')+' · '+date+'</div>'+(ok?'<div class="v5-req-reply">'+esc(r.reply_text).slice(0,300)+(r.reply_text.length>300?'…':'')+'</div>':'<div class="v5-req-reply">Statut : demande reçue. Un expert pourra être assigné depuis le tableau de bord administrateur.</div>')+'</div>';}).join(''); }
+  document.addEventListener('click',function(e){ var add=e.target.closest('[data-add-need]'); if(add){e.preventDefault(); var d=byId('besoInDesc'); if(d){d.value=(d.value?d.value+'\n\n':'')+add.getAttribute('data-add-need'); d.focus();} return;} var t=e.target.closest('[data-tab-target], .v5-tab, .v5-step, .v5-domain-pill, #btnStep1Next, #btnSend'); if(!t)return; if(t.matches('[data-tab-target]')){e.preventDefault();switchTab(t.getAttribute('data-tab-target'));return;} if(t.classList.contains('v5-tab')){e.preventDefault();switchTab(t.dataset.tab);return;} if(t.classList.contains('v5-step')){e.preventDefault();goStep(parseInt(t.dataset.step,10));return;} if(t.classList.contains('v5-domain-pill')){e.preventDefault();selectDomain(t);return;} if(t.id==='btnStep1Next'){e.preventDefault();goStep(2);return;} if(t.id==='btnSend'){e.preventDefault();submitBesoin();return;} });
+  document.addEventListener('change',function(e){ if(e.target&&e.target.name==='besoType') updateBesoType(); });
   window.switchTab=switchTab; window.goStep=goStep; window.selectDomain=selectDomain; window.updateBesoType=updateBesoType; window.submitBesoin=submitBesoin; window.loadRequests=loadRequests;
+  injectNeedAssistant();
 })();
