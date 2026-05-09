@@ -62,7 +62,7 @@
     return g;
   }
   function lastGenId(){ var arr=loadGenerations(); return sessionStorage.getItem('pope_v61_last_gen') || sessionStorage.getItem('pope_v58_last_gen') || sessionStorage.getItem('pope_v54_last_generation_id') || (arr[0] && arr[0].id) || ''; }
-  function dashUrl(step, attach){ return (isPrivate?'dashboard-private.html':'dashboard.html') + '?from=app&step=' + (step||2); }
+  function dashUrl(step, attach){ return (isPrivate?'dashboard-private.html':'dashboard.html') + '?from=app&step=' + (step||2) + (attach?'&attach=last':''); }
   function appUrl(){ return (isPrivate?'app-private.html':'app.html') + '?from=dashboard&step=2'; }
   window.POPEV61State = {KEY:KEY, space:space, isPrivate:isPrivate, load:load, save:save, clear:clear, loadGenerations:loadGenerations, saveGeneration:saveGeneration, lastGenId:lastGenId, dashUrl:dashUrl, appUrl:appUrl};
 })(window);
