@@ -233,7 +233,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 /* PANELS */
 .v5-step-panel{padding:24px;display:none;}
-.v5-step-panel.active{display:block!important;}
+.v5-step-panel.active{display:block;}
 .v5-panel-head{margin-bottom:20px;}
 .v5-panel-head h2{font-size:17px;font-weight:800;color:var(--ink);margin:0 0 5px;}
 .v5-panel-head p{font-size:13px;color:var(--muted);margin:0;}
@@ -252,7 +252,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   font-family:inherit;
 }
 .v5-domain-pill:hover{border-color:var(--blue);color:var(--blue);background:#f0f8ff;}
-.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;transform:scale(1.04);box-shadow:0 2px 12px rgba(37,99,235,.2);transition:transform .12s,box-shadow .12s;}
+.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
 
 /* FIELDS */
 .v5-field-group{margin-bottom:16px;}
@@ -509,10 +509,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <!-- Tabs -->
 <div class="v5-tabs-bar">
-  <button class="v5-tab active" data-tab="besoin" data-v63-tab="besoin"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
-  <button class="v5-tab" data-tab="experts" data-v63-tab="experts"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
-  <button class="v5-tab" data-tab="surmesure" data-v63-tab="surmesure"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
-  <button class="v5-tab" data-tab="espace" data-v63-tab="espace"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
+  <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
+  <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
 </div>
 
 <!-- Alerte trial -->
@@ -563,55 +563,55 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
     <!-- Indicateur d'étapes -->
     <div class="v5-steps">
-      <div class="v5-step active" data-step="1" data-v63-step="1">
+      <div class="v5-step active" data-step="1" onclick="goStep(1)">
         <div class="v5-step-n">1</div>
         <div class="v5-step-label">Domaine</div>
       </div>
       <div class="v5-step-line"></div>
-      <div class="v5-step" data-step="2" data-v63-step="2">
+      <div class="v5-step" data-step="2" onclick="goStep(2)">
         <div class="v5-step-n">2</div>
         <div class="v5-step-label">Besoin</div>
       </div>
       <div class="v5-step-line"></div>
-      <div class="v5-step" data-step="3" data-v63-step="3">
+      <div class="v5-step" data-step="3" onclick="goStep(3)">
         <div class="v5-step-n">3</div>
         <div class="v5-step-label">Documents</div>
       </div>
       <div class="v5-step-line"></div>
-      <div class="v5-step" data-step="4" data-v63-step="4">
+      <div class="v5-step" data-step="4" onclick="goStep(4)">
         <div class="v5-step-n">4</div>
         <div class="v5-step-label">Envoi</div>
       </div>
     </div>
 
     <!-- Étape 1: Domaine -->
-    <div class="v5-step-panel active" id="step-panel-1" style="display:block">
+    <div class="v5-step-panel active" id="step-panel-1">
       <div class="v5-panel-head">
         <h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
         <p>Sélectionnez le domaine le plus proche de votre situation.</p>
       </div>
       <div class="v5-domain-grid" id="domainGrid">
-        <button class="v5-domain-pill" data-domain="Droit et Juridique" data-v63-domain="1">⚖️ Droit &amp; Juridique</button>
-        <button class="v5-domain-pill" data-domain="Marches publics" data-v63-domain="1">🏛️ Marchés publics</button>
-        <button class="v5-domain-pill" data-domain="Travaux et MOA" data-v63-domain="1">🏗️ Travaux &amp; MOA</button>
-        <button class="v5-domain-pill" data-domain="Management et Strategie" data-v63-domain="1">📊 Management &amp; Stratégie</button>
-        <button class="v5-domain-pill" data-domain="Finances et Gestion" data-v63-domain="1">💰 Finances &amp; Gestion</button>
-        <button class="v5-domain-pill" data-domain="Ressources humaines" data-v63-domain="1">👥 Ressources humaines</button>
-        <button class="v5-domain-pill" data-domain="Audit et Diagnostic" data-v63-domain="1">🔍 Audit &amp; Diagnostic</button>
-        <button class="v5-domain-pill" data-domain="Cybersecurite et SI" data-v63-domain="1">🛡️ Cybersécurité &amp; SI</button>
-        <button class="v5-domain-pill" data-domain="Transition ecologique" data-v63-domain="1">🌿 Transition écologique</button>
-        <button class="v5-domain-pill" data-domain="Communication" data-v63-domain="1">📣 Communication</button>
-        <button class="v5-domain-pill" data-domain="Mediation et Conflits" data-v63-domain="1">🤝 Médiation &amp; Conflits</button>
-        <button class="v5-domain-pill" data-domain="Intelligence artificielle" data-v63-domain="1">🤖 Intelligence artificielle</button>
-        <button class="v5-domain-pill" data-domain="Autre domaine" data-v63-domain="1">➕ Autre domaine</button>
+        <button class="v5-domain-pill" data-domain="Droit et Juridique" onclick="selectDomain(this)">⚖️ Droit &amp; Juridique</button>
+        <button class="v5-domain-pill" data-domain="Marches publics" onclick="selectDomain(this)">🏛️ Marchés publics</button>
+        <button class="v5-domain-pill" data-domain="Travaux et MOA" onclick="selectDomain(this)">🏗️ Travaux &amp; MOA</button>
+        <button class="v5-domain-pill" data-domain="Management et Strategie" onclick="selectDomain(this)">📊 Management &amp; Stratégie</button>
+        <button class="v5-domain-pill" data-domain="Finances et Gestion" onclick="selectDomain(this)">💰 Finances &amp; Gestion</button>
+        <button class="v5-domain-pill" data-domain="Ressources humaines" onclick="selectDomain(this)">👥 Ressources humaines</button>
+        <button class="v5-domain-pill" data-domain="Audit et Diagnostic" onclick="selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
+        <button class="v5-domain-pill" data-domain="Cybersecurite et SI" onclick="selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
+        <button class="v5-domain-pill" data-domain="Transition ecologique" onclick="selectDomain(this)">🌿 Transition écologique</button>
+        <button class="v5-domain-pill" data-domain="Communication" onclick="selectDomain(this)">📣 Communication</button>
+        <button class="v5-domain-pill" data-domain="Mediation et Conflits" onclick="selectDomain(this)">🤝 Médiation &amp; Conflits</button>
+        <button class="v5-domain-pill" data-domain="Intelligence artificielle" onclick="selectDomain(this)">🤖 Intelligence artificielle</button>
+        <button class="v5-domain-pill" data-domain="Autre domaine" onclick="selectDomain(this)">➕ Autre domaine</button>
       </div>
       <div class="v5-step-footer">
-        <button class="v5-btn-primary" id="btnStep1Next" data-v63-step="2">Continuer →</button>
+        <button class="v5-btn-primary" id="btnStep1Next" onclick="goStep(2)">Continuer →</button>
       </div>
     </div>
 
     <!-- Étape 2: Description -->
-    <div class="v5-step-panel" id="step-panel-2" hidden>
+    <div class="v5-step-panel" id="step-panel-2">
       <div class="v5-panel-head">
         
       <div class="v58-domain-badge" id="v58DomainBadge">
@@ -620,7 +620,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           <span id="v58DomainName">—</span>
           <span class="v58-domain-badge-sub">Domaine d'expertise sélectionné</span>
         </span>
-        <button class="v58-domain-change" type="button" data-v63-step="1">✕ Changer</button>
+        <button class="v58-domain-change" type="button" onclick="goStep(1)">✕ Changer</button>
       </div>
 
       <div class="v5-field-group">
@@ -632,7 +632,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div id="v58DescAccordion">
 
         <div class="v58-acc is-open" id="v58AccCtx" data-field="descContexte">
-          <button type="button" class="v58-acc-trigger" data-v63-toggle="v58AccCtx">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCtx')">
             <span class="v58-acc-ico">🏢</span>
             <span class="v58-acc-lbl">Contexte de la demande<span class="v58-acc-val" id="prevCtx">Qui vous êtes, votre organisation…</span></span>
             <span class="v58-acc-dot"></span>
@@ -651,7 +651,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         </div>
 
         <div class="v58-acc" id="v58AccObj" data-field="descObjectif">
-          <button type="button" class="v58-acc-trigger" data-v63-toggle="v58AccObj">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccObj')">
             <span class="v58-acc-ico">🎯</span>
             <span class="v58-acc-lbl">Objectif &amp; résultat attendu<span class="v58-acc-val" id="prevObj">Ce que vous attendez de l'expert…</span></span>
             <span class="v58-acc-dot"></span>
@@ -676,7 +676,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         </div>
 
         <div class="v58-acc" id="v58AccCon" data-field="descContraintes">
-          <button type="button" class="v58-acc-trigger" data-v63-toggle="v58AccCon">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCon')">
             <span class="v58-acc-ico">⚠️</span>
             <span class="v58-acc-lbl">Contraintes &amp; risques<span class="v58-acc-val" id="prevCon">Délais, sensibilité, points bloquants…</span></span>
             <span class="v58-acc-dot"></span>
@@ -695,7 +695,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         </div>
 
         <div class="v58-acc" id="v58AccAct" data-field="descActeurs">
-          <button type="button" class="v58-acc-trigger" data-v63-toggle="v58AccAct">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccAct')">
             <span class="v58-acc-ico">👥</span>
             <span class="v58-acc-lbl">Acteurs, échéance &amp; pièces<span class="v58-acc-val" id="prevAct">Qui est impliqué, délais, documents…</span></span>
             <span class="v58-acc-dot"></span>
@@ -726,7 +726,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         </div>
 
         <div class="v58-acc" id="v58AccPlus" data-field="besoInDesc">
-          <button type="button" class="v58-acc-trigger" data-v63-toggle="v58AccPlus">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccPlus')">
             <span class="v58-acc-ico">💬</span>
             <span class="v58-acc-lbl">Précisions complémentaires<span class="v58-acc-val" id="prevPlus">Niveau de détail, historique…</span></span>
             <span class="v58-acc-dot"></span>
@@ -772,17 +772,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           <strong>Préparer un draft IA <span class="v58-draft-badge">Optionnel</span></strong>
           <p>Générez un document de travail avant de soumettre à votre expert. Votre saisie est conservée et pré-remplie.</p>
         </div>
-        <a href="app.html?from=dashboard&step=2" id="lnkDraftTool" class="v58-draft-btn">Accéder à l'outil →</a>
+        <a href="app.html" id="lnkDraftTool" class="v58-draft-btn">Accéder à l'outil →</a>
       </div>
 
       <div class="v5-step-footer">
-        <button class="v5-btn-ghost" data-v63-step="1">← Retour</button>
-        <button class="v5-btn-primary" data-v63-step="3">Continuer →</button>
+        <button class="v5-btn-ghost" onclick="goStep(1)">← Retour</button>
+        <button class="v5-btn-primary" onclick="goStep(3)">Continuer →</button>
       </div>
     </div>
 
     <!-- Étape 3: Documents -->
-    <div class="v5-step-panel" id="step-panel-3" hidden>
+    <div class="v5-step-panel" id="step-panel-3">
       <div class="v5-panel-head">
         <h2>📎 Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
         <p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
@@ -796,7 +796,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
             <strong style="color:#14532d">Joindre un draft IA préparé</strong>
             <p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici et peut être joint à votre demande expert.</p>
           </div>
-          <a href="app.html?from=dashboard&step=2" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:12px;padding:7px 14px;background:#16a34a">Créer un draft →</a>
+          <a href="app.html" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:12px;padding:7px 14px;background:#16a34a">Créer un draft →</a>
         </div>
         <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0;border-color:#bbf7d0">
           <option value="">Ne pas joindre de draft préparé</option>
@@ -804,11 +804,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <div id="v59DraftStatus" style="display:none;margin-top:8px;font-size:12px;color:#166534;font-weight:600">
           ✅ Draft disponible et sélectionné
         </div>
-      </div>
-
-      <!-- v60: Draft cards liste -->
-      <div id="v60DraftCards" style="margin-top:4px">
-        <div style="color:#94a3b8;font-size:13px;padding:8px 0">Aucun draft généré.</div>
       </div>
 
       <!-- Pièces du dépôt sécurisé -->
@@ -830,13 +825,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
 
       <div class="v5-step-footer">
-        <button class="v5-btn-ghost" data-v63-step="2">← Retour</button>
-        <button class="v5-btn-primary" data-v63-step="4">Continuer →</button>
+        <button class="v5-btn-ghost" onclick="goStep(2)">← Retour</button>
+        <button class="v5-btn-primary" onclick="goStep(4)">Continuer →</button>
       </div>
     </div>
 
     <!-- Étape 4: Envoi -->
-    <div class="v5-step-panel" id="step-panel-4" hidden>
+    <div class="v5-step-panel" id="step-panel-4">
       <div class="v5-panel-head">
         <h2>Récapitulatif de votre demande</h2>
         <p>Vérifiez avant d'envoyer à votre expert.</p>
@@ -849,8 +844,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
       <div class="v5-msg" id="msgBesoin"></div>
       <div class="v5-step-footer">
-        <button class="v5-btn-ghost" data-v63-step="3">← Retour</button>
-        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend" data-v63-submit="1">🎯 Soumettre à un expert</button>
+        <button class="v5-btn-ghost" onclick="goStep(3)">← Retour</button>
+        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend" onclick="submitBesoin()">🎯 Soumettre à un expert</button>
       </div>
     </div>
 
@@ -877,8 +872,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v5-empty-state">
       <div class="v5-empty-ico">👤</div>
       <strong>Aucun échange expert pour le moment.</strong>
-      <p>Soumettez votre premier besoin depuis l’onglet Mon Besoin.</p>
-      <button class="v5-btn-primary" data-v63-tab="besoin">🎯 Soumettre un besoin</button>
+      <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
+      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
     </div>
   </div>
 </div>
@@ -1206,7 +1201,7 @@ function loadRequests() {
 function renderRequests(container, reqs) {
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l’onglet Mon Besoin.</p><button class="v5-btn-primary" data-v63-tab="besoin">🎯 Soumettre un besoin</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
     return;
   }
   container.innerHTML = reqs.map(function(r){
@@ -1231,19 +1226,17 @@ window.loadRequests   = loadRequests;
 
 window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain;window.updateBesoType=updateBesoType;window.submitBesoin=submitBesoin;window.loadRequests=loadRequests;
 </script>
-<!-- V63: moteur dashboard externe robuste sans onclick inline -->
+<script type="module" src="./dashboard-v5.js"></script>
 <script>
-// v60: Immediate fallbacks before state scripts load
+// v59: v58Toggle defined inline for immediate availability
 function v58Toggle(id){
   var acc=document.getElementById(id);
   if(!acc)return;
   acc.classList.toggle('is-open');
 }
+// v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
-function restoreDashboardState(){ return false; }
 </script>
-<script src="./pope-state.js"></script>
-<script src="./pope-state-v61.js"></script>
-<script src="./dashboard-v63.js"></script>
+<script src="./dashboard-v58.js"></script>
 </body>
 </html>

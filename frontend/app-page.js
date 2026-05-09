@@ -1005,28 +1005,15 @@ async function callAI() {
     setTicketsBadge(data.wallet);
     const _autoRecord = { usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: resultText, dossierAnalysis: data.dossierAnalysis || null };
     rememberLastGeneration(_autoRecord);
-    // v60: save generation via POPEState (canonical) + legacy fallback
+    // v56-fix8: auto-sync generation to pope_v54_generations key for dashboard
     try {
-      const _entry = {
-        id: 'gen_'+Date.now(),
-        title: currentUsecaseLabel(),
-        usecaseLabel: currentUsecaseLabel(),
-        createdAt: new Date().toISOString(),
-        result: resultText,
-        prompt: {context:payload.context,objective:payload.objective,facts:payload.facts}
-      };
-      // Use POPEState if available
-      if (window.POPEState) {
-        window.POPEState.saveGeneration(_entry);
-      } else {
-        // Legacy fallback
-        const _genKey = 'pope_v54_generations';
-        let _gens = []; try { _gens = JSON.parse(localStorage.getItem(_genKey)||'[]'); } catch(e) {}
-        _gens.unshift(_entry); if(_gens.length>30) _gens=_gens.slice(0,30);
-        localStorage.setItem(_genKey, JSON.stringify(_gens));
-        sessionStorage.setItem('pope_v54_last_generation_id', _entry.id);
-      }
-      // Always dispatch event
+      const _genKey = 'pope_v54_generations';
+      let _gens = []; try { _gens = JSON.parse(localStorage.getItem(_genKey)||'[]'); } catch(e) {}
+      const _entry = { id: 'gen_'+Date.now(), title: currentUsecaseLabel(), usecaseLabel: currentUsecaseLabel(), createdAt: new Date().toISOString(), result: resultText, prompt: {context:payload.context,objective:payload.objective,facts:payload.facts} };
+      _gens.unshift(_entry); if(_gens.length>20) _gens=_gens.slice(0,20);
+      localStorage.setItem(_genKey, JSON.stringify(_gens));
+      sessionStorage.setItem('pope_v54_last_generation_id', _entry.id);
+      // Dispatch event so back-button updates
       try { window.dispatchEvent(new CustomEvent('pope_generation_done', {detail:_entry})); } catch(e) {}
     } catch(e) {}
     persistFormState();
