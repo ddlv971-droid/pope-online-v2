@@ -4,336 +4,926 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Tableau de bord privé</title>
-<link href="./assets/favicon-BgPk1Min.png" rel="icon" type="image/png"/>
-
-<style id="v60-topbar">
-html body header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;width:100%!important;}
-.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;}
-.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;}
-.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;}
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style id="v40-topbar-fix">
+/* ── Anti-conflits topbar V40 ── */
+html body header.v40-topbar{
+  position:sticky!important;top:0!important;z-index:200!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  display:flex!important;align-items:center!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;
+  background:rgba(7,22,42,.97)!important;
+  backdrop-filter:blur(16px)!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  overflow:visible!important;
+}
+html body header.v40-topbar .v40-topbar-inner{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;height:58px!important;
+  width:100%!important;padding:0 20px!important;gap:10px!important;
+}
+html body header.v40-topbar .v40-topbar-brand{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;gap:9px!important;
+  text-decoration:none!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand img{
+  height:28px!important;width:auto!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:baseline!important;gap:5px!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong,
+html body header.v40-topbar .v40-topbar-brand-text small{
+  white-space:nowrap!important;display:inline!important;width:auto!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong{
+  font-size:14px!important;font-weight:800!important;color:#fff!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text small{
+  font-size:11px!important;color:rgba(255,255,255,.4)!important;
+}
+html body header.v40-topbar .v40-topbar-nav{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+}
+html body header.v40-topbar #v40Burger{
+  display:none;flex-direction:column!important;gap:5px!important;
+  margin-left:auto!important;flex-shrink:0!important;
+  background:none!important;border:none!important;
+  cursor:pointer!important;padding:6px!important;width:auto!important;
+}
+html body header.v40-topbar #v40Burger span{
+  display:block!important;width:22px!important;height:2px!important;
+  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
+  transition:transform .25s ease,opacity .25s ease!important;
+}
+#v40MobileMenu{
+  display:none;position:fixed!important;
+  top:58px!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:201!important;
+  background:rgba(7,22,42,.98)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  padding:20px!important;overflow-y:auto!important;
+  flex-direction:column!important;gap:4px!important;
+}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:14px 18px!important;border-radius:12px!important;
+  font-size:15px!important;font-weight:600!important;
+  color:rgba(255,255,255,.85)!important;
+  text-decoration:none!important;background:none!important;
+  border:none!important;cursor:pointer!important;
+  width:100%!important;
+}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{
+  background:rgba(255,255,255,.07)!important;color:#fff!important;
+}
+.v40-mobile-menu-sep{
+  height:1px!important;background:rgba(255,255,255,.08)!important;
+  margin:8px 0!important;
+}
+@media(max-width:860px){
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
+  html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+</style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
 .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
-.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;}
-.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
 .v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
 .v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
 .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
-.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;}
-.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;margin-left:auto!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
 .v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
 .v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
 .v40-mobile-menu.open{display:flex!important;}
-.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;width:100%;text-align:left;}
-.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
 .v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
-@media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
-</style>
-<style id="v60-styles">
-*{box-sizing:border-box;}
-:root{--pope-blue:#0079C1;--pope-cyan:#03A0D7;--ink:#07162A;--muted:#35506B;--muted2:#5C748E;--bg:#F6FAFE;--surface:#FFFFFF;--line:rgba(7,22,42,.1);--line2:rgba(7,22,42,.14);--radius:18px;--shadow:0 20px 60px rgba(7,22,42,.12);--shadow-soft:0 12px 34px rgba(7,22,42,.1);}
-body{margin:0;padding:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink);background:radial-gradient(900px 600px at 10% -10%,rgba(3,160,215,.18),transparent 60%),radial-gradient(900px 600px at 90% 0%,rgba(0,121,193,.16),transparent 60%),linear-gradient(180deg,var(--bg),#ffffff 55%,#ffffff 100%);}
-a{color:inherit;}
-.v60-stepper{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:58px;z-index:100;}
-.v60-stepper-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;height:52px;gap:0;}
-.v60-step{display:flex;align-items:center;gap:8px;padding:0 16px;height:52px;font-size:13px;font-weight:600;color:var(--muted2);cursor:pointer;border:none;background:none;position:relative;flex-shrink:0;transition:.15s;}
-.v60-step:after{content:"›";position:absolute;right:-2px;color:rgba(7,22,42,.2);font-size:18px;}
-.v60-step:last-child:after{display:none;}
-.v60-step.active{color:var(--pope-blue);font-weight:700;}
-.v60-step.active:before{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pope-blue),var(--pope-cyan));border-radius:3px 3px 0 0;}
-.v60-step.done{color:var(--pope-blue);opacity:.7;}
-.v60-step-num{width:22px;height:22px;border-radius:50%;background:rgba(7,22,42,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
-.v60-step.active .v60-step-num{background:linear-gradient(135deg,var(--pope-blue),var(--pope-cyan));color:#fff;}
-.v60-step.done .v60-step-num{background:var(--pope-blue);color:#fff;}
-.v60-domain-badge-wrap{margin-left:auto;display:flex;align-items:center;}
-.v60-domain-badge{display:none;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(0,121,193,.12),rgba(3,160,215,.08));border:1px solid rgba(0,121,193,.2);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--pope-blue);cursor:pointer;white-space:nowrap;}
-.v60-domain-badge:hover{background:rgba(0,121,193,.18);}
-.v60-hero{background:linear-gradient(135deg,#07162A,#0b3060,#0079c1);padding:24px 20px;color:#fff;}
-.v60-hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
-.v60-hero-text h1{margin:0 0 4px;font-size:clamp(20px,2.5vw,28px);font-weight:800;}
-.v60-hero-text p{margin:0;color:rgba(255,255,255,.7);font-size:14px;}
-.v60-hero-stats{display:flex;gap:12px;flex-shrink:0;}
-.v60-stat-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 16px;text-align:center;min-width:90px;}
-.v60-stat-pill .n{font-size:24px;font-weight:800;color:#fff;line-height:1;}
-.v60-stat-pill .l{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;}
-.v60-trial-wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
-.v60-trial-alert{background:linear-gradient(to right,#fffbeb,#fff8f0);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-top:14px;}
-.v60-trial-alert.expired{background:linear-gradient(to right,#fef2f2,#fff0f0);border-color:#fecaca;}
-.v60-main{max-width:1200px;margin:0 auto;padding:28px 20px 60px;}
-.v60-panel{display:none;}
-.v60-section-head{margin-bottom:20px;}
-.v60-section-head h2{margin:0 0 6px;font-size:24px;font-weight:800;color:var(--ink);}
-.v60-section-head p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
-.v60-domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
-.v60-domain-pill{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 16px;border-radius:16px;border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:.2s;box-shadow:var(--shadow-soft);}
-.v60-domain-pill:hover{border-color:var(--pope-blue);background:#f0f7fc;transform:translateY(-2px);}
-.v60-domain-pill.selected{border-color:var(--pope-blue);background:linear-gradient(135deg,#eef7ff,#f5fbff);box-shadow:0 8px 24px rgba(0,121,193,.18);}
-.v60-pill-icon{font-size:28px;}
-.v60-pill-label{font-size:13px;font-weight:700;color:var(--ink);text-align:center;}
-.v60-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-soft);padding:20px;margin-bottom:16px;}
-.v60-card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
-.v60-card-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:#eef7ff;}
-.v60-card-head h3{margin:0 0 2px;font-size:15px;font-weight:700;}
-.v60-card-head p{margin:0;font-size:12px;color:var(--muted);}
-.v60-field{margin-bottom:14px;}
-.v60-field label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
-.v60-field input,.v60-field textarea,.v60-field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--ink);background:#fafcff;outline:none;font-family:inherit;transition:.15s;}
-.v60-field input:focus,.v60-field textarea:focus,.v60-field select:focus{border-color:var(--pope-blue);box-shadow:0 0 0 3px rgba(0,121,193,.12);}
-.v60-field textarea{min-height:90px;resize:vertical;}
-.v60-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.v60-radio-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
-.v60-radio-opt{display:flex;align-items:center;gap:8px;padding:9px 16px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
-.v60-radio-opt:has(input:checked){border-color:var(--pope-blue);background:#eef7ff;color:var(--pope-blue);}
-.v60-radio-opt input{accent-color:var(--pope-blue);}
-.v60-acc{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;}
-.v60-acc-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;background:#fafcff;user-select:none;}
-.v60-acc-head:hover{background:#f0f7fc;}
-.v60-acc-arrow{transition:transform .2s;font-size:12px;color:var(--muted2);}
-.v60-acc.open .v60-acc-arrow{transform:rotate(180deg);}
-.v60-acc-body{display:none;padding:16px 18px;border-top:1px solid var(--line);}
-.v60-acc.open .v60-acc-body{display:block;}
-.v60-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;border:none;cursor:pointer;text-decoration:none;transition:.2s;}
-.v60-btn-primary{background:linear-gradient(135deg,var(--pope-blue),var(--pope-cyan));color:#fff;box-shadow:0 6px 18px rgba(0,121,193,.3);}
-.v60-btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,121,193,.4);}
-.v60-btn-secondary{background:#f0f7fc;color:var(--pope-blue);border:1.5px solid rgba(0,121,193,.2);}
-.v60-btn-secondary:hover{background:#dbeeff;}
-.v60-btn-ghost{background:rgba(7,22,42,.05);color:var(--ink);border:1px solid var(--line);}
-.v60-btn-ghost:hover{background:rgba(7,22,42,.1);}
-.v60-btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 6px 18px rgba(5,150,105,.28);}
-.v60-btn-success:hover{transform:translateY(-1px);}
-.v60-btn-lg{padding:14px 28px;font-size:16px;border-radius:14px;}
-.v60-btn-sm{padding:6px 12px;font-size:12px;border-radius:8px;}
-.v60-btn-full{width:100%;}
-.v60-btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important;}
-.v60-nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap;}
-.v60-nav-left{display:flex;gap:10px;}
-.v60-nav-right{display:flex;gap:10px;align-items:center;}
-.v60-docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.v60-draft-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;transition:.2s;}
-.v60-draft-card:hover{border-color:var(--pope-blue);}
-.v60-draft-card.v60-draft-attached{border-color:var(--pope-cyan);background:linear-gradient(135deg,#f0fbff,#fff);}
-.v60-draft-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
-.v60-draft-title{font-size:14px;font-weight:700;display:block;}
-.v60-draft-date{font-size:11px;color:var(--muted2);display:block;margin-top:2px;}
-.v60-draft-preview{font-size:13px;color:var(--muted);line-height:1.5;margin:0;}
-.v60-vault-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fafcff;margin-bottom:8px;}
-.v60-vault-icon{font-size:20px;flex-shrink:0;}
-.v60-vault-info strong{display:block;font-size:13px;font-weight:700;}
-.v60-vault-info span{font-size:11px;color:var(--muted2);}
-.v60-expert-summary{background:linear-gradient(135deg,#f0f7fc,#eef7ff);border:1.5px solid rgba(0,121,193,.2);border-radius:16px;padding:18px;margin-bottom:18px;font-size:14px;line-height:1.8;}
-.v60-expert-guarantee{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
-.v60-expert-guarantee-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;}
-.v60-expert-guarantee-item .ico{font-size:24px;display:block;margin-bottom:6px;}
-.v60-expert-guarantee-item strong{font-size:13px;display:block;}
-.v60-expert-guarantee-item p{font-size:12px;color:var(--muted);margin:4px 0 0;}
-.v60-attached-badge{display:inline-flex;align-items:center;gap:8px;background:#eef7ff;border:1px solid rgba(0,121,193,.2);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--pope-blue);margin-bottom:12px;}
-.v60-empty-state{text-align:center;padding:24px;color:var(--muted);}
-.v60-empty-state .ico{font-size:30px;display:block;margin-bottom:8px;}
-.v60-empty-state p{margin:0;font-size:14px;line-height:1.6;}
-.v60-link{color:var(--pope-blue);font-weight:700;text-decoration:none;}
-.v60-link:hover{text-decoration:underline;}
-.v60-muted{color:var(--muted);font-size:13px;}
-.v60-mt8{margin-top:8px;}
-.v60-mt16{margin-top:16px;}
-.v60-msg-ok{color:#059669;font-size:13px;font-weight:700;padding:8px 14px;background:#f0fdf4;border-radius:10px;}
-.v60-msg-err{color:#dc2626;font-size:13px;font-weight:700;padding:8px 14px;background:#fef2f2;border-radius:10px;}
-.v60-toast{position:fixed;right:18px;bottom:18px;z-index:9999;background:#07162aeb;color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;box-shadow:0 12px 36px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;max-width:360px;pointer-events:none;}
-.v60-toast-show{opacity:1;transform:translateY(0);}
-.v60-toast-ok{background:#065f46eb;}
-.v60-toast-err{background:#991b1beb;}
-.v60-toast-warn{background:#92400eeb;}
-.v60-quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:0;}
 @media(max-width:860px){
-  .v60-docs-grid,.v60-expert-guarantee,.v60-grid-2{grid-template-columns:1fr;}
-  .v60-hero-stats{width:100%;justify-content:center;}
-  .v60-hero-inner{flex-direction:column;align-items:flex-start;}
-  .v60-stepper-inner{overflow-x:auto;padding:0 12px;}
-  .v60-step{padding:0 10px;font-size:12px;}
-  .v60-nav-row{flex-direction:column;align-items:stretch;}
-  .v60-nav-left,.v60-nav-right{justify-content:center;}
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
 }
 </style>
 
-<script type="module" crossorigin src="./assets/dashboard-private-MysN4WEL.js"></script>
-<link rel="modulepreload" crossorigin href="./assets/shared-QmHk-S3D.js">
-<link rel="modulepreload" crossorigin href="./assets/cgu-DGo0aPUa.js">
-<link rel="modulepreload" crossorigin href="./assets/protected-topbar-BQPjv2xD.js">
-<link rel="stylesheet" crossorigin href="./assets/cgu-DhnjAcwr.css">
+<style id="v5-workspace-css">
+:root{
+  --navy:#07162a;--blue:#0079c1;--cyan:#03a0d7;--pink:#c22e83;
+  --green:#16a34a;--red:#dc2626;--orange:#d97706;
+  --ink:#0d1e30;--muted:#566477;--border:rgba(13,30,48,.1);
+  --bg:#f8fafc;--bg2:#f1f5f9;--white:#fff;
+  --r:16px;--sh:0 2px 12px rgba(13,30,48,.08);
+}
+.v5-workspace{background:var(--bg);min-height:100vh;padding-bottom:60px;}
+
+/* TABS */
+.v5-tabs-bar{
+  background:var(--white);border-bottom:2px solid var(--border);
+  display:flex;align-items:stretch;padding:0 24px;gap:2px;
+  position:sticky;top:58px;z-index:90;
+  box-shadow:0 2px 8px rgba(13,30,48,.06);
+  overflow-x:auto;
+}
+.v5-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:14px 16px;border:none;background:none;
+  cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--muted);border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:.2s;white-space:nowrap;
+  font-family:inherit;
+}
+.v5-tab:hover{color:var(--blue);}
+.v5-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.v5-tab-ico{font-size:15px;}
+
+/* TAB CONTENT */
+.v5-tab-content{padding:24px;max-width:920px;margin:0 auto;}
+.v5-tab-content[hidden]{display:none!important;}
+
+/* ALERTS */
+.v5-trial-alert{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(to right,#fffbeb,#fff8f0);
+  border:1.5px solid #fde68a;border-radius:14px;
+  padding:14px 18px;margin:12px 24px 0;
+}
+.v5-trial-alert strong{font-size:14px;color:var(--ink);}
+.v5-trial-alert div{font-size:13px;color:var(--muted);margin-top:2px;}
+.v5-trial-cta{
+  background:var(--blue);color:#fff;border-radius:10px;
+  padding:7px 14px;font-size:13px;font-weight:700;
+  text-decoration:none;white-space:nowrap;margin-left:auto;
+}
+.v5-expired-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(7,22,42,.9);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.v5-expired-card{
+  background:#fff;border-radius:22px;padding:36px;
+  max-width:460px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.v5-expired-card h2{font-size:20px;font-weight:800;color:var(--ink);margin:0 0 10px;}
+.v5-expired-card p{font-size:14px;color:var(--muted);line-height:1.65;margin:0 0 24px;}
+
+/* HERO BAR */
+.v5-hero-bar{
+  display:flex;align-items:flex-start;gap:20px;
+  background:linear-gradient(135deg,var(--navy),#0d3460);
+  border-radius:18px;padding:24px 28px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.v5-hero-bar::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(0,121,193,.12);pointer-events:none;
+}
+.v5-hero-text{flex:1;}
+.v5-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px;}
+.v5-hero-title{font-size:clamp(20px,2.5vw,26px);font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.02em;}
+.v5-hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin:0;}
+.v5-kpi-row{display:flex;gap:12px;flex-shrink:0;}
+.v5-kpi{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:14px 16px;text-align:center;min-width:76px;
+}
+.v5-kpi-n{font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;}
+.v5-kpi-l{font-size:10px;color:rgba(255,255,255,.5);line-height:1.4;}
+
+/* JOURNEY */
+.v5-journey{background:var(--white);border-radius:18px;box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;}
+
+/* STEPS NAV */
+.v5-steps{
+  display:flex;align-items:center;
+  padding:16px 24px;background:var(--bg2);
+  border-bottom:1px solid var(--border);gap:0;
+}
+.v5-step{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;padding:0 2px;
+}
+.v5-step-n{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.08);color:var(--muted);
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.v5-step.active .v5-step-n{background:var(--blue);color:#fff;}
+.v5-step.done .v5-step-n{background:var(--green);color:#fff;}
+.v5-step-label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.v5-step.active .v5-step-label{color:var(--blue);}
+.v5-step-line{flex:1;height:2px;background:var(--border);margin:0 6px;margin-bottom:15px;}
+
+/* PANELS */
+.v5-step-panel{padding:24px;display:none;}
+.v5-step-panel.active{display:block;}
+.v5-panel-head{margin-bottom:20px;}
+.v5-panel-head h2{font-size:17px;font-weight:800;color:var(--ink);margin:0 0 5px;}
+.v5-panel-head p{font-size:13px;color:var(--muted);margin:0;}
+
+/* DOMAIN GRID */
+.v5-domain-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:10px;margin-bottom:20px;
+}
+.v5-domain-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 14px;border-radius:12px;
+  border:2px solid var(--border);background:var(--white);
+  font-size:13px;font-weight:600;color:var(--ink);
+  cursor:pointer;text-align:left;transition:.15s;
+  font-family:inherit;
+}
+.v5-domain-pill:hover{border-color:var(--blue);color:var(--blue);background:#f0f8ff;}
+.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
+
+/* FIELDS */
+.v5-field-group{margin-bottom:16px;}
+.v5-label{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.v5-req{color:var(--blue);}
+.v5-input{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;color:var(--ink);
+  background:var(--white);transition:.15s;box-sizing:border-box;
+}
+.v5-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+.v5-textarea{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;color:var(--ink);
+  background:var(--white);resize:vertical;min-height:110px;
+  transition:.15s;box-sizing:border-box;font-family:inherit;
+}
+.v5-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+
+/* IA BLOCK */
+.v5-ia-block{
+  background:#f0f8ff;border:1.5px solid rgba(0,121,193,.2);
+  border-radius:13px;padding:16px;margin-bottom:16px;
+}
+.v5-ia-block strong{font-size:13px;color:var(--ink);}
+.v5-ia-badge{font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:99px;font-weight:600;margin-left:8px;}
+.v5-ia-block p{font-size:12px;color:var(--muted);margin:4px 0 10px;}
+
+/* CHOICE */
+.v5-choice-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v5-choice{
+  display:flex;align-items:flex-start;gap:10px;
+  border:2px solid var(--border);border-radius:12px;
+  padding:13px 14px;cursor:pointer;transition:.15s;
+}
+.v5-choice:has(input:checked){border-color:var(--blue);background:#f0f8ff;}
+.v5-choice input{margin-top:2px;flex-shrink:0;accent-color:var(--blue);}
+.v5-choice strong{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.v5-choice span{font-size:11px;color:var(--muted);}
+
+/* ATTACH */
+.v5-attach-box{border:1.5px solid var(--border);border-radius:13px;padding:16px;margin-bottom:12px;}
+.v5-attach-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.v5-attach-ico{font-size:20px;width:40px;height:40px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.v5-attach-head strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.v5-attach-head p{font-size:12px;color:var(--muted);margin:0;}
+
+/* RECAP */
+.v5-recap-card{border:1.5px solid var(--border);border-radius:13px;padding:18px;margin-bottom:18px;}
+.v5-recap-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);align-items:baseline;}
+.v5-recap-row:last-child{border-bottom:none;}
+.v5-recap-key{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:90px;flex-shrink:0;}
+.v5-recap-val{font-size:13px;color:var(--ink);font-weight:500;}
+
+/* STEP FOOTER */
+.v5-step-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+
+/* BUTTONS */
+.v5-btn-primary{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:11px;padding:11px 20px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  text-decoration:none;transition:.2s;font-family:inherit;
+  box-shadow:0 4px 12px rgba(0,121,193,.28);
+}
+.v5-btn-primary:hover{background:#0068a8;transform:translateY(-1px);}
+.v5-btn-primary-send{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  padding:13px 26px;font-size:14px;
+}
+.v5-btn-ghost{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:var(--muted);
+  border:1.5px solid var(--border);border-radius:11px;
+  padding:11px 18px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
+}
+.v5-btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
+.v5-btn-ghost-sm{
+  display:inline-flex;align-items:center;gap:5px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;
+  padding:5px 10px;font-size:11px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
+}
+
+
+/* MESSAGES */
+.v5-msg{font-size:13px;padding:10px 14px;border-radius:9px;display:none;margin-bottom:12px;}
+.v5-msg.err-show{background:#fee2e2;color:#991b1b;display:block;}
+.v5-msg.ok-show{background:#d1fae5;color:#065f46;display:block;}
+
+/* SECTION HEAD */
+.v5-section-head{margin-bottom:20px;}
+.v5-section-head h2{font-size:19px;font-weight:800;color:var(--ink);margin:0 0 4px;}
+.v5-section-head p{font-size:13px;color:var(--muted);margin:0;}
+
+/* REQUESTS */
+.v5-requests-list{display:flex;flex-direction:column;gap:10px;}
+.v5-request-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+}
+.v5-request-card.replied{border-left:4px solid var(--green);}
+.v5-request-card.pending{border-left:4px solid var(--orange);}
+.v5-req-domain{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);background:#e0f2fe;padding:2px 7px;border-radius:5px;display:inline-block;}
+.v5-req-title{font-size:13px;font-weight:700;color:var(--ink);margin:5px 0 3px;}
+.v5-req-date{font-size:11px;color:var(--muted);}
+.v5-req-reply{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-top:8px;font-size:12px;color:#065f46;line-height:1.6;}
+
+/* EMPTY STATE */
+.v5-empty-state{
+  text-align:center;padding:44px 24px;
+  border:2px dashed var(--border);border-radius:18px;background:var(--white);
+}
+.v5-empty-ico{font-size:38px;margin-bottom:10px;}
+.v5-empty-state strong{display:block;font-size:15px;color:var(--ink);margin-bottom:6px;}
+.v5-empty-state p{font-size:13px;color:var(--muted);margin:0 0 18px;}
+
+/* SUR MESURE */
+.v5-sm-intro{display:flex;flex-direction:column;gap:14px;}
+.v5-sm-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;display:flex;gap:14px;align-items:flex-start;}
+.v5-sm-ico{font-size:26px;flex-shrink:0;}
+.v5-sm-card strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.v5-sm-card p{font-size:12px;color:var(--muted);margin:0 0 6px;line-height:1.6;}
+.v5-sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v5-sm-col{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.v5-sm-col-head{padding:10px 14px;font-size:12px;font-weight:700;}
+.v5-sm-col-head.green{background:#d1fae5;color:#065f46;}
+.v5-sm-col-head.blue{background:#dbeafe;color:#1e40af;}
+.v5-sm-col ul{list-style:none;margin:0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+.v5-sm-col ul li{font-size:12px;color:var(--muted);padding-left:14px;position:relative;}
+.v5-sm-col ul li::before{content:'•';position:absolute;left:0;color:var(--blue);}
+
+/* ESPACE GRID */
+.v5-espace-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.v5-espace-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:20px 16px;text-align:center;
+  text-decoration:none;transition:.2s;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+}
+.v5-espace-card:hover{border-color:var(--blue);box-shadow:0 4px 18px rgba(0,121,193,.1);transform:translateY(-2px);}
+.v5-espace-ico{font-size:26px;}
+.v5-espace-card strong{font-size:13px;font-weight:700;color:var(--ink);}
+.v5-espace-card span{font-size:11px;color:var(--muted);text-align:center;}
+
+/* QUICK LINKS */
+.v5-quick-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px;}
+.v5-quick{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:6px 11px;font-size:11px;font-weight:600;
+  color:var(--muted);text-decoration:none;transition:.15s;
+}
+.v5-quick:hover{color:var(--blue);border-color:var(--blue);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .v5-tabs-bar{padding:0 8px;}
+  .v5-tab{padding:12px 10px;font-size:11px;gap:4px;}
+  .v5-tab-ico{font-size:14px;}
+  .v5-tab-content{padding:16px;}
+  .v5-hero-bar{flex-direction:column;gap:14px;padding:18px;}
+  .v5-kpi-row{width:100%;}
+  .v5-kpi{flex:1;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .v5-domain-pill{font-size:12px;padding:10px 11px;}
+  .v5-choice-row{grid-template-columns:1fr;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+  .v5-sm-grid{grid-template-columns:1fr;}
+  .v5-steps{padding:12px 16px;}
+  .v5-step-label{font-size:9px;}
+  .v5-step-panel{padding:18px 14px;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* v56 — Description structurée */
+.v56-desc-block{border:1.5px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;background:var(--bg2);}
+.v56-desc-header{margin-bottom:14px;}
+.v56-desc-title{font-size:14px;font-weight:800;color:var(--ink);}
+.v56-desc-hint{display:block;font-size:11px;color:var(--muted);margin-top:3px;}
+.v56-desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v56-desc-field{display:flex;flex-direction:column;gap:4px;}
+.v56-desc-full{grid-column:1/-1;}
+.v56-field-label{font-size:12px;font-weight:700;color:var(--ink);}
+.v56-field-input{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;resize:vertical;font-family:inherit;box-sizing:border-box;}
+.v56-field-input-sm{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;font-family:inherit;box-sizing:border-box;}
+.v56-field-input:focus,.v56-field-input-sm:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px #dbeafe;}
+/* v56 — Nature du traitement */
+.v56-traitement-block{margin:16px 0;}
+.v56-traitement-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+.v56-traitement-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v56-traitement-card{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;background:#fff;transition:border-color .15s,background .15s;}
+.v56-traitement-card:has(input:checked){border-color:var(--blue);background:#f0f8ff;}
+.v56-traitement-card input{margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--blue);}
+.v56-traitement-content strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.v56-traitement-content span{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+/* v56 — Bloc draft */
+.v56-draft-block{display:flex;align-items:center;gap:14px;border:1.5px solid #d0e8ff;border-radius:12px;padding:14px 16px;margin:16px 0;background:#f5f9ff;}
+.v56-draft-icon{font-size:22px;flex-shrink:0;}
+.v56-draft-body{flex:1;}
+.v56-draft-body strong{font-size:13px;font-weight:800;color:var(--ink);}
+.v56-draft-body p{font-size:12px;color:var(--muted);margin:3px 0 0;line-height:1.4;}
+.v56-draft-btn{background:var(--blue);color:#fff;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;}
+.v56-draft-btn:hover{background:#0a4fa0;}
+@media(max-width:720px){.v56-desc-grid{grid-template-columns:1fr;}.v56-traitement-grid{grid-template-columns:1fr;}.v56-draft-block{flex-wrap:wrap;}}
+</style>
+<link rel="stylesheet" href="v58-styles.css">
 </head>
 <body data-logout-target="private.html" class="bg po-v14-dashboard">
-
-<!-- TOPBAR -->
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
     <a class="v40-topbar-brand" href="dashboard-private.html" id="topbarHomeLink">
-      <img src="./assets/favicon-BgPk1Min.png" alt="POPE Online"/>
-      <div class="v40-topbar-brand-text"><strong>POPE Online</strong><small>IA + Expertise</small></div>
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>Conseil &amp; Expertise</small>
+      </div>
     </a>
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub">Espace privé</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn v60-goto-app" href="app-private.html">⚡ Générer</a>
-      <a class="v40-topbar-btn" href="expert-private.html">✍️ Relecture</a>
       <a class="v40-topbar-btn" href="vault.html?space=private&return=dashboard-private.html">📂 Dépôt</a>
       <a class="v40-topbar-btn" href="referral.html">🎁 Parrainage</a>
       <a class="v40-topbar-btn" href="profile.html">Mon compte</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
-    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-
-  <a href="app-private.html">⚡ Générer</a>
-  <a href="expert-private.html">✍️ Relecture</a>
   <a href="vault.html?space=private&return=dashboard-private.html">📂 Dépôt</a>
   <a href="referral.html">🎁 Parrainage</a>
   <a href="profile.html">👤 Mon compte</a>
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
+    <button data-logout>🚪 Déconnexion</button>
+</div>
 
-<!-- STEPPER -->
-<div class="v60-stepper" role="navigation" aria-label="Étapes">
-  <div class="v60-stepper-inner">
-    <button class="v60-step active" data-step="1" onclick="v60GoStep(1)" aria-current="step"><div class="v60-step-num"><span>1</span></div>&nbsp;Domaine</button>
-    <button class="v60-step" data-step="2" onclick="v60GoStep(2)"><div class="v60-step-num"><span>2</span></div>&nbsp;Mon besoin</button>
-    <button class="v60-step" data-step="3" onclick="v60GoStep(3)"><div class="v60-step-num"><span>3</span></div>&nbsp;Documents &amp; IA</button>
-    <button class="v60-step" data-step="4" onclick="v60GoStep(4)"><div class="v60-step-num"><span>4</span></div>&nbsp;Transmission</button>
-    <div class="v60-domain-badge-wrap">
-      <button class="v60-domain-badge" onclick="v60ChangeDomain()" title="Changer de domaine">
-        <span class="v60-badge-icon">🎯</span><span class="v60-badge-label"></span><span style="font-size:10px;opacity:.6;">✎</span>
-      </button>
-    </div>
+<main class="v5-workspace">
+
+<!-- Variables JS selon espace -->
+<script>var EXPERT_PAGE='expert-private.html';var EXPERT_PAGE_MISSION='mission-private.html';</script>
+
+<!-- Tabs -->
+<div class="v5-tabs-bar">
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
+  <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
+  <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
+</div>
+
+<!-- Alerte trial -->
+<div id="trialAlert" hidden class="v5-trial-alert">
+  <span style="font-size:20px">⏳</span>
+  <div>
+    <strong id="trialAlertTitle">Période d'essai</strong>
+    <div id="trialAlertBody"></div>
+  </div>
+  <a href="pricing.html" class="v5-trial-cta">Voir les plans →</a>
+</div>
+
+<!-- Overlay expiré -->
+<div id="trialExpiredOverlay" hidden class="v5-expired-overlay">
+  <div class="v5-expired-card">
+    <div style="font-size:42px;margin-bottom:14px">⏰</div>
+    <h2>Votre période d'essai est terminée</h2>
+    <p>L'accès au Conseil Expert est suspendu. Choisissez un plan pour reprendre immédiatement.</p>
+    <a href="pricing.html" class="v5-btn-primary" style="display:inline-flex;margin-bottom:10px">🚀 Voir les offres</a><br>
+    <button onclick="document.getElementById('trialExpiredOverlay').setAttribute('hidden','')" class="v5-btn-ghost-sm">Continuer en accès limité</button>
   </div>
 </div>
 
-<!-- HERO -->
-<div class="v60-hero">
-  <div class="v60-hero-inner">
-    <div class="v60-hero-text">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:6px;">🏛️ 🔒 Espace privé — Artisans &amp; indépendants</div>
-      <h1 data-user-greet>Bonjour, bienvenue sur POPE Online</h1>
-      <p>Produisez, sécurisez et faites relire vos livrables professionnels.</p>
-    </div>
-    <div class="v60-hero-stats">
-      <div class="v60-stat-pill"><div class="n" data-user-expert-left>—</div><div class="l">Relectures restantes</div></div>
-      <div class="v60-stat-pill"><div class="n" data-user-plan>—</div><div class="l">Plan actif</div></div>
-    </div>
-  </div>
-</div>
+<!-- ══ ONGLET MON BESOIN ══ -->
+<div id="tab-besoin" class="v5-tab-content">
 
-<!-- Trial alert -->
-<div class="v60-trial-wrap">
-  <div id="v60TrialAlert" class="v60-trial-alert" hidden>
-    <span style="font-size:22px;">⏳</span>
-    <div><strong style="color:#0b2440;font-size:14px;">Période d'essai</strong><div id="v60TrialBody" style="font-size:13px;color:#50627a;margin-top:3px;"></div></div>
-    <a href="pricing.html" style="margin-left:auto;background:#0079c1;color:#fff;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">Voir les plans</a>
-  </div>
-</div>
-
-<!-- MAIN -->
-<main class="v60-main">
-
-<!-- ÉTAPE 1 -->
-<div id="v60Panel1" class="v60-panel" style="display:block;">
-  <div class="v60-section-head">
-    <h2>Quel est votre domaine d'activité ?</h2>
-    <p>Sélectionnez votre type d'organisation pour personnaliser votre parcours et les modèles IA disponibles.</p>
-  </div>
-  <div class="v60-domain-grid" id="v60DomainPills"><!-- rendered by JS --></div>
-  <div class="v60-card">
-    <div class="v60-card-head"><div class="v60-card-icon">⚡</div><div><h3>Accès rapide</h3><p>Vous pouvez aussi accéder directement aux outils</p></div></div>
-    <div class="v60-quick-grid">
-      <a class="v60-btn v60-btn-ghost v60-goto-app" href="app-private.html" style="justify-content:flex-start;">⚡ Générer un livrable IA</a>
-        <a class="v60-btn v60-btn-ghost" href="expert-private.html" style="justify-content:flex-start;">✍️ Demande de relecture</a>
-        <a class="v60-btn v60-btn-ghost" href="vault.html?space=private&return=dashboard-private.html" style="justify-content:flex-start;">📂 Dépôt sécurisé</a>
-        <a class="v60-btn v60-btn-ghost" href="clausier.html" style="justify-content:flex-start;">📚 Clausier documentaire</a>
+  <!-- Hero KPIs -->
+  <div class="v5-hero-bar">
+    <div class="v5-hero-text">
+      <div class="v5-hero-eyebrow">🔒 Espace privé — Artisans, indépendants &amp; TPE</div>
+      <h1 id="dashWelcome" data-user-greet class="v5-hero-title">Bonjour 👋</h1>
+      <p class="v5-hero-sub">Décrivez votre situation. Un expert privé prend en charge votre dossier sous 48h ouvrées.</p>
     </div>
-  </div>
-</div>
-
-<!-- ÉTAPE 2 -->
-<div id="v60Panel2" class="v60-panel" style="display:none;">
-  <div class="v60-section-head"><h2>Décrivez votre besoin</h2><p>Plus votre description est précise, meilleur sera le livrable IA généré et l'accompagnement expert.</p></div>
-  <div class="v60-card">
-    <div class="v60-card-head"><div class="v60-card-icon">📋</div><div><h3>Objet &amp; type de demande</h3></div></div>
-    <div class="v60-field"><label for="v60Title">Objet / Titre de la demande</label><input id="v60Title" type="text" placeholder="Ex : Note stratégique sur la restructuration budgétaire 2025…" maxlength="200"/></div>
-    <div class="v60-radio-group">
-      <label class="v60-radio-opt"><input type="radio" name="v60BesoType" value="conseil" checked/> 💡 Conseil</label>
-      <label class="v60-radio-opt"><input type="radio" name="v60BesoType" value="redaction"/> ✍️ Rédaction</label>
-      <label class="v60-radio-opt"><input type="radio" name="v60BesoType" value="analyse"/> 🔍 Analyse</label>
-      <label class="v60-radio-opt"><input type="radio" name="v60BesoType" value="synthese"/> 📊 Synthèse</label>
-      <label class="v60-radio-opt"><input type="radio" name="v60BesoType" value="relecture"/> 👁️ Relecture</label>
-    </div>
-  </div>
-  <div class="v60-card">
-    <div class="v60-card-head"><div class="v60-card-icon" style="background:#ecfeff;">📝</div><div><h3>Description libre</h3><p>Décrivez librement votre besoin en quelques phrases</p></div></div>
-    <div class="v60-field"><textarea id="v60Desc" rows="4" placeholder="Décrivez votre situation, ce que vous cherchez à obtenir et tout ce qui vous semble important…"></textarea></div>
-  </div>
-  <div class="v60-acc"><div class="v60-acc-head" onclick="this.parentElement.classList.toggle('open')"><span>📍 Contexte &amp; environnement</span><span class="v60-acc-arrow">▾</span></div><div class="v60-acc-body"><div class="v60-field"><label for="v60Contexte">Contexte général</label><textarea id="v60Contexte" rows="3" placeholder="Situation actuelle, contexte institutionnel, historique…"></textarea></div><div class="v60-field"><label for="v60Probleme">Problème / Enjeu identifié</label><textarea id="v60Probleme" rows="3" placeholder="Quel est le problème à résoudre ?"></textarea></div></div></div>
-  <div class="v60-acc"><div class="v60-acc-head" onclick="this.parentElement.classList.toggle('open')"><span>🎯 Objectif &amp; livrable attendu</span><span class="v60-acc-arrow">▾</span></div><div class="v60-acc-body"><div class="v60-field"><label for="v60Objectif">Objectif principal</label><textarea id="v60Objectif" rows="3" placeholder="Quel résultat concret attendez-vous ?"></textarea></div><div class="v60-grid-2"><div class="v60-field"><label for="v60Decision">Décision attendue</label><input id="v60Decision" type="text" placeholder="Ex : Arbitrage budgétaire…"/></div><div class="v60-field"><label for="v60Livrable">Livrable souhaité</label><input id="v60Livrable" type="text" placeholder="Ex : Note de 2 pages…"/></div></div></div></div>
-  <div class="v60-acc"><div class="v60-acc-head" onclick="this.parentElement.classList.toggle('open')"><span>⚠️ Contraintes &amp; acteurs</span><span class="v60-acc-arrow">▾</span></div><div class="v60-acc-body"><div class="v60-field"><label for="v60Contraintes">Contraintes</label><textarea id="v60Contraintes" rows="3" placeholder="Contraintes réglementaires, budgétaires, calendaires…"></textarea></div><div class="v60-grid-2"><div class="v60-field"><label for="v60Risques">Points sensibles</label><textarea id="v60Risques" rows="3" placeholder="Points juridiques, politiques, opérationnels…"></textarea></div><div class="v60-field"><label for="v60Acteurs">Acteurs impliqués</label><textarea id="v60Acteurs" rows="3" placeholder="Parties prenantes, interlocuteurs clés…"></textarea></div></div></div></div>
-  <div class="v60-acc"><div class="v60-acc-head" onclick="this.parentElement.classList.toggle('open')"><span>📅 Informations complémentaires</span><span class="v60-acc-arrow">▾</span></div><div class="v60-acc-body"><div class="v60-grid-2"><div class="v60-field"><label for="v60Public">Destinataire</label><input id="v60Public" type="text" placeholder="Ex : Conseil municipal, DG…"/></div><div class="v60-field"><label for="v60Deadline">Échéance</label><input id="v60Deadline" type="text" placeholder="Ex : 15 juin 2025, urgent…"/></div></div><div class="v60-grid-2"><div class="v60-field"><label for="v60Pieces">Pièces disponibles</label><input id="v60Pieces" type="text" placeholder="Ex : Délibération N°42…"/></div><div class="v60-field"><label for="v60Niveau">Niveau de détail</label><select id="v60Niveau"><option value="">— Choisir —</option><option value="resume">Résumé synthétique</option><option value="standard">Standard (2-3 pages)</option><option value="detaille">Détaillé (5+ pages)</option><option value="expert">Expert (exhaustif)</option></select></div></div></div></div>
-  <div class="v60-nav-row">
-    <div class="v60-nav-left"><button class="v60-btn v60-btn-ghost" onclick="v60GoStep(1)">← Domaine</button></div>
-    <div class="v60-nav-right">
-      <a class="v60-btn v60-btn-secondary v60-goto-app" href="app-private.html?from=dashboard&step=2">⚡ Générer un livrable IA</a>
-      <button class="v60-btn v60-btn-primary" onclick="v60GoStep(3)">Documents &amp; IA →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ÉTAPE 3 -->
-<div id="v60Panel3" class="v60-panel" style="display:none;">
-  <div class="v60-section-head"><h2>Documents &amp; Livrables IA</h2><p>Retrouvez vos générations IA, joignez-les à votre demande experte, et gérez vos pièces déposées.</p></div>
-  <div class="v60-docs-grid">
-    <div>
-      <div class="v60-card">
-        <div class="v60-card-head"><div class="v60-card-icon">🤖</div><div><h3>Livrables IA générés</h3><p>Sélectionnez un draft à joindre à votre demande experte</p></div></div>
-        <div id="v60AttachedBadge" class="v60-attached-badge" hidden><span>✅</span><span></span><button onclick="v60DetachDraft()" style="background:none;border:none;cursor:pointer;color:inherit;font-size:11px;margin-left:4px;">✕ Retirer</button></div>
-        <div id="v60DraftList"><p class="v60-muted" style="font-style:italic;">Chargement…</p></div>
-        <a class="v60-btn v60-btn-primary v60-btn-full v60-goto-app" href="app-private.html?from=dashboard&step=2" style="margin-top:12px;">⚡ Générer un nouveau livrable</a>
+    <div class="v5-kpi-row">
+      <div class="v5-kpi" id="statExpert">
+        <div class="v5-kpi-n" id="expertLeftN" data-user-expert-left>—</div>
+        <div class="v5-kpi-l">Conseils Expert<br>disponibles</div>
+      </div>
+      <div class="v5-kpi" id="statPlan">
+        <div class="v5-kpi-n" id="planN" data-user-plan>—</div>
+        <div class="v5-kpi-l">Plan actif</div>
       </div>
     </div>
-    <div>
-      <div class="v60-card">
-        <div class="v60-card-head"><div class="v60-card-icon" style="background:#fffbeb;">📂</div><div><h3>Dépôt sécurisé 48h</h3><p>Pièces déposées disponibles pour la génération IA</p></div></div>
-        <div id="v60VaultList"><p class="v60-muted" style="font-style:italic;">Chargement…</p></div>
+  </div>
+
+  <!-- Parcours 4 étapes -->
+  <div class="v5-journey">
+
+    <!-- Indicateur d'étapes -->
+    <div class="v5-steps">
+      <div class="v5-step active" data-step="1" onclick="goStep(1)">
+        <div class="v5-step-n">1</div>
+        <div class="v5-step-label">Domaine</div>
       </div>
-      <div class="v60-card">
-        <div class="v60-card-head"><div class="v60-card-icon" style="background:#f0fdf4;">📚</div><div><h3>Ressources</h3></div></div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <a class="v60-btn v60-btn-ghost" href="clausier.html" style="justify-content:flex-start;">📚 Clausier — Modèles officiels</a>
-          <a class="v60-btn v60-btn-ghost" href="vault.html?space=private&return=dashboard-private.html?step=3" style="justify-content:flex-start;">📂 Gérer mes pièces</a>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="2" onclick="goStep(2)">
+        <div class="v5-step-n">2</div>
+        <div class="v5-step-label">Besoin</div>
+      </div>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="3" onclick="goStep(3)">
+        <div class="v5-step-n">3</div>
+        <div class="v5-step-label">Documents</div>
+      </div>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="4" onclick="goStep(4)">
+        <div class="v5-step-n">4</div>
+        <div class="v5-step-label">Envoi</div>
+      </div>
+    </div>
+
+    <!-- Étape 1: Domaine -->
+    <div class="v5-step-panel active" id="step-panel-1">
+      <div class="v5-panel-head">
+        <h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
+        <p>Sélectionnez le domaine le plus proche de votre situation.</p>
+      </div>
+      <div class="v5-domain-grid" id="domainGrid">
+        <button class="v5-domain-pill" data-domain="Droit et Juridique" onclick="selectDomain(this)">⚖️ Droit &amp; Juridique</button>
+        <button class="v5-domain-pill" data-domain="Marches publics" onclick="selectDomain(this)">🏛️ Marchés publics</button>
+        <button class="v5-domain-pill" data-domain="Travaux et MOA" onclick="selectDomain(this)">🏗️ Travaux &amp; MOA</button>
+        <button class="v5-domain-pill" data-domain="Management et Strategie" onclick="selectDomain(this)">📊 Management &amp; Stratégie</button>
+        <button class="v5-domain-pill" data-domain="Finances et Gestion" onclick="selectDomain(this)">💰 Finances &amp; Gestion</button>
+        <button class="v5-domain-pill" data-domain="Ressources humaines" onclick="selectDomain(this)">👥 Ressources humaines</button>
+        <button class="v5-domain-pill" data-domain="Audit et Diagnostic" onclick="selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
+        <button class="v5-domain-pill" data-domain="Cybersecurite et SI" onclick="selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
+        <button class="v5-domain-pill" data-domain="Transition ecologique" onclick="selectDomain(this)">🌿 Transition écologique</button>
+        <button class="v5-domain-pill" data-domain="Communication" onclick="selectDomain(this)">📣 Communication</button>
+        <button class="v5-domain-pill" data-domain="Mediation et Conflits" onclick="selectDomain(this)">🤝 Médiation &amp; Conflits</button>
+        <button class="v5-domain-pill" data-domain="Intelligence artificielle" onclick="selectDomain(this)">🤖 Intelligence artificielle</button>
+        <button class="v5-domain-pill" data-domain="Autre domaine" onclick="selectDomain(this)">➕ Autre domaine</button>
+      </div>
+      <div class="v5-step-footer">
+        <button class="v5-btn-primary" id="btnStep1Next" onclick="goStep(2)">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Étape 2: Description -->
+    <div class="v5-step-panel" id="step-panel-2">
+      <div class="v5-panel-head">
+        
+      <div class="v58-domain-badge" id="v58DomainBadge">
+        <span class="v58-domain-badge-icon" id="v58DomainIcon">🎯</span>
+        <span class="v58-domain-badge-text">
+          <span id="v58DomainName">—</span>
+          <span class="v58-domain-badge-sub">Domaine d'expertise sélectionné</span>
+        </span>
+        <button class="v58-domain-change" type="button" onclick="goStep(1)">✕ Changer</button>
+      </div>
+
+      <div class="v5-field-group">
+        <label class="v5-label">En quelques mots <span class="v5-req">★</span></label>
+        <input class="v5-input" id="besoInTitle" placeholder="Ex : avis juridique sur un marché public, analyse d'un bail commercial…" maxlength="120"/>
+      </div>
+
+      <!-- v58 : Description structurée par accordéons -->
+      <div id="v58DescAccordion">
+
+        <div class="v58-acc is-open" id="v58AccCtx" data-field="descContexte">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCtx')">
+            <span class="v58-acc-ico">🏢</span>
+            <span class="v58-acc-lbl">Contexte de la demande<span class="v58-acc-val" id="prevCtx">Qui vous êtes, votre organisation…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Contexte &amp; organisation</label>
+              <textarea class="v58-textarea" id="descContexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel de la demande…"></textarea>
+            </div>
+            <div class="v58-field">
+              <label>Problème à résoudre</label>
+              <textarea class="v58-textarea" id="descProbleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccObj" data-field="descObjectif">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccObj')">
+            <span class="v58-acc-ico">🎯</span>
+            <span class="v58-acc-lbl">Objectif &amp; résultat attendu<span class="v58-acc-val" id="prevObj">Ce que vous attendez de l'expert…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Objectif recherché</label>
+              <textarea class="v58-textarea" id="descObjectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, réponse, arbitrage, rédaction…"></textarea>
+            </div>
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Décision attendue</label>
+                <input type="text" class="v58-input" id="descDecision" placeholder="Valider, refuser, arbitrer, répondre…"/>
+              </div>
+              <div class="v58-field">
+                <label>Livrable attendu</label>
+                <input type="text" class="v58-input" id="descLivrable" placeholder="Note, courrier, analyse, trame, avis…"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccCon" data-field="descContraintes">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccCon')">
+            <span class="v58-acc-ico">⚠️</span>
+            <span class="v58-acc-lbl">Contraintes &amp; risques<span class="v58-acc-val" id="prevCon">Délais, sensibilité, points bloquants…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Contraintes connues</label>
+              <textarea class="v58-textarea" id="descContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…"></textarea>
+            </div>
+            <div class="v58-field">
+              <label>Points sensibles ou risques</label>
+              <textarea class="v58-textarea" id="descRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccAct" data-field="descActeurs">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccAct')">
+            <span class="v58-acc-ico">👥</span>
+            <span class="v58-acc-lbl">Acteurs, échéance &amp; pièces<span class="v58-acc-val" id="prevAct">Qui est impliqué, délais, documents…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Acteurs concernés</label>
+                <input type="text" class="v58-input" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
+              </div>
+              <div class="v58-field">
+                <label>Public / destinataire final</label>
+                <input type="text" class="v58-input" id="descPublic" placeholder="Conseil municipal, commission, direction…"/>
+              </div>
+            </div>
+            <div class="v58-row">
+              <div class="v58-field">
+                <label>Échéance souhaitée</label>
+                <input type="text" class="v58-input" id="needDeadline" placeholder="Avant vendredi / sous 10 jours…"/>
+              </div>
+              <div class="v58-field">
+                <label>Pièces disponibles</label>
+                <input type="text" class="v58-input" id="descPieces" placeholder="Contrat, rapport, délibération, DCE…"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v58-acc" id="v58AccPlus" data-field="besoInDesc">
+          <button type="button" class="v58-acc-trigger" onclick="v58Toggle('v58AccPlus')">
+            <span class="v58-acc-ico">💬</span>
+            <span class="v58-acc-lbl">Précisions complémentaires<span class="v58-acc-val" id="prevPlus">Niveau de détail, historique…</span></span>
+            <span class="v58-acc-dot"></span>
+            <span class="v58-acc-chevron">▶</span>
+          </button>
+          <div class="v58-acc-body">
+            <div class="v58-field">
+              <label>Niveau de détail souhaité</label>
+              <input type="text" class="v58-input" id="descNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/>
+            </div>
+            <div class="v58-field">
+              <label>Informations complémentaires libres</label>
+              <textarea class="v58-textarea" id="besoInDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /v58DescAccordion -->
+
+      <!-- v58 : Nature du traitement -->
+      <div class="v58-trt">
+        <div class="v58-trt-title">🔧 Nature du traitement attendu</div>
+        <div class="v58-trt-grid">
+          <label class="v58-trt-card">
+            <input type="radio" name="besoType" value="conseil" onchange="updateBesoType()" checked/>
+            <div class="v58-trt-head">🎯 Conseil Expert ponctuel</div>
+            <div class="v58-trt-desc">Réponse ciblée à un besoin précis, sécurisation juridique ou arbitrage.</div>
+            <div class="v58-trt-tags"><span class="v58-trt-tag">⏱ Sous 48h ouvrées</span><span class="v58-trt-tag">Ponctuel</span></div>
+          </label>
+          <label class="v58-trt-card">
+            <input type="radio" name="besoType" value="surmesure" onchange="updateBesoType()"/>
+            <div class="v58-trt-head">📋 Accompagnement approfondi</div>
+            <div class="v58-trt-desc">Dossier sensible, multi-acteurs ou nécessitant un cadrage complet Sur Mesure.</div>
+            <div class="v58-trt-tags"><span class="v58-trt-tag">📅 Planning à définir</span><span class="v58-trt-tag">Sur Mesure</span></div>
+          </label>
         </div>
       </div>
+
+      <!-- v58 : Draft IA -->
+      <div class="v58-draft">
+        <span class="v58-draft-ico">🛠️</span>
+        <div class="v58-draft-body">
+          <strong>Préparer un draft IA <span class="v58-draft-badge">Optionnel</span></strong>
+          <p>Générez un document de travail avant de soumettre à votre expert. Votre saisie est conservée et pré-remplie.</p>
+        </div>
+        <a href="app-private.html" id="lnkDraftTool" class="v58-draft-btn">Accéder à l'outil →</a>
+      </div>
+
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" onclick="goStep(1)">← Retour</button>
+        <button class="v5-btn-primary" onclick="goStep(3)">Continuer →</button>
+      </div>
     </div>
+
+    <!-- Étape 3: Documents -->
+    <div class="v5-step-panel" id="step-panel-3">
+      <div class="v5-panel-head">
+        <h2>📎 Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
+        <p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
+      </div>
+
+      <!-- Draft IA généré -->
+      <div class="v5-attach-box" style="border-color:#bbf7d0;background:#f0fdf4">
+        <div class="v5-attach-head">
+          <div class="v5-attach-ico" style="background:#dcfce7">🛠️</div>
+          <div style="flex:1">
+            <strong style="color:#14532d">Joindre un draft IA préparé</strong>
+            <p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici et peut être joint à votre demande expert.</p>
+          </div>
+          <a href="app-private.html" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:12px;padding:7px 14px;background:#16a34a">Créer un draft →</a>
+        </div>
+        <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0;border-color:#bbf7d0">
+          <option value="">Ne pas joindre de draft préparé</option>
+        </select>
+        <div id="v59DraftStatus" style="display:none;margin-top:8px;font-size:12px;color:#166534;font-weight:600">
+          ✅ Draft disponible et sélectionné
+        </div>
+      </div>
+
+      <!-- Pièces du dépôt sécurisé -->
+      <div class="v5-attach-box">
+        <div class="v5-attach-head">
+          <div class="v5-attach-ico">📂</div>
+          <div style="flex:1">
+            <strong>Pièces du dépôt sécurisé 48h</strong>
+            <p>Joignez des documents complémentaires depuis votre espace sécurisé (contrats, rapports, délibérations…).</p>
+          </div>
+          <a href="vault.html?space=private&return=dashboard-private.html" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap">Gérer le dépôt →</a>
+        </div>
+        <div id="vaultExpertList" class="v5-muted" style="font-size:12px;margin-top:4px">Aucune pièce disponible.</div>
+      </div>
+
+      <!-- Info rapide -->
+      <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;margin-top:4px">
+        💡 <strong>Conseil :</strong> Un draft bien préparé augmente significativement la qualité et la rapidité de la réponse experte.
+      </div>
+
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" onclick="goStep(2)">← Retour</button>
+        <button class="v5-btn-primary" onclick="goStep(4)">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Étape 4: Envoi -->
+    <div class="v5-step-panel" id="step-panel-4">
+      <div class="v5-panel-head">
+        <h2>Récapitulatif de votre demande</h2>
+        <p>Vérifiez avant d'envoyer à votre expert.</p>
+      </div>
+      <div class="v5-recap-card">
+        <div class="v5-recap-row"><span class="v5-recap-key">Domaine</span><span class="v5-recap-val" id="recapDomain">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Objet</span><span class="v5-recap-val" id="recapTitle">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Type</span><span class="v5-recap-val" id="recapType">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Quota</span><span class="v5-recap-val" id="recapQuota">—</span></div>
+      </div>
+      <div class="v5-msg" id="msgBesoin"></div>
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" onclick="goStep(3)">← Retour</button>
+        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend" onclick="submitBesoin()">🎯 Soumettre à un expert</button>
+      </div>
+    </div>
+
+  </div><!-- /v5-journey -->
+
+  <!-- Liens rapides -->
+  <div class="v5-quick-links">
+    <a href="vault.html?space=private&return=dashboard-private.html" class="v5-quick">📂 Dépôt sécurisé</a>
+    <a href="clausier.html" class="v5-quick">📚 Clausier</a>
+    <a href="tutoriel.html" class="v5-quick">▶️ Tutoriel</a>
+    <a href="referral.html" class="v5-quick">🎁 Parrainage</a>
   </div>
-  <div class="v60-nav-row">
-    <div class="v60-nav-left"><button class="v60-btn v60-btn-ghost" onclick="v60GoStep(2)">← Mon besoin</button></div>
-    <div class="v60-nav-right"><button class="v60-btn v60-btn-primary" onclick="v60GoStep(4)">Transmettre à un expert →</button></div>
+
+</div><!-- /tab-besoin -->
+
+<!-- ══ ONGLET MES EXPERTS ══ -->
+<div id="tab-experts" class="v5-tab-content" hidden>
+  <div class="v5-section-head">
+    <h2>Mes échanges experts</h2>
+    <p>Historique de vos dossiers soumis et réponses de vos conseillers.</p>
+    <button class="v5-btn-ghost-sm" onclick="loadRequests()" style="margin-top:8px">🔄 Actualiser</button>
+  </div>
+  <div id="expertRequestsList" class="v5-requests-list">
+    <div class="v5-empty-state">
+      <div class="v5-empty-ico">👤</div>
+      <strong>Aucun échange expert pour le moment.</strong>
+      <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
+      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
+    </div>
   </div>
 </div>
 
-<!-- ÉTAPE 4 -->
-<div id="v60Panel4" class="v60-panel" style="display:none;">
-  <div class="v60-section-head"><h2>Transmission à un expert POPE Online</h2><p>Un conseiller expert analysera votre demande et vous répondra sous 48h ouvrées.</p></div>
-  <div class="v60-expert-guarantee">
-    <div class="v60-expert-guarantee-item"><span class="ico">⏱️</span><strong>Réponse sous 48h</strong><p>Délai garanti jours ouvrés</p></div>
-    <div class="v60-expert-guarantee-item"><span class="ico">🔒</span><strong>Données sécurisées</strong><p>Chiffrement de bout en bout</p></div>
-    <div class="v60-expert-guarantee-item"><span class="ico">🎓</span><strong>Expert qualifié</strong><p>Conseiller POPE Online certifié</p></div>
+<!-- ══ ONGLET SUR MESURE ══ -->
+<div id="tab-surmesure" class="v5-tab-content" hidden>
+  <div class="v5-section-head">
+    <h2>Sur Mesure</h2>
+    <p>Pour les dossiers complexes qui nécessitent un accompagnement dans la durée.</p>
   </div>
-  <div class="v60-card">
-    <div class="v60-card-head"><div class="v60-card-icon">📋</div><div><h3>Récapitulatif de votre demande</h3><p>Généré automatiquement depuis votre parcours</p></div></div>
-    <div id="v60ExpertSummary" class="v60-expert-summary"><span class="v60-muted">—</span></div>
+  <div class="v5-sm-intro">
+    <div class="v5-sm-card">
+      <div class="v5-sm-ico">📋</div>
+      <div>
+        <strong>Qu'est-ce que le Sur Mesure ?</strong>
+        <p>Pour les dossiers multi-étapes, les accompagnements sur plusieurs semaines ou le pilotage de projet complexe. Un expert Pope Online est mobilisé sur la durée.</p>
+      </div>
+    </div>
+    <div class="v5-sm-grid">
+      <div class="v5-sm-col">
+        <div class="v5-sm-col-head green">🎯 Conseil Expert</div>
+        <ul>
+          <li>Besoin ponctuel identifié</li>
+          <li>Avis sous 48h ouvrées</li>
+          <li>Inclus dans votre offre</li>
+        </ul>
+      </div>
+      <div class="v5-sm-col">
+        <div class="v5-sm-col-head blue">📋 Sur Mesure</div>
+        <ul>
+          <li>Dossier complexe, multi-étapes</li>
+          <li>Expert mobilisé en continu</li>
+          <li>Devis personnalisé</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <a href="mission-private.html" class="v5-btn-primary">📋 Qualifier mon besoin Sur Mesure →</a>
+    </div>
   </div>
-  <div class="v60-card">
-    <div class="v60-card-head"><div class="v60-card-icon" style="background:#f0fdf4;">✍️</div><div><h3>Message à l'expert</h3><p>Complétez ou précisez votre demande</p></div></div>
-    <div class="v60-field"><label for="v60ExpertDesc">Description complète transmise à l'expert</label><textarea id="v60ExpertDesc" rows="8" placeholder="Votre besoin en détail…"></textarea></div>
-  </div>
-  <div id="v60SubmitMsg" class="v60-mt8" hidden></div>
-  <div class="v60-nav-row">
-    <div class="v60-nav-left"><button class="v60-btn v60-btn-ghost" onclick="v60GoStep(3)">← Documents &amp; IA</button></div>
-    <div class="v60-nav-right"><button id="v60BtnSubmitExpert" class="v60-btn v60-btn-success v60-btn-lg" onclick="v60SubmitExpert()">📤 Soumettre à un expert</button></div>
+</div>
+
+<!-- ══ ONGLET MON ESPACE ══ -->
+<div id="tab-espace" class="v5-tab-content" hidden>
+  <div class="v5-section-head"><h2>Mon Espace</h2></div>
+  <div class="v5-espace-grid">
+    <a href="profile.html" class="v5-espace-card"><div class="v5-espace-ico">👤</div><strong>Mon profil</strong><span>Informations, sécurité</span></a>
+    <a href="profile.html#abonnement" class="v5-espace-card"><div class="v5-espace-ico">💎</div><strong>Mon abonnement</strong><span>Plan, factures, résiliation</span></a>
+    <a href="vault.html?space=private&return=dashboard-private.html" class="v5-espace-card"><div class="v5-espace-ico">📂</div><strong>Dépôt sécurisé</strong><span>Mes documents 48h</span></a>
+    <a href="app-private.html" class="v5-espace-card"><div class="v5-espace-ico">🛠️</div><strong>Outil de rédaction IA</strong><span>Préparer un draft — illimité</span></a>
+    <a href="clausier.html" class="v5-espace-card"><div class="v5-espace-ico">📚</div><strong>Clausier documentaire</strong><span>Modèles officiels</span></a>
+    <a href="referral.html" class="v5-espace-card"><div class="v5-espace-ico">🎁</div><strong>Parrainage</strong><span>Inviter mes contacts</span></a>
   </div>
 </div>
 
@@ -342,34 +932,310 @@ a{color:inherit;}
 
 <script>
 (function(){
-  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
-  function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
-  function getApiBase(){var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return 'http://localhost:3000';return 'https://pope-online-v2.onrender.com';}
-  function redirectToLogin(){var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');window.location.replace('login.html?next='+path);}
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
+  }
+  function getToken(){
+    return sessionStorage.getItem('pope_session_token')||
+           localStorage.getItem('pope_session_token')||'';
+  }
+  function getApiBase(){
+    var e=window.__POPE_API_BASE__||'';
+    if(e) return String(e).replace(/\/$/,'');
+    var h=window.location.hostname;
+    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+    return 'https://pope-online-v2.onrender.com';
+  }
+  function redirectToLogin(){
+    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
+    window.location.replace('login.html?next='+path);
+  }
+  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
+    'mission.html','private-onboarding.html','account.html','profile.html',
+    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
+    'mission-private.html','referral.html','tutoriel.html'];
+  var path=(window.location.pathname||'').toLowerCase();
+  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
+  if(!isProtected) return;
   if(hasSession()){window.__popeAuthValidated=true;return;}
   window.__popeAuthPending=true;
-  var headers={'Content-Type':'application/json'};var token=getToken();if(token)headers['Authorization']='Bearer '+token;
+  var headers={'Content-Type':'application/json'};
+  var token=getToken();
+  if(token) headers['Authorization']='Bearer '+token;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return {};});})
-    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));window.__popeAuthValidated=true;}else throw 0;})
-    .catch(function(){redirectToLogin();})
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json().catch(function(){return {};});
+    })
+    .then(function(data){
+      if(data&&data.user){
+        localStorage.setItem('pope_session_active','1');
+        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
+        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        window.__popeAuthValidated=true;
+      } else throw new Error('missing_user');
+    })
+    .catch(function(){
+      window.__popeAuthValidated=false;
+      redirectToLogin();
+    })
     .finally(function(){window.__popeAuthPending=false;});
 })();
 </script>
-
-
-<script>
-(function(){
-  var burger=document.getElementById('v40Burger'),menu=document.getElementById('v40MobileMenu');
-  if(!burger||!menu)return;
-  var spans=burger.querySelectorAll('span');
-  function setOpen(o){if(o){menu.classList.add('open');spans[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';spans[1].style.cssText='opacity:0;transform:scaleX(0)';spans[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{menu.classList.remove('open');[0,1,2].forEach(function(i){spans[i].style.cssText='';});}}
-  burger.addEventListener('click',function(){setOpen(!menu.classList.contains('open'));});
-  menu.querySelectorAll('a,button').forEach(function(e){e.addEventListener('click',function(){setOpen(false);});});
-  document.addEventListener('click',function(e){if(!burger.contains(e.target)&&!menu.contains(e.target))setOpen(false);});
+<script type="module" src="./protected-topbar.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
+if (!requireLogin('dashboard-private.html')) {}
+wireLogout();
+(async () => {
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+    const u = me.user || {};
+    const w = me.wallet || {};
+    // Welcome
+    const name = u.full_name ? u.full_name.split(' ')[0] : '';
+    if (name) document.getElementById('dashWelcome').textContent = 'Bonjour ' + name + ' 👋';
+    // Stats
+    document.getElementById('expertLeftN').textContent = w.expert_left ?? '—';
+    document.getElementById('planN').textContent = w.plan_label || 'Free';
+    // Trial alert
+    if (w.status === 'trial_active' && w.trial_days_left !== null) {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      var _trialEnd = w.trial_expires_at ? new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
+      document.getElementById('trialAlertTitle').textContent = 'Essai gratuit — ' + w.trial_days_left + ' jour' + (w.trial_days_left > 1 ? 's' : '') + ' restant' + (w.trial_days_left > 1 ? 's' : '');
+      document.getElementById('trialAlertBody').textContent = (_trialEnd ? 'Expire le ' + _trialEnd + '. ' : '') + 'Souscrivez un plan pour continuer après votre essai.';
+    }
+    if (w.status === 'trial_expired') {
+      const alert = document.getElementById('trialAlert');
+      alert.removeAttribute('hidden');
+      alert.style.background = 'linear-gradient(to right,#fef2f2,#fff0f0)';
+      alert.style.borderColor = '#fecaca';
+      // Afficher l'overlay de blocage UI
+      var _overlay = document.getElementById('trialExpiredOverlay');
+      if (_overlay) _overlay.removeAttribute('hidden');
+      var _expEnd = w.trial_expires_at ? new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
+      document.getElementById('trialAlertTitle').textContent = 'Période d\'essai terminée' + (_expEnd ? ' le ' + _expEnd : '');
+      document.getElementById('trialAlertBody').textContent = 'Génération et Conseils Expert suspendues. Choisissez un plan pour reprendre immédiatement.';
+    } else if (w.status === 'verified_no_trial') {
+      // Offre gratuite permanente — afficher un bandeau informatif discret
+      const alertVnt = document.getElementById('trialAlert');
+      alertVnt.removeAttribute('hidden');
+      alertVnt.style.background = 'linear-gradient(to right,#f0f9ff,#e0f2fe)';
+      alertVnt.style.borderColor = '#bae6fd';
+      document.getElementById('trialAlertTitle').textContent = '💡 Offre gratuite — 2 Conseils Expert offerts (une seule fois)';
+      document.getElementById('trialAlertBody').textContent = 'Vous bénéficiez de l\'offre gratuite permanente. La génération IA est illimitée. Passez à Starter ou Pro pour plus de Conseils Expert.';
+    }
+  } catch {}
 })();
 </script>
+<script>
+// Topbar mobile universelle V40 — burger + menu + croix
+(function() {
+  var burger  = document.getElementById('v40Burger');
+  var menu    = document.getElementById('v40MobileMenu');
+  if (!burger || !menu) return;
 
-<script src="./assets/dashboard-v60.js"></script>
+  var spans = burger.querySelectorAll('span');
+
+  function setOpen(open) {
+    if (open) {
+      menu.classList.add('open');
+      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+    } else {
+      menu.classList.remove('open');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
+    }
+  }
+
+  burger.addEventListener('click', function() {
+    setOpen(!menu.classList.contains('open'));
+  });
+
+  // Fermer en cliquant un lien
+  menu.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('click', function() { setOpen(false); });
+  });
+
+  // Fermer en cliquant hors du menu
+  document.addEventListener('click', function(e) {
+    if (!burger.contains(e.target) && !menu.contains(e.target)) {
+      setOpen(false);
+    }
+  });
+})();
+
+</script>
+
+<script id="v5-js">
+// Variables
+var _domain = ''; window._domain = ''; // v57: shared state
+var _besoType = 'conseil';
+var _step = 1;
+
+// Changer d'onglet
+function switchTab(name) {
+  document.querySelectorAll('.v5-tab').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  document.querySelectorAll('.v5-tab-content').forEach(function(c){
+    if (c.id === 'tab-' + name) {
+      c.removeAttribute('hidden');
+    } else {
+      c.setAttribute('hidden', '');
+    }
+  });
+  if (name === 'experts') loadRequests();
+}
+
+// Aller à une étape
+function goStep(n) {
+  // v57: also check window._domain (set by state restore) and skip guard if force=true
+  if (n > 1 && !_domain) _domain = window._domain || '';
+  if (n > 1 && !_domain) {
+    var g = document.getElementById('domainGrid');
+    if (g) {
+      g.style.boxShadow = '0 0 0 3px #ef4444';
+      g.style.borderRadius = '14px';
+      setTimeout(function(){ g.style.boxShadow=''; g.style.borderRadius=''; }, 1500);
+    }
+    return;
+  }
+  _step = n;
+  // Panels
+  for (var i = 1; i <= 4; i++) {
+    var p = document.getElementById('step-panel-' + i);
+    if (p) p.classList.toggle('active', i === n);
+  }
+  // Steps visuels
+  document.querySelectorAll('.v5-step').forEach(function(s){
+    var sn = parseInt(s.dataset.step);
+    s.classList.toggle('active', sn === n);
+    s.classList.toggle('done', sn < n);
+  });
+  if (n === 4) updateRecap();
+}
+
+// Sélectionner un domaine
+function selectDomain(btn) {
+  document.querySelectorAll('.v5-domain-pill').forEach(function(b){
+    b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+  _domain = btn.getAttribute('data-domain');
+  window._domain = _domain; // v57: sync
+  // v56: mise à jour badge domaine
+  var badge = document.getElementById('selectedDomainBadge');
+  var label = document.getElementById('selectedDomainLabel');
+  var icon = document.getElementById('selectedDomainIcon');
+  if (badge && label) {
+    badge.style.display = 'block';
+    label.textContent = _domain || '';
+    if (icon) icon.textContent = btn.textContent.trim().split(' ')[0] || '🎯';
+  }
+}
+
+// Maj type de besoin
+function updateBesoType() {
+  var r = document.querySelector('input[name="besoType"]:checked');
+  if (r) _besoType = r.value;
+}
+
+// Récapitulatif
+function updateRecap() {
+  var title  = (document.getElementById('besoInTitle') || {}).value || '—';
+  var leftEl = document.getElementById('expertLeftN');
+  var quota  = leftEl ? leftEl.textContent : '—';
+  var tLabel = _besoType === 'surmesure' ? '📋 Sur Mesure' : '🎯 Conseil Expert (48h)';
+  var r = function(id, v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+  r('recapDomain', _domain || '—');
+  r('recapTitle',  title);
+  r('recapType',   tLabel);
+  r('recapQuota',  quota + ' Conseil(s) Expert disponible(s)');
+}
+
+// Soumettre le besoin
+function submitBesoin() {
+  var title = ($('besoInTitle') || {}).value || '';
+  function $(id){ return document.getElementById(id); }
+  var desc = window.buildFullDescription ? window.buildFullDescription() : (($('besoInDesc')||{}).value||'');
+  var msgEl = $('msgBesoin');
+  var ctx = ($('descContexte')||{}).value||'';
+  var obj = ($('descObjectif')||{}).value||'';
+  if (!title.trim() || (!ctx.trim() && !obj.trim() && !desc.trim())) {
+    if (msgEl) { msgEl.textContent = "Remplissez l'objet et au moins le contexte ou l'objectif."; msgEl.className = 'v5-msg err-show'; }
+    var first = document.querySelector('.v58-acc:not(.is-open)');
+    if (first) first.classList.add('is-open');
+    return;
+  }
+  if (window.saveDashboardState) window.saveDashboardState();
+  if (_besoType === 'surmesure') { window.location.href = EXPERT_PAGE_MISSION; return; }
+  try { sessionStorage.setItem('v5_prefill', JSON.stringify({ domain: _domain, subject: title, context: desc })); } catch(e) {}
+  window.location.href = EXPERT_PAGE;
+}
+
+// Charger historique experts
+function loadRequests() {
+  var container = document.getElementById('expertRequestsList');
+  if (!container) return;
+  var token = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
+  var base = (window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com').replace(/\/$/, '');
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  fetch(base + '/expert/my-requests', { headers: headers, credentials: 'include' })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(data){ renderRequests(container, Array.isArray(data) ? data : (data.requests || [])); })
+    .catch(function(){ renderRequests(container, []); });
+}
+
+function renderRequests(container, reqs) {
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  if (!reqs.length) {
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
+    return;
+  }
+  container.innerHTML = reqs.map(function(r){
+    var ok = r.reply_text && r.reply_text.trim();
+    var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '—';
+    return '<div class="v5-request-card ' + (ok ? 'replied' : 'pending') + '">'
+      + '<div class="v5-req-domain">' + esc(r.domain || 'Expert') + '</div>'
+      + '<div class="v5-req-title">' + esc(r.subject || r.content || '—') + '</div>'
+      + '<div class="v5-req-date">' + (ok ? '✅ Répondu' : '⏳ En attente') + ' · ' + date + '</div>'
+      + (ok ? '<div class="v5-req-reply">' + esc(r.reply_text).substring(0,300) + (r.reply_text.length>300?'…':'') + '</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+// Exposer sur window — nécessaire quand la page contient un <script type="module">
+window.switchTab      = switchTab;
+window.goStep         = goStep;
+window.selectDomain   = selectDomain;
+window.updateBesoType = updateBesoType;
+window.submitBesoin   = submitBesoin;
+window.loadRequests   = loadRequests;
+
+window.switchTab=switchTab;window.goStep=goStep;window.selectDomain=selectDomain;window.updateBesoType=updateBesoType;window.submitBesoin=submitBesoin;window.loadRequests=loadRequests;
+</script>
+<script type="module" src="./dashboard-v5.js"></script>
+<script>
+// v59: v58Toggle defined inline for immediate availability
+function v58Toggle(id){
+  var acc=document.getElementById(id);
+  if(!acc)return;
+  acc.classList.toggle('is-open');
+}
+// v59: saveDashboardState stub (overridden by dashboard-v58.js)
+function saveDashboardState(){}
+</script>
+<script src="./dashboard-v58.js"></script>
+<script src="./dashboard-v60.js"></script>
 </body>
 </html>
