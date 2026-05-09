@@ -4,8 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Génération guidée</title>
-<link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link href="./assets/favicon-BgPk1Min.png" rel="icon" type="image/png"/>
 <style id="v40-topbar-fix">
 /* ── Anti-conflits topbar V40 ── */
 html body header.v40-topbar{
@@ -120,24 +119,29 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   .v40-burger{display:flex!important;}
 }
 </style>
-<style id="v54-app-style">.v40-topbar-nav a[href*="expert"],.v40-topbar-nav a[href*="mission"],#v40MobileMenu a[href*="expert"],#v40MobileMenu a[href*="mission"]{display:none!important}</style>
-<link rel="stylesheet" href="v58-styles.css">
+  <script type="module" crossorigin src="./assets/shared-QmHk-S3D.js"></script>
+  <script type="module" crossorigin src="./assets/cgu-DGo0aPUa.js"></script>
+  <script type="module" crossorigin src="./assets/protected-topbar-BQPjv2xD.js"></script>
+  <script type="module" crossorigin src="./assets/app-page-B4u65T7G.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/cgu-DhnjAcwr.css">
 </head>
 <body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
     <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
-      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <img src="./assets/favicon-BgPk1Min.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>Conseil &amp; Expertise</small>
+        <small>IA + Expertise</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub" id="appSubTitle">Génération guidée</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="vault.html?space=public&return=app.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="expert.html">✍️ Relecture</a>
+      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
     <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
@@ -146,6 +150,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="dashboard.html">🏠 Dashboard</a>
+  <a href="expert.html">✍️ Relecture</a>
+  <a href="mission.html">🎯 Sur mesure</a>
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
@@ -153,16 +160,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 </div>
 
 <!-- Barre workflow -->
-<!-- v58: Barre retour parcours -->
-<div class="v58-retour-bar" id="v58RetourBar">
-  <a href="dashboard.html?from=app&step=2" id="btnRetourDashboard" class="v58-retour-btn">
-    ← Retour à mon parcours
-  </a>
-  <span class="v58-retour-info" id="v58RetourInfo">
-    Votre saisie est conservée. Revenez après génération pour joindre le draft.
-  </span>
-  <span class="v58-draft-ready" id="v58DraftReady">✅ Draft prêt à joindre</span>
-</div>
 <div class="v36-workflow-bar">
   <div class="v36-workflow-inner">
     <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
@@ -170,8 +167,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-wf-step" id="wfStep3"><span class="v36-wf-num">3</span> Exploiter</div>
   </div>
 </div>
-
-
 
 <!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
 <span id="spaceBadge" hidden></span>
@@ -298,13 +293,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultExpertLink">
+        <a class="v36-next-btn" href="expert.html" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
-          <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
+          <div class="v36-next-btn-text"><strong>Relecture experte</strong><span>Faire valider par un conseiller</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultMissionLink">
+        <a class="v36-next-btn" href="mission.html" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
-          <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
+          <div class="v36-next-btn-text"><strong>Sur mesure</strong><span>Accompagnement approfondi</span></div>
         </a>
         <button class="v36-next-btn" id="btnRefine" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
           <span class="v36-next-btn-icon">✨</span>
@@ -418,9 +413,6 @@ document.addEventListener('DOMContentLoaded', function() {
     .finally(function(){window.__popeAuthPending=false;});
 })();
 </script>
-<script type="module" src="./protected-topbar.js"></script>
-<script type="module" src="./app-page.js"></script>
-<script src="./app-v54.js"></script>
 <script>
 // Topbar mobile universelle V40 — burger + menu + croix
 (function() {
@@ -462,102 +454,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 </script>
-<script src="./app-v53-bridge.js"></script>
-
-
-
-<script>
-
-
-<script>
-// v57: restore dashboard context into app generation form
-(function(){
-  var STATE_KEY = 'pope_v57_state_' + (location.pathname.indexOf('private')>-1?'private':'public');
-  function _restoreCtxInApp(){
-    try{
-      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if(!raw) return;
-      var d = JSON.parse(raw);
-      // Pre-fill context field if empty
-      var ctx = document.getElementById('context');
-      if(ctx && !ctx.value && (d.contexte||d.objectif)){
-        var parts=[];
-        if(d.contexte) parts.push('Contexte : '+d.contexte);
-        if(d.objectif) parts.push('Objectif : '+d.objectif);
-        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
-        if(d.acteurs) parts.push('Acteurs : '+d.acteurs);
-        if(d.pieces) parts.push('Pièces : '+d.pieces);
-        if(d.desc) parts.push(d.desc);
-        ctx.value = parts.join('\n');
-      }
-      // Pre-fill objective if empty
-      var obj = document.getElementById('objective');
-      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
-      // Show domain badge in app
-      if(d.domain){
-        var info=document.getElementById('v56RetourInfo');
-        if(info) info.textContent = 'Domaine : '+d.domain+' — Votre saisie est pré-remplie depuis le parcours.';
-      }
-    }catch(e){}
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(_restoreCtxInApp, 600);
-  });
-})();
-</script>
-<script>
-// v58: gestion dynamique barre retour
-(function(){{
-  var DASH = 'dashboard.html';
-  var STATE_KEY = 'pope_v58_state_public';
-  function _init(){{
-    var gens=[]; try{{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}}catch(e){{}}
-    var lastId = sessionStorage.getItem('pope_v54_last_generation_id') || (gens.length?gens[0].id:'');
-    var btn    = document.getElementById('btnRetourDashboard');
-    var badge  = document.getElementById('v58DraftReady');
-    var info   = document.getElementById('v58RetourInfo');
-    if(lastId && btn){{
-      btn.href = DASH + '?from=app&attach=last&step=3';
-      if(badge) badge.classList.add('visible');
-      if(info)  info.textContent = 'Draft généré ! Revenez pour le joindre à l\'étape Documents (étape 3).';
-    }}
-    // Restore context into app form from dashboard state
-    try{{
-      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if(!raw) return;
-      var d = JSON.parse(raw);
-      var ctx = document.getElementById('context');
-      var obj = document.getElementById('objective');
-      if(ctx && !ctx.value){{
-        var parts=[];
-        if(d.contexte)    parts.push('Contexte : '+d.contexte);
-        if(d.probleme)    parts.push('Problème : '+d.probleme);
-        if(d.objectif)    parts.push('Objectif : '+d.objectif);
-        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
-        if(d.risques)     parts.push('Points sensibles : '+d.risques);
-        if(d.acteurs)     parts.push('Acteurs : '+d.acteurs);
-        if(d.deadline)    parts.push('Échéance : '+d.deadline);
-        if(d.pieces)      parts.push('Pièces : '+d.pieces);
-        if(d.desc)        parts.push(d.desc);
-        if(parts.length) ctx.value = parts.join('\n');
-      }}
-      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
-      if(d.domain){{
-        var info2 = document.getElementById('v58RetourInfo');
-        if(info2 && !badge.classList.contains('visible'))
-          info2.textContent = 'Domaine : ' + d.domain + ' — Contexte pré-rempli depuis votre parcours.';
-      }}
-    }}catch(e){{}}
-  }}
-  document.addEventListener('DOMContentLoaded', function(){{ setTimeout(_init, 500); }});
-  window.addEventListener('pope_generation_done', function(){{
-    setTimeout(_init, 300);
-  }});
-  window.addEventListener('storage', function(e){{
-    if(e.key==='pope_v54_generations') _init();
-  }});
-  setTimeout(_init, 800);
-}})();
-</script>
+<script src="./assets/app-v60-bridge.js"></script>
 </body>
 </html>
