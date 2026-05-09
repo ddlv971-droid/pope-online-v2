@@ -233,7 +233,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 /* PANELS */
 .v5-step-panel{padding:24px;display:none;}
-.v5-step-panel.active{display:block;}
+.v5-step-panel.active{display:block!important;}
 .v5-panel-head{margin-bottom:20px;}
 .v5-panel-head h2{font-size:17px;font-weight:800;color:var(--ink);margin:0 0 5px;}
 .v5-panel-head p{font-size:13px;color:var(--muted);margin:0;}
@@ -252,7 +252,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   font-family:inherit;
 }
 .v5-domain-pill:hover{border-color:var(--blue);color:var(--blue);background:#f0f8ff;}
-.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
+.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;transform:scale(1.04);box-shadow:0 2px 12px rgba(37,99,235,.2);transition:transform .12s,box-shadow .12s;}
 
 /* FIELDS */
 .v5-field-group{margin-bottom:16px;}
@@ -583,7 +583,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
 
     <!-- Étape 1: Domaine -->
-    <div class="v5-step-panel active" id="step-panel-1">
+    <div class="v5-step-panel active" id="step-panel-1" style="display:block">
       <div class="v5-panel-head">
         <h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
         <p>Sélectionnez le domaine le plus proche de votre situation.</p>
@@ -609,7 +609,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
 
     <!-- Étape 2: Description -->
-    <div class="v5-step-panel" id="step-panel-2">
+    <div class="v5-step-panel" id="step-panel-2" hidden>
       <div class="v5-panel-head">
         
       <div class="v58-domain-badge" id="v58DomainBadge">
@@ -780,7 +780,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
 
     <!-- Étape 3: Documents -->
-    <div class="v5-step-panel" id="step-panel-3">
+    <div class="v5-step-panel" id="step-panel-3" hidden>
       <div class="v5-panel-head">
         <h2>📎 Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
         <p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
@@ -834,7 +834,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
 
     <!-- Étape 4: Envoi -->
-    <div class="v5-step-panel" id="step-panel-4">
+    <div class="v5-step-panel" id="step-panel-4" hidden>
       <div class="v5-panel-head">
         <h2>Récapitulatif de votre demande</h2>
         <p>Vérifiez avant d'envoyer à votre expert.</p>

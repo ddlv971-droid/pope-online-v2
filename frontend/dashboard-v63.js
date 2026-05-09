@@ -179,7 +179,14 @@
     $all('.v5-step-panel').forEach(function (p) {
       var active = p.id === 'step-panel-' + step;
       p.classList.toggle('active', active);
-      if (active) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+      // Belt+suspenders: use both class+hidden AND inline style to avoid CSS specificity conflicts
+      if (active) {
+        p.removeAttribute('hidden');
+        p.style.display = 'block';
+      } else {
+        p.setAttribute('hidden', '');
+        p.style.display = 'none';
+      }
     });
     $all('.v5-step').forEach(function (s) {
       var n = parseInt(s.dataset.step || s.getAttribute('data-v63-step'), 10) || 1;
@@ -202,6 +209,9 @@
     window._domain = domain;
     saveState({ domain: domain, domainIcon: icon, step: 1, need: collectNeed() });
     renderDomain(domain, icon);
+    // V64 FIX: auto-advance to step 2 after domain selection
+    // (short delay for visual feedback on selected pill)
+    setTimeout(function () { goStep(2); }, 120);
   }
 
   function switchTab(name) {
