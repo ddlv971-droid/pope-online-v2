@@ -1,573 +1,397 @@
 /**
  * POPE Online — Dashboard V60
- * ════════════════════════════
- * Moteur d'état multi-étapes persistant (public + privé)
- * Corrections V59 :
- *  - Étapes 1-4 indexables, persistantes, avec step-panel complets dans le HTML
- *  - Liaison bidirectionnelle app.html / app-private.html ↔ dashboard
- *  - Étape 3 Documents entièrement restaurée
- *  - Badge domaine permanent dès étape 2
- *  - Bandeau utilisateur dynamique (prénom, plan, consultations restantes)
- *  - Retour exact à l'étape précédente sans perte de données
+ * Correctifs ciblés sur la structure HTML existante (IDs réels)
+ * ─────────────────────────────────────────────────────────────
+ * BUG 1 : Persistance / retour depuis app.html → étape perdue
+ * BUG 2 : Étape 3 (archiveAttachSelect, vaultExpertList) vide
+ * BUG 3 : Bandeau domaine (v58DomainBadge) non hydraté
+ * BUG 4 : Bandeau utilisateur (dashWelcome, expertLeftN, planN) vide
+ * BUG 5 : Retour depuis app → forcé à étape 1 alors que domaine perdu
  */
 (function () {
   'use strict';
 
-  /* ─── Configuration ──────────────────────────────────── */
-  var isPrivate   = /dashboard-private/i.test(location.pathname);
-  var DASH_URL    = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
-  var APP_URL     = isPrivate ? 'app-private.html'       : 'app.html';
-  var VAULT_SPACE = isPrivate ? 'private'                 : 'public';
-  var EXPERT_URL  = isPrivate ? 'expert-private.html'    : 'expert.html';
-  var STATE_KEY   = 'pope_v60_state_' + (isPrivate ? 'private' : 'public');
-  var API_BASE    = window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com';
+  /* ─── Détection espace ───────────────────────────────── */
+  var isPrivate  = /dashboard-private/i.test(location.pathname);
+  var APP_URL    = isPrivate ? 'app-private.html' : 'app.html';
+  var DASH_URL   = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
+  var VAULT_SP   = isPrivate ? 'private' : 'public';
+  var STATE_KEY  = 'pope_v60_state_' + (isPrivate ? 'priv' : 'pub');
+  var API_BASE   = (window.__POPE_API_BASE__ || 'https://pope-online-v2.onrender.com').replace(/\/$/, '');
 
-  /* ─── Utils ──────────────────────────────────────────── */
-  function el(id)  { return document.getElementById(id); }
-  function qsa(s)  { return Array.from(document.querySelectorAll(s)); }
-  function show(id){ var e=el(id); if(e) e.hidden=false; }
-  function hide(id){ var e=el(id); if(e) e.hidden=true;  }
-
-  /* ─── Session helpers ────────────────────────────────── */
+  /* ─── Helpers ────────────────────────────────────────── */
+  function el(id) { return document.getElementById(id); }
   function getToken() {
     return sessionStorage.getItem('pope_session_token') ||
-           localStorage.getItem('pope_session_token')  || '';
+           localStorage.getItem('pope_session_token') || '';
   }
-  function getUser() {
-    try { return JSON.parse(localStorage.getItem('pope_session_user') || 'null'); } catch(e){ return null; }
-  }
-
-  /* ─── State management ───────────────────────────────── */
-  function emptyState() {
-    return { step:1, domain:'', domainLabel:'', domainIcon:'🎯',
-             title:'', desc:'', contexte:'', probleme:'', objectif:'',
-             decision:'', livrable:'', contraintes:'', risques:'',
-             acteurs:'', public_c:'', deadline:'', pieces:'', niveau:'',
-             besoType:'conseil', attachedGenId:'' };
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function saveState(patch) {
-    var s = loadState();
-    Object.assign(s, patch || {});
-    // Snapshot current fields
-    var fieldMap = {
-      title:'v60Title', desc:'v60Desc', contexte:'v60Contexte',
-      probleme:'v60Probleme', objectif:'v60Objectif', decision:'v60Decision',
-      livrable:'v60Livrable', contraintes:'v60Contraintes', risques:'v60Risques',
-      acteurs:'v60Acteurs', public_c:'v60Public', deadline:'v60Deadline',
-      pieces:'v60Pieces', niveau:'v60Niveau'
-    };
-    Object.keys(fieldMap).forEach(function(k){
-      var e = el(fieldMap[k]); if(e) s[k] = e.value;
-    });
-    var radio = document.querySelector('input[name="v60BesoType"]:checked');
-    if(radio) s.besoType = radio.value;
-    s.step = window.__v60Step || s.step;
+  /* ─── État persistant ────────────────────────────────── */
+  function saveState() {
     try {
-      var json = JSON.stringify(s);
-      sessionStorage.setItem(STATE_KEY, json);
-      localStorage.setItem(STATE_KEY, json);
-    } catch(e){}
+      var data = {
+        step:   window._step || 1,
+        domain: window._domain || ''
+      };
+      // Champs de formulaire
+      var fields = ['besoInTitle','descContexte','descProbleme','descObjectif',
+                    'descDecision','descLivrable','descContraintes','descRisques',
+                    'descActeurs','descPublic','needDeadline','descPieces',
+                    'descNiveau','besoInDesc'];
+      fields.forEach(function(id) {
+        var e = el(id); if (e) data[id] = e.value;
+      });
+      var radio = document.querySelector('input[name="besoType"]:checked');
+      if (radio) data.besoType = radio.value;
+      var attachSel = el('archiveAttachSelect');
+      if (attachSel) data.attachedGenId = attachSel.value;
+      localStorage.setItem(STATE_KEY, JSON.stringify(data));
+      sessionStorage.setItem(STATE_KEY, JSON.stringify(data));
+    } catch(e) {}
   }
 
   function loadState() {
     try {
       var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if(raw) return Object.assign(emptyState(), JSON.parse(raw));
-    } catch(e){}
-    return emptyState();
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
   }
 
-  function clearState() {
-    sessionStorage.removeItem(STATE_KEY);
-    localStorage.removeItem(STATE_KEY);
-  }
-
-  /* ─── Domain configuration ───────────────────────────── */
-  var PUBLIC_DOMAINS = [
-    { id:'collectivite',    label:'Collectivité',          icon:'🏛️' },
-    { id:'etablissement',   label:'Établissement public',  icon:'🏫' },
-    { id:'etat',            label:'Services de l\'État',   icon:'⚖️' },
-    { id:'association',     label:'Association',           icon:'🤝' },
-    { id:'autre_public',    label:'Autre organisation',    icon:'🏢' }
-  ];
-  var PRIVATE_DOMAINS = [
-    { id:'artisan',         label:'Artisan / TPE',         icon:'🔧' },
-    { id:'commerce',        label:'Commerce / Boutique',   icon:'🛍️' },
-    { id:'profession',      label:'Profession libérale',   icon:'💼' },
-    { id:'construction',    label:'BTP / Construction',    icon:'🏗️' },
-    { id:'numerique',       label:'Numérique / Tech',      icon:'💻' },
-    { id:'agri',            label:'Agriculture / Agro',    icon:'🌾' },
-    { id:'autre_prive',     label:'Autre secteur',         icon:'🏢' }
-  ];
-  var DOMAINS = isPrivate ? PRIVATE_DOMAINS : PUBLIC_DOMAINS;
-
-  /* ─── Step management ────────────────────────────────── */
-  var STEPS = [1,2,3,4];
-
-  function goStep(n) {
+  function restoreState() {
     var s = loadState();
-    // Guard : domain required for steps > 1
-    if(n > 1 && !s.domain) {
-      showToast('Veuillez d\'abord sélectionner votre domaine.', 'warn');
+    if (!s) return false;
+
+    // Domaine
+    if (s.domain) {
+      window._domain = s.domain;
+      document.querySelectorAll('.v5-domain-pill').forEach(function(b) {
+        if (b.getAttribute('data-domain') === s.domain) b.classList.add('selected');
+        else b.classList.remove('selected');
+      });
+      updateDomainBadge(s.domain);
+    }
+
+    // Champs texte
+    var fields = ['besoInTitle','descContexte','descProbleme','descObjectif',
+                  'descDecision','descLivrable','descContraintes','descRisques',
+                  'descActeurs','descPublic','needDeadline','descPieces',
+                  'descNiveau','besoInDesc'];
+    fields.forEach(function(id) {
+      var e = el(id); if (e && s[id]) e.value = s[id];
+    });
+
+    // Radio
+    if (s.besoType) {
+      var r = document.querySelector('input[name="besoType"][value="' + s.besoType + '"]');
+      if (r) r.checked = true;
+    }
+
+    return !!(s.domain);
+  }
+
+  /* ─── Badge domaine (v58DomainBadge existant) ────────── */
+  function updateDomainBadge(domain) {
+    var badge  = el('v58DomainBadge');
+    var name   = el('v58DomainName');
+    var icon   = el('v58DomainIcon');
+    if (!badge) return;
+    if (domain) {
+      badge.style.display = 'flex';
+      if (name) name.textContent = domain;
+      // Trouver l'icône depuis le pill sélectionné
+      var pill = document.querySelector('.v5-domain-pill.selected');
+      if (icon && pill) {
+        icon.textContent = pill.textContent.trim().split(' ')[0] || '🎯';
+      }
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  /* ─── goStep corrigé (remplace la version originale) ─── */
+  function goStepV60(n, force) {
+    // Restaurer domaine si nécessaire avant la garde
+    var s = loadState();
+    if (s && s.domain && !window._domain) {
+      window._domain = s.domain;
+    }
+
+    // Garde domaine pour étapes > 1
+    if (n > 1 && !window._domain) {
+      // Flash le domainGrid
+      var g = el('domainGrid');
+      if (g) {
+        g.style.boxShadow = '0 0 0 3px #ef4444';
+        g.style.borderRadius = '14px';
+        setTimeout(function(){ g.style.boxShadow=''; g.style.borderRadius=''; }, 1500);
+      }
       n = 1;
     }
-    window.__v60Step = n;
-    saveState({ step: n });
 
-    // Update panels
-    STEPS.forEach(function(i){
-      var panel = el('v60Panel' + i);
-      if(panel) {
-        panel.style.display = (i === n) ? 'block' : 'none';
-        panel.classList.toggle('v60-panel-active', i === n);
-      }
+    window._step = n;
+    saveState();
+
+    // Panels
+    for (var i = 1; i <= 4; i++) {
+      var p = el('step-panel-' + i);
+      if (p) p.classList.toggle('active', i === n);
+    }
+    // Steps visuels
+    document.querySelectorAll('.v5-step').forEach(function(s) {
+      var sn = parseInt(s.dataset.step, 10);
+      s.classList.toggle('active', sn === n);
+      s.classList.toggle('done', sn < n);
     });
 
-    // Update stepper
-    qsa('.v60-step').forEach(function(btn){
-      var sn = parseInt(btn.dataset.step, 10);
-      btn.classList.toggle('active', sn === n);
-      btn.classList.toggle('done', sn < n);
-      btn.setAttribute('aria-current', sn === n ? 'step' : 'false');
-    });
+    if (n === 3) setTimeout(initStep3, 80);
+    if (n === 4) { if (window.updateRecap) window.updateRecap(); }
 
-    // Panel-specific init
-    if(n === 3) setTimeout(initStep3, 100);
-    if(n === 4) setTimeout(initStep4, 100);
-
-    // Scroll top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  window.v60GoStep = goStep;
-
-  /* ─── Domain selection ───────────────────────────────── */
-  function selectDomain(id) {
-    var dom = DOMAINS.find(function(d){ return d.id === id; });
-    if(!dom) return;
-    qsa('.v60-domain-pill').forEach(function(p){
-      p.classList.toggle('selected', p.dataset.domain === id);
-    });
-    saveState({ domain: id, domainLabel: dom.label, domainIcon: dom.icon });
-    updateDomainBadge();
-    goStep(2);
-  }
-
-  window.v60SelectDomain = selectDomain;
-
-  function updateDomainBadge() {
-    var s = loadState();
-    qsa('.v60-domain-badge').forEach(function(badge){
-      badge.style.display = s.domain ? 'inline-flex' : 'none';
-      var ico  = badge.querySelector('.v60-badge-icon');
-      var lbl  = badge.querySelector('.v60-badge-label');
-      if(ico)  ico.textContent  = s.domainIcon;
-      if(lbl)  lbl.textContent  = s.domainLabel;
-    });
-  }
-
-  function changeDomain() {
-    // Allow domain change from step 2+ without full reset
-    goStep(1);
-  }
-
-  window.v60ChangeDomain = changeDomain;
-
-  /* ─── Field restoration ──────────────────────────────── */
-  function restoreFields() {
-    var s = loadState();
-    var fieldMap = {
-      v60Title:'title', v60Desc:'desc', v60Contexte:'contexte',
-      v60Probleme:'probleme', v60Objectif:'objectif', v60Decision:'decision',
-      v60Livrable:'livrable', v60Contraintes:'contraintes', v60Risques:'risques',
-      v60Acteurs:'acteurs', v60Public:'public_c', v60Deadline:'deadline',
-      v60Pieces:'pieces', v60Niveau:'niveau'
-    };
-    Object.keys(fieldMap).forEach(function(id){
-      var e = el(id); if(e && s[fieldMap[id]]) e.value = s[fieldMap[id]];
-    });
-    var radio = document.querySelector('input[name="v60BesoType"][value="' + (s.besoType||'conseil') + '"]');
-    if(radio) radio.checked = true;
-
-    // Restore domain pills
-    if(s.domain) {
-      qsa('.v60-domain-pill').forEach(function(p){
-        p.classList.toggle('selected', p.dataset.domain === s.domain);
-      });
-    }
-    updateDomainBadge();
-  }
-
-  /* ─── Build full description for expert submission ────── */
-  function buildFullDescription() {
-    var parts = [];
-    var add = function(id, label){
-      var e = el(id); if(e && (e.value||'').trim()) parts.push(label + ' : ' + e.value.trim());
-    };
-    add('v60Title',       'Titre / Objet');
-    add('v60Contexte',    'Contexte');
-    add('v60Probleme',    'Problème / Enjeu');
-    add('v60Objectif',    'Objectif');
-    add('v60Decision',    'Décision attendue');
-    add('v60Livrable',    'Livrable attendu');
-    add('v60Contraintes', 'Contraintes');
-    add('v60Risques',     'Points sensibles');
-    add('v60Acteurs',     'Acteurs');
-    add('v60Public',      'Destinataire');
-    add('v60Deadline',    'Échéance');
-    add('v60Pieces',      'Pièces disponibles');
-    add('v60Niveau',      'Niveau de détail');
-    var desc = (el('v60Desc')||{}).value || '';
-    if(desc.trim()) parts.push(desc.trim());
-    return parts.join('\n');
-  }
-  window.v60BuildFullDescription = buildFullDescription;
-
-  /* ─── Step 3 – Documents & IA drafts ────────────────── */
+  /* ─── Étape 3 — Drafts IA ────────────────────────────── */
   function loadGenerations() {
-    try { return JSON.parse(localStorage.getItem('pope_v54_generations') || '[]'); } catch(e){ return []; }
+    try { return JSON.parse(localStorage.getItem('pope_v54_generations') || '[]'); } catch(e) { return []; }
   }
 
   function initStep3() {
-    renderDrafts();
-    renderVaultFiles();
+    fillDraftSelect();
+    loadVaultFiles();
   }
 
-  function renderDrafts() {
-    var container = el('v60DraftList');
-    if(!container) return;
+  function fillDraftSelect() {
+    var sel = el('archiveAttachSelect');
+    if (!sel) return;
     var gens = loadGenerations();
-    if(!gens.length) {
-      container.innerHTML = '<div class="v60-empty-state"><span>📄</span><p>Aucun draft IA disponible pour l\'instant. <a href="' + APP_URL + '" class="v60-link">Générer un livrable →</a></p></div>';
+    var s    = loadState();
+    var cur  = (s && s.attachedGenId) ||
+               sessionStorage.getItem('pope_v58_attached_gen') ||
+               sessionStorage.getItem('pope_v54_last_generation_id') || '';
+
+    sel.innerHTML = '<option value="">Ne pas joindre de draft préparé</option>' +
+      gens.map(function(g, i) {
+        var lbl = (g.title || g.usecaseLabel || 'Draft IA') + ' — ' +
+                  (g.createdAt ? new Date(g.createdAt).toLocaleString('fr-FR') : '');
+        var id  = g.id != null ? g.id : i;
+        return '<option value="' + esc(String(id)) + '">' + esc(lbl) + '</option>';
+      }).join('');
+
+    if (cur) sel.value = cur;
+
+    // Statut draft
+    var status = el('v59DraftStatus');
+    if (status) status.style.display = (gens.length && sel.value) ? 'block' : 'none';
+
+    // Lien "Créer un draft" → app.html avec retour
+    var lnk = el('lnkDraftStep3');
+    if (lnk) {
+      lnk.href = APP_URL + '?from=dashboard&step=2';
+      if (gens.length) lnk.textContent = 'Voir l\'outil →';
+    }
+  }
+
+  function loadVaultFiles() {
+    var container = el('vaultExpertList');
+    if (!container) return;
+    var token = getToken();
+    if (!token) {
+      container.innerHTML = '<span style="color:#64748b">Connexion requise pour accéder au dépôt.</span>';
       return;
     }
-    container.innerHTML = gens.slice(0,10).map(function(g, i){
-      var date = g.createdAt ? new Date(g.createdAt).toLocaleString('fr-FR') : '';
-      var title = g.title || g.usecaseLabel || 'Draft IA';
-      var preview = (g.result||g.text||'').substring(0,120);
-      var id = g.id || i;
-      return '<div class="v60-draft-card" data-id="' + id + '">' +
-        '<div class="v60-draft-head">' +
-          '<div class="v60-draft-meta">' +
-            '<strong class="v60-draft-title">' + escHtml(title) + '</strong>' +
-            '<span class="v60-draft-date">' + escHtml(date) + '</span>' +
-          '</div>' +
-          '<button class="v60-btn v60-btn-sm v60-btn-secondary" onclick="v60AttachDraft(\'' + id + '\')" title="Joindre à la demande experte">Joindre</button>' +
-        '</div>' +
-        (preview ? '<p class="v60-draft-preview">' + escHtml(preview) + '…</p>' : '') +
-      '</div>';
-    }).join('');
-
-    // Restore attached
-    var s = loadState();
-    if(s.attachedGenId) highlightAttachedDraft(s.attachedGenId);
-  }
-
-  function highlightAttachedDraft(id) {
-    qsa('.v60-draft-card').forEach(function(c){
-      var attached = String(c.dataset.id) === String(id);
-      c.classList.toggle('v60-draft-attached', attached);
-      var btn = c.querySelector('button');
-      if(btn) btn.textContent = attached ? '✓ Joint' : 'Joindre';
-    });
-    var badge = el('v60AttachedBadge');
-    if(badge) {
-      var gens = loadGenerations();
-      var gen = gens.find(function(g){ return String(g.id) === String(id); });
-      badge.hidden = !gen;
-      if(gen) badge.textContent = 'Draft joint : ' + (gen.title || gen.usecaseLabel || 'Draft IA');
-    }
-  }
-
-  window.v60AttachDraft = function(id) {
-    saveState({ attachedGenId: id });
-    sessionStorage.setItem('pope_v58_attached_gen', id);
-    highlightAttachedDraft(id);
-    showToast('Draft joint à la demande experte ✓', 'ok');
-  };
-
-  window.v60DetachDraft = function() {
-    saveState({ attachedGenId: '' });
-    sessionStorage.removeItem('pope_v58_attached_gen');
-    qsa('.v60-draft-card').forEach(function(c){ c.classList.remove('v60-draft-attached'); });
-    var badge = el('v60AttachedBadge');
-    if(badge) badge.hidden = true;
-    renderDrafts();
-    showToast('Draft détaché.', 'ok');
-  };
-
-  function renderVaultFiles() {
-    var container = el('v60VaultList');
-    if(!container) return;
-    var token = getToken();
-    if(!token) { container.innerHTML = '<p class="v60-muted">Connexion requise pour accéder au dépôt.</p>'; return; }
-    container.innerHTML = '<p class="v60-muted v60-loading-text">⏳ Chargement des pièces déposées…</p>';
-    fetch(API_BASE + '/vault/list?space=' + VAULT_SPACE, {
+    container.innerHTML = '<span style="color:#64748b;font-style:italic">⏳ Chargement…</span>';
+    fetch(API_BASE + '/vault/list?space=' + VAULT_SP, {
       headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       credentials: 'include'
-    }).then(function(r){ return r.json(); })
-    .then(function(data){
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
       var files = data.files || data.items || [];
-      if(!files.length) {
-        container.innerHTML = '<div class="v60-empty-state"><span>📂</span>' +
-          '<p>Aucune pièce déposée. <a href="vault.html?space=' + VAULT_SPACE + '&return=' + DASH_URL + '" class="v60-link">Accéder au dépôt →</a></p></div>';
+      if (!files.length) {
+        container.innerHTML = '<span style="color:#64748b">Aucune pièce déposée. ' +
+          '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '" ' +
+          'style="color:#0079c1;font-weight:700">Déposer des pièces →</a></span>';
         return;
       }
-      container.innerHTML = files.slice(0,8).map(function(f){
-        return '<div class="v60-vault-item">' +
-          '<span class="v60-vault-icon">📄</span>' +
-          '<div class="v60-vault-info">' +
-            '<strong>' + escHtml(f.original_name || f.filename || 'Fichier') + '</strong>' +
-            '<span>' + (f.size_kb ? f.size_kb + ' Ko' : '') + (f.created_at ? ' · ' + new Date(f.created_at).toLocaleDateString('fr-FR') : '') + '</span>' +
-          '</div>' +
-        '</div>';
+      container.innerHTML = files.slice(0, 6).map(function(f) {
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f4f8">' +
+          '<span>📄</span>' +
+          '<span style="flex:1;font-size:12px;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+            esc(f.original_name || f.filename || 'Fichier') + '</span>' +
+          '<span style="font-size:11px;color:#94a3b8;white-space:nowrap">' +
+            (f.size_kb ? f.size_kb + ' Ko' : '') + '</span>' +
+          '</div>';
       }).join('') +
-      '<a href="vault.html?space=' + VAULT_SPACE + '&return=' + DASH_URL + '?step=3" class="v60-btn v60-btn-secondary v60-mt8">📂 Gérer le dépôt</a>';
+      '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '?step=3" ' +
+      'style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#0079c1">📂 Gérer le dépôt →</a>';
     })
-    .catch(function(){
-      container.innerHTML = '<div class="v60-empty-state"><span>📂</span>' +
-        '<p>Impossible de charger les pièces. <a href="vault.html?space=' + VAULT_SPACE + '&return=' + DASH_URL + '" class="v60-link">Accéder au dépôt →</a></p></div>';
+    .catch(function() {
+      container.innerHTML = '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '" ' +
+        'style="font-size:12px;font-weight:700;color:#0079c1">📂 Accéder au dépôt sécurisé →</a>';
     });
   }
 
-  /* ─── Step 4 – Transmission experte ─────────────────── */
-  function initStep4() {
-    var s = loadState();
-    // Populate summary
-    var summary = el('v60ExpertSummary');
-    if(summary) {
-      var lines = [];
-      if(s.title) lines.push('<strong>Objet :</strong> ' + escHtml(s.title));
-      if(s.domain) lines.push('<strong>Domaine :</strong> ' + escHtml(s.domainIcon + ' ' + s.domainLabel));
-      if(s.objectif) lines.push('<strong>Objectif :</strong> ' + escHtml(s.objectif.substring(0,80) + (s.objectif.length > 80 ? '…' : '')));
-      if(s.deadline) lines.push('<strong>Échéance :</strong> ' + escHtml(s.deadline));
-      if(s.attachedGenId) {
-        var gens = loadGenerations();
-        var g = gens.find(function(x){ return String(x.id) === String(s.attachedGenId); });
-        if(g) lines.push('<strong>Draft joint :</strong> ' + escHtml(g.title || 'Draft IA'));
-      }
-      summary.innerHTML = lines.length ? lines.join('<br>') : '<span class="v60-muted">Récapitulatif de votre demande.</span>';
-    }
-    // Pre-fill expert description field
-    var descField = el('v60ExpertDesc');
-    if(descField && !descField.value) descField.value = buildFullDescription();
-  }
-
-  /* ─── Expert submission ──────────────────────────────── */
-  window.v60SubmitExpert = function() {
-    var btn = el('v60BtnSubmitExpert');
-    var msg = el('v60SubmitMsg');
-    var s   = loadState();
-
-    var desc = (el('v60ExpertDesc')||{}).value || buildFullDescription();
-    if(!desc.trim()) { showToast('Veuillez décrire votre besoin avant d\'envoyer.', 'warn'); return; }
-
-    if(btn) { btn.disabled = true; btn.textContent = '⏳ Envoi en cours…'; }
-    if(msg) { msg.hidden = true; }
-
-    var token = getToken();
-    var body = {
-      domain:      s.domain,
-      domain_label:s.domainLabel,
-      title:       s.title || 'Demande de relecture',
-      description: desc,
-      deadline:    s.deadline,
-      attached_gen_id: s.attachedGenId || null,
-      space:       VAULT_SPACE
-    };
-
-    fetch(API_BASE + '/expert/request', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? 'Bearer ' + token : ''
-      },
-      credentials: 'include',
-      body: JSON.stringify(body)
-    })
-    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
-    .then(function(res){
-      if(res.ok) {
-        showToast('✅ Demande envoyée ! Un expert vous répondra sous 48h.', 'ok');
-        if(msg) { msg.textContent = '✅ Demande transmise avec succès.'; msg.className = 'v60-msg-ok'; msg.hidden = false; }
-        setTimeout(function(){ clearState(); location.href = EXPERT_URL; }, 2200);
-      } else {
-        var errMsg = (res.data && res.data.message) || 'Erreur lors de l\'envoi.';
-        showToast('❌ ' + errMsg, 'err');
-        if(msg) { msg.textContent = '❌ ' + errMsg; msg.className = 'v60-msg-err'; msg.hidden = false; }
-        if(btn) { btn.disabled = false; btn.textContent = '📤 Soumettre à un expert'; }
-      }
-    })
-    .catch(function(){
-      showToast('❌ Erreur réseau. Vérifiez votre connexion.', 'err');
-      if(btn) { btn.disabled = false; btn.textContent = '📤 Soumettre à un expert'; }
-    });
-  };
-
-  /* ─── User hydration (bandeau dynamique) ─────────────── */
+  /* ─── Bandeau utilisateur ────────────────────────────── */
   function hydrateUser() {
     var token = getToken();
     var headers = { 'Content-Type': 'application/json' };
-    if(token) headers['Authorization'] = 'Bearer ' + token;
+    if (token) headers['Authorization'] = 'Bearer ' + token;
 
-    fetch(API_BASE + '/auth/me', {
-      method: 'GET', headers: headers, credentials: 'include'
-    })
-    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then(function(data){
+    fetch(API_BASE + '/auth/me', { method: 'GET', headers: headers, credentials: 'include' })
+    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function(data) {
       var user   = data.user   || {};
       var wallet = data.wallet || {};
 
-      // Cache user
-      if(user) localStorage.setItem('pope_session_user', JSON.stringify(user));
+      // Mettre en cache
+      if (user && Object.keys(user).length) {
+        localStorage.setItem('pope_session_user', JSON.stringify(user));
+      }
 
       // Prénom
       var prenom = user.full_name ? user.full_name.split(' ')[0] : (user.first_name || '');
-      qsa('[data-user-greet]').forEach(function(el){
-        el.textContent = prenom ? 'Bonjour ' + prenom + ' 👋' : 'Bonjour 👋';
-      });
-      qsa('[data-user-name]').forEach(function(el){ el.textContent = prenom || '—'; });
-
-      // Plan
-      var planLabel = wallet.plan_label || user.plan_label || 'Free';
-      qsa('[data-user-plan]').forEach(function(el){ el.textContent = planLabel; });
+      var greet  = el('dashWelcome');
+      if (greet && prenom) greet.textContent = 'Bonjour ' + prenom + ' 👋';
 
       // Consultations restantes
-      var expertLeft = wallet.expert_left != null ? wallet.expert_left : '—';
-      qsa('[data-user-expert-left]').forEach(function(el){ el.textContent = expertLeft; });
+      var leftEl = el('expertLeftN');
+      if (leftEl) leftEl.textContent = wallet.expert_left != null ? wallet.expert_left : '—';
 
-      // Trial alert
-      if(wallet.status === 'trial_active' && wallet.trial_days_left != null) {
-        var alert = el('v60TrialAlert');
-        if(alert) {
-          alert.hidden = false;
-          var alertBody = el('v60TrialBody');
-          if(alertBody) alertBody.textContent = wallet.trial_days_left + ' jour(s) d\'essai restant(s).';
-        }
-      } else if(wallet.status === 'trial_expired') {
-        var alert2 = el('v60TrialAlert');
-        if(alert2) {
-          alert2.hidden = false;
-          alert2.classList.add('v60-trial-expired');
-          var alertBody2 = el('v60TrialBody');
-          if(alertBody2) alertBody2.textContent = 'Votre période d\'essai est terminée. Choisissez un plan pour continuer.';
+      // Plan
+      var planEl = el('planN');
+      if (planEl) planEl.textContent = wallet.plan_label || user.plan_label || 'Free';
+
+      // Alerte trial
+      var trialAlert = el('trialAlert');
+      if (trialAlert) {
+        if (wallet.status === 'trial_active' && wallet.trial_days_left != null) {
+          trialAlert.removeAttribute('hidden');
+          var tTitle = el('trialAlertTitle');
+          var tBody  = el('trialAlertBody');
+          if (tTitle) tTitle.textContent = 'Essai gratuit — ' + wallet.trial_days_left + ' jour(s) restant(s)';
+          if (tBody)  tBody.textContent  = 'Souscrivez un plan pour continuer après votre essai.';
+        } else if (wallet.status === 'trial_expired') {
+          trialAlert.removeAttribute('hidden');
+          trialAlert.style.background = 'linear-gradient(to right,#fef2f2,#fff0f0)';
+          trialAlert.style.borderColor = '#fecaca';
+          var tTitle2 = el('trialAlertTitle');
+          var tBody2  = el('trialAlertBody');
+          if (tTitle2) tTitle2.textContent = 'Période d\'essai terminée';
+          if (tBody2)  tBody2.textContent  = 'Votre accès est suspendu. Choisissez un plan pour reprendre.';
         }
       }
     })
-    .catch(function(){
-      // Fallback on cached user
-      var cached = getUser();
-      if(cached) {
-        var prenom = cached.full_name ? cached.full_name.split(' ')[0] : '';
-        qsa('[data-user-greet]').forEach(function(e){ if(prenom) e.textContent = 'Bonjour ' + prenom + ' 👋'; });
-      }
+    .catch(function() {
+      // Fallback depuis le cache
+      try {
+        var cached = JSON.parse(localStorage.getItem('pope_session_user') || 'null');
+        if (cached) {
+          var prenom = cached.full_name ? cached.full_name.split(' ')[0] : '';
+          var greet  = el('dashWelcome');
+          if (greet && prenom) greet.textContent = 'Bonjour ' + prenom + ' 👋';
+        }
+      } catch(e) {}
     });
   }
 
-  /* ─── Handle return from app.html ────────────────────── */
+  /* ─── Retour depuis app.html ─────────────────────────── */
   function handleUrlParams() {
     var sp     = new URLSearchParams(location.search);
     var from   = sp.get('from');
     var step   = parseInt(sp.get('step') || '0', 10);
     var attach = sp.get('attach') === 'last';
 
-    if(!from && !step && !attach) return;
+    if (!from && !step && !attach) return;
 
-    // Attach last generation if requested
-    if(attach) {
+    // Récupérer le dernier ID de génération
+    if (attach) {
       var lastId = sessionStorage.getItem('pope_v54_last_generation_id') ||
                    sessionStorage.getItem('pope_v58_last_gen') || '';
-      if(lastId) {
-        saveState({ attachedGenId: lastId });
+      if (lastId) {
         sessionStorage.setItem('pope_v58_attached_gen', lastId);
+        var s = loadState() || {};
+        s.attachedGenId = lastId;
+        try {
+          localStorage.setItem(STATE_KEY, JSON.stringify(s));
+          sessionStorage.setItem(STATE_KEY, JSON.stringify(s));
+        } catch(e) {}
       }
     }
 
     var target = step || (attach ? 3 : 2);
-    setTimeout(function(){ goStep(target); }, 350);
+    setTimeout(function() { goStepV60(target); }, 400);
   }
 
-  /* ─── Auto-link app buttons to save state first ─────── */
-  function wireAppLinks() {
-    qsa('a[href="' + APP_URL + '"], a[href^="' + APP_URL + '?"]').forEach(function(a){
-      a.addEventListener('click', function(){ saveState({}); });
-    });
-    // Update "Générer" links to include from= param so app can return correctly
-    qsa('.v60-goto-app').forEach(function(a){
-      a.href = APP_URL + '?from=dashboard&step=2';
-      a.addEventListener('click', function(){ saveState({}); });
-    });
+  /* ─── Patcher selectDomain pour sauvegarder ─────────── */
+  function patchSelectDomain() {
+    var orig = window.selectDomain;
+    if (!orig || orig._v60patched) return;
+    window.selectDomain = function(btn) {
+      orig(btn);
+      var domain = btn.getAttribute('data-domain');
+      window._domain = domain;
+      updateDomainBadge(domain);
+      saveState();
+    };
+    window.selectDomain._v60patched = true;
   }
 
-  /* ─── Toast ──────────────────────────────────────────── */
-  function showToast(msg, type) {
-    type = type || 'ok';
-    var t = document.createElement('div');
-    t.className = 'v60-toast v60-toast-' + type;
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(function(){ t.classList.add('v60-toast-show'); }, 10);
-    setTimeout(function(){ t.classList.remove('v60-toast-show'); setTimeout(function(){ t.remove(); }, 300); }, 3000);
+  /* ─── Patcher goStep pour passer par notre version ───── */
+  function patchGoStep() {
+    if (window.goStep && window.goStep._v60patched) return;
+    window.goStep = goStepV60;
+    window.goStep._v60patched = true;
   }
 
-  /* ─── HTML escape ────────────────────────────────────── */
-  function escHtml(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  /* ─── Auto-save on input ─────────────────────────────── */
-  document.addEventListener('input', function(){ saveState({}); }, true);
-  document.addEventListener('change', function(){ saveState({}); }, true);
+  /* ─── Auto-save sur saisie ───────────────────────────── */
+  document.addEventListener('input', saveState, true);
+  document.addEventListener('change', function(e) {
+    saveState();
+    if (e.target && e.target.id === 'archiveAttachSelect') {
+      sessionStorage.setItem('pope_v58_attached_gen', e.target.value || '');
+    }
+  }, true);
 
   /* ─── Init ───────────────────────────────────────────── */
   function init() {
-    // Render domain pills
-    var pillContainer = el('v60DomainPills');
-    if(pillContainer && !pillContainer.dataset.rendered) {
-      pillContainer.dataset.rendered = '1';
-      pillContainer.innerHTML = DOMAINS.map(function(d){
-        return '<button class="v60-domain-pill" data-domain="' + d.id + '" onclick="v60SelectDomain(\'' + d.id + '\')">' +
-          '<span class="v60-pill-icon">' + d.icon + '</span>' +
-          '<span class="v60-pill-label">' + escHtml(d.label) + '</span>' +
-        '</button>';
-      }).join('');
+    patchSelectDomain();
+    patchGoStep();
+
+    // Restaurer l'état
+    var hasDomain = restoreState();
+
+    // Naviguer à l'étape persistée
+    var s = loadState();
+    if (s && s.step && s.step > 1 && hasDomain) {
+      setTimeout(function() { goStepV60(s.step); }, 150);
     }
 
-    // Restore state
-    var s = loadState();
-    window.__v60Step = s.step || 1;
-    restoreFields();
-
-    // Go to persisted step (silently)
-    STEPS.forEach(function(i){
-      var panel = el('v60Panel' + i);
-      if(panel) panel.style.display = (i === s.step) ? 'block' : 'none';
-    });
-    qsa('.v60-step').forEach(function(btn){
-      var sn = parseInt(btn.dataset.step, 10);
-      btn.classList.toggle('active', sn === s.step);
-      btn.classList.toggle('done', sn < s.step);
-    });
-
-    // Panel specific
-    if(s.step === 3) setTimeout(initStep3, 100);
-    if(s.step === 4) setTimeout(initStep4, 100);
-
-    // User hydration
+    // Hydratation utilisateur
     hydrateUser();
 
-    // Wire links
-    wireAppLinks();
-
-    // URL param handling (return from app)
+    // Gérer les paramètres URL (retour de app.html)
     handleUrlParams();
+
+    // Peupler étape 3 si on y est déjà
+    if (s && s.step === 3) setTimeout(initStep3, 200);
   }
 
-  if(document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(init, 60); });
+  // Patch tardif au cas où les fonctions sont définies après ce script
+  setTimeout(function() {
+    patchSelectDomain();
+    patchGoStep();
+  }, 300);
+  setTimeout(function() {
+    patchSelectDomain();
+    patchGoStep();
+  }, 800);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 80); });
   } else {
-    setTimeout(init, 60);
+    setTimeout(init, 80);
   }
 
 })();

@@ -1,90 +1,70 @@
 /**
- * POPE Online — App ↔ Dashboard Bridge V60
- * ==========================================
- * Injecté dans app.html et app-private.html pour :
- * 1. Sauvegarder le contexte dashboard avant la génération IA
- * 2. Enrichir les liens retour vers le dashboard avec from=app&attach=last
- * 3. Stocker l'ID de la dernière génération pour que le dashboard
- *    la récupère automatiquement à l'étape 3
+ * POPE Online — App Bridge V60
+ * Enrichit les liens retour dashboard dans app.html / app-private.html
  */
 (function () {
   'use strict';
 
-  var isPrivate   = /app-private/i.test(location.pathname) || document.body.getAttribute('data-forced-space') === 'private';
-  var DASH_URL    = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
-  var STATE_KEY   = 'pope_v60_state_' + (isPrivate ? 'private' : 'public');
+  var isPrivate = /app-private/i.test(location.pathname) ||
+                  (document.body && document.body.getAttribute('data-forced-space') === 'private');
+  var DASH_URL  = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
+  var STATE_KEY = 'pope_v60_state_' + (isPrivate ? 'priv' : 'pub');
 
-  /* ─── Restore dashboard context into the app form ───── */
-  function restoreContext() {
-    try {
-      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if (!raw) return;
-      var s = JSON.parse(raw);
-      // Pre-fill app context textarea if empty
-      var ctxField = document.getElementById('context') || document.getElementById('contextField') || document.getElementById('v60AppContext');
-      if (ctxField && !ctxField.value && s.contexte) {
-        ctxField.value = s.contexte;
-      }
-      var objField = document.getElementById('objective') || document.getElementById('objectiveField');
-      if (objField && !objField.value && s.objectif) {
-        objField.value = s.objectif;
-      }
-    } catch(e) {}
-  }
-
-  /* ─── Save generation ID when app produces one ───────── */
-  function watchGenerations() {
-    // Hook onto pope_v54_generations updates
-    var origSetItem = Storage.prototype.setItem;
+  /* ─── Intercepter les écritures localStorage pour capter le dernier ID ── */
+  function watchStorage() {
+    var origSet = Storage.prototype.setItem;
     Storage.prototype.setItem = function(key, value) {
-      origSetItem.apply(this, arguments);
-      if (key === 'pope_v54_generations' || key === 'pope_last_generation_public' || key === 'pope_last_generation_private') {
+      origSet.apply(this, arguments);
+      if (key === 'pope_v54_generations') {
         try {
           var gens = JSON.parse(value);
-          if (Array.isArray(gens) && gens.length) {
-            var last = gens[0];
-            sessionStorage.setItem('pope_v54_last_generation_id', last.id || '');
-            sessionStorage.setItem('pope_v58_last_gen', last.id || '');
+          if (Array.isArray(gens) && gens.length && gens[0].id != null) {
+            sessionStorage.setItem('pope_v54_last_generation_id', String(gens[0].id));
+            sessionStorage.setItem('pope_v58_last_gen', String(gens[0].id));
           }
         } catch(e) {}
       }
     };
   }
 
-  /* ─── Enrich all dashboard return links ──────────────── */
-  function wireReturnLinks() {
-    // Update all dashboard home links to include return params
-    function update() {
-      document.querySelectorAll('a[href="' + DASH_URL + '"], a[href^="' + DASH_URL + '?"]').forEach(function(a) {
-        var base = a.getAttribute('href').split('?')[0];
-        a.href = base + '?from=app&attach=last&step=3';
-      });
-      // Also the topbar "Dashboard" button
-      var topbarHome = document.getElementById('topbarHomeLink') || document.getElementById('appHomeLink');
-      if (topbarHome && topbarHome.getAttribute('href') === DASH_URL) {
-        topbarHome.href = DASH_URL + '?from=app&attach=last&step=3';
+  /* ─── Mettre à jour les liens dashboard ─────────────── */
+  function wireLinks() {
+    var returnUrl = DASH_URL + '?from=app&attach=last&step=3';
+
+    // Topbar "Dashboard"
+    var topbar = document.getElementById('topbarHomeLink') || document.getElementById('appHomeLink');
+    if (topbar) {
+      var href = topbar.getAttribute('href') || '';
+      if (href === DASH_URL || href.startsWith(DASH_URL + '?')) {
+        topbar.href = returnUrl;
       }
     }
-    update();
-    setTimeout(update, 600);
-    setTimeout(update, 1500);
+
+    // Tous les liens vers dashboard dans la page
+    document.querySelectorAll('a[href="' + DASH_URL + '"], a[href="' + DASH_URL + '"]').forEach(function(a) {
+      a.href = returnUrl;
+    });
+
+    // Lien "🏠 Dashboard" dans le topbar nav
+    document.querySelectorAll('.v40-topbar-btn, .v40-mobile-menu a').forEach(function(a) {
+      if (a.getAttribute('href') === DASH_URL) {
+        a.href = returnUrl;
+      }
+    });
   }
 
-  /* ─── Init ───────────────────────────────────────────── */
   function init() {
-    // Only run if we came from dashboard
-    var sp = new URLSearchParams(location.search);
-    if (sp.get('from') === 'dashboard' || sp.get('from') === 'app') {
-      restoreContext();
-    }
-    watchGenerations();
-    wireReturnLinks();
+    watchStorage();
+    wireLinks();
+    // Re-passer après hydration du topbar
+    setTimeout(wireLinks, 600);
+    setTimeout(wireLinks, 1500);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 200); });
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
   } else {
-    setTimeout(init, 200);
+    setTimeout(init, 100);
   }
 
 })();
