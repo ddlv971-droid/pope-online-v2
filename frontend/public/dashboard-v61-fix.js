@@ -258,13 +258,13 @@
                     '<a href="' + manageUrl + '" style="font-size:12px;font-weight:700;color:#0079c1;white-space:nowrap">📂 Déposer des pièces →</a></div>';
     if (!t) { c.innerHTML = fallback; return; }
     c.innerHTML = '<span style="color:#64748b;font-style:italic">⏳ Chargement du dépôt…</span>';
-    fetch(API_BASE + '/vault/list?space=' + VAULT_SP, {
+    fetch(API_BASE + '/vault/', {
       headers: { Authorization: 'Bearer ' + t },
       credentials: 'include'
     })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
-      var files = data.files || data.items || [];
+      var files = data.items || data.files || [];
       if (!files.length) { c.innerHTML = fallback; return; }
       sessionStorage.setItem('pope_v61_vault_files', JSON.stringify(files));
       c.innerHTML = files.slice(0, 8).map(function(f) {
