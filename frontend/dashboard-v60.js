@@ -64,15 +64,10 @@
     var s = loadState();
     if (!s) return false;
 
-    // Domaine
-    if (s.domain) {
-      window._domain = s.domain;
-      document.querySelectorAll('.v5-domain-pill').forEach(function(b) {
-        if (b.getAttribute('data-domain') === s.domain) b.classList.add('selected');
-        else b.classList.remove('selected');
-      });
-      updateDomainBadge(s.domain);
-    }
+    // V61.1 : NE PAS restaurer le domaine au chargement initial.
+    // Le domaine est restauré uniquement si on revient depuis app.html (?from=app).
+    // Cela empêche l'utilisateur d'aller à l'étape > 1 sans rechoisir un domaine.
+    // window._domain restera '' jusqu'à ce que l'utilisateur clique un pill.
 
     // Champs texte
     var fields = ['besoInTitle','descContexte','descProbleme','descObjectif',
@@ -89,7 +84,7 @@
       if (r) r.checked = true;
     }
 
-    return !!(s.domain);
+    return false; // V61.1 : domaine toujours vide au premier chargement
   }
 
   /* ─── Badge domaine (v58DomainBadge existant) ────────── */
@@ -362,11 +357,11 @@
     // Restaurer l'état
     var hasDomain = restoreState();
 
-    // Naviguer à l'étape persistée
-    var s = loadState();
-    if (s && s.step && s.step > 1 && hasDomain) {
-      setTimeout(function() { goStepV60(s.step); }, 150);
-    }
+    // V61.1 : NE PAS restaurer l'étape persistée au chargement initial.
+    // L'utilisateur doit toujours repartir de l'étape 1 (choix du domaine).
+    // La navigation vers une étape > 1 n'est autorisée que via handleUrlParams()
+    // (retour depuis app.html avec ?from=app&step=N).
+    var s = loadState(); // Déclaré pour utilisation en aval
 
     // Hydratation utilisateur
     hydrateUser();
@@ -374,8 +369,7 @@
     // Gérer les paramètres URL (retour de app.html)
     handleUrlParams();
 
-    // Peupler étape 3 si on y est déjà
-    if (s && s.step === 3) setTimeout(initStep3, 200);
+    // V61.1 : initStep3 appelé UNIQUEMENT via goStepV60(3), jamais au chargement.
   }
 
   // Patch tardif au cas où les fonctions sont définies après ce script
