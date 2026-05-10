@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Outil de rédaction IA</title>
+<link rel="icon" href="./assets/favicon.png" type="image/png"/>
+<link rel="stylesheet" href="pope2.css"/>
+</head>
+<body>
+
+<header class="p2-topbar">
+  <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:1280px;margin:0 auto;padding:0 20px">
+    <a class="p2-topbar-brand" href="dashboard2.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <span class="p2-topbar-brand-name">POPE Online</span>
+    </a>
+    <div class="p2-topbar-sep"></div>
+    <span class="p2-topbar-label">Outil de rédaction IA</span>
+    <nav class="p2-topbar-nav">
+      <a class="p2-topbar-btn" href="dashboard2.html" id="p2ReturnTopbar">← Retour au parcours</a>
+      <button class="p2-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="p2-burger" id="p2Burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="p2-mobile-menu" id="p2MobileMenu">
+  <a href="dashboard2.html" id="p2ReturnMobile">← Retour au parcours</a>
+  <div class="p2-mobile-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+
+<!-- Barre de retour -->
+<div class="p2-return-bar" id="p2ReturnBar">
+  <a class="p2-return-link" href="dashboard2.html" id="p2ReturnBtn">← Retour à mon parcours</a>
+  <div class="p2-draft-ready" id="p2DraftReady">✅ Draft prêt — retournez au parcours pour le joindre</div>
+</div>
+
+<main class="p2-main">
+
+  <div class="p2-gen-box">
+    <div class="p2-gen-title">🛠️ Outil de rédaction IA</div>
+    <div class="p2-gen-sub">Générez un document de travail avant de soumettre votre demande à un expert. Illimité.</div>
+
+    <div class="p2-field" style="margin-bottom:16px">
+      <label class="p2-label">Type de document ★</label>
+      <select class="p2-select" id="p2Usecase">
+        <option value="">— Sélectionnez —</option>
+        <option value="note_strategique">Note stratégique / arbitrage</option>
+        <option value="courrier">Courrier administratif</option>
+        <option value="deliberation">Projet de délibération</option>
+        <option value="synthese_reunion">Synthèse de réunion</option>
+        <option value="cadrage_projet">Cadrage projet / pilotage</option>
+        <option value="rapport_synthese_argumente_public">Rapport de synthèse argumenté</option>
+      </select>
+    </div>
+
+    <div class="p2-field" style="margin-bottom:12px">
+      <label class="p2-label">Contexte ★</label>
+      <textarea class="p2-textarea" id="p2GenContext" rows="4" placeholder="Décrivez votre organisation, la situation, les enjeux, les acteurs impliqués…" style="min-height:100px"></textarea>
+    </div>
+
+    <div class="p2-field" style="margin-bottom:16px">
+      <label class="p2-label">Objectif du document</label>
+      <textarea class="p2-textarea" id="p2GenObj" rows="2" placeholder="Ce que doit produire le document : valider, informer, décider, alerter…"></textarea>
+    </div>
+
+    <div class="p2-msg" id="p2GenMsg"></div>
+
+    <button class="p2-btn p2-btn-primary" id="p2BtnGen" onclick="P2.generateIA('public')" style="width:100%;justify-content:center;padding:13px">
+      ✨ Générer
+    </button>
+  </div>
+
+  <!-- Spinner -->
+  <div class="p2-spinner" id="p2Spinner">
+    <div class="p2-spinner-dot"></div><div class="p2-spinner-dot"></div><div class="p2-spinner-dot"></div>
+    <span>Génération en cours… (10–30 secondes)</span>
+  </div>
+
+  <!-- Résultat -->
+  <div class="p2-gen-box" id="p2ResultBox" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <strong style="font-size:14px;color:var(--ink)">📄 Résultat généré</strong>
+      <span style="font-size:11px;color:var(--muted)">Ce draft peut être joint à votre demande experte</span>
+    </div>
+    <div class="p2-result-box show" id="p2Result"></div>
+    <div class="p2-result-actions" id="p2ResultActions" style="display:none">
+      <button class="p2-btn p2-btn-ghost p2-btn-sm" id="p2BtnCopy">📋 Copier</button>
+      <a class="p2-btn p2-btn-primary p2-btn-sm" href="dashboard2.html" id="p2ReturnWithDraft">← Joindre à ma demande</a>
+    </div>
+  </div>
+
+</main>
+
+<script src="pope2.js"></script>
+<script>
+// Afficher le résultat quand généré
+const _origGen = P2.generateIA.bind(P2);
+// Montrer/cacher la result box
+document.addEventListener('DOMContentLoaded', () => {
+  const spinner = document.getElementById('p2Spinner');
+  const resultBox = document.getElementById('p2ResultBox');
+  const result = document.getElementById('p2Result');
+  const actions = document.getElementById('p2ResultActions');
+
+  // Observer le résultat
+  const obs = new MutationObserver(() => {
+    if (result && result.textContent.trim()) {
+      resultBox.style.display = 'block';
+      actions.style.display = 'flex';
+    }
+  });
+  if (result) obs.observe(result, { childList: true, characterData: true, subtree: true });
+});
+
+P2.initApp('public');
+</script>
+</body>
+</html>

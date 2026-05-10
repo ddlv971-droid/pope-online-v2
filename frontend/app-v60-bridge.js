@@ -29,7 +29,7 @@
 
   /* ─── Mettre à jour les liens dashboard ─────────────── */
   function wireLinks() {
-    var returnUrl = DASH_URL + '?from=app&attach=last&step=3';
+    var returnUrl = DASH_URL + '?from=app&attach=last&step=2';
 
     // Topbar "Dashboard"
     var topbar = document.getElementById('topbarHomeLink') || document.getElementById('appHomeLink');
