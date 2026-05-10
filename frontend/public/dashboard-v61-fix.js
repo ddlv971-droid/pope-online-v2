@@ -177,12 +177,9 @@
     if (n === 4) renderStep4();
 
     if (!opts.noScroll) {
-      // V61.2 : scroll vers le panel actif pour visibilité immédiate
       var activePanel = document.getElementById('step-panel-' + n);
       if (activePanel) {
-        setTimeout(function() {
-          activePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 60);
+        setTimeout(function() { activePanel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
       } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -284,6 +281,10 @@
   window.buildFullDescription = function() { return buildDescription(writeState()); };
 
   function renderStep4() {
+    // Appeler updateRecap de dashboard-v5.js pour pré-remplir recapDomain/Title/Type/Quota
+    if (typeof window.updateRecap === 'function') {
+      try { window.updateRecap(); } catch(e) {}
+    }
     var s = writeState({ step: 4 });
     var typeLabel = s.type === 'surmesure' ? '📋 Accompagnement approfondi / Sur Mesure' : '🎯 Conseil Expert';
     var put = function(id, v) { var e = $(id); if (e) e.textContent = v || '—'; };
@@ -298,12 +299,6 @@
     if (card && !$('v61FinalRecap')) {
       card.insertAdjacentHTML('beforeend', '<div id="v61FinalRecap"></div>');
     }
-    // V61.2 : appeler updateRecap() de dashboard-v5.js si disponible
-    // pour pré-remplir recapDomain, recapTitle, recapType, recapQuota
-    if (typeof window.updateRecap === 'function') {
-      try { window.updateRecap(); } catch(e) {}
-    }
-
     var recap = $('v61FinalRecap');
     if (recap) {
       var gens = loadGenerations();
@@ -373,37 +368,6 @@
     var leftEl = $('expertLeftN'); if (leftEl) leftEl.textContent = left;
   }
 
-  /* V61.2 : Logout robuste — nettoie toutes les clés connues */
-  function wireLogoutFix() {
-    document.addEventListener('click', function(e) {
-      var btn = e.target && e.target.closest ? e.target.closest('[data-logout]') : null;
-      if (!btn) return;
-      e.preventDefault();
-      e.stopPropagation();
-      // Nettoyer TOUTES les clés de session
-      var keysToRemove = [
-        'pope_session_active', 'pope_session_token', 'pope_session_user',
-        'pope_session_wallet', 'pope_plan_label', 'pope_account_space',
-        'pope_token', 'pope_v61_state_public', 'pope_v61_state_private',
-        'pope_v60_state_pub', 'pope_v60_state_priv',
-        'pope_v58_state_public', 'pope_v58_state_private'
-      ];
-      keysToRemove.forEach(function(k) {
-        try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch(ex) {}
-      });
-      var isPrivatePage = /dashboard-private/i.test(location.pathname);
-      var target = document.body && document.body.getAttribute('data-logout-target') || (isPrivatePage ? 'private.html' : 'public.html');
-      // Appel API logout (best-effort)
-      var tok = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
-      var headers = {'Content-Type': 'application/json'};
-      if (tok) headers['Authorization'] = 'Bearer ' + tok;
-      try {
-        fetch(API_BASE + '/auth/logout', { method: 'POST', credentials: 'include', headers: headers }).catch(function(){});
-      } catch(ex) {}
-      setTimeout(function() { window.location.href = target; }, 120);
-    }, true); // capture phase
-  }
-
   function hydrateUser() {
     // Affichage immédiat depuis cache
     try {
@@ -432,29 +396,41 @@
     window.goStep = function(n) { showStep(Number(n) || 1); };
     window.goStep._v61patched = true;
 
+    // Logout robuste : nettoyer toutes les clés connues
+    if (!document._v61LogoutWired) {
+      document._v61LogoutWired = true;
+      document.addEventListener('click', function(e) {
+        var btn = e.target && e.target.closest ? e.target.closest('[data-logout]') : null;
+        if (!btn) return;
+        e.preventDefault(); e.stopPropagation();
+        ['pope_session_active','pope_session_token','pope_session_user',
+         'pope_session_wallet','pope_plan_label','pope_account_space','pope_token',
+         'pope_v61_state_public','pope_v61_state_private',
+         'pope_v60_state_pub','pope_v60_state_priv',
+         'pope_v58_state_public','pope_v58_state_private'
+        ].forEach(function(k){ try{localStorage.removeItem(k);sessionStorage.removeItem(k);}catch(ex){} });
+        var target = (document.body && document.body.getAttribute('data-logout-target')) ||
+                     (/private/.test(location.pathname) ? 'private.html' : 'public.html');
+        try { fetch(API_BASE+'/auth/logout',{method:'POST',credentials:'include',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+(token()||'')}
+        }).catch(function(){}); } catch(ex) {}
+        setTimeout(function(){ window.location.href = target; }, 120);
+      }, true);
+    }
+
     window.selectDomain = function(btn) {
       var domain = btn && btn.getAttribute('data-domain');
       var icon   = btn && (btn.textContent || '').trim().split(' ')[0];
       if (!domain) return;
       setDomain(domain, icon);
       _isFirstLoad = false;
-      // V61.2 : NE PAS naviguer automatiquement vers l'étape 2.
-      // L'utilisateur doit cliquer "Continuer" lui-même.
-      // Activer visuellement le bouton "Continuer" de l'étape 1
-      var btn1Next = document.getElementById('btnStep1Next');
-      if (btn1Next) {
-        btn1Next.style.opacity = '1';
-        btn1Next.removeAttribute('disabled');
-        btn1Next.style.pointerEvents = 'auto';
-      }
-      writeState({ domain: domain, domainIcon: icon || '🎯' });
+      // V61.2 : rester sur l'étape 1, l'utilisateur clique "Continuer" lui-même
     };
 
     window.saveDashboardState  = function() { writeState(); };
     window.loadDashboardState  = readState;
     window.restoreDashboardState = restoreFields;
 
-    wireLogoutFix();
     var oldSubmit = window.submitBesoin;
     window.submitBesoin = function() {
       writeState();
@@ -498,15 +474,15 @@
       }
     }
 
-    // Retour depuis APP → étape 2, restaurer domaine + champs
+    // Retour depuis APP → étape 2, restaurer le domain
     if (fromApp) {
       _isFirstLoad = false;
-      var sf = readState();
-      // Restaurer le domaine IMMÉDIATEMENT (avant patchGoStep de v60 à 80ms)
-      if (sf.domain) {
-        window._domain = sf.domain;
-        try { if (typeof _domain !== 'undefined') _domain = sf.domain; } catch(ex) {}
-        setDomain(sf.domain, sf.domainIcon, true);
+      var s = readState();
+      if (s.domain) {
+        // Forcer window._domain AVANT showStep pour que la garde ne bloque pas
+        window._domain = s.domain;
+        try { if (typeof _domain !== 'undefined') _domain = s.domain; } catch(ex) {}
+        setDomain(s.domain, s.domainIcon, true);
       }
       restoreFields();
       return 2;
@@ -515,11 +491,8 @@
     // Paramètre step explicite dans l'URL
     if (step >= 1 && step <= 4) {
       _isFirstLoad = false;
-      var sf2 = readState();
-      if (sf2.domain) {
-        window._domain = sf2.domain;
-        setDomain(sf2.domain, sf2.domainIcon, true);
-      }
+      var s2 = readState();
+      if (s2.domain) setDomain(s2.domain, s2.domainIcon, true);
       restoreFields();
       return step;
     }
@@ -562,17 +535,5 @@
   } else {
     setTimeout(init, 100);
   }
-
-  // V61.2 : Re-patches tardifs pour écraser les patches de dashboard-v60.js (300ms, 800ms)
-  // Nos patches s'exécutent à 400ms et 1000ms → toujours après v60
-  function reapplyPatches() {
-    patchPublicFns();
-    // Recâbler les liens APP
-    document.querySelectorAll('a[href="app.html"],a[href="app-private.html"],#lnkDraftTool').forEach(function(a) {
-      a.href = APP_URL + '?from=dashboard&step=2';
-    });
-  }
-  setTimeout(reapplyPatches, 400);
-  setTimeout(reapplyPatches, 1000);
 
 })();
