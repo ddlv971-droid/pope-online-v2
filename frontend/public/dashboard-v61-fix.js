@@ -242,7 +242,7 @@
       noDraftMsg = document.createElement('p');
       noDraftMsg.id = 'v61NoDraftMsg';
       noDraftMsg.style.cssText = 'font-size:12px;color:#64748b;margin-top:8px;line-height:1.6';
-      noDraftMsg.innerHTML = '💡 Vous pouvez soumettre directement sans draft. L'outil IA est optionnel.';
+      noDraftMsg.innerHTML = '💡 Vous pouvez soumettre directement sans draft. L\'outil IA est optionnel.';
       sel.after(noDraftMsg);
     }
 
