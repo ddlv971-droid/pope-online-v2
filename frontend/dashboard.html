@@ -499,6 +499,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
+    <button data-logout>🚪 Déconnexion</button>
 </div>
 
 <main class="v5-workspace">
@@ -1236,8 +1237,22 @@ function v58Toggle(id){
 // v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
 </script>
-<script src="./dashboard-v58.js"></script>
-<script src="./dashboard-v60.js"></script>
-<script src="./dashboard-v61-fix.js"></script>
+<script type="module">
+// Chargement des scripts de correction via le module (Vite-compatible)
+function loadScript(src) {
+  return new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+// Charger en séquence pour respecter l'ordre de dépendance
+loadScript('./dashboard-v58.js')
+  .then(function() { return loadScript('./dashboard-v60.js'); })
+  .then(function() { return loadScript('./dashboard-v61-fix.js'); })
+  .catch(function(e) { console.warn('[POPE] Script load error:', e); });
+</script>
 </body>
 </html>

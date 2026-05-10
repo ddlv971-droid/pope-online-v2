@@ -35,7 +35,8 @@
       '</div>'+
       '<div class="v5-helpchips"><button data-add-need="Contexte :\nObjectif recherché :\nContraintes connues :\nÉchéance :\nDocuments disponibles :\nLivrable attendu :">➕ Trame complète</button><button data-add-need="Points de vigilance juridique / financier / organisationnel :">⚠️ Points de vigilance</button><button data-add-need="Résultat idéal attendu de l’expert :">🎯 Résultat attendu</button><button data-add-need="Questions précises à trancher :">❓ Questions à trancher</button></div>'+
       '<p class="v5-quality-note">Un besoin bien défini permet à l’expert de répondre plus vite, avec moins d’allers-retours et une recommandation plus adaptée.</p>';
-    desc.closest('.v5-field-group').after(wrap);
+    var fg = desc.closest('.v5-field-group') || desc.closest('.v5-field') || desc.parentElement;
+    if (fg) fg.after(wrap); else desc.insertAdjacentElement('afterend', wrap);
   }
   function buildFullNeed(){
     var desc=(byId('besoInDesc')||{}).value||'';
