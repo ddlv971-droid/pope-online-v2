@@ -197,13 +197,13 @@
       return;
     }
     container.innerHTML = '<span style="color:#64748b;font-style:italic">⏳ Chargement…</span>';
-    fetch(API_BASE + '/vault/list?space=' + VAULT_SP, {
+    fetch(API_BASE + '/vault/', {
       headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       credentials: 'include'
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      var files = data.files || data.items || [];
+      var files = data.items || data.files || [];
       if (!files.length) {
         container.innerHTML = '<span style="color:#64748b">Aucune pièce déposée. ' +
           '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '" ' +
