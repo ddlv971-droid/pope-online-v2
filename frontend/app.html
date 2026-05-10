@@ -298,11 +298,11 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-next-actions" id="nextActions" hidden>
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultExpertLink">
+        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=2" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
           <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=3" id="resultMissionLink">
+        <a class="v36-next-btn" href="dashboard.html?from=app&attach=last&step=2" id="resultMissionLink">
           <span class="v36-next-btn-icon">🎯</span>
           <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
@@ -464,6 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="./app-v53-bridge.js"></script>
 <script src="./app-v60-bridge.js"></script>
+<script src="./app-v61-bridge.js"></script>
 
 
 
@@ -508,28 +509,28 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 // v58: gestion dynamique barre retour
-(function(){{
+(function(){
   var DASH = 'dashboard.html';
   var STATE_KEY = 'pope_v58_state_public';
-  function _init(){{
-    var gens=[]; try{{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}}catch(e){{}}
+  function _init(){
+    var gens=[]; try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}catch(e){}
     var lastId = sessionStorage.getItem('pope_v54_last_generation_id') || (gens.length?gens[0].id:'');
     var btn    = document.getElementById('btnRetourDashboard');
     var badge  = document.getElementById('v58DraftReady');
     var info   = document.getElementById('v58RetourInfo');
-    if(lastId && btn){{
-      btn.href = DASH + '?from=app&attach=last&step=3';
+    if(lastId && btn){
+      btn.href = DASH + '?from=app&attach=last&step=2';
       if(badge) badge.classList.add('visible');
       if(info)  info.textContent = 'Draft généré ! Revenez pour le joindre à l\'étape Documents (étape 3).';
-    }}
+    }
     // Restore context into app form from dashboard state
-    try{{
+    try{
       var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
       if(!raw) return;
       var d = JSON.parse(raw);
       var ctx = document.getElementById('context');
       var obj = document.getElementById('objective');
-      if(ctx && !ctx.value){{
+      if(ctx && !ctx.value){
         var parts=[];
         if(d.contexte)    parts.push('Contexte : '+d.contexte);
         if(d.probleme)    parts.push('Problème : '+d.probleme);
@@ -541,24 +542,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if(d.pieces)      parts.push('Pièces : '+d.pieces);
         if(d.desc)        parts.push(d.desc);
         if(parts.length) ctx.value = parts.join('\n');
-      }}
+      }
       if(obj && !obj.value && d.objectif) obj.value = d.objectif;
-      if(d.domain){{
+      if(d.domain){
         var info2 = document.getElementById('v58RetourInfo');
         if(info2 && !badge.classList.contains('visible'))
           info2.textContent = 'Domaine : ' + d.domain + ' — Contexte pré-rempli depuis votre parcours.';
-      }}
-    }}catch(e){{}}
-  }}
-  document.addEventListener('DOMContentLoaded', function(){{ setTimeout(_init, 500); }});
-  window.addEventListener('pope_generation_done', function(){{
+      }
+    }catch(e){}
+  }
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(_init, 500); });
+  window.addEventListener('pope_generation_done', function(){
     setTimeout(_init, 300);
-  }});
-  window.addEventListener('storage', function(e){{
+  });
+  window.addEventListener('storage', function(e){
     if(e.key==='pope_v54_generations') _init();
-  }});
+  });
   setTimeout(_init, 800);
-}})();
+})();
 </script>
 </body>
 </html>
