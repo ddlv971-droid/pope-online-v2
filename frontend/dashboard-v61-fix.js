@@ -203,6 +203,7 @@
   }
 
   function renderStep3() {
+    console.log('[POPE V61] renderStep3 appelé — gens:', loadGenerations().length);
     var sel = $('archiveAttachSelect');
     var gens = loadGenerations();
     var cur  = selectedDraftId();
@@ -231,9 +232,19 @@
     }
 
     var lnk = $('lnkDraftStep3');
-    if (lnk) { lnk.href = APP_URL + '?from=dashboard&step=2'; lnk.textContent = gens.length ? 'Créer / modifier un draft →' : 'Créer un draft →'; }
+    if (lnk) { lnk.href = APP_URL + '?from=dashboard&step=2'; lnk.textContent = gens.length ? 'Voir / modifier le draft →' : 'Créer un draft (optionnel) →'; }
     var topDraft = $('lnkDraftTool');
     if (topDraft) topDraft.href = APP_URL + '?from=dashboard&step=2';
+
+    // Si aucun draft : afficher un message incitatif sous le select
+    var noDraftMsg = $('v61NoDraftMsg');
+    if (!noDraftMsg && sel && !gens.length) {
+      noDraftMsg = document.createElement('p');
+      noDraftMsg.id = 'v61NoDraftMsg';
+      noDraftMsg.style.cssText = 'font-size:12px;color:#64748b;margin-top:8px;line-height:1.6';
+      noDraftMsg.innerHTML = '💡 Vous pouvez soumettre directement sans draft. L'outil IA est optionnel.';
+      sel.after(noDraftMsg);
+    }
 
     renderVaultList();
   }
@@ -243,8 +254,8 @@
     var t = token();
     var manageUrl = 'vault.html?space=' + VAULT_SP + '&return=' + encodeURIComponent(DASH_URL + '?step=3');
     var fallback  = '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">' +
-                    '<span style="color:#64748b">Aucune pièce chargée.</span>' +
-                    '<a href="' + manageUrl + '" class="v5-btn-ghost-sm">📂 Déposer / gérer les pièces →</a></div>';
+                    '<span style="color:#64748b;font-size:12px">Aucune pièce dans le dépôt sécurisé — optionnel.</span>' +
+                    '<a href="' + manageUrl + '" style="font-size:12px;font-weight:700;color:#0079c1;white-space:nowrap">📂 Déposer des pièces →</a></div>';
     if (!t) { c.innerHTML = fallback; return; }
     c.innerHTML = '<span style="color:#64748b;font-style:italic">⏳ Chargement du dépôt…</span>';
     fetch(API_BASE + '/vault/list?space=' + VAULT_SP, {
