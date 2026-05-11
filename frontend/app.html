@@ -53,40 +53,131 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
 @media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
 </style>
-<style id="v54-app-style">.v40-topbar-nav a[href*="expert"],.v40-topbar-nav a[href*="mission"],#v40MobileMenu a[href*="expert"],#v40MobileMenu a[href*="mission"]{display:none!important}</style>
 <style>
-/* V67 vault inline styles */
-.v36-vault-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
-.v36-vault-item:last-child{border-bottom:none;}
-.v36-vault-item-name{flex:1;font-size:13px;color:#0b2440;cursor:pointer;}
-.v36-vault-item-size{font-size:11px;color:#50627a;}
-/* Archive items */
-.v36-archive-item{padding:10px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;}
+/* V68 APP styles */
+:root{
+  --blue:#0079c1;--navy:#07162a;--green:#16a34a;
+  --ink:#0b2440;--muted:#50627a;--line:#dce9f4;
+  --bg:#f5f7fa;--white:#fff;
+  --v36-blue:#0079c1;--v36-blue-dark:#0b3060;--v36-blue-soft:#eef7ff;
+  --v36-teal:#0891b2;--v36-green:#059669;--v36-amber:#d97706;--v36-red:#dc2626;
+  --v36-ink:#0b2440;--v36-muted:#50627a;--v36-line:#dce9f4;
+  --v36-bg:#f5f7fa;--v36-white:#fff;
+  --v36-shadow:0 2px 16px rgba(11,36,64,.08);--v36-shadow-md:0 4px 28px rgba(11,36,64,.12);
+}
+.v36-page{background:var(--v36-bg);min-height:100vh;}
+/* Workflow bar */
+.v36-workflow-bar{background:linear-gradient(90deg,#0b3060,#0079c1);padding:0;}
+.v36-workflow-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:stretch;gap:0;height:44px;}
+.v36-wf-step{display:flex;align-items:center;gap:10px;padding:0 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.55);position:relative;cursor:default;flex-shrink:0;}
+.v36-wf-step::after{content:'›';position:absolute;right:-2px;color:rgba(255,255,255,.25);font-size:18px;}
+.v36-wf-step:last-child::after{display:none;}
+.v36-wf-step.active{color:#fff;background:rgba(255,255,255,.1);}
+.v36-wf-step.done{color:rgba(255,255,255,.7);}
+.v36-wf-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.v36-wf-step.active .v36-wf-num{background:#fff;color:var(--v36-blue-dark);}
+.v36-wf-step.done .v36-wf-num{background:rgba(255,255,255,.3);color:#fff;}
+/* Layout */
+.v36-gen-layout{max-width:1280px;margin:0 auto;padding:28px 24px 60px;display:grid;grid-template-columns:420px 1fr;gap:20px;align-items:start;}
+.v36-form-col{position:sticky;top:104px;display:flex;flex-direction:column;gap:14px;}
+/* Domain context badge */
+.v68-domain-ctx{display:flex;align-items:center;gap:8px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:9px 14px;font-size:12px;color:#0369a1;font-weight:600;}
+.v68-domain-ctx-icon{font-size:15px;flex-shrink:0;}
+.v68-domain-ctx-name{flex:1;}
+.v68-domain-ctx-change{font-size:11px;color:#0369a1;opacity:.7;text-decoration:none;cursor:pointer;background:none;border:none;padding:0;font-family:inherit;}
+.v68-domain-ctx-change:hover{opacity:1;text-decoration:underline;}
+/* Usecase selector */
+.v36-usecase-selector{background:linear-gradient(135deg,#0b3060,#0079c1);border-radius:20px;padding:20px;color:#fff;}
+.v36-usecase-selector label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.65);margin-bottom:10px;}
+.v36-usecase-selector select{width:100%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:12px;color:#fff;padding:11px 14px;font-size:14px;font-weight:600;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer;}
+.v36-usecase-selector select option{background:#0b3060;color:#fff;}
+.v36-usecase-hint{margin-top:10px;font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;min-height:18px;}
+/* Form cards */
+.v36-form-card{background:#fff;border-radius:18px;padding:20px;box-shadow:var(--v36-shadow);border:1px solid var(--v36-line);}
+.v36-form-card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.v36-form-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.v36-form-icon.blue{background:#eef7ff;}
+.v36-form-icon.teal{background:#ecfeff;}
+.v36-form-icon.amber{background:#fffbeb;}
+.v36-form-card-head h3{margin:0;font-size:14px;font-weight:700;color:var(--v36-ink);}
+.v36-form-card-head p{margin:2px 0 0;font-size:12px;color:var(--v36-muted);}
+.label{display:block;font-size:12px;font-weight:700;color:var(--v36-ink);margin-bottom:5px;}
+.input{width:100%;padding:9px 12px;border:1.5px solid var(--v36-line);border-radius:10px;font-size:13px;color:var(--v36-ink);background:#fff;transition:.15s;box-sizing:border-box;font-family:inherit;resize:vertical;}
+.input:focus{outline:none;border-color:var(--v36-blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+/* Generate button */
+.v36-generate-btn{width:100%;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border:none;border-radius:14px;padding:16px 24px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(0,121,193,.3);font-family:inherit;}
+.v36-generate-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,121,193,.4);}
+.v36-generate-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.v36-generate-btn.loading{opacity:.8;}
+/* Loading */
+.v36-loading{display:none;align-items:center;gap:14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:14px;padding:16px 20px;}
+.v36-loading.show{display:flex;}
+.v36-spinner{width:20px;height:20px;border:2.5px solid #b8dcf0;border-top-color:var(--v36-blue);border-radius:50%;animation:v36spin .8s linear infinite;flex-shrink:0;}
+@keyframes v36spin{to{transform:rotate(360deg);}}
+/* Result col */
+.v36-result-col{display:flex;flex-direction:column;gap:16px;}
+.v36-result-empty{background:#fff;border-radius:20px;border:2px dashed var(--v36-line);padding:60px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.v36-result-empty-icon{font-size:48px;opacity:.4;}
+.v36-result-empty h3{margin:0;font-size:18px;color:var(--v36-ink);font-weight:700;}
+.v36-result-empty p{margin:0;color:var(--v36-muted);font-size:14px;max-width:320px;line-height:1.6;}
+.v36-result-card{background:#fff;border-radius:20px;box-shadow:var(--v36-shadow-md);border:1px solid var(--v36-line);overflow:hidden;display:none;}
+.v36-result-card.show{display:block;}
+.v36-result-header{background:linear-gradient(to right,#f8fafc,#fff);border-bottom:1px solid var(--v36-line);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.v36-result-header h2{margin:0;font-size:16px;font-weight:700;color:var(--v36-ink);}
+.v36-result-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.v36-result-body{padding:24px;min-height:300px;}
+.v36-output{white-space:pre-wrap;line-height:1.75;font-size:14px;color:var(--v36-ink);}
+/* Next actions */
+.v36-next-actions{background:linear-gradient(135deg,#f0f7fc,#eef7ff);border:1.5px solid #b8dcf0;border-radius:18px;padding:20px;display:none;}
+.v36-next-actions h3{margin:0 0 14px;font-size:14px;font-weight:700;color:var(--v36-ink);text-transform:uppercase;letter-spacing:.05em;}
+.v36-next-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v36-next-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--v36-line);border-radius:12px;padding:13px 16px;text-decoration:none;transition:.2s;cursor:pointer;}
+.v36-next-btn:hover{border-color:var(--v36-blue);background:var(--v36-blue-soft);}
+.v36-next-btn-icon{font-size:20px;flex-shrink:0;}
+.v36-next-btn-text strong{display:block;font-size:13px;font-weight:700;color:var(--v36-ink);}
+.v36-next-btn-text span{font-size:11px;color:var(--v36-muted);}
+/* Archive */
+.v36-archive-card{background:#fff;border-radius:18px;border:1px solid var(--v36-line);box-shadow:var(--v36-shadow);display:none;}
+.v36-archive-card.show{display:block;}
+.v36-archive-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--v36-line);}
+.v36-archive-head h3{margin:0;font-size:15px;font-weight:700;color:var(--v36-ink);}
+.v36-archive-body{padding:12px 20px 16px;}
+.v36-archive-item{padding:10px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:.15s;}
 .v36-archive-item:last-child{border-bottom:none;}
 .v36-archive-item:hover .v36-archive-item-title{color:#0079c1;}
-.v36-archive-item-title{font-size:13px;font-weight:600;color:#0b2440;}
-.v36-archive-item-meta{font-size:11px;color:#50627a;margin-top:2px;}
-/* Result card show class */
-.v36-result-card{display:none;}
-.v36-result-card.show{display:block;}
-/* Toast compat */
-.po-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d1e30;color:#fff;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
-.po-toast.show{opacity:1;}
-.po-toast.err{background:#dc2626;}
-.po-toast.ok{background:#16a34a;}
-/* v36-loading show */
-.v36-loading{display:none;}
-.v36-loading.active{display:flex;}
-/* Mobile responsive */
+.v36-archive-item-title{font-size:13px;font-weight:600;color:var(--v36-ink);}
+.v36-archive-item-meta{font-size:11px;color:var(--v36-muted);margin-top:2px;}
+/* Vault list */
+.v68-vault-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f1f5f9;}
+.v68-vault-item:last-child{border-bottom:none;}
+.v68-vault-item label{flex:1;font-size:13px;color:var(--v36-ink);cursor:pointer;}
+.v68-vault-item-size{font-size:11px;color:var(--v36-muted);}
+/* Btn styles */
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;text-decoration:none;border:none;}
+.btn.ghost{background:transparent;color:var(--v36-muted);border:1.5px solid var(--v36-line);}
+.btn.ghost:hover{border-color:var(--v36-ink);color:var(--v36-ink);}
+/* Toast */
+.v68-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d1e30;color:#fff;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.v68-toast.show{opacity:1;}
+.v68-toast.err{background:#dc2626;}
+.v68-toast.ok{background:#16a34a;}
+/* Retour bar */
+.v58-retour-bar{background:#1e3a5f;color:#fff;padding:11px 20px;display:flex;align-items:center;gap:14px;font-size:13px;position:sticky;top:0;z-index:900;border-bottom:2px solid #2d5282;}
+.v58-retour-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1e3a5f;border-radius:8px;padding:8px 16px;font-weight:800;text-decoration:none;font-size:13px;flex-shrink:0;cursor:pointer;border:none;transition:background .15s;}
+.v58-retour-btn:hover{background:#e8f0fe;}
+.v58-retour-info{flex:1;opacity:.75;font-size:12px;}
+.v58-draft-ready{background:#22c55e;color:#fff;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:800;display:none;}
+.v58-draft-ready.visible{display:inline-block;}
 @media(max-width:900px){
   .v36-gen-layout{grid-template-columns:1fr!important;}
   .v36-form-col{position:static!important;}
   .v36-next-btns{grid-template-columns:1fr!important;}
+  .v36-result-empty{padding:40px 20px;}
 }
 </style>
 <link rel="stylesheet" href="v58-styles.css">
 </head>
-<body data-logout-target="public.html" class="bg v36-page po-v8-public" data-forced-space="public">
+<body data-logout-target="public.html" class="bg v36-page" data-forced-space="public">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
@@ -98,7 +189,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub" id="appSubTitle">Génération guidée</span>
+    <span class="v40-topbar-sub">Génération guidée</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=app.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
@@ -114,17 +205,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 </div>
 
 <!-- Barre retour parcours -->
-<div class="v58-retour-bar" id="v58RetourBar">
-  <a href="dashboard.html?from=app&amp;step=2" id="btnRetourDashboard" class="v58-retour-btn">
-    ← Retour à mon parcours
-  </a>
-  <span class="v58-retour-info" id="v58RetourInfo">
-    Votre saisie est conservée. Revenez après génération pour joindre le draft.
-  </span>
+<div class="v58-retour-bar">
+  <a href="dashboard.html?from=app&amp;step=2" id="btnRetourDashboard" class="v58-retour-btn">← Retour au parcours</a>
+  <span class="v58-retour-info" id="v58RetourInfo">Votre saisie est conservée. Revenez après génération pour joindre le draft.</span>
   <span class="v58-draft-ready" id="v58DraftReady">✅ Draft prêt à joindre</span>
 </div>
 
-<!-- Barre workflow 3 étapes -->
+<!-- Workflow -->
 <div class="v36-workflow-bar">
   <div class="v36-workflow-inner">
     <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
@@ -133,35 +220,38 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </div>
 
-<!-- IDs fantômes pour compat -->
-<span id="spaceBadge" hidden></span>
-<span id="heroTitle" hidden></span>
-<span id="heroCopy" hidden></span>
-<span id="formCopy" hidden></span>
-<span id="status" hidden></span>
-<span id="poToast" class="po-toast"></span>
+<!-- Toast -->
+<div class="v68-toast" id="v68Toast"></div>
 
 <main class="v36-gen-layout">
 
-  <!-- ═══ COLONNE GAUCHE : FORMULAIRE ═══ -->
+  <!-- ═══ COLONNE GAUCHE ═══ -->
   <div class="v36-form-col">
 
-    <!-- Sélecteur type de livrable -->
+    <!-- Contexte domaine hérité du dashboard -->
+    <div class="v68-domain-ctx" id="domainCtx" style="display:none">
+      <span class="v68-domain-ctx-icon" id="domainCtxIcon">🎯</span>
+      <span class="v68-domain-ctx-name" id="domainCtxName"></span>
+      <a href="dashboard.html" class="v68-domain-ctx-change">Changer →</a>
+    </div>
+
+    <!-- Sélecteur livrable -->
     <div class="v36-usecase-selector">
       <label for="usecase">Quel type de livrable ?</label>
-      <select id="usecase" aria-label="Type de livrable">
+      <select id="usecase">
         <option value="">— Sélectionnez un type —</option>
         <option value="note_strategique">📋 Note stratégique</option>
         <option value="courrier">✉️ Courrier administratif</option>
         <option value="deliberation">🏛️ Projet de délibération</option>
         <option value="synthese_reunion">📝 Synthèse de réunion</option>
-        <option value="cadrage_projet">🗂️ Cadrage projet</option>
+        <option value="cadrage_projet">🗂️ Cadrage projet / PMO</option>
         <option value="rapport_synthese_argumente_public">📊 Rapport de synthèse argumenté</option>
+        <option value="analyse_marche_public">🏗️ Analyse marchés publics / DCE</option>
       </select>
       <div class="v36-usecase-hint" id="usecaseInsight"></div>
     </div>
 
-    <!-- Contexte + Objectif -->
+    <!-- Contexte -->
     <div class="v36-form-card">
       <div class="v36-form-card-head">
         <div class="v36-form-icon blue">📋</div>
@@ -171,9 +261,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         </div>
       </div>
       <label class="label">Contexte</label>
-      <textarea class="input" id="context" rows="5" style="margin-bottom:14px" placeholder="Décrivez votre organisation, le cadre de la demande, le contexte de votre besoin…"></textarea>
+      <textarea class="input" id="context" rows="5" style="margin-bottom:14px" placeholder="Décrivez votre organisation, le cadre de la demande, la situation…"></textarea>
       <label class="label">Objectif du livrable</label>
-      <textarea class="input" id="objective" rows="4" placeholder="Quel résultat souhaitez-vous obtenir ? Quelle décision doit éclairer ce document ?"></textarea>
+      <textarea class="input" id="objective" rows="3" placeholder="Quel résultat souhaitez-vous obtenir ?"></textarea>
     </div>
 
     <!-- Éléments factuels -->
@@ -185,7 +275,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           <p>Données, chiffres, acteurs, dates clés</p>
         </div>
       </div>
-      <textarea class="input" id="facts" rows="5" placeholder="Chiffres, noms, dates, textes de référence, précédents, données budgétaires…"></textarea>
+      <textarea class="input" id="facts" rows="4" placeholder="Chiffres, noms, dates, références réglementaires…"></textarea>
     </div>
 
     <!-- Pièces vault -->
@@ -197,29 +287,30 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           <p>Les fichiers texte alimentent directement l'IA</p>
         </div>
       </div>
-      <div id="vaultInlineList">
+      <div id="vaultInlineList" style="min-height:24px">
         <div style="font-size:13px;color:#50627a">Aucune pièce disponible.</div>
       </div>
-      <a class="btn ghost" href="vault.html?space=public&amp;return=app.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
+      <a class="btn ghost" href="vault.html?space=public&amp;return=app.html" style="margin-top:12px;font-size:12px">+ Déposer des pièces</a>
     </div>
 
     <!-- Bouton générer -->
     <button class="v36-generate-btn" id="btnGenerate" type="button">
-      <span>⚡</span> <span id="btnGenerateText">Produire un livrable sécurisé</span>
+      <span>⚡</span>
+      <span id="btnGenerateText">Produire un livrable sécurisé</span>
     </button>
 
-    <!-- Indicateur chargement -->
-    <div class="v36-loading" id="generationIndicator" hidden>
+    <!-- Loader -->
+    <div class="v36-loading" id="generationLoader">
       <div class="v36-spinner"></div>
       <div>
         <strong style="font-size:14px;color:#0b2440">Génération en cours…</strong>
-        <div style="font-size:12px;color:#50627a;margin-top:3px">Analyse du contexte, structuration, rédaction.</div>
+        <div style="font-size:12px;color:#50627a;margin-top:3px">Analyse, structuration, rédaction.</div>
       </div>
     </div>
 
   </div>
 
-  <!-- ═══ COLONNE DROITE : RÉSULTAT ═══ -->
+  <!-- ═══ COLONNE DROITE ═══ -->
   <div class="v36-result-col">
 
     <!-- État vide -->
@@ -234,32 +325,32 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </div>
 
-    <!-- Résultat généré -->
+    <!-- Résultat -->
     <div class="v36-result-card" id="resultCard">
       <div class="v36-result-header">
         <div>
-          <h2 id="resultCardTitle">Résultat généré</h2>
+          <h2 id="resultTitle">Résultat généré</h2>
           <div style="font-size:12px;color:#50627a;margin-top:2px" id="resultMeta"></div>
         </div>
         <div class="v36-result-actions">
-          <button class="btn ghost" id="btnCopyResult" title="Copier" aria-label="Copier le résultat">📋 Copier</button>
-          <button class="btn ghost" id="btnSaveResult" type="button">🗄 Archiver</button>
+          <button class="btn ghost" id="btnCopyResult">📋 Copier</button>
+          <button class="btn ghost" id="btnArchiveResult">🗄 Archiver</button>
         </div>
       </div>
       <div class="v36-result-body">
-        <div class="v36-output" id="output" id="resultText" data-raw=""></div>
+        <div class="v36-output" id="output"></div>
       </div>
     </div>
 
     <!-- Actions suivantes -->
-    <div class="v36-next-actions" id="nextActions" style="display:none">
+    <div class="v36-next-actions" id="nextActions">
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
         <a class="v36-next-btn" href="dashboard.html?from=app&amp;attach=last&amp;step=2" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
-          <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
+          <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande expert</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard.html?from=app&amp;attach=last&amp;step=2" id="nextExpertLink">
+        <a class="v36-next-btn" href="dashboard.html?from=app&amp;attach=last&amp;step=2">
           <span class="v36-next-btn-icon">🎯</span>
           <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
@@ -269,16 +360,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <!-- Archive locale -->
     <div class="v36-archive-card" id="archivePanel">
       <div class="v36-archive-head">
-        <div>
-          <h3>Archivage local</h3>
-          <p style="margin:2px 0 0;font-size:12px;color:#50627a">Conservez vos générations sur cet appareil</p>
-        </div>
+        <h3>📁 Mes drafts archivés</h3>
+        <button class="btn ghost" id="btnClearArchive" style="font-size:12px;padding:5px 10px">Vider</button>
       </div>
-      <div class="v36-archive-body">
-        <div class="v36-archive-body" id="archiveList">
-          <div style="font-size:13px;color:#50627a">Aucune génération archivée.</div>
-        </div>
-      </div>
+      <div class="v36-archive-body" id="archiveList"></div>
     </div>
 
   </div>
@@ -290,69 +375,472 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
   function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
   function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
-  function redirectToLogin(){var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'app.html');window.location.replace('login.html?next='+path);}
+  function redirectToLogin(){var path=encodeURIComponent(window.location.pathname+window.location.search||'app.html');window.location.replace('login.html?next='+path);}
   if(hasSession()){window.__popeAuthValidated=true;return;}
   window.__popeAuthPending=true;
-  var headers={'Content-Type':'application/json'};
   var token=getToken();
+  var headers={'Content-Type':'application/json'};
   if(token)headers['Authorization']='Bearer '+token;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(res){if(!res.ok)throw new Error('HTTP '+res.status);return res.json().catch(function(){return{};});})
-    .then(function(data){if(data&&data.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(data.user));window.__popeAuthValidated=true;}else throw new Error('missing_user');})
-    .catch(function(){window.__popeAuthValidated=false;redirectToLogin();})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json().catch(function(){return{};});})
+    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));window.__popeAuthValidated=true;}else throw new Error('no_user');})
+    .catch(function(){redirectToLogin();})
     .finally(function(){window.__popeAuthPending=false;});
 })();
 </script>
 
-<!-- Burger mobile -->
+<!-- Burger -->
 <script>
 (function(){
-  var burger=document.getElementById('v40Burger');
-  var menu=document.getElementById('v40MobileMenu');
+  var burger=document.getElementById('v40Burger'),menu=document.getElementById('v40MobileMenu');
   if(!burger||!menu)return;
   var spans=burger.querySelectorAll('span');
-  function setOpen(open){if(open){menu.classList.add('open');spans[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';spans[1].style.cssText='opacity:0;transform:scaleX(0)';spans[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{menu.classList.remove('open');spans[0].style.cssText='';spans[1].style.cssText='';spans[2].style.cssText='';}}
+  function setOpen(o){if(o){menu.classList.add('open');spans[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';spans[1].style.cssText='opacity:0;transform:scaleX(0)';spans[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{menu.classList.remove('open');[0,1,2].forEach(function(i){spans[i].style.cssText='';});}}
   burger.addEventListener('click',function(){setOpen(!menu.classList.contains('open'));});
   menu.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){setOpen(false);});});
   document.addEventListener('click',function(e){if(!burger.contains(e.target)&&!menu.contains(e.target))setOpen(false);});
 })();
 </script>
 
+<!-- ══ CONTRÔLEUR V68 — IIFE unique, zéro patch ══ -->
 <script>
 (function(){
 'use strict';
-var API=(function(){var h=location.hostname;if(h==='localhost'||h==='127.0.0.1')return 'http://localhost:3000';if(h.indexOf('staging')!==-1)return 'https://popeonline-staging.onrender.com';return 'https://pope-online-v2.onrender.com';})();
-var SPACE='public';
-var DASH_KEY='pope_v67_pub';
-var GENS_KEY='pope_v67_gens_pub';
-var FORM_KEY='pope_v67_form_pub';
-var TOKEN_KEY='pope_session_token';
-function $(id){return document.getElementById(id);}
-function qsa(s,r){return Array.from((r||document).querySelectorAll(s));}
-function token(){return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||'';}
-function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
-function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h.Authorization='Bearer '+t;return h;}
-function apiFetch(path,opts){opts=opts||{};return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'}).then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error_label||d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});}
-function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app.html';return false;}
-function logout(){['pope_session_active','pope_session_user','pope_session_token','pope_token'].forEach(function(k){localStorage.removeItem(k);});sessionStorage.removeItem(TOKEN_KEY);location.href='public.html';}
+
+/* ─── Config ─── */
+var API = (function(){
+  var h = location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:3000';
+  if (h.indexOf('staging') !== -1) return 'https://popeonline-staging.onrender.com';
+  return 'https://pope-online-v2.onrender.com';
+})();
+var SPACE    = 'public';
+var DASH_KEY = 'pope_v67_pub';
+var GENS_KEY = 'pope_v67_gens_pub';
+var FORM_KEY = 'pope_v67_form_pub';
+var TOKEN_KEY = 'pope_session_token';
+
+/* ─── Helpers ─── */
+function $(id){ return document.getElementById(id); }
+function qsa(s, r){ return Array.from((r||document).querySelectorAll(s)); }
+function token(){ return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || ''; }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
 var toastT;
-function toast(m,t){var el=$('poToast');if(!el)return;el.textContent=m;el.className='po-toast '+(t||'');requestAnimationFrame(function(){el.classList.add('show');});clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show');},3500);}
-function saveForm(){try{localStorage.setItem(FORM_KEY,JSON.stringify({usecase:($('usecase')||{}).value||'',context:($('context')||{}).value||'',objective:($('objective')||{}).value||'',facts:($('facts')||{}).value||''}));}catch(e){}}
-function restoreForm(){try{var raw=localStorage.getItem(FORM_KEY);if(!raw)return;var f=JSON.parse(raw);if(f.usecase&&$('usecase'))$('usecase').value=f.usecase;if(f.context&&$('context'))$('context').value=f.context;if(f.objective&&$('objective'))$('objective').value=f.objective;if(f.facts&&$('facts'))$('facts').value=f.facts;}catch(e){}}
-function prefill(){try{var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY);if(!raw)return;var s=JSON.parse(raw);var n=s.need||{};var ctx=$('context');if(ctx&&!ctx.value){var p=[];if(s.domain)p.push('Domaine : '+s.domain);if(n.title)p.push('Objet : '+n.title);if(n.context)p.push('Contexte : '+n.context);if(n.problem)p.push('Probleme : '+n.problem);if(n.constraints)p.push('Contraintes : '+n.constraints);if(n.actors)p.push('Acteurs : '+n.actors);if(n.deadline)p.push('Echeance : '+n.deadline);if(p.length)ctx.value=p.join('\n');}var obj=$('objective');if(obj&&!obj.value&&(n.objective||n.title))obj.value=n.objective||n.title||'';}catch(e){}}
-function loadVault(){var list=$('vaultInlineList');if(!list)return;list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Chargement...</div>';apiFetch('/vault?space='+SPACE).then(function(data){var files=(data&&data.files)||[];if(!files.length){list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Aucune piece. <a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);font-weight:600;">Deposer</a></div>';return;}list.innerHTML=files.map(function(f){var id=esc(f.id||f.filename);var name=esc(f.filename||'Fichier');var sz=esc(f.size_label||'');return'<div class="po-vault-item"><input type="checkbox" data-vault-select value="'+id+'" id="vf'+id+'"/><label class="v36-vault-item-name" for="vf'+id+'">'+name+'</label><span class="v36-vault-item-size">'+sz+'</span></div>';}).join('');}).catch(function(){list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Coffre indisponible. <a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);">Ouvrir</a></div>';});}
-var UH={note_strategique:{t:'Note strategique',b:'Produit une note de cadrage pour eclairer une decision. Precisez les options, contraintes et decision attendue.'},courrier:{t:'Courrier administratif',b:'Redige un courrier structure. Indiquez destinataire, objet et contexte.'},deliberation:{t:'Projet de deliberation',b:'Produit un projet de deliberation. Precisez sujet, textes de reference et enjeux.'},synthese_reunion:{t:'Synthese de reunion',b:'Produit une synthese structuree. Decrivez contexte, participants, points abordes et decisions.'},cadrage_projet:{t:'Cadrage projet',b:'Produit une note de cadrage. Precisez objectifs, jalons, risques et parties prenantes.'},rapport_synthese_argumente_public:{t:'Rapport de synthese argumente',b:'Produit un rapport argumente. Joignez vos documents depuis le coffre pour enrichir la generation.'}};
-function updateHelp(){var v=($('usecase')||{}).value||'';var h=UH[v];var el=$('usecaseInsight');if(!el)return;if(h){el.textContent=h.t+' — '+h.b;}else el.textContent='';}
-function updateCC(){}
-function setWF(n){for(var i=1;i<=3;i++){var el=$('wfStep'+i);if(!el)continue;el.classList.remove('active','done');if(i===n)el.classList.add('active');else if(i<n)el.classList.add('done');}}
-function loadGens(){var g=[];['pope_v67_gens_pub','pope_v61_generations','pope_v54_generations','pope_v53_generations'].forEach(function(k){try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}});var seen={};return g.filter(function(x){if(!x||seen[x.id])return false;seen[x.id]=1;return true;});}
-function saveGen(g){var gens=[];try{gens=JSON.parse(localStorage.getItem(GENS_KEY)||'[]');}catch(e){}gens.unshift(g);if(gens.length>30)gens=gens.slice(0,30);try{localStorage.setItem(GENS_KEY,JSON.stringify(gens));}catch(e){}try{localStorage.setItem('pope_v61_last_gen',String(g.id));}catch(e){}try{localStorage.setItem('pope_v54_last_generation_id',String(g.id));}catch(e){}try{window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g}));}catch(e){}}
-function showResult(text,title,meta){$('resultEmpty').style.display='none';$('generationIndicator').setAttribute('hidden','');$('resultCard').classList.add('show');$('resultCardTitle').textContent=title||'Document genere';$('resultMeta').textContent=meta||'';var out=$('output');out.textContent=text;var rb=$('resultBody');if(rb){rb.dataset.raw=text;rb.textContent=text;}var rt=$('resultText');if(rt)rt.textContent=text;$('nextActions').style.display='block';$('v58DraftReady') && $('v58DraftReady').classList.add('visible');setWF(3);renderArchive();}
-function generate(){var uc=($('usecase')||{}).value||'',ctx=($('context')||{}).value||'',obj=($('objective')||{}).value||'';if(!uc){toast('Selectionnez un type de document.','err');return;}if(!ctx.trim()){toast('Le contexte est obligatoire.','err');$('context').focus();return;}if(!obj.trim()){toast("L'objectif est obligatoire.",'err');$('objective').focus();return;}saveForm();setWF(2);var btn=$('btnGenerate');btn.disabled=true;btn.classList.add('loading');$('btnGenerateText').textContent='Generation en cours...';$('resultEmpty').style.display='none';$('resultCard').classList.remove('show');$('nextActions').style.display='none';$('generationIndicator').removeAttribute('hidden');var vids=qsa('[data-vault-select]:checked').map(function(n){return n.value;});var payload={mode:'generate',usecase:uc,context:ctx.trim(),objective:obj.trim(),facts:($('facts')||{}).value||'',locale:'fr-FR',accountSpace:SPACE,uploaded_file_ids:vids};function done(){btn.disabled=false;btn.classList.remove('loading');$('btnGenerateText').textContent='Produire un livrable securise';}apiFetch('/ai/generate',{method:'POST',body:payload}).then(function(data){var text=data&&(data.result||data.output||data.text)||'';if(!text)throw new Error('Reponse vide.');var ucEl=$('usecase');var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||uc;var title=obj.slice(0,60);var now=new Date();var meta=label+' - '+now.toLocaleString('fr-FR');var gr={id:'g_'+Date.now(),title:title,usecaseLabel:label,usecase:uc,createdAt:now.toISOString(),result:text,domain:'',prompt:{context:ctx,objective:obj,facts:($('facts')||{}).value||''},source:'app-public-v67'};saveGen(gr);$('resultExpertLink').href='dashboard.html?from=app&attach=last';/* nextExpertLink */var _nel=$('resultExpertLink');if(_nel)_nel.href='dashboard.html?from=app&attach=last';$('btnRetourDashboard').href='dashboard.html?from=app&attach=last';showResult(text,title,meta);toast('Document genere !','ok');done();}).catch(function(e){$('generationIndicator').removeAttribute('hidden');$('resultEmpty').style.display='flex';toast((e&&e.data&&e.data.error_label)||(e&&e.message)||'Erreur lors de la generation.','err');setWF(1);done();});}
-function renderArchive(){var gens=loadGens();var s=$('archivePanel');if(!gens.length){if(s)s.style.display='none';return;}if(s)s.style.display='block';var list=$('archiveList');if(!list)return;list.innerHTML=gens.slice(0,8).map(function(g){var d=g.createdAt?new Date(g.createdAt).toLocaleString('fr-FR'):'';return'<div class="v36-archive-item"' data-gen-id="'+esc(g.id)+'"><div class="po-archive-item-title">'+esc(g.title||g.usecaseLabel||'Draft')+'</div><div class="po-archive-item-meta">'+esc((g.usecaseLabel||'')+' - '+d)+'</div></div>';}).join('');}
-function copyResult(){var out=$('output');if(!out)return;var t=out.textContent||'';navigator.clipboard.writeText(t).then(function(){toast('Copie !','ok');}).catch(function(){toast('Impossible de copier.','err');});}
-function init(){if(!requireAuth())return;document.querySelectorAll('[data-logout]').forEach(function(b){b.addEventListener('click',logout);});/* handled above *//* burger handled by separate script */$('usecase')&&$('usecase').addEventListener('change',function(){updateHelp();saveForm();});$('context')&&$('context').addEventListener('input',function(){updateCC();saveForm();});$('objective')&&$('objective').addEventListener('input',saveForm);$('facts')&&$('facts').addEventListener('input',saveForm);$('btnGenerate')&&$('btnGenerate').addEventListener('click',generate);$('btnCopyResult')&&$('btnCopyResult').addEventListener('click',copyResult);$('btnSaveResult')&&$('btnSaveResult').addEventListener('click',function(){toast('Draft archive localement.','ok');});$('archiveList')&&$('archiveList').addEventListener('click',function(e){var item=e.target.closest('[data-gen-id]');if(!item)return;var id=item.getAttribute('data-gen-id');var g=loadGens().find(function(x){return String(x.id)===String(id);});if(g)showResult(g.result||'',g.title||'Draft',g.usecaseLabel||'');});restoreForm();prefill();updateHelp();updateCC();loadVault();renderArchive();apiFetch('/auth/me').then(function(data){if(data){var i=(data.name||data.email||'?').charAt(0).toUpperCase();var av=null;if(av)av.textContent=i;}}).catch(function(){});setWF(1);}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+function toast(msg, type){
+  var el = $('v68Toast'); if(!el) return;
+  el.textContent = msg;
+  el.className = 'v68-toast ' + (type||'');
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.classList.remove('show'); }, 3500);
+}
+
+function apiH(){
+  var h = {'Content-Type':'application/json'};
+  var t = token(); if(t) h['Authorization'] = 'Bearer '+t;
+  return h;
+}
+function apiFetch(path, opts){
+  opts = opts||{};
+  return fetch(API+path, {
+    method: opts.method||'GET',
+    headers: apiH(),
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+    credentials: 'include'
+  }).then(function(r){
+    return r.json().catch(function(){return{};}).then(function(d){
+      if(!r.ok){ var e=new Error(d&&d.error||'HTTP '+r.status); e.status=r.status; e.data=d; throw e; }
+      return d;
+    });
+  });
+}
+
+/* ─── Auth ─── */
+function requireAuth(){
+  if(token()) return true;
+  if(localStorage.getItem('pope_session_active')==='1') return true;
+  location.href = 'login.html?next=app.html';
+  return false;
+}
+function logout(){
+  /* V68 : nettoyage complet au logout */
+  var keys = ['pope_session_active','pope_session_user','pope_session_token','pope_token',
+               FORM_KEY, DASH_KEY, 'pope_v67_priv', 'pope_v67_form_priv'];
+  keys.forEach(function(k){ localStorage.removeItem(k); });
+  sessionStorage.clear();
+  location.href = 'public.html';
+}
+
+/* ─── Workflow steps ─── */
+function setWF(n){
+  for(var i=1;i<=3;i++){
+    var el=$('wfStep'+i); if(!el) continue;
+    el.classList.remove('active','done');
+    if(i===n) el.classList.add('active');
+    else if(i<n) el.classList.add('done');
+  }
+}
+
+/* ─── Usecase hints ─── */
+var UH = {
+  note_strategique:{t:'Note stratégique',b:'Note de cadrage pour éclairer une décision politique ou administrative. Précisez les options et la décision attendue.'},
+  courrier:{t:'Courrier administratif',b:'Courrier structuré pour une correspondance officielle. Indiquez destinataire, objet et contexte.'},
+  deliberation:{t:'Projet de délibération',b:'Structure conforme aux usages institutionnels. Précisez le sujet, les textes de référence et les enjeux.'},
+  synthese_reunion:{t:'Synthèse de réunion',b:'Compte rendu exploitable. Décrivez les participants, points abordés et décisions prises.'},
+  cadrage_projet:{t:'Cadrage projet / PMO',b:'Note de cadrage structurée. Précisez objectifs, jalons, risques et parties prenantes.'},
+  rapport_synthese_argumente_public:{t:'Rapport argumenté',b:'Analyse factuelle avec recommandation. Joignez vos documents depuis le coffre pour enrichir la génération.'},
+  analyse_marche_public:{t:'Analyse marchés publics / DCE',b:'Analyse du DCE, grilles d\'offres, note de synthèse procédure achat. Précisez le type de marché et les pièces disponibles.'}
+};
+function updateHelp(){
+  var v = ($('usecase')||{}).value||'';
+  var h = UH[v];
+  var el = $('usecaseInsight'); if(!el) return;
+  el.textContent = h ? h.b : '';
+}
+
+/* ─── Form persistence ─── */
+function saveForm(){
+  try{
+    localStorage.setItem(FORM_KEY, JSON.stringify({
+      usecase: ($('usecase')||{}).value||'',
+      context: ($('context')||{}).value||'',
+      objective: ($('objective')||{}).value||'',
+      facts: ($('facts')||{}).value||''
+    }));
+  }catch(e){}
+}
+function restoreForm(){
+  try{
+    var raw = localStorage.getItem(FORM_KEY); if(!raw) return;
+    var f = JSON.parse(raw);
+    if(f.usecase && $('usecase')) $('usecase').value = f.usecase;
+    if(f.context && $('context') && !$('context').value) $('context').value = f.context;
+    if(f.objective && $('objective') && !$('objective').value) $('objective').value = f.objective;
+    if(f.facts && $('facts') && !$('facts').value) $('facts').value = f.facts;
+  }catch(e){}
+}
+
+/* ─── Pré-alimentation intelligente depuis le dashboard ─── */
+function prefillFromDashboard(){
+  try{
+    var raw = sessionStorage.getItem(DASH_KEY) || localStorage.getItem(DASH_KEY);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    var n = s.need || {};
+
+    /* Badge domaine */
+    if(s.domain){
+      var ctx = $('domainCtx');
+      var icon = $('domainCtxIcon');
+      var name = $('domainCtxName');
+      if(ctx){ ctx.style.display='flex'; }
+      if(icon){ icon.textContent = s.domainIcon || '🎯'; }
+      if(name){ name.textContent = s.domain; }
+      /* Mise à jour barre retour */
+      var info = $('v58RetourInfo');
+      if(info) info.textContent = 'Domaine : ' + s.domain + ' — Contexte pré-rempli depuis votre parcours.';
+    }
+
+    /* Pré-remplissage contexte */
+    var ctxEl = $('context');
+    if(ctxEl && !ctxEl.value){
+      var parts = [];
+      if(s.domain)        parts.push('Domaine : ' + s.domain);
+      if(n.title)         parts.push('Objet : ' + n.title);
+      if(n.context)       parts.push('Contexte : ' + n.context);
+      if(n.problem)       parts.push('Problème : ' + n.problem);
+      if(n.constraints)   parts.push('Contraintes : ' + n.constraints);
+      if(n.risks)         parts.push('Points sensibles : ' + n.risks);
+      if(n.actors)        parts.push('Acteurs : ' + n.actors);
+      if(n.audience)      parts.push('Destinataire : ' + n.audience);
+      if(n.deadline)      parts.push('Échéance : ' + n.deadline);
+      if(n.pieces)        parts.push('Pièces disponibles : ' + n.pieces);
+      if(n.description)   parts.push('Précisions : ' + n.description);
+      if(parts.length)    ctxEl.value = parts.join('\n');
+    }
+
+    /* Pré-remplissage objectif */
+    var objEl = $('objective');
+    if(objEl && !objEl.value){
+      var objParts = [];
+      if(n.objective)    objParts.push(n.objective);
+      if(n.deliverable)  objParts.push('Livrable attendu : ' + n.deliverable);
+      if(n.decision)     objParts.push('Décision : ' + n.decision);
+      if(n.detailLevel)  objParts.push('Niveau de détail : ' + n.detailLevel);
+      if(objParts.length) objEl.value = objParts.join('\n');
+      else if(n.title)    objEl.value = n.title;
+    }
+
+    /* Badge draft ready si déjà une génération */
+    var lastId = localStorage.getItem('pope_v61_last_gen') || localStorage.getItem('pope_v54_last_generation_id');
+    if(lastId){
+      var badge = $('v58DraftReady'); if(badge) badge.classList.add('visible');
+      var retour = $('btnRetourDashboard'); if(retour) retour.href = 'dashboard.html?from=app&attach=last&step=2';
+    }
+  }catch(e){}
+}
+
+/* ─── Vault ─── */
+function loadVault(){
+  var list = $('vaultInlineList'); if(!list) return;
+  list.innerHTML = '<div style="font-size:13px;color:#50627a">Chargement des pièces…</div>';
+  apiFetch('/vault?space=' + SPACE)
+    .then(function(data){
+      var files = (data && data.files) || [];
+      if(!files.length){
+        list.innerHTML = '<div style="font-size:13px;color:#50627a">Aucune pièce disponible. '
+          + '<a href="vault.html?space=' + SPACE + '&return=app.html" style="color:#0079c1;font-weight:600">Déposer →</a></div>';
+        return;
+      }
+      list.innerHTML = files.map(function(f){
+        var id  = esc(f.id || f.filename);
+        var nm  = esc(f.filename || 'Fichier');
+        var sz  = esc(f.size_label || '');
+        return '<div class="v68-vault-item">'
+          + '<input type="checkbox" data-vault-select value="' + id + '" id="vf' + id + '"/>'
+          + '<label class="v68-vault-item-label" for="vf' + id + '">' + nm + '</label>'
+          + '<span class="v68-vault-item-size">' + sz + '</span>'
+          + '</div>';
+      }).join('');
+    })
+    .catch(function(){
+      list.innerHTML = '<div style="font-size:13px;color:#50627a">Coffre indisponible. '
+        + '<a href="vault.html?space=' + SPACE + '&return=app.html" style="color:#0079c1">Ouvrir le dépôt →</a></div>';
+    });
+}
+
+/* ─── Générations (archive locale) ─── */
+function loadGens(){
+  var g = [];
+  ['pope_v67_gens_pub','pope_v61_generations','pope_v54_generations','pope_v53_generations'].forEach(function(k){
+    try{ var a=JSON.parse(localStorage.getItem(k)||'[]'); if(Array.isArray(a)) g=g.concat(a); }catch(e){}
+  });
+  var seen={};
+  return g.filter(function(x){ if(!x||seen[x.id])return false; seen[x.id]=1; return true; });
+}
+function saveGen(g){
+  var gens=[];
+  try{ gens=JSON.parse(localStorage.getItem(GENS_KEY)||'[]'); }catch(e){}
+  gens.unshift(g);
+  if(gens.length>30) gens=gens.slice(0,30);
+  try{ localStorage.setItem(GENS_KEY,JSON.stringify(gens)); }catch(e){}
+  try{ localStorage.setItem('pope_v61_last_gen',String(g.id)); }catch(e){}
+  try{ localStorage.setItem('pope_v54_last_generation_id',String(g.id)); }catch(e){}
+  try{ window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g})); }catch(e){}
+}
+function renderArchive(){
+  var gens = loadGens();
+  var panel = $('archivePanel');
+  if(!gens.length){ if(panel) panel.classList.remove('show'); return; }
+  if(panel) panel.classList.add('show');
+  var list = $('archiveList'); if(!list) return;
+  list.innerHTML = gens.slice(0,10).map(function(g){
+    var d = g.createdAt ? new Date(g.createdAt).toLocaleString('fr-FR') : '';
+    return '<div class="v36-archive-item" data-gen-id="' + esc(String(g.id)) + '">'
+      + '<div class="v36-archive-item-title">' + esc(g.title||g.usecaseLabel||'Draft') + '</div>'
+      + '<div class="v36-archive-item-meta">' + esc((g.usecaseLabel||'') + (d?' — '+d:'')) + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+/* ─── Afficher résultat ─── */
+function showResult(text, title, meta){
+  var empty = $('resultEmpty');
+  var loader = $('generationLoader');
+  var card   = $('resultCard');
+  var next   = $('nextActions');
+  if(empty)  empty.style.display = 'none';
+  if(loader) loader.classList.remove('show');
+  if(card)   card.classList.add('show');
+  var tEl = $('resultTitle'); if(tEl) tEl.textContent = title || 'Document généré';
+  var mEl = $('resultMeta');  if(mEl) mEl.textContent = meta || '';
+  var out = $('output'); if(out) out.textContent = text;
+  if(next) next.style.display = 'block';
+  var badge = $('v58DraftReady'); if(badge) badge.classList.add('visible');
+  setWF(3);
+  renderArchive();
+}
+
+/* ─── Copier résultat ─── */
+function copyResult(){
+  var out = $('output'); if(!out) return;
+  var txt = out.textContent || '';
+  navigator.clipboard.writeText(txt)
+    .then(function(){ toast('Copié dans le presse-papiers !', 'ok'); })
+    .catch(function(){ toast('Impossible de copier.', 'err'); });
+}
+
+/* ─── Générer ─── */
+function generate(){
+  var uc  = ($('usecase')||{}).value||'';
+  var ctx = ($('context')||{}).value||'';
+  var obj = ($('objective')||{}).value||'';
+
+  if(!uc){ toast('Sélectionnez un type de document.','err'); return; }
+  if(!ctx.trim()){ toast('Le contexte est obligatoire.','err'); $('context').focus(); return; }
+  if(!obj.trim()){ toast("L'objectif est obligatoire.",'err'); $('objective').focus(); return; }
+
+  saveForm();
+  setWF(2);
+
+  var btn = $('btnGenerate');
+  var btnTxt = $('btnGenerateText');
+  if(btn){ btn.disabled=true; btn.classList.add('loading'); }
+  if(btnTxt) btnTxt.textContent = 'Génération en cours…';
+
+  /* Afficher loader */
+  var empty  = $('resultEmpty');
+  var loader = $('generationLoader');
+  var card   = $('resultCard');
+  var next   = $('nextActions');
+  if(empty)  empty.style.display='none';
+  if(card)   card.classList.remove('show');
+  if(next)   next.style.display='none';
+  if(loader) loader.classList.add('show');
+
+  var vids = qsa('[data-vault-select]:checked').map(function(n){ return n.value; });
+
+  var payload = {
+    mode:'generate',
+    usecase: uc,
+    context: ctx.trim(),
+    objective: obj.trim(),
+    facts: ($('facts')||{}).value||'',
+    locale: 'fr-FR',
+    accountSpace: SPACE,
+    uploaded_file_ids: vids
+  };
+
+  function done(ok){
+    if(btn){ btn.disabled=false; btn.classList.remove('loading'); }
+    if(btnTxt) btnTxt.textContent = 'Produire un livrable sécurisé';
+    if(!ok){
+      if(loader) loader.classList.remove('show');
+      if(empty){ empty.style.display='flex'; }
+      setWF(1);
+    }
+  }
+
+  apiFetch('/ai/generate', {method:'POST', body:payload})
+    .then(function(data){
+      var text = data && (data.result || data.output || data.text) || '';
+      if(!text) throw new Error('Réponse vide du serveur.');
+
+      var ucEl  = $('usecase');
+      var label = (ucEl && ucEl.selectedOptions && ucEl.selectedOptions[0] && ucEl.selectedOptions[0].textContent) || uc;
+      var now   = new Date();
+      var title = obj.trim().slice(0,70);
+      var meta  = label + ' — ' + now.toLocaleString('fr-FR');
+
+      /* Sauvegarde */
+      var domainCtxName = $('domainCtxName');
+      var gr = {
+        id: 'g_'+Date.now(),
+        title: title,
+        usecaseLabel: label.trim(),
+        usecase: uc,
+        createdAt: now.toISOString(),
+        result: text,
+        domain: (domainCtxName && domainCtxName.textContent)||'',
+        prompt: {context:ctx,objective:obj,facts:($('facts')||{}).value||''},
+        source: 'app-v68-public'
+      };
+      saveGen(gr);
+
+      /* Liens retour */
+      var expertLink = $('resultExpertLink');
+      if(expertLink) expertLink.href = 'dashboard.html?from=app&attach=last&step=2';
+      var retourBtn = $('btnRetourDashboard');
+      if(retourBtn) retourBtn.href = 'dashboard.html?from=app&attach=last&step=2';
+
+      showResult(text, title, meta);
+      toast('Document généré avec succès !', 'ok');
+      done(true);
+    })
+    .catch(function(e){
+      var msg = (e && e.data && (e.data.error_label||e.data.error)) || (e && e.message) || 'Erreur lors de la génération.';
+      toast(msg, 'err');
+      done(false);
+    });
+}
+
+/* ─── Init ─── */
+function init(){
+  if(!requireAuth()) return;
+
+  /* Logout */
+  document.querySelectorAll('[data-logout]').forEach(function(b){
+    b.addEventListener('click', logout);
+  });
+
+  /* Events formulaire */
+  var uc = $('usecase');
+  if(uc) uc.addEventListener('change', function(){ updateHelp(); saveForm(); });
+  var ctx = $('context');
+  if(ctx) ctx.addEventListener('input', saveForm);
+  var obj = $('objective');
+  if(obj) obj.addEventListener('input', saveForm);
+  var facts = $('facts');
+  if(facts) facts.addEventListener('input', saveForm);
+
+  /* Bouton générer */
+  var gen = $('btnGenerate');
+  if(gen) gen.addEventListener('click', generate);
+
+  /* Copier */
+  var cp = $('btnCopyResult');
+  if(cp) cp.addEventListener('click', copyResult);
+
+  /* Archiver manuellement */
+  var arch = $('btnArchiveResult');
+  if(arch) arch.addEventListener('click', function(){
+    toast('Draft archivé localement.', 'ok');
+  });
+
+  /* Vider archive */
+  var clr = $('btnClearArchive');
+  if(clr) clr.addEventListener('click', function(){
+    try{ localStorage.removeItem(GENS_KEY); }catch(e){}
+    renderArchive();
+    toast('Archive vidée.', 'ok');
+  });
+
+  /* Clic sur un item archivé */
+  var archList = $('archiveList');
+  if(archList) archList.addEventListener('click', function(e){
+    var item = e.target.closest('[data-gen-id]');
+    if(!item) return;
+    var id = item.getAttribute('data-gen-id');
+    var g = loadGens().find(function(x){ return String(x.id)===String(id); });
+    if(g) showResult(g.result||'', g.title||'Draft', g.usecaseLabel||'');
+  });
+
+  /* Restaurer formulaire */
+  restoreForm();
+
+  /* Pré-alimentation depuis dashboard */
+  prefillFromDashboard();
+
+  /* Aide usecase */
+  updateHelp();
+
+  /* Charger coffre */
+  loadVault();
+
+  /* Archive */
+  renderArchive();
+
+  /* Workflow step 1 */
+  setWF(1);
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
 })();
 </script>
 
