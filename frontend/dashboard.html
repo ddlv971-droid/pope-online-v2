@@ -533,7 +533,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <!-- Tabs -->
 <div class="v5-tabs-bar">
-  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab(\'besoin\')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
   <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
   <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
   <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
@@ -897,7 +897,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v5-empty-ico">👤</div>
       <strong>Aucun échange expert pour le moment.</strong>
       <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
-      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
+      <button class="v5-btn-primary" onclick="switchTab(\'besoin\')">🎯 Soumettre un besoin</button>
     </div>
   </div>
 </div>
@@ -1183,7 +1183,7 @@ function loadRequests() {
 function renderRequests(container, reqs) {
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab(\'besoin\')">🎯 Soumettre un besoin</button></div>';
     return;
   }
   container.innerHTML = reqs.map(function(r){
@@ -1223,114 +1223,148 @@ function saveDashboardState(){}
 <script src="./dashboard-v60.js"></script>
 <script src="./dashboard-v61-fix.js"></script>
 
-<script>
-window.addEventListener('DOMContentLoaded', function(){
+<script id="pope-v62-final-step-engine">
+(function(){
+  'use strict';
+  if (window.__POPE_V62_STEP_ENGINE__) return;
+  window.__POPE_V62_STEP_ENGINE__ = true;
 
-  function ensureStep3(){
+  var isPrivate = /dashboard-private\.html/i.test(location.pathname);
+  var stateKey = 'pope_v62_dashboard_state_' + (isPrivate ? 'private' : 'public');
+  var legacyKeys = [
+    'pope_v61_state_' + (isPrivate ? 'private' : 'public'),
+    'pope_v60_state_' + (isPrivate ? 'priv' : 'pub'),
+    'pope_v58_state_' + (isPrivate ? 'private' : 'public')
+  ];
 
-    const s3 =
-      document.querySelector('[data-step="3"]') ||
-      document.getElementById('step-3') ||
-      document.getElementById('step3');
-
-    if(!s3){
-      console.warn('[POPE V62.4] étape 3 introuvable');
-      return;
+  function $(id){ return document.getElementById(id); }
+  function readJSON(k){ try { var raw=sessionStorage.getItem(k)||localStorage.getItem(k); return raw?JSON.parse(raw):null; } catch(e){ return null; } }
+  function readState(){
+    var s = readJSON(stateKey);
+    if (!s) for (var i=0;i<legacyKeys.length;i++){ s = readJSON(legacyKeys[i]); if (s) break; }
+    return s || {};
+  }
+  function writeState(patch){
+    var s = Object.assign({}, readState(), patch || {}, collectFields());
+    var json = JSON.stringify(s);
+    [stateKey].concat(legacyKeys).forEach(function(k){ try{ sessionStorage.setItem(k,json); localStorage.setItem(k,json); }catch(e){} });
+    return s;
+  }
+  function collectFields(){
+    var ids = {
+      title:'besoInTitle', contexte:'descContexte', probleme:'descProbleme', objectif:'descObjectif',
+      decision:'descDecision', livrable:'descLivrable', contraintes:'descContraintes', risques:'descRisques',
+      acteurs:'descActeurs', public_c:'descPublic', deadline:'needDeadline', pieces:'descPieces',
+      niveau:'descNiveau', desc:'besoInDesc'
+    };
+    var out = { step: Number(window._step || 1), domain: window._domain || '' };
+    Object.keys(ids).forEach(function(k){ var e=$(ids[k]); if(e) out[k]=e.value||''; });
+    var r=document.querySelector('input[name="besoType"]:checked'); if(r) out.type=r.value;
+    var sel=$('archiveAttachSelect'); if(sel) out.attachedGenId=sel.value||'';
+    return out;
+  }
+  function restoreFields(){
+    var s=readState();
+    var map={besoInTitle:s.title,descContexte:s.contexte,descProbleme:s.probleme,descObjectif:s.objectif,descDecision:s.decision,descLivrable:s.livrable,descContraintes:s.contraintes,descRisques:s.risques,descActeurs:s.acteurs,descPublic:s.public_c,needDeadline:s.deadline,descPieces:s.pieces,descNiveau:s.niveau,besoInDesc:s.desc};
+    Object.keys(map).forEach(function(id){ var e=$(id); if(e && map[id] && !e.value) e.value=map[id]; });
+    if(s.type){ var rr=document.querySelector('input[name="besoType"][value="'+s.type+'"]'); if(rr) rr.checked=true; }
+    if(s.domain) setDomain(s.domain, s.domainIcon || '🎯', true);
+  }
+  function setDomain(domain, icon, silent){
+    if(!domain) return;
+    window._domain = domain;
+    try { if (typeof _domain !== 'undefined') _domain = domain; } catch(e) {}
+    document.querySelectorAll('.v5-domain-pill').forEach(function(b){
+      var on = b.getAttribute('data-domain') === domain;
+      b.classList.toggle('selected', on);
+      if(on && !icon) icon=(b.textContent||'').trim().split(/\s+/)[0]||'🎯';
+    });
+    var pairs=[['selectedDomainBadge','selectedDomainLabel','selectedDomainIcon'],['v58DomainBadge','v58DomainName','v58DomainIcon']];
+    pairs.forEach(function(p){
+      var badge=$(p[0]), name=$(p[1]), ico=$(p[2]);
+      if(badge){ badge.style.display = p[0]==='v58DomainBadge' ? 'flex' : 'block'; badge.classList.add('visible'); }
+      if(name) name.textContent=domain;
+      if(ico) ico.textContent=icon||'🎯';
+    });
+    if(!silent) writeState({domain:domain, domainIcon:icon||'🎯'});
+  }
+  function hasDomain(){
+    var s=readState();
+    return !!(window._domain || s.domain || document.querySelector('.v5-domain-pill.selected'));
+  }
+  function renderStep3Safe(){
+    try { if (typeof window.renderStep3 === 'function') window.renderStep3(); } catch(e){ console.error('[POPE V62.5] renderStep3 error', e); }
+    var p=$('step-panel-3');
+    if(!p) return;
+    var sel=$('archiveAttachSelect');
+    if(sel && sel.options.length <= 1){
+      var gens=[];
+      try { gens=JSON.parse(localStorage.getItem('pope_v54_generations')||localStorage.getItem('pope_v53_generations')||'[]'); } catch(e) { gens=[]; }
+      gens.forEach(function(g,i){ var o=document.createElement('option'); o.value=String(g.id!=null?g.id:i); o.textContent=(g.title||g.usecaseLabel||'Draft IA')+(g.createdAt?' — '+new Date(g.createdAt).toLocaleDateString('fr-FR'):''); sel.appendChild(o); });
     }
-
-    s3.style.display='block';
-    s3.style.visibility='visible';
-    s3.style.opacity='1';
-
-    if(!s3.innerHTML || s3.innerHTML.trim().length < 50){
-
-      s3.innerHTML = `
-        <div class="pope-step3-wrapper" style="padding:24px">
-          <h2 style="margin-bottom:18px">Documents et éléments complémentaires</h2>
-
-          <div style="border:2px dashed #cfd8e3;border-radius:16px;padding:28px;text-align:center;margin-bottom:20px">
-            <p style="font-weight:600;margin-bottom:10px">Déposez vos documents</p>
-            <input type="file" id="popeFileInput" multiple />
-          </div>
-
-          <div id="popeFilesList" style="margin-bottom:20px"></div>
-
-          <div style="padding:20px;border-radius:14px;background:#f7f9fc;margin-bottom:20px">
-            <h3 style="margin-bottom:10px">Drafts IA générés</h3>
-            <div id="popeDraftsContainer">
-              Chargement des drafts...
-            </div>
-          </div>
-
-          <div style="display:flex;justify-content:flex-end">
-            <button id="popeGoStep4"
-              style="padding:12px 20px;border:none;border-radius:10px;cursor:pointer">
-              Continuer vers la transmission expert
-            </button>
-          </div>
-        </div>
-      `;
-
-      const draftsContainer = document.getElementById('popeDraftsContainer');
-
-      try{
-        const drafts = JSON.parse(localStorage.getItem('pope_generations') || '[]');
-
-        if(drafts.length){
-          draftsContainer.innerHTML = drafts.map((d,i)=>
-            `<div style="padding:12px;border:1px solid #dbe3ee;border-radius:10px;margin-bottom:10px">
-              <strong>Draft ${i+1}</strong>
-            </div>`
-          ).join('');
-        }else{
-          draftsContainer.innerHTML = '<p>Aucun draft généré pour le moment.</p>';
-        }
-
-      }catch(e){
-        draftsContainer.innerHTML = '<p>Impossible de charger les drafts.</p>';
-      }
-
-      const input = document.getElementById('popeFileInput');
-      const list = document.getElementById('popeFilesList');
-
-      input?.addEventListener('change', function(){
-        list.innerHTML = '';
-
-        [...input.files].forEach(file=>{
-          const div = document.createElement('div');
-          div.style.padding='10px';
-          div.style.border='1px solid #dbe3ee';
-          div.style.borderRadius='10px';
-          div.style.marginBottom='8px';
-          div.textContent = file.name;
-          list.appendChild(div);
-        });
-      });
-
-      document.getElementById('popeGoStep4')?.addEventListener('click', function(){
-
-        if(window.goStep){
-          window.goStep(4);
-        }else{
-          const s4 =
-            document.querySelector('[data-step="4"]') ||
-            document.getElementById('step-4') ||
-            document.getElementById('step4');
-
-          if(s4){
-            s4.style.display='block';
-          }
-        }
-
-      });
-
-    }
-
+  }
+  function renderStep4Safe(){ try { if (typeof window.renderStep4 === 'function') window.renderStep4(); else if (typeof window.updateRecap === 'function') window.updateRecap(); } catch(e){ console.error('[POPE V62.5] renderStep4 error', e); } }
+  function showStep(n, opts){
+    opts=opts||{}; n=parseInt(n,10)||1;
+    if(n>1 && !hasDomain()) { n=1; }
+    var anti=$('v61-antiflash'); if(anti) anti.remove();
+    window._step=n; try { if (typeof _step !== 'undefined') _step=n; } catch(e) {}
+    document.querySelectorAll('.v5-step-panel').forEach(function(p){
+      var active = p.id === 'step-panel-' + n;
+      p.classList.toggle('active', active);
+      p.hidden = false;
+      p.removeAttribute('aria-hidden');
+      p.style.setProperty('display', active ? 'block' : 'none', 'important');
+      p.style.visibility = active ? 'visible' : 'hidden';
+      p.style.opacity = active ? '1' : '0';
+    });
+    document.querySelectorAll('.v5-step').forEach(function(s){
+      var sn=parseInt(s.dataset.step,10);
+      s.classList.toggle('active', sn===n);
+      s.classList.toggle('done', sn<n);
+    });
+    writeState({step:n});
+    if(n===3) renderStep3Safe();
+    if(n===4) renderStep4Safe();
+    if(!opts.noScroll){ var activePanel=$('step-panel-'+n); if(activePanel) activePanel.scrollIntoView({behavior:'smooth',block:'start'}); }
   }
 
-  setTimeout(ensureStep3, 250);
-
-});
+  function targetFromUrl(){
+    var sp=new URLSearchParams(location.search);
+    if(sp.get('from')==='app') return 2;
+    var st=parseInt(sp.get('step')||'0',10);
+    return st>=1 && st<=4 ? st : 1;
+  }
+  function wire(){
+    restoreFields();
+    window.goStep = showStep;
+    window.goStep._v62patched = true;
+    window.selectDomain = function(btn){
+      var domain = btn && btn.getAttribute('data-domain');
+      if(!domain) return;
+      var icon=(btn.textContent||'').trim().split(/\s+/)[0]||'🎯';
+      setDomain(domain, icon, false);
+    };
+    document.addEventListener('click', function(e){
+      var d=e.target.closest && e.target.closest('.v5-domain-pill');
+      if(d){ window.selectDomain(d); return; }
+      var btn=e.target.closest && e.target.closest('button,a');
+      if(!btn) return;
+      var txt=(btn.textContent||'').toLowerCase();
+      if(txt.includes('continuer') && btn.closest('#step-panel-1')) { e.preventDefault(); e.stopPropagation(); showStep(2); }
+      else if(txt.includes('continuer') && btn.closest('#step-panel-2')) { e.preventDefault(); e.stopPropagation(); showStep(3); }
+      else if(txt.includes('continuer') && btn.closest('#step-panel-3')) { e.preventDefault(); e.stopPropagation(); showStep(4); }
+      else if(txt.includes('retour') && btn.closest('#step-panel-2')) { e.preventDefault(); e.stopPropagation(); showStep(1); }
+      else if(txt.includes('retour') && btn.closest('#step-panel-3')) { e.preventDefault(); e.stopPropagation(); showStep(2); }
+      else if(txt.includes('retour') && btn.closest('#step-panel-4')) { e.preventDefault(); e.stopPropagation(); showStep(3); }
+    }, true);
+    document.addEventListener('input', function(){ writeState(); }, true);
+    document.addEventListener('change', function(){ writeState(); }, true);
+    showStep(targetFromUrl(), {noScroll:true});
+    setTimeout(function(){ window.goStep=showStep; var n=Number(window._step||targetFromUrl()); showStep(n,{noScroll:true}); }, 700);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+})();
 </script>
 
 </body>

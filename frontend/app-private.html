@@ -479,9 +479,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-
-
-<script>
 // v57: restore dashboard context into app generation form
 (function(){
   var STATE_KEY = 'pope_v57_state_' + (location.pathname.indexOf('private')>-1?'private':'public');
@@ -571,5 +568,24 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(_init, 800);
 })();
 </script>
+
+<script id="pope-v62-return-dashboard">
+(function(){
+  function ret(e){
+    if(e){ e.preventDefault(); e.stopPropagation(); }
+    try { sessionStorage.setItem('pope_v62_return_from_app','1'); localStorage.setItem('pope_v62_return_from_app','1'); } catch(ex) {}
+    var isPrivate = /app-private\.html/i.test(location.pathname);
+    location.href = (isPrivate ? './dashboard-private.html' : './dashboard.html') + '?from=app&step=2&attach=last';
+  }
+  window.popeReturnToDashboard = ret;
+  document.addEventListener('click', function(e){
+    var el=e.target.closest && e.target.closest('a,button');
+    if(!el) return;
+    var t=(el.textContent||'').toLowerCase();
+    if(t.includes('retour à mon parcours') || t.includes('retour au parcours')) ret(e);
+  }, true);
+})();
+</script>
+
 </body>
 </html>
