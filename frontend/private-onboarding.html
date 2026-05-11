@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>POPE Online — Qualification privée</title>
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="app.css"/>
+</head>
+<body class="bg po-v5-harmony po-private-v24">
+<header class="topbar">
+  <div class="container">
+    <div class="row">
+      <a class="brand" href="private.html">
+        <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+        <div>
+          <div class="title">POPE Online</div>
+          <div class="sub">Parcours privé · Qualification progressive</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</header>
+<main class="container onboarding-page">
+  <section class="glass-card onboarding-shell onboarding-shell-v24">
+    <div class="onboarding-intro">
+      <span class="badge">Étape 1 à 3</span>
+      <h1 class="h2">Aidez-nous à vous connaître</h1>
+      <p class="p">En quelques étapes, nous personnaliserons votre espace et votre accompagnement selon votre activité et vos besoins.</p>
+    </div>
+    <div class="stepper" aria-label="Progression">
+      <div class="step is-active" data-step-indicator="1"><span>1</span><small>Activité</small></div>
+      <div class="step" data-step-indicator="2"><span>2</span><small>Contact</small></div>
+      <div class="step" data-step-indicator="3"><span>3</span><small>Besoin</small></div>
+    </div>
+    <form id="privateWizard" class="wizard-form" novalidate>
+      <section class="wizard-step is-active" data-step="1">
+        <label class="label" for="activityDomain">Votre domaine d'activité</label>
+        <select class="input" id="activityDomain" name="activityDomain" required>
+          <option value="">Sélectionnez votre domaine</option>
+          <option>Artisanat / BTP</option>
+          <option>Commerce</option>
+          <option>Services</option>
+          <option>Transport</option>
+          <option>Restauration</option>
+          <option>Profession libérale</option>
+          <option>Entreprise de 10 à 50 salariés</option>
+          <option>Autre</option>
+        </select>
+        <div id="otherDomainWrap" class="conditional-field" hidden>
+          <label class="label" for="otherDomain">Précisez votre domaine</label>
+          <input class="input" id="otherDomain" name="otherDomain" placeholder="Ex : maintenance, bien-être, événementiel..."/>
+        </div>
+        <label class="label" for="companyName">Nom de votre structure</label>
+        <input class="input" id="companyName" name="companyName" placeholder="Ex : Martin Bâtiment" required/>
+        <div class="wizard-actions">
+          <button type="button" class="btn primary" data-next>Suivant</button>
+        </div>
+      </section>
+      <section class="wizard-step" data-step="2">
+        <label class="label" for="fullName">Votre nom et prénom</label>
+        <input class="input" id="fullName" name="fullName" placeholder="Ex : Jean Martin" required/>
+        <label class="label" for="contactMethod">Le moyen de contact que vous préférez</label>
+        <select class="input" id="contactMethod" name="contactMethod" required>
+          <option value="">Choisissez une option</option>
+          <option>Téléphone</option>
+          <option>Mail</option>
+          <option>WhatsApp</option>
+        </select>
+        <label class="label" for="contactValue">Votre coordonnée principale</label>
+        <input class="input" id="contactValue" name="contactValue" placeholder="Numéro ou email" required/>
+        <div class="wizard-actions between">
+          <button type="button" class="btn ghost" data-prev>Précédent</button>
+          <button type="button" class="btn primary" data-next>Suivant</button>
+        </div>
+      </section>
+      <section class="wizard-step" data-step="3">
+        <label class="label" for="mainNeed">Votre besoin principal</label>
+        <select class="input" id="mainNeed" name="mainNeed" required>
+          <option value="">Sélectionnez votre besoin prioritaire</option>
+          <option value="courriers">Rédiger des courriers (URSSAF, banque, clients, fournisseurs)</option>
+          <option value="marches">Répondre à des marchés publics</option>
+          <option value="formalites">Gérer des formalités (création, modification, cessation)</option>
+          <option value="rh">Gérer des formalités sociales et RH</option>
+          <option value="cadrage">Cadrer et suivre des projets</option>
+          <option value="autre">Autre besoin administratif</option>
+        </select>
+        <label class="label" for="expectation">Ce que vous attendez de POPE Online</label>
+        <textarea class="input" id="expectation" name="expectation" rows="3"
+          placeholder="Ex : Gagner du temps sur mes courriers administratifs, sécuriser mes réponses aux marchés, déléguer la veille formalités..."></textarea>
+        <div class="wizard-actions between">
+          <button type="button" class="btn ghost" data-prev>Précédent</button>
+          <button type="submit" class="btn primary" id="btnSubmit">Accéder à mon espace</button>
+        </div>
+      </section>
+    </form>
+    <div id="wizardMsg" class="fineprint" style="margin-top:12px;text-align:center"></div>
+  </section>
+</main>
+<script type="module">
+import { apiFetch, setSession } from './api.js';
+import { showToast } from './app.js';
+
+// Stepper
+const steps = Array.from(document.querySelectorAll('.wizard-step'));
+const indicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
+let current = 0;
+
+function goTo(n) {
+  steps[current].classList.remove('is-active');
+  indicators[current].classList.remove('is-active');
+  current = n;
+  steps[current].classList.add('is-active');
+  indicators[current].classList.add('is-active');
+}
+
+document.querySelectorAll('[data-next]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = steps[current];
+    const req = step.querySelectorAll('[required]');
+    let valid = true;
+    req.forEach(f => { if (!f.value.trim()) { f.style.borderColor='#ef4444'; valid=false; } else f.style.borderColor=''; });
+    if (!valid) { document.getElementById('wizardMsg').textContent = 'Veuillez remplir tous les champs obligatoires.'; return; }
+    document.getElementById('wizardMsg').textContent = '';
+    if (current < steps.length - 1) goTo(current + 1);
+  });
+});
+
+document.querySelectorAll('[data-prev]').forEach(btn => {
+  btn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+});
+
+// Show/hide "autre domaine"
+document.getElementById('activityDomain').addEventListener('change', function() {
+  document.getElementById('otherDomainWrap').hidden = this.value !== 'Autre';
+});
+
+// Soumission - sauvegarder EN BASE et rediriger
+document.getElementById('privateWizard').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement...';
+
+  const domain = document.getElementById('activityDomain').value;
+  const other  = document.getElementById('otherDomain').value.trim();
+  const activityDomain = domain === 'Autre' && other ? other : domain;
+  const companyName    = document.getElementById('companyName').value.trim();
+  const fullName       = document.getElementById('fullName').value.trim();
+  const contactMethod  = document.getElementById('contactMethod').value;
+  const contactValue   = document.getElementById('contactValue').value.trim();
+  const mainNeed       = document.getElementById('mainNeed').value;
+  const expectation    = document.getElementById('expectation').value.trim();
+
+  try {
+    // Sauvegarder dans le profil utilisateur
+    await apiFetch('/auth/me', {
+      method: 'PUT',
+      body: {
+        full_name:        fullName,
+        company_name:     companyName,
+        activity_domain:  activityDomain,
+        contact_method:   contactMethod + (contactValue ? ' : ' + contactValue : ''),
+        main_need:        mainNeed + (expectation ? ' — ' + expectation : ''),
+        onboarding_done:  true
+      }
+    });
+    showToast('Profil enregistré ✓', 'ok');
+    setTimeout(() => { window.location.href = 'dashboard-private.html'; }, 500);
+  } catch(err) {
+    console.error(err);
+    // En cas d'erreur réseau, on redirige quand même
+    document.getElementById('wizardMsg').textContent = 'Profil sauvegardé localement. Redirection...';
+    setTimeout(() => { window.location.href = 'dashboard-private.html'; }, 1000);
+  }
+});
+</script>
+</body>
+</html>

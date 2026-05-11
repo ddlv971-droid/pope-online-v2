@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>POPE Online — IA &amp; expertise humaine pour vos livrables professionnels</title>
+  <meta name="description" content="POPE Online produit, sécurise et fait relire vos livrables professionnels par des conseillers experts. Deux espaces : collectivités et entreprises privées."/>
+  <link rel="icon" href="./assets/favicon.png" type="image/png"/>
+  <link rel="shortcut icon" href="./favicon.png"/>
+  <link rel="apple-touch-icon" href="./favicon.png"/>
+  <link rel="stylesheet" href="app.css"/>
+<style>
+/* ── Index V39 styles supplémentaires ── */
+.v39-body {
+  background: #07162a;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* NAV */
+.v39-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 62px;
+  background: rgba(7,22,42,.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center;
+}
+.v39-nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 16px;
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  flex-wrap: nowrap; overflow: hidden;
+}
+.v39-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.v39-brand img { height: 32px; flex-shrink: 0; }
+.v39-brand-text { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.v39-brand strong { font-size: 15px; font-weight: 800; color: #fff; white-space: nowrap; }
+.v39-brand small  { font-size: 11px; color: rgba(255,255,255,.45); white-space: nowrap; }
+.v39-nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.v39-nav-links a {
+  color: rgba(255,255,255,.65); text-decoration: none; font-size: 13px;
+  font-weight: 500; padding: 7px 12px; border-radius: 8px; transition: .15s;
+}
+.v39-nav-links a:hover { color: #fff; background: rgba(255,255,255,.07); }
+.v39-nav-sep { width: 1px; height: 20px; background: rgba(255,255,255,.1); margin: 0 6px; }
+.v39-nav-cta-priv {
+  background: rgba(0,121,193,.25) !important; color: #7dcfff !important;
+  border: 1px solid rgba(0,121,193,.35) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+.v39-nav-cta-pub {
+  background: rgba(194,46,131,.2) !important; color: #ffaad8 !important;
+  border: 1px solid rgba(194,46,131,.3) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+.v39-nav-cta-login {
+  background: rgba(255,255,255,.1) !important; color: #fff !important;
+  border: 1px solid rgba(255,255,255,.15) !important; border-radius: 10px !important; font-weight: 700 !important;
+}
+
+/* HERO — bandeau animé amplifié */
+.v39-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  padding-top: 62px; /* nav height */
+}
+
+/* Bandeau animé plein écran */
+.v39-band {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #02111f;
+  /* Hauteur max sur mobile pour éviter trop d'espace vide */
+  max-height: calc(100vh - 62px);
+}
+
+.v39-band-bg {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(0,121,193,.18), transparent 40%),
+    radial-gradient(circle at 85% 45%, rgba(194,46,131,.1), transparent 38%),
+    radial-gradient(circle at 50% 90%, rgba(3,160,215,.06), transparent 35%),
+    linear-gradient(160deg, #030e1c 0%, #06243e 50%, #020d19 100%);
+}
+
+/* Mosaïque panels */
+.v39-panels {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; width: 100%; height: 100%;
+}
+.v39-panel {
+  flex: 1 1 20%; height: 100%; overflow: hidden; position: relative;
+  will-change: opacity, transform, filter;
+  transition: opacity 1.2s cubic-bezier(.22,.61,.36,1),
+              transform 1.2s cubic-bezier(.22,.61,.36,1),
+              filter 1.2s cubic-bezier(.22,.61,.36,1);
+}
+.v39-panel img {
+  position: absolute; top: 0; left: calc(var(--i) * -100%);
+  width: 500%; height: 100%; object-fit: cover;
+  object-position: center 20%;
+  pointer-events: none; transform: scale(1.02);
+  filter: saturate(1.2) contrast(1.05) brightness(.92);
+}
+.v39-panel.hide {
+  opacity: 0; transform: translateY(-3%) scale(.99); filter: blur(8px);
+}
+/* Vignette sur la mosaïque */
+.v39-panels::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(2,17,31,.55) 0%, transparent 20%, transparent 55%, rgba(2,17,31,.92) 100%),
+    linear-gradient(90deg, rgba(2,17,31,.35), transparent 12%, transparent 88%, rgba(2,17,31,.3));
+}
+
+/* Filigrane logo sur la mosaïque */
+.v39-watermark {
+  position: absolute; inset: 0; z-index: 4;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; mix-blend-mode: screen;
+}
+.v39-watermark img {
+  width: min(68vw, 860px); opacity: .1; filter: blur(.5px);
+}
+
+/* Contenu centré sur le bandeau */
+.v39-band-content {
+  position: absolute; inset: 0; z-index: 6;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 0 24px; text-align: center;
+  pointer-events: none;
+}
+.v39-band-logo {
+  height: clamp(90px, 21vw, 285px);
+  max-width: min(82vw, 900px);
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 32px;
+  filter: drop-shadow(0 6px 32px rgba(0,0,0,.5));
+}
+
+.v39-slogan-wrap { min-height: 100px; display: flex; align-items: center; justify-content: center; }
+.v39-slogan {
+  font-size: clamp(36px, 5.5vw, 70px);
+  font-weight: 800; letter-spacing: -.03em;
+  color: #fff; line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0,0,0,.5);
+  animation: v39fadeIn .7s ease;
+}
+@keyframes v39fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.v39-band-tagline {
+  color: rgba(255,255,255,.85);
+  font-size: clamp(14px, 1.8vw, 22px);
+  font-weight: 600; font-style: italic;
+  margin-top: 16px; letter-spacing: .01em;
+  text-shadow: 0 1px 12px rgba(0,0,0,.5);
+}
+.v39-band-sub {
+  color: rgba(255,255,255,.65); font-size: clamp(15px, 2.2vw, 26px);
+  margin-top: 18px; font-weight: 500; letter-spacing: .02em;
+  text-shadow: 0 1px 12px rgba(0,0,0,.4);
+}
+
+/* Ticker texte défilant en bas du bandeau */
+.v39-ticker {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 9;
+  height: 50px; background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+  display: flex; align-items: center; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.v39-ticker-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: v39ticker 28s linear infinite;
+}
+@keyframes v39ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.v39-ticker-item {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 0 32px; font-size: 15px; font-weight: 600;
+  color: rgba(255,255,255,.7); letter-spacing: .04em;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.v39-ticker-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.v39-ticker-dot.blue  { background: #0079c1; }
+.v39-ticker-dot.pink  { background: #c22e83; }
+.v39-ticker-dot.cyan  { background: #03a0d7; }
+
+/* CTA overlay en bas du hero */
+.v39-cta-zone {
+  background: linear-gradient(to top, #07162a 60%, transparent 100%);
+  padding: 60px 24px 48px;
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+  position: absolute;
+  bottom: 50px; left: 0; right: 0;
+  z-index: 8; pointer-events: all;
+}
+
+/* Cartes espaces */
+.v39-spaces {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; max-width: 1100px; margin: 0 auto;
+  padding: 32px 24px 60px; position: relative; z-index: 2;
+}
+
+.v39-space-card {
+  border-radius: 24px; padding: 32px;
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(4px);
+  transition: .25s; cursor: default;
+  position: relative; overflow: hidden;
+}
+.v39-space-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 24px;
+  opacity: 0; transition: .3s;
+}
+.v39-space-card:hover::before { opacity: 1; }
+
+.v39-space-card.priv {
+  background: linear-gradient(135deg, rgba(0,121,193,.15), rgba(7,22,42,.8) 60%);
+}
+.v39-space-card.priv::before {
+  background: linear-gradient(135deg, rgba(0,121,193,.22), rgba(7,22,42,.85) 60%);
+}
+.v39-space-card.priv:hover { border-color: rgba(0,121,193,.35); transform: translateY(-3px); box-shadow: 0 20px 50px rgba(0,121,193,.2); }
+
+.v39-space-card.pub {
+  background: linear-gradient(135deg, rgba(194,46,131,.12), rgba(7,22,42,.8) 60%);
+}
+.v39-space-card.pub::before {
+  background: linear-gradient(135deg, rgba(194,46,131,.2), rgba(7,22,42,.85) 60%);
+}
+.v39-space-card.pub:hover { border-color: rgba(194,46,131,.3); transform: translateY(-3px); box-shadow: 0 20px 50px rgba(194,46,131,.15); }
+
+.v39-space-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  border-radius: 999px; padding: 4px 12px; margin-bottom: 14px; position: relative; z-index: 1;
+}
+.v39-space-card.priv .v39-space-tag { background: rgba(0,121,193,.2); color: #7dcfff; }
+.v39-space-card.pub  .v39-space-tag { background: rgba(194,46,131,.18); color: #ffaad8; }
+
+.v39-space-card h2 {
+  margin: 0 0 12px; font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 800; color: #fff; letter-spacing: -.02em;
+  hyphens: none; word-break: normal;
+  position: relative; z-index: 1;
+}
+.v39-space-card p {
+  margin: 0 0 20px; font-size: 14px; color: rgba(255,255,255,.65);
+  line-height: 1.65; max-width: 40ch; position: relative; z-index: 1;
+}
+.v39-space-list {
+  list-style: none; margin: 0 0 24px; padding: 0;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative; z-index: 1;
+}
+.v39-space-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: rgba(255,255,255,.75);
+}
+.v39-space-list li::before { content: '✓'; font-weight: 700; flex-shrink: 0; }
+.v39-space-card.priv .v39-space-list li::before { color: #0099e6; }
+.v39-space-card.pub  .v39-space-list li::before { color: #e060a8; }
+
+.v39-space-actions { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+.v39-space-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 14px; font-weight: 700; text-decoration: none; transition: .2s;
+}
+.v39-space-card.priv .v39-space-btn.main {
+  background: #0079c1; color: #fff;
+  box-shadow: 0 6px 20px rgba(0,121,193,.35);
+}
+.v39-space-card.priv .v39-space-btn.main:hover { background: #0088d4; }
+.v39-space-card.pub  .v39-space-btn.main {
+  background: #b9227c; color: #fff;
+  box-shadow: 0 6px 20px rgba(185,34,124,.3);
+}
+.v39-space-card.pub  .v39-space-btn.main:hover { background: #cc2a8a; }
+.v39-space-btn.ghost {
+  background: rgba(255,255,255,.07); color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.v39-space-btn.ghost:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+/* Section pitch */
+.v39-pitch {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px 60px;
+}
+.v39-pitch-inner {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 24px; padding: 40px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
+}
+.v39-pitch-item { text-align: center; }
+.v39-pitch-num  { font-size: 40px; font-weight: 800; color: #0099e6; margin-bottom: 8px; }
+.v39-pitch-item h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #fff; }
+.v39-pitch-item p  { margin: 0; font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.6; }
+
+/* Footer */
+.v39-footer {
+  background: rgba(0,0,0,.3); border-top: 1px solid rgba(255,255,255,.06);
+  padding: 20px 24px; text-align: center;
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+}
+.v39-footer a { color: rgba(255,255,255,.38); font-size: 12px; text-decoration: none; transition: .15s; }
+.v39-footer a:hover { color: rgba(255,255,255,.7); }
+.v39-footer span { color: rgba(255,255,255,.15); }
+
+/* Burger mobile */
+.v39-burger {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 6px; margin-left: auto; flex-direction: column; gap: 5px;
+  flex-shrink: 0;
+}
+.v39-burger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.7); border-radius: 2px; transition: transform .25s ease, opacity .25s ease; }
+
+/* ══════════════════════════════════════════
+   COOKIE CONSENT PREMIUM — POPE Online
+══════════════════════════════════════════ */
+.ck-overlay {
+  position: fixed; inset: 0; z-index: 99990;
+  background: rgba(3,9,18,.75);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.ck-panel {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 99991;
+  width: min(620px, calc(100vw - 20px));
+  background: linear-gradient(160deg, #0a1628 0%, #071020 100%);
+  border: 1px solid rgba(0,121,193,.2);
+  border-radius: 22px;
+  box-shadow:
+    0 48px 120px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.03),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  overflow: hidden;
+  animation: ckSlide .5s cubic-bezier(.16,1,.3,1);
+}
+@keyframes ckSlide {
+  from { opacity:0; transform:translateX(-50%) translateY(32px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+.ck-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,180,216,.5) 40%, rgba(0,121,193,.5) 60%, transparent 100%);
+}
+.ck-head { padding: 24px 28px 0; display: flex; align-items: center; gap: 14px; }
+.ck-ico {
+  width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+  background: linear-gradient(135deg, #005fa3 0%, #00afd8 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; box-shadow: 0 8px 24px rgba(0,120,193,.45);
+}
+.ck-title-wrap { flex: 1; min-width: 0; }
+.ck-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #00b4d8; margin-bottom: 4px; }
+.ck-title { margin: 0; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -.025em; line-height: 1.2; }
+.ck-body { padding: 16px 28px 0; }
+.ck-desc { font-size: 13.5px; color: rgba(255,255,255,.48); line-height: 1.7; margin: 0 0 18px; }
+.ck-sep { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,150,200,.2), transparent); margin: 0 -28px 0; }
+/* Prefs */
+.ck-prefs-list { padding: 4px 0; }
+.ck-pref {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 13px 28px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .15s;
+}
+.ck-pref:last-child { border-bottom: none; }
+.ck-pref:hover { background: rgba(255,255,255,.02); }
+/* Toggle switch */
+.ck-sw { position: relative; width: 44px; height: 26px; flex-shrink: 0; margin-top: 1px; }
+.ck-sw input { opacity: 0; width: 0; height: 0; position: absolute; }
+.ck-sw-track {
+  position: absolute; inset: 0; cursor: pointer;
+  background: rgba(255,255,255,.1); border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.08);
+  transition: all .25s;
+}
+.ck-sw-track:before {
+  content: ''; position: absolute;
+  width: 20px; height: 20px; left: 2px; top: 2px;
+  background: rgba(255,255,255,.45); border-radius: 50%;
+  transition: all .25s; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.ck-sw input:checked ~ .ck-sw-track { background: #0079c1; border-color: #0079c1; }
+.ck-sw input:checked ~ .ck-sw-track:before { transform: translateX(18px); background: #fff; }
+.ck-sw input:disabled ~ .ck-sw-track { cursor: not-allowed; opacity: .9; }
+.ck-sw input:disabled:checked ~ .ck-sw-track { background: #00afd8; border-color: #00afd8; }
+.ck-sw input:disabled:checked ~ .ck-sw-track:before { background: #fff; }
+.ck-pref-info { flex: 1; min-width: 0; }
+.ck-pref-name {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px;
+}
+.ck-badge {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 99px;
+  color: #00b4d8; background: rgba(0,180,216,.1); border: 1px solid rgba(0,180,216,.2);
+}
+.ck-pref-desc { font-size: 12px; color: rgba(255,255,255,.38); line-height: 1.6; }
+/* Boutons */
+.ck-foot { padding: 16px 28px 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+.ck-btn {
+  flex: 1 1 0; min-width: 0;
+  padding: 12px 14px; border-radius: 12px;
+  font-size: 12.5px; font-weight: 700;
+  border: none; cursor: pointer;
+  transition: all .2s; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ck-btn-ok {
+  background: linear-gradient(135deg, #0070b8 0%, #0099d6 100%);
+  color: #fff; flex: 2 1 0;
+  box-shadow: 0 4px 18px rgba(0,112,184,.45);
+}
+.ck-btn-ok:hover { box-shadow: 0 6px 28px rgba(0,112,184,.6); transform: translateY(-1px); }
+.ck-btn-no { background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-no:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ck-btn-cfg { background: none; color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-cfg:hover { background: rgba(255,255,255,.05); color: rgba(255,255,255,.65); }
+.ck-btn-save {
+  background: linear-gradient(135deg, #0070b8 0%, #0099d6 100%);
+  color: #fff; flex: 2 1 0; box-shadow: 0 4px 18px rgba(0,112,184,.45);
+}
+.ck-btn-save:hover { box-shadow: 0 6px 28px rgba(0,112,184,.6); transform: translateY(-1px); }
+.ck-btn-back { background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.08); }
+.ck-btn-back:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ck-legal {
+  text-align: center; font-size: 11px; color: rgba(255,255,255,.2);
+  padding: 0 28px 18px; line-height: 1.65;
+}
+.ck-legal a { color: rgba(255,255,255,.35); text-decoration: underline; }
+.ck-legal a:hover { color: rgba(255,255,255,.6); }
+@media(max-width: 480px) {
+  .ck-panel { border-radius: 16px; bottom: 12px; }
+  .ck-head, .ck-body, .ck-foot, .ck-legal { padding-left: 18px; padding-right: 18px; }
+  .ck-pref { padding-left: 18px; padding-right: 18px; }
+  .ck-foot { flex-direction: column; }
+  .ck-btn { flex: none; width: 100%; }
+}
+
+@media(max-width: 860px) {
+  .v39-spaces { grid-template-columns: 1fr; }
+  .v39-pitch-inner { grid-template-columns: 1fr; gap: 24px; }
+  .v39-nav-links { display: none; }
+  .v39-burger { display: flex; }
+  /* Retirer backdrop-filter du nav en mobile pour libérer le stacking context */
+  .v39-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .v39-nav-links.open {
+    display: flex; flex-direction: column; align-items: stretch; gap: 2px;
+    position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
+    background: rgba(7,22,42,.98); backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 20px 20px 40px; z-index: 200;
+    overflow-y: auto; pointer-events: all;
+  }
+  .v39-nav-links.open a {
+    padding: 14px 18px; border-radius: 12px; font-size: 15px;
+    font-weight: 600; color: rgba(255,255,255,.85);
+    border: none; background: none; transition: .15s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .v39-nav-links.open a:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .v39-nav-links.open .v39-nav-sep { width: 100%; height: 1px; margin: 8px 0; background: rgba(255,255,255,.07); }
+  .v39-nav-links.open .v39-nav-cta-priv,
+  .v39-nav-links.open .v39-nav-cta-pub,
+  .v39-nav-links.open .v39-nav-cta-login {
+    margin-top: 4px; border-radius: 12px !important; justify-content: center;
+    padding: 14px 18px !important; font-size: 15px !important;
+    border: 1.5px solid !important;
+  }
+  .v39-ticker {
+    display: flex;
+    height: 38px;
+  }
+  .v39-ticker-item { font-size: 12px; padding: 0 20px; }
+  .v39-ticker-dot { width: 5px; height: 5px; }
+
+  /* Hero mobile : plein écran comme desktop */
+  .v39-hero { min-height: 100vh; }
+
+  /* Bandeau plein écran, CTA intégrée dedans via flex */
+  .v39-band { flex: 1; }
+
+  /* Contenu : logo remonté au niveau des cheveux */
+  .v39-band-content {
+    position: absolute;
+    justify-content: flex-start;
+    padding-top: 5%;
+    padding-bottom: 0;
+  }
+
+  .v39-cta-zone {
+    padding: 40px 24px 32px;
+  }
+
+  /* Logo x2 sur mobile */
+  .v39-band-logo {
+    height: clamp(110px, 28vw, 200px);
+    max-width: 80vw;
+    margin-bottom: 12px;
+  }
+  .v39-slogan-wrap { min-height: 50px; }
+  .v39-slogan { font-size: clamp(24px, 6.5vw, 44px); }
+  .v39-band-tagline { font-size: clamp(12px, 3vw, 15px); margin-top: 8px; }
+  .v39-band-sub { font-size: clamp(11px, 2.8vw, 14px); margin-top: 8px; }
+}
+@media(max-width: 500px) {
+  .v39-space-card { padding: 22px 18px; }
+  .v39-pitch-inner { padding: 24px 20px; }
+  .v39-band-content { padding-top: 4%; }
+  .v39-band-logo { height: clamp(100px, 26vw, 160px); max-width: 78vw; }
+  .v39-slogan { font-size: clamp(20px, 6.5vw, 30px); }
+  .v39-band-sub { font-size: 12px; }
+  .v39-band-tagline { font-size: 11px; }
+}
+
+/* ══ EXPERTS PANEL — section index ══ */
+.v39-experts {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px 72px;
+}
+.v39-experts-head {
+  text-align: center; margin-bottom: 52px;
+}
+.v39-experts-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,153,230,.1); border: 1px solid rgba(0,153,230,.2);
+  color: #7dcfff; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase;
+  border-radius: 99px; padding: 5px 18px; margin-bottom: 24px;
+}
+.v39-experts-head h2 {
+  font-size: clamp(24px, 3.2vw, 38px); font-weight: 800;
+  color: #fff; letter-spacing: -.025em; line-height: 1.15;
+  margin: 0 0 14px;
+}
+.v39-experts-head p {
+  font-size: 15px; color: rgba(255,255,255,.52);
+  line-height: 1.72; max-width: 560px; margin: 0 auto;
+}
+.v39-experts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 48px;
+}
+.v39-ecard {
+  background: rgba(5,12,28,.72);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px; padding: 22px 18px;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.v39-ecard:hover {
+  background: rgba(5,12,28,.88);
+  border-color: rgba(0,180,216,.5);
+  transform: translateY(-3px);
+}
+.v39-ecard-ico {
+  font-size: 22px; margin-bottom: 12px; display: block; line-height: 1;
+}
+.v39-ecard h3 {
+  font-size: 13.5px; font-weight: 700; color: #fff;
+  margin: 0 0 7px; letter-spacing: -.01em;
+}
+.v39-ecard p {
+  font-size: 12px; color: rgba(255,255,255,.46);
+  line-height: 1.6; margin: 0 0 12px;
+}
+.v39-etags {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.v39-etag {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 99px;
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.48);
+  border: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+}
+.v39-experts-stat {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: 44px;
+}
+.v39-estat { text-align: center; }
+.v39-estat-n {
+  font-size: clamp(30px,4vw,44px); font-weight: 800;
+  color: #fff; line-height: 1; margin-bottom: 6px; letter-spacing: -.04em;
+}
+.v39-estat-n em { font-style: normal; color: #0099e6; }
+.v39-estat-l { font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.5; }
+.v39-estat-sep { width: 1px; height: 48px; background: rgba(255,255,255,.2); }
+
+@media(max-width: 1024px) {
+  .v39-experts-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media(max-width: 860px) {
+  .v39-experts-grid { grid-template-columns: repeat(2, 1fr); }
+  .v39-estat-sep { display: none; }
+  .v39-experts-stat { gap: 24px; }
+}
+@media(max-width: 480px) {
+  .v39-experts-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .v39-ecard { padding: 18px 14px; }
+}
+</style>
+</head>
+<body class="v39-body">
+
+<!-- NAV -->
+<nav class="v39-nav">
+  <div class="v39-nav-inner">
+    <a class="v39-brand" href="index.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v39-brand-text"><strong>POPE Online</strong><small>Conseil &amp; Expertise</small></div>
+    </a>
+    <button class="v39-burger" id="burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="v39-nav-links" id="navLinks">
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="tutoriel.html">▶ Tutoriel</a>
+      <a href="mailto:contact@pope-online.com">Contact</a>
+      <div class="v39-nav-sep"></div>
+      <a href="private.html" class="v39-nav-cta-priv">🔒 Espace privé</a>
+      <a href="public.html"  class="v39-nav-cta-pub">🏛️ Espace public</a>
+      <a href="login.html"   class="v39-nav-cta-login">Connexion</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO : BANDEAU ANIMÉ PLEIN ÉCRAN -->
+<section class="v39-hero">
+  <div class="v39-band">
+    <div class="v39-band-bg"></div>
+
+    <!-- Mosaïque animée -->
+    <div class="v39-panels" id="panels">
+      <div class="v39-panel" style="--i:0"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:1"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:2"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:3"><img src="./assets/mosaic.png" alt=""/></div>
+      <div class="v39-panel" style="--i:4"><img src="./assets/mosaic.png" alt=""/></div>
+    </div>
+
+    <!-- Filigrane logo -->
+    <div class="v39-watermark">
+      <img src="./assets/popeonline-logo2.png" alt=""/>
+    </div>
+
+    <!-- Contenu central -->
+    <div class="v39-band-content">
+      <img class="v39-band-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <div class="v39-slogan-wrap">
+        <div class="v39-slogan" id="slogan">Deux univers, une même exigence</div>
+      </div>
+      <div class="v39-band-tagline">Là où l'expertise humaine fait toute la différence</div>
+      <div class="v39-band-sub">Réseau d'experts · Conseil personnalisé · Réponse sous 48h</div>
+    </div>
+
+    <!-- Ticker défilant -->
+    <div class="v39-ticker" aria-hidden="true">
+      <div class="v39-ticker-track">
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Réseau d'experts qualifiés</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Conseil expert sous 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>30 ans d'expérience terrain</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>+12 domaines d'expertise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Expert dédié à votre dossier</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Confidentialité garantie</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Sans engagement</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+        <!-- duplicate pour boucle infinie -->
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Réseau d'experts qualifiés</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Conseil expert sous 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Marchés publics</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Délibérations</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Courriers URSSAF</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Clausier documentaire</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Notes stratégiques</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot pink"></span>Formalités d'entreprise</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot cyan"></span>Dépôt sécurisé 48h</span>
+        <span class="v39-ticker-item"><span class="v39-ticker-dot blue"></span>Accompagnement sur mesure</span>
+      </div>
+    </div>
+
+  <!-- CTA overlay — à l'intérieur du bandeau -->
+  <div class="v39-cta-zone">
+    <a href="signup.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(0,121,193,.4)">
+      Démarrer l'essai gratuit →
+    </a>
+    <a href="login.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 22px;font-size:14px;font-weight:600;text-decoration:none">
+      Se connecter
+    </a>
+  </div>
+</div>
+
+</section>
+
+<!-- CARTES ESPACES -->
+<section class="v39-spaces">
+
+  <div class="v39-space-card priv">
+    <div class="v39-space-tag">🔒 Espace privé</div>
+    <h2>Artisans, indépendants &amp; TPE</h2>
+    <p>Déléguez votre administratif. Produisez des courriers, formalités et réponses aux marchés publics — vite et bien.</p>
+    <ul class="v39-space-list">
+      <li>Courriers URSSAF, banque, clients, fournisseurs</li>
+      <li>Formalités de création, modification, RH</li>
+      <li>Réponses aux marchés publics</li>
+      <li>Devis et propositions commerciales</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="private.html">Découvrir l'espace privé →</a>
+      <a class="v39-space-btn ghost" href="signup-private.html">Essai gratuit</a>
+    </div>
+  </div>
+
+  <div class="v39-space-card pub">
+    <div class="v39-space-tag">🏛️ Espace public</div>
+    <h2>Collectivités &amp; organisations</h2>
+    <p>Produisez vite, décidez mieux. Notes stratégiques, délibérations, réponses aux marchés — sécurisés et validés.</p>
+    <ul class="v39-space-list">
+      <li>Notes stratégiques et arbitrages</li>
+      <li>Délibérations et synthèses de réunion</li>
+      <li>Analyse des marchés publics</li>
+      <li>Cadrages projet / PMO</li>
+    </ul>
+    <div class="v39-space-actions">
+      <a class="v39-space-btn main" href="public.html">Découvrir l'espace public →</a>
+      <a class="v39-space-btn ghost" href="signup-public.html">Essai gratuit</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- PITCH CHIFFRES -->
+<section class="v39-pitch">
+  <div class="v39-pitch-inner">
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">+30</div>
+      <h3>Experts mobilisables</h3>
+      <p>Un réseau de conseillers terrain, juristes, financiers, RH et auditeurs — disponibles pour votre dossier.</p>
+    </div>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">48h</div>
+      <h3>Délai de réponse expert</h3>
+      <p>Votre besoin est traité personnellement par un expert dédié — pas par un algorithme. Garanti.</p>
+    </div>
+    <div class="v39-pitch-item">
+      <div class="v39-pitch-num">15j</div>
+      <h3>Essai gratuit</h3>
+      <p>2 Conseils Expert offerts (une seule fois). Sans carte bancaire, sans engagement.</p>
+    </div>
+  </div>
+</section>
+<!-- PANEL EXPERTS -->
+<section style="background: url(./assets/experts-bg.png) center center / cover no-repeat;position:relative;padding:0 0 0;">
+<div style="position:absolute;inset:0;background:rgba(7,10,22,.72);backdrop-filter:blur(0px);z-index:0;"></div>
+<div class="v39-experts" style="position:relative;z-index:1;">
+  <div class="v39-experts-head">
+    <div class="v39-experts-eyebrow">✦ Notre panel d'experts</div>
+    <h2>Des experts humains à chaque étape<br>de votre dossier</h2>
+    <p>Derrière POPE Online, un réseau de conseillers issus du terrain public et privé.
+       Chaque avis, chaque relecture est rendu par un professionnel qualifié — pas par un algorithme.</p>
+  </div>
+
+  <div class="v39-experts-grid">
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">⚖️</span>
+      <h3>Droit & Juridique</h3>
+      <p>Contrats, contentieux, conformité réglementaire, droit public et des affaires.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Droit public</span>
+        <span class="v39-etag">Contrats</span>
+        <span class="v39-etag">Contentieux</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🏛️</span>
+      <h3>Marchés publics</h3>
+      <p>DCE, mémoires techniques, réponses aux appels d'offres, délégations de service.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">DCE & CCAP</span>
+        <span class="v39-etag">Offres</span>
+        <span class="v39-etag">DSP</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🏗️</span>
+      <h3>Travaux & MOA</h3>
+      <p>Maîtrise d'ouvrage, suivi de chantier, CCTP, coordination MOE/MOA.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">CCTP</span>
+        <span class="v39-etag">MOA / MOE</span>
+        <span class="v39-etag">Réception</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">📊</span>
+      <h3>Management & Stratégie</h3>
+      <p>Pilotage de projets, notes de décision, cadrages stratégiques, gouvernance.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">PMO</span>
+        <span class="v39-etag">Gouvernance</span>
+        <span class="v39-etag">Arbitrage</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">💰</span>
+      <h3>Finances & Gestion</h3>
+      <p>Budget M57, fiscalité, trésorerie, plans de financement, rapports financiers.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Budget M57</span>
+        <span class="v39-etag">Fiscalité</span>
+        <span class="v39-etag">Financement</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">👥</span>
+      <h3>Ressources humaines</h3>
+      <p>Statut FPT, recrutement, fiche de poste, entretiens, procédures disciplinaires.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Statut FPT</span>
+        <span class="v39-etag">Recrutement</span>
+        <span class="v39-etag">Disciplinaire</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🔍</span>
+      <h3>Audit des organisations</h3>
+      <p>Diagnostic organisationnel, cartographie des risques, contrôle de gestion.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Audit interne</span>
+        <span class="v39-etag">Risques</span>
+        <span class="v39-etag">Contrôle</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🛡️</span>
+      <h3>Cybersécurité & SI</h3>
+      <p>RGPD, PSSI, NIS2, politique de sécurité des systèmes d'information.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">RGPD / DPO</span>
+        <span class="v39-etag">PSSI</span>
+        <span class="v39-etag">NIS2</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🌿</span>
+      <h3>Transition écologique</h3>
+      <p>PCAET, bilan carbone, commande publique responsable, stratégies RSE.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">PCAET</span>
+        <span class="v39-etag">Bilan carbone</span>
+        <span class="v39-etag">RSE</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">📣</span>
+      <h3>Communication</h3>
+      <p>Stratégie éditoriale, gestion de crise, discours, supports institutionnels.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Com. inst.</span>
+        <span class="v39-etag">Gestion de crise</span>
+        <span class="v39-etag">Discours</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🤝</span>
+      <h3>Médiation & Conflits</h3>
+      <p>Médiation administrative, négociation, protocoles amiables, sortie de crise.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Médiation</span>
+        <span class="v39-etag">Négociation</span>
+        <span class="v39-etag">Protocole</span>
+      </div>
+    </div>
+
+    <div class="v39-ecard">
+      <span class="v39-ecard-ico">🤖</span>
+      <h3>Intelligence artificielle</h3>
+      <p>Gouvernance IA, éthique algorithmique, intégration métier, prompts avancés.</p>
+      <div class="v39-etags">
+        <span class="v39-etag">Gouvernance IA</span>
+        <span class="v39-etag">Éthique</span>
+        <span class="v39-etag">Intégration</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="v39-experts-stat">
+    <div class="v39-estat">
+      <div class="v39-estat-n"><em>+</em>30</div>
+      <div class="v39-estat-l">Années d'expertise<br>terrain cumulées</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n">12</div>
+      <div class="v39-estat-l">Domaines d'expertise<br>couverts</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n">48<em>h</em></div>
+      <div class="v39-estat-l">Retour expert<br>garanti</div>
+    </div>
+    <div class="v39-estat-sep"></div>
+    <div class="v39-estat">
+      <div class="v39-estat-n"><em>2</em></div>
+      <div class="v39-estat-l">Espaces dédiés<br>public &amp; privé</div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="v39-footer">
+  <span style="color:rgba(255,255,255,.25);font-size:12px">© Pope Consulting SAS</span>
+  <span>·</span><a href="legal.html">Mentions légales</a>
+  <span>·</span><a href="cgu.html">CGU</a>
+  <span>·</span><a href="cgv.html">CGV</a>
+  <span>·</span><a href="privacy.html">Confidentialité</a>
+  <span>·</span><a href="pricing.html">Tarifs</a>
+  <span>·</span><a href="about.html">À propos</a>
+  <span>·</span><a href="mailto:contact@pope-online.com">Contact</a>
+</footer>
+
+<!-- Cookie modal conservé -->
+<div class="ck-overlay" id="ckOverlay" hidden></div>
+
+<!-- Bannière principale -->
+<div class="ck-panel" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitleMain">
+  <div class="ck-glow"></div>
+  <div class="ck-head">
+    <div class="ck-ico">🍪</div>
+    <div class="ck-title-wrap">
+      <div class="ck-eyebrow">Confidentialité &amp; Données</div>
+      <h2 class="ck-title" id="ckTitleMain">Nous respectons votre vie privée</h2>
+    </div>
+  </div>
+  <div class="ck-body">
+    <p class="ck-desc">POPE Online utilise des cookies pour sécuriser votre session, mémoriser vos préférences et mesurer les performances de la plateforme. Aucune donnée n'est revendue à des tiers.</p>
+  </div>
+  <div class="ck-sep"></div>
+  <div class="ck-foot">
+    <button class="ck-btn ck-btn-no"  id="ckRefuse"  type="button">Refuser</button>
+    <button class="ck-btn ck-btn-cfg" id="ckConfig"  type="button">⚙ Personnaliser</button>
+    <button class="ck-btn ck-btn-ok"  id="ckAccept"  type="button">✓ Tout accepter</button>
+  </div>
+  <p class="ck-legal">En continuant, vous acceptez notre <a href="privacy.html">Politique de confidentialité</a> et nos <a href="cgu.html">CGU</a>.</p>
+</div>
+
+<!-- Panneau préférences -->
+<div class="ck-panel" id="ckPrefs" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitlePrefs">
+  <div class="ck-glow"></div>
+  <div class="ck-head">
+    <div class="ck-ico">⚙️</div>
+    <div class="ck-title-wrap">
+      <div class="ck-eyebrow">Gestion des cookies</div>
+      <h2 class="ck-title" id="ckTitlePrefs">Personnaliser mes choix</h2>
+    </div>
+  </div>
+  <div class="ck-sep"></div>
+  <div class="ck-prefs-list">
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" checked disabled/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Cookies essentiels <span class="ck-badge">Obligatoires</span></div>
+        <div class="ck-pref-desc">Authentification sécurisée, gestion de session, protection anti-fraude et stabilité de la plateforme. Ces cookies sont indispensables au bon fonctionnement du service et ne peuvent pas être désactivés.</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwAnalytics"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Analytiques</div>
+        <div class="ck-pref-desc">Mesure d'audience anonymisée pour comprendre comment vous utilisez POPE Online et améliorer nos services (pages visitées, durée de session, erreurs rencontrées).</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwFunctional"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Fonctionnels</div>
+        <div class="ck-pref-desc">Mémorisation de vos préférences d'affichage, de langue et de configuration pour personnaliser votre espace de travail à chaque connexion.</div>
+      </div>
+    </div>
+    <div class="ck-pref">
+      <label class="ck-sw">
+        <input type="checkbox" id="ckSwMarketing"/>
+        <div class="ck-sw-track"></div>
+      </label>
+      <div class="ck-pref-info">
+        <div class="ck-pref-name">Communication ciblée</div>
+        <div class="ck-pref-desc">Contenus et communications adaptés à votre profil et à votre espace (public ou privé). Utilisés uniquement en interne — jamais transmis à des annonceurs tiers.</div>
+      </div>
+    </div>
+  </div>
+  <div class="ck-sep"></div>
+  <div class="ck-foot">
+    <button class="ck-btn ck-btn-back" id="ckBack"    type="button">← Retour</button>
+    <button class="ck-btn ck-btn-save" id="ckSave"    type="button">Enregistrer mes choix</button>
+  </div>
+  <p class="ck-legal">Vos préférences sont sauvegardées localement et respectent le RGPD. <a href="privacy.html">En savoir plus</a></p>
+</div>
+
+<script>
+// Burger
+var burgerBtn = document.getElementById('burger');
+var navLinksEl = document.getElementById('navLinks');
+burgerBtn.addEventListener('click', function() {
+  var isOpen = navLinksEl.classList.toggle('open');
+  // Transformer en croix quand ouvert
+  var spans = burgerBtn.querySelectorAll('span');
+  if (isOpen) {
+    spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+    spans[1].style.cssText = 'opacity:0; transform:scaleX(0)';
+    spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans[0].style.cssText = '';
+    spans[1].style.cssText = '';
+    spans[2].style.cssText = '';
+  }
+});
+// Fermer le menu en cliquant sur un lien
+if (navLinksEl) {
+  navLinksEl.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinksEl.classList.remove('open');
+      var spans = burgerBtn.querySelectorAll('span');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
+    });
+  });
+}
+
+// Slogans rotatifs
+(function() {
+  var slogans = [
+    "Deux univers, une même exigence",
+    "La fluidité d'un outil pensé pour l'action",
+    "Décuplez votre efficacité métier",
+    "IA guidée. Expertise humaine. Résultat garanti.",
+    "Accélérez vos décisions stratégiques"
+  ];
+  var el = document.getElementById('slogan');
+  var i = 0;
+  function rotate() {
+    i = (i + 1) % slogans.length;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(function() {
+      el.textContent = slogans[i];
+      el.style.transition = 'opacity .6s ease, transform .6s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 400);
+  }
+  setInterval(rotate, 4000);
+})();
+
+// Mosaïque
+(function() {
+  var panels = document.querySelectorAll('.v39-panel');
+  if (!panels.length) return;
+  function restart() {
+    panels.forEach(function(p) { p.classList.remove('hide'); });
+    setTimeout(function() {
+      panels.forEach(function(p, i) {
+        setTimeout(function() { p.classList.add('hide'); }, i * 200);
+      });
+    }, 6000);
+  }
+  setTimeout(restart, 500);
+  setInterval(restart, 16000);
+})();
+
+// Cookies
+(function() {
+  var KEY='pope_cookie_choice';
+  var ov=document.getElementById('ckOverlay');
+  var mn=document.getElementById('ckMain');
+  var pr=document.getElementById('ckPrefs');
+  function save(choice){
+    try{localStorage.setItem(KEY,JSON.stringify({v:2,choice:choice,
+      analytics: choice==='accept'||(document.getElementById('ckSwAnalytics')&&document.getElementById('ckSwAnalytics').checked),
+      functional:choice==='accept'||(document.getElementById('ckSwFunctional')&&document.getElementById('ckSwFunctional').checked),
+      marketing: choice==='accept'||(document.getElementById('ckSwMarketing')&&document.getElementById('ckSwMarketing').checked),
+      ts:Date.now()
+    }));}catch(e){}
+    if(ov)ov.hidden=true; if(mn)mn.hidden=true; if(pr)pr.hidden=true;
+  }
+  try{var s=localStorage.getItem(KEY); if(s){var p=JSON.parse(s); if(p&&p.choice)return;}}catch(e){}
+  if(ov)ov.hidden=false; if(mn)mn.hidden=false;
+  document.getElementById('ckAccept').onclick =function(){save('accept');};
+  document.getElementById('ckRefuse').onclick  =function(){save('refuse');};
+  document.getElementById('ckConfig').onclick  =function(){mn.hidden=true;pr.hidden=false;};
+  document.getElementById('ckBack').onclick    =function(){pr.hidden=true;mn.hidden=false;};
+  document.getElementById('ckSave').onclick    =function(){save('custom');};
+})();
+</script>
+<script>
+(function(){
+  var protectedTargets={'app.html':1,'expert.html':1,'mission.html':1,'dashboard.html':1,
+    'app-private.html':1,'expert-private.html':1,'mission-private.html':1,
+    'dashboard-private.html':1,'vault.html':1,'referral.html':1,'profile.html':1};
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
+  }
+  document.addEventListener('click',function(e){
+    var link=e.target.closest('a[href]');
+    if(!link) return;
+    var href=link.getAttribute('href')||'';
+    if(!href||href.startsWith('http')||href.startsWith('mailto:')||
+       href.startsWith('tel:')||href.startsWith('#')) return;
+    var clean=href.replace(/^\.\//,'');
+    var pathname=clean.split('?')[0];
+    if(!protectedTargets[pathname]) return;
+    if(hasSession()) return;
+    e.preventDefault();
+    window.location.href='login.html?next='+encodeURIComponent(clean);
+  },true);
+})();
+</script>
+</body>
+</html>

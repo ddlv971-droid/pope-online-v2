@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Tableau de bord Privé</title>
+<link rel="icon" href="./assets/favicon.png" type="image/png"/>
+<link rel="stylesheet" href="pope2.css"/>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="p2-topbar">
+  <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:1280px;margin:0 auto;padding:0 20px">
+    <a class="p2-topbar-brand" href="dashboard2-private.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <span class="p2-topbar-brand-name">POPE Online</span>
+      <span class="p2-topbar-brand-sub">Conseil &amp; Expertise</span>
+    </a>
+    <div class="p2-topbar-sep"></div>
+    <span class="p2-topbar-label">Espace privé 🔒</span>
+    <nav class="p2-topbar-nav">
+      <a class="p2-topbar-btn" href="vault2.html?space=private&return=dashboard2-private.html">📂 Dépôt</a>
+      <a class="p2-topbar-btn" href="clausier.html">📚 Clausier</a>
+      <a class="p2-topbar-btn" href="referral.html">🎁 Parrainage</a>
+      <a class="p2-topbar-btn" href="profile.html">Mon compte</a>
+      <button class="p2-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="p2-burger" id="p2Burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="p2-mobile-menu" id="p2MobileMenu">
+  <a href="vault2.html?space=private&return=dashboard2-private.html">📂 Dépôt</a>
+  <a href="clausier.html">📚 Clausier</a>
+  <a href="referral.html">🎁 Parrainage</a>
+  <a href="profile.html">👤 Mon compte</a>
+  <div class="p2-mobile-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+
+<main class="p2-main">
+
+  <!-- ALERT TRIAL -->
+  <div id="p2TrialAlert" style="display:none" class="p2-alert">
+    <span class="p2-alert-ico">⏳</span>
+    <div><strong id="p2TrialTitle">Période d'essai</strong><p id="p2TrialBody"></p></div>
+    <a href="pricing.html" class="p2-alert-cta">Voir les plans →</a>
+  </div>
+
+  <!-- OVERLAY EXPIRÉ -->
+  <div id="p2ExpiredOverlay" class="p2-overlay">
+    <div class="p2-overlay-card">
+      <div style="font-size:42px;margin-bottom:14px">⏰</div>
+      <h2>Période d'essai terminée</h2>
+      <p>L'accès au Conseil Expert est suspendu. Choisissez un plan pour reprendre immédiatement.</p>
+      <a href="pricing.html" class="p2-btn p2-btn-primary" style="display:inline-flex;margin-bottom:10px">🚀 Voir les offres</a><br>
+      <button class="p2-btn p2-btn-ghost p2-btn-sm" onclick="document.getElementById('p2ExpiredOverlay').classList.remove('show')">Continuer en accès limité</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="p2-hero">
+    <div class="p2-hero-text">
+      <div class="p2-hero-eyebrow">🏛️ Espace privé 🔒 — Collectivités &amp; organisations</div>
+      <h1 id="p2Welcome" class="p2-hero-title">Bonjour 👋</h1>
+      <p class="p2-hero-sub">Exprimez votre besoin. Un expert qualifié prend en charge votre dossier sous 48h ouvrées.</p>
+    </div>
+    <div class="p2-kpi-row">
+      <div class="p2-kpi">
+        <div class="p2-kpi-n" id="p2ExpertLeft">—</div>
+        <div class="p2-kpi-l">Conseils Expert<br>disponibles</div>
+      </div>
+      <div class="p2-kpi">
+        <div class="p2-kpi-n" id="p2Plan">—</div>
+        <div class="p2-kpi-l">Plan actif</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div style="background:var(--white);border-radius:var(--radius) var(--radius) 0 0;box-shadow:var(--shadow);overflow:hidden">
+    <div class="p2-tabs">
+      <button class="p2-tab active" data-tab="besoin" onclick="P2.switchTab('besoin')"><span class="p2-tab-ico">🎯</span> Mon Besoin</button>
+      <button class="p2-tab" data-tab="experts" onclick="P2.switchTab('experts')"><span class="p2-tab-ico">👤</span> Mes Experts</button>
+      <button class="p2-tab" data-tab="surmesure" onclick="P2.switchTab('surmesure')"><span class="p2-tab-ico">📋</span> Sur Mesure</button>
+      <button class="p2-tab" data-tab="espace" onclick="P2.switchTab('espace')"><span class="p2-tab-ico">⚙️</span> Mon Espace</button>
+    </div>
+
+    <!-- TAB : MON BESOIN -->
+    <div id="p2TabBesoin" class="p2-tab-content active">
+      <div class="p2-journey" style="box-shadow:none;border-radius:0;margin:0">
+
+        <!-- Steps nav -->
+        <div class="p2-steps">
+          <div class="p2-step active" data-step="1" onclick="P2.goStep(1)"><div class="p2-step-n">1</div><div class="p2-step-label">Domaine</div></div>
+          <div class="p2-step-line"></div>
+          <div class="p2-step" data-step="2" onclick="P2.goStep(2)"><div class="p2-step-n">2</div><div class="p2-step-label">Besoin</div></div>
+          <div class="p2-step-line"></div>
+          <div class="p2-step" data-step="3" onclick="P2.goStep(3)"><div class="p2-step-n">3</div><div class="p2-step-label">Documents</div></div>
+          <div class="p2-step-line"></div>
+          <div class="p2-step" data-step="4" onclick="P2.goStep(4)"><div class="p2-step-n">4</div><div class="p2-step-label">Envoi</div></div>
+        </div>
+
+        <!-- ÉTAPE 1 : Domaine -->
+        <div class="p2-panel active" data-step="1" id="step-panel-1">
+          <div style="margin-bottom:16px">
+            <h2 style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px">Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
+            <p style="font-size:12px;color:var(--muted)">Sélectionnez le domaine le plus proche de votre situation.</p>
+          </div>
+          <div class="p2-domain-grid" id="p2DomainGrid">
+            <button class="p2-domain-pill" data-domain="Droit et Juridique" onclick="P2.selectDomain(this)">⚖️ Droit &amp; Juridique</button>
+            <button class="p2-domain-pill" data-domain="Marches publics" onclick="P2.selectDomain(this)">🏛️ Marchés publics</button>
+            <button class="p2-domain-pill" data-domain="Travaux et MOA" onclick="P2.selectDomain(this)">🏗️ Travaux &amp; MOA</button>
+            <button class="p2-domain-pill" data-domain="Management et Strategie" onclick="P2.selectDomain(this)">📊 Management &amp; Stratégie</button>
+            <button class="p2-domain-pill" data-domain="Finances et Gestion" onclick="P2.selectDomain(this)">💰 Finances &amp; Gestion</button>
+            <button class="p2-domain-pill" data-domain="Ressources humaines" onclick="P2.selectDomain(this)">👥 Ressources humaines</button>
+            <button class="p2-domain-pill" data-domain="Audit et Diagnostic" onclick="P2.selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
+            <button class="p2-domain-pill" data-domain="Cybersecurite et SI" onclick="P2.selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
+            <button class="p2-domain-pill" data-domain="Transition ecologique" onclick="P2.selectDomain(this)">🌿 Transition écologique</button>
+            <button class="p2-domain-pill" data-domain="Communication" onclick="P2.selectDomain(this)">📣 Communication</button>
+            <button class="p2-domain-pill" data-domain="Mediation et Conflits" onclick="P2.selectDomain(this)">🤝 Médiation &amp; Conflits</button>
+            <button class="p2-domain-pill" data-domain="Intelligence artificielle" onclick="P2.selectDomain(this)">🤖 Intelligence artificielle</button>
+            <button class="p2-domain-pill" data-domain="Autre domaine" onclick="P2.selectDomain(this)">➕ Autre domaine</button>
+          </div>
+          <div class="p2-step-footer">
+            <button class="p2-btn p2-btn-primary" onclick="P2.goStep(2)">Continuer →</button>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 2 : Besoin -->
+        <div class="p2-panel" data-step="2" id="step-panel-2">
+          <!-- Badge domaine -->
+          <div class="p2-domain-badge" id="p2DomainBadge">
+            <span class="p2-domain-badge-icon" id="p2DomainIcon">🎯</span>
+            <div>
+              <span class="p2-domain-badge-text" id="p2DomainName">—</span>
+              <span class="p2-domain-badge-sub">Domaine d'expertise sélectionné</span>
+            </div>
+            <button class="p2-domain-change" onclick="P2.goStep(1)">✕ Changer</button>
+          </div>
+
+          <div class="p2-field">
+            <label class="p2-label">En quelques mots ★</label>
+            <input class="p2-input" id="p2Title" placeholder="Ex : avis juridique sur un marché public, analyse d'un bail…" maxlength="120"/>
+          </div>
+
+          <!-- Accordéons description -->
+          <div id="p2Accordions">
+
+            <div class="p2-acc open" id="accCtx">
+              <button type="button" class="p2-acc-trigger" onclick="toggleAcc('accCtx')">
+                <span class="p2-acc-ico">🏢</span>
+                <span class="p2-acc-lbl">Contexte de la demande<span class="p2-acc-hint" data-default="Qui vous êtes, votre organisation…">Qui vous êtes, votre organisation…</span></span>
+                <span class="p2-acc-dot"></span><span class="p2-acc-chevron">▶</span>
+              </button>
+              <div class="p2-acc-body">
+                <div class="p2-field"><label class="p2-label">Contexte &amp; organisation</label><textarea class="p2-textarea" id="p2Contexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel…"></textarea></div>
+                <div class="p2-field"><label class="p2-label">Problème à résoudre</label><textarea class="p2-textarea" id="p2Probleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea></div>
+              </div>
+            </div>
+
+            <div class="p2-acc" id="accObj">
+              <button type="button" class="p2-acc-trigger" onclick="toggleAcc('accObj')">
+                <span class="p2-acc-ico">🎯</span>
+                <span class="p2-acc-lbl">Objectif &amp; résultat attendu<span class="p2-acc-hint" data-default="Ce que vous attendez de l'expert…">Ce que vous attendez de l'expert…</span></span>
+                <span class="p2-acc-dot"></span><span class="p2-acc-chevron">▶</span>
+              </button>
+              <div class="p2-acc-body">
+                <div class="p2-field"><label class="p2-label">Objectif recherché</label><textarea class="p2-textarea" id="p2Objectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, arbitrage…"></textarea></div>
+                <div class="p2-row">
+                  <div class="p2-field"><label class="p2-label">Décision attendue</label><input class="p2-input" id="p2Decision" placeholder="Valider, refuser, arbitrer…"/></div>
+                  <div class="p2-field"><label class="p2-label">Livrable attendu</label><input class="p2-input" id="p2Livrable" placeholder="Note, courrier, analyse, trame…"/></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p2-acc" id="accCon">
+              <button type="button" class="p2-acc-trigger" onclick="toggleAcc('accCon')">
+                <span class="p2-acc-ico">⚠️</span>
+                <span class="p2-acc-lbl">Contraintes &amp; risques<span class="p2-acc-hint" data-default="Délais, sensibilité, points bloquants…">Délais, sensibilité, points bloquants…</span></span>
+                <span class="p2-acc-dot"></span><span class="p2-acc-chevron">▶</span>
+              </button>
+              <div class="p2-acc-body">
+                <div class="p2-field"><label class="p2-label">Contraintes connues</label><textarea class="p2-textarea" id="p2Contraintes" rows="2" placeholder="Légales, budgétaires, politiques, organisationnelles…"></textarea></div>
+                <div class="p2-field"><label class="p2-label">Points sensibles ou risques</label><textarea class="p2-textarea" id="p2Risques" rows="2" placeholder="Confidentialité, tensions internes, risques juridiques…"></textarea></div>
+              </div>
+            </div>
+
+            <div class="p2-acc" id="accAct">
+              <button type="button" class="p2-acc-trigger" onclick="toggleAcc('accAct')">
+                <span class="p2-acc-ico">👥</span>
+                <span class="p2-acc-lbl">Acteurs, échéance &amp; pièces<span class="p2-acc-hint" data-default="Qui est impliqué, délais, documents…">Qui est impliqué, délais, documents…</span></span>
+                <span class="p2-acc-dot"></span><span class="p2-acc-chevron">▶</span>
+              </button>
+              <div class="p2-acc-body">
+                <div class="p2-row">
+                  <div class="p2-field"><label class="p2-label">Acteurs concernés</label><input class="p2-input" id="p2Acteurs" placeholder="Élu, DG, prestataire, usager…"/></div>
+                  <div class="p2-field"><label class="p2-label">Public / destinataire</label><input class="p2-input" id="p2Public" placeholder="Conseil municipal, commission…"/></div>
+                </div>
+                <div class="p2-row">
+                  <div class="p2-field"><label class="p2-label">Échéance souhaitée</label><input class="p2-input" id="p2Deadline" placeholder="Avant vendredi / sous 10 jours…"/></div>
+                  <div class="p2-field"><label class="p2-label">Pièces disponibles</label><input class="p2-input" id="p2Pieces" placeholder="Contrat, rapport, délibération…"/></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p2-acc" id="accPlus">
+              <button type="button" class="p2-acc-trigger" onclick="toggleAcc('accPlus')">
+                <span class="p2-acc-ico">💬</span>
+                <span class="p2-acc-lbl">Précisions complémentaires<span class="p2-acc-hint" data-default="Niveau de détail, historique…">Niveau de détail, historique…</span></span>
+                <span class="p2-acc-dot"></span><span class="p2-acc-chevron">▶</span>
+              </button>
+              <div class="p2-acc-body">
+                <div class="p2-field"><label class="p2-label">Niveau de détail souhaité</label><input class="p2-input" id="p2Niveau" placeholder="Synthèse rapide / analyse approfondie…"/></div>
+                <div class="p2-field"><label class="p2-label">Informations libres complémentaires</label><textarea class="p2-textarea" id="p2DescPlus" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes…"></textarea></div>
+              </div>
+            </div>
+
+          </div><!-- /accordions -->
+
+          <!-- Nature du traitement -->
+          <div style="margin:16px 0">
+            <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px">🔧 Nature du traitement attendu</div>
+            <div class="p2-trt-grid">
+              <label class="p2-trt-card">
+                <input type="radio" name="p2BesoType" value="conseil" checked/>
+                <div><strong>🎯 Conseil Expert ponctuel</strong><span>Réponse ciblée à un besoin précis, sécurisation juridique ou arbitrage.</span><div><span class="p2-trt-tag">⏱ Sous 48h ouvrées</span><span class="p2-trt-tag">Ponctuel</span></div></div>
+              </label>
+              <label class="p2-trt-card">
+                <input type="radio" name="p2BesoType" value="surmesure"/>
+                <div><strong>📋 Accompagnement approfondi</strong><span>Dossier sensible, multi-acteurs ou nécessitant un cadrage complet Sur Mesure.</span><div><span class="p2-trt-tag">📅 Planning à définir</span><span class="p2-trt-tag">Sur Mesure</span></div></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Draft IA -->
+          <div style="display:flex;align-items:center;gap:14px;border:1.5px solid #d0e8ff;border-radius:12px;padding:14px 16px;margin:16px 0;background:#f5f9ff">
+            <span style="font-size:22px">🛠️</span>
+            <div style="flex:1">
+              <strong style="font-size:13px;font-weight:800;color:var(--ink)">Préparer un draft IA <span style="font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:99px;font-weight:600;margin-left:6px">Optionnel</span></strong>
+              <p style="font-size:12px;color:var(--muted);margin-top:3px">Générez un document de travail avant de soumettre à votre expert.</p>
+            </div>
+            <a href="app2-private.html" id="p2DraftTool" class="p2-btn p2-btn-primary p2-btn-sm">Accéder à l'outil →</a>
+          </div>
+
+          <div class="p2-step-footer">
+            <button class="p2-btn p2-btn-ghost" onclick="P2.goStep(1)">← Retour</button>
+            <button class="p2-btn p2-btn-primary" onclick="P2.goStep(3)">Continuer →</button>
+          </div>
+        </div><!-- /panel 2 -->
+
+        <!-- ÉTAPE 3 : Documents -->
+        <div class="p2-panel" data-step="3" id="step-panel-3">
+          <div style="margin-bottom:16px">
+            <h2 style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px">📎 Joindre des documents <span style="font-size:12px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
+            <p style="font-size:12px;color:var(--muted)">Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
+          </div>
+
+          <!-- Draft IA -->
+          <div class="p2-attach green">
+            <div class="p2-attach-head">
+              <div class="p2-attach-ico green">🛠️</div>
+              <div style="flex:1">
+                <strong style="color:#14532d">Joindre un draft IA préparé</strong>
+                <p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici et peut être joint à votre demande expert.</p>
+              </div>
+              <a href="app2-private.html" id="p2DraftLnk3" class="p2-btn p2-btn-green p2-btn-sm">Créer un draft →</a>
+            </div>
+            <select class="p2-select" id="p2ArchiveSelect" style="border-color:#bbf7d0">
+              <option value="">Ne pas joindre de draft préparé</option>
+            </select>
+            <div id="p2DraftStatus" style="display:none;margin-top:8px;font-size:12px;color:#166534;font-weight:600;align-items:center;gap:6px">
+              ✅ Draft disponible et sélectionné
+            </div>
+          </div>
+
+          <!-- Pièces vault -->
+          <div class="p2-attach">
+            <div class="p2-attach-head">
+              <div class="p2-attach-ico">📂</div>
+              <div style="flex:1">
+                <strong>Pièces du dépôt sécurisé 48h</strong>
+                <p>Joignez des documents complémentaires depuis votre espace sécurisé.</p>
+              </div>
+              <a href="vault2.html?space=private&return=dashboard2-private.html" class="p2-btn p2-btn-ghost p2-btn-sm">Gérer →</a>
+            </div>
+            <div id="p2VaultPreview" style="font-size:12px;color:var(--muted)">Aucune pièce disponible.</div>
+          </div>
+
+          <div class="p2-step-footer">
+            <button class="p2-btn p2-btn-ghost" onclick="P2.goStep(2)">← Retour</button>
+            <button class="p2-btn p2-btn-primary" onclick="P2.goStep(4)">Continuer →</button>
+          </div>
+        </div><!-- /panel 3 -->
+
+        <!-- ÉTAPE 4 : Envoi -->
+        <div class="p2-panel" data-step="4" id="step-panel-4">
+          <div style="margin-bottom:16px">
+            <h2 style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px">Récapitulatif de votre demande</h2>
+            <p style="font-size:12px;color:var(--muted)">Vérifiez avant d'envoyer à votre expert.</p>
+          </div>
+          <div class="p2-recap">
+            <div class="p2-recap-row"><span class="p2-recap-key">Domaine</span><span class="p2-recap-val" id="p2RecapDomain">—</span></div>
+            <div class="p2-recap-row"><span class="p2-recap-key">Objet</span><span class="p2-recap-val" id="p2RecapTitle">—</span></div>
+            <div class="p2-recap-row"><span class="p2-recap-key">Type</span><span class="p2-recap-val" id="p2RecapType">—</span></div>
+            <div class="p2-recap-row"><span class="p2-recap-key">Draft IA</span><span class="p2-recap-val" id="p2RecapDraft">Aucun</span></div>
+            <div class="p2-recap-row"><span class="p2-recap-key">Quota</span><span class="p2-recap-val" id="p2RecapQuota">—</span></div>
+          </div>
+          <div class="p2-msg" id="p2MsgSend"></div>
+          <div class="p2-step-footer">
+            <button class="p2-btn p2-btn-ghost" onclick="P2.goStep(3)">← Retour</button>
+            <button class="p2-btn p2-btn-send" id="p2BtnSend" onclick="P2.submitBesoin()">🎯 Soumettre à un expert</button>
+          </div>
+        </div><!-- /panel 4 -->
+
+      </div><!-- /journey -->
+    </div><!-- /tab besoin -->
+
+    <!-- TAB : MES EXPERTS -->
+    <div id="p2TabExperts" class="p2-tab-content" style="padding:20px">
+      <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+        <div><h2 style="font-size:16px;font-weight:800;color:var(--ink)">Mes échanges experts</h2><p style="font-size:12px;color:var(--muted);margin-top:3px">Historique de vos dossiers et réponses.</p></div>
+        <button class="p2-btn p2-btn-ghost p2-btn-sm" onclick="P2.loadRequests()">🔄 Actualiser</button>
+      </div>
+      <div id="p2RequestsList">
+        <div class="p2-empty"><div class="p2-empty-ico">👤</div><strong>Aucun échange expert.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="p2-btn p2-btn-primary" onclick="P2.switchTab('besoin')">🎯 Soumettre un besoin</button></div>
+      </div>
+    </div>
+
+    <!-- TAB : SUR MESURE -->
+    <div id="p2TabSurmesure" class="p2-tab-content" style="padding:20px">
+      <div style="margin-bottom:16px"><h2 style="font-size:16px;font-weight:800;color:var(--ink)">Sur Mesure</h2><p style="font-size:12px;color:var(--muted);margin-top:3px">Pour les dossiers complexes nécessitant un accompagnement dans la durée.</p></div>
+      <div class="p2-sm-grid">
+        <div class="p2-sm-col"><div class="p2-sm-col-head green">🎯 Conseil Expert</div><ul><li>Besoin ponctuel identifié</li><li>Avis sous 48h ouvrées</li><li>Inclus dans votre offre</li></ul></div>
+        <div class="p2-sm-col"><div class="p2-sm-col-head blue">📋 Sur Mesure</div><ul><li>Dossier complexe, multi-étapes</li><li>Expert mobilisé en continu</li><li>Devis personnalisé</li></ul></div>
+      </div>
+      <div style="text-align:center;margin-top:20px"><a href="mission-private.html" class="p2-btn p2-btn-primary">📋 Qualifier mon besoin Sur Mesure →</a></div>
+    </div>
+
+    <!-- TAB : MON ESPACE -->
+    <div id="p2TabEspace" class="p2-tab-content" style="padding:20px">
+      <div style="margin-bottom:16px"><h2 style="font-size:16px;font-weight:800;color:var(--ink)">Mon Espace</h2></div>
+      <div class="p2-espace-grid">
+        <a href="profile.html" class="p2-espace-card"><div class="p2-espace-ico">👤</div><strong>Mon profil</strong><span>Informations, sécurité</span></a>
+        <a href="profile.html#abonnement" class="p2-espace-card"><div class="p2-espace-ico">💎</div><strong>Mon abonnement</strong><span>Plan, factures, résiliation</span></a>
+        <a href="vault2.html?space=private&return=dashboard2-private.html" class="p2-espace-card"><div class="p2-espace-ico">📂</div><strong>Dépôt sécurisé</strong><span>Mes documents 48h</span></a>
+        <a href="app2-private.html" class="p2-espace-card"><div class="p2-espace-ico">🛠️</div><strong>Outil rédaction IA</strong><span>Préparer un draft — illimité</span></a>
+        <a href="clausier.html" class="p2-espace-card"><div class="p2-espace-ico">📚</div><strong>Clausier documentaire</strong><span>Modèles officiels</span></a>
+        <a href="referral.html" class="p2-espace-card"><div class="p2-espace-ico">🎁</div><strong>Parrainage</strong><span>Inviter mes contacts</span></a>
+      </div>
+    </div>
+
+  </div><!-- /tabs container -->
+
+  <!-- Liens rapides -->
+  <div class="p2-quick-links" style="margin-top:16px">
+    <a href="vault2.html?space=private&return=dashboard2-private.html" class="p2-quick">📂 Dépôt sécurisé</a>
+    <a href="clausier.html" class="p2-quick">📚 Clausier</a>
+    <a href="tutoriel.html" class="p2-quick">▶️ Tutoriel</a>
+    <a href="referral.html" class="p2-quick">🎁 Parrainage</a>
+  </div>
+
+</main>
+
+<script src="pope2.js"></script>
+<script>
+function toggleAcc(id) {
+  const acc = document.getElementById(id);
+  if (acc) acc.classList.toggle('open');
+}
+// Init
+P2.initDashboard('private');
+</script>
+</body>
+</html>
