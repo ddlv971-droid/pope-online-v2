@@ -27,6 +27,9 @@
 
   var _bootDone = false;
   var _isFirstLoad = true; // Flag : premier chargement de session
+  var V62_GUARD_FROM_APP_AUTOSTEP3 = /[?&]from=app(?:&|$)/.test(location.search);
+  var V62_BOOT_TS = Date.now();
+  var V62_USER_NAV = false;
 
   function $(id) { return document.getElementById(id); }
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -404,7 +407,14 @@
 
   /* ── Patch des fonctions window ─────────────────────── */
   function patchPublicFns() {
-    window.goStep = function(n) { showStep(Number(n) || 1); };
+    window.goStep = function(n) {
+      n = Number(n) || 1;
+      if (V62_GUARD_FROM_APP_AUTOSTEP3 && n === 3 && !V62_USER_NAV && Date.now() - V62_BOOT_TS < 2500) {
+        showStep(2);
+        return;
+      }
+      showStep(n);
+    };
     window.goStep._v61patched = true;
 
     // Logout robuste : nettoyer toutes les clés connues
@@ -537,6 +547,11 @@
   }
 
   // Auto-save sur saisie
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('button,a,[onclick]') : null;
+    if (t && /goStep\s*\(\s*[34]\s*\)/.test(String(t.getAttribute('onclick')||''))) V62_USER_NAV = true;
+  }, true);
+
   document.addEventListener('input',  function() { updateAccordions(); writeState(); }, true);
   document.addEventListener('change', function() { updateAccordions(); writeState(); }, true);
 

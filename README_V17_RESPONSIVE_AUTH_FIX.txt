@@ -1,1 +1,0 @@
-V17 corrige la désynchronisation de session en responsive/mobile : auth-guard vérifie aussi la session cookie serveur via /auth/me, requireLogin attend cette vérification, les liens sensibles redirigent directement vers login avec next, et les pages privées ont une cible de déconnexion explicite.

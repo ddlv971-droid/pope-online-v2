@@ -85,5 +85,5 @@
   document.addEventListener('change',function(e){ if(e.target&&e.target.name==='besoType') updateBesoType(); });
   window.switchTab=switchTab; window.goStep=goStep; window.selectDomain=selectDomain; window.updateBesoType=updateBesoType; window.submitBesoin=submitBesoin; window.loadRequests=loadRequests;
   injectNeedAssistant(); populateGenerationSelect();
-  try{ var params=new URLSearchParams(location.search); if(params.get('attach')==='last'){ setTimeout(function(){ switchTab('besoin'); goStep(3); var last=sessionStorage.getItem('pope_v53_last_generation_id'); var sel=byId('archiveAttachSelect'); if(sel && last){ sel.value=last; sel.dispatchEvent(new Event('change')); } },350); } }catch(e){}
+  try{ var params=new URLSearchParams(location.search); if(params.get('attach')==='last'){ setTimeout(function(){ switchTab('besoin'); goStep(2); var last=sessionStorage.getItem('pope_v53_last_generation_id'); var sel=byId('archiveAttachSelect'); if(sel && last){ sel.value=last; sel.dispatchEvent(new Event('change')); } },350); } }catch(e){}
 })();

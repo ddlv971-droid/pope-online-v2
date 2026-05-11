@@ -497,7 +497,7 @@ const P2 = (function() {
 
   function updateReturnUrl(space) {
     const dash = space === 'private' ? 'dashboard2-private.html' : 'dashboard2.html';
-    const url  = _lastGenId ? `${dash}?from=app&attach=last&step=3` : `${dash}?from=app&step=2`;
+    const url  = _lastGenId ? `${dash}?from=app&attach=last&step=2` : `${dash}?from=app&step=2`;
     document.querySelectorAll('a[id^="p2Return"]').forEach(a => { a.href = url; });
   }
 
