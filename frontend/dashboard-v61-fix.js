@@ -79,8 +79,7 @@
     Object.keys(map).forEach(function(k) { var e = $(map[k]); if (e) out[k] = e.value || ''; });
     var r = document.querySelector('input[name="besoType"]:checked');
     if (r) out.type = r.value;
-    var sel = $('archiveAttachSelect');
-    if(!sel){ console.warn('[POPE] archiveAttachSelect introuvable'); return; } if (sel) out.attachedGenId = sel.value || '';
+    var sel = $('archiveAttachSelect'); if (sel) out.attachedGenId = sel.value || '';
     return out;
   }
 
@@ -206,7 +205,6 @@
   function renderStep3() {
     console.log('[POPE V61] renderStep3 appelé — gens:', loadGenerations().length);
     var sel = $('archiveAttachSelect');
-    if(!sel){ console.warn('[POPE] archiveAttachSelect introuvable'); return; }
     var gens = loadGenerations();
     var cur  = selectedDraftId();
 
@@ -248,7 +246,7 @@
       sel.after(noDraftMsg);
     }
 
-    try { renderVaultList(); } catch(e){ console.error('[POPE] renderVaultList error', e); }
+    renderVaultList();
   }
 
   function renderVaultList() {
@@ -550,3 +548,5 @@
   }
 
 })();
+
+window.renderStep3 = renderStep3;

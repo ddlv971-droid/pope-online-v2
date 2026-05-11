@@ -1219,8 +1219,26 @@ function v58Toggle(id){
 // v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
 </script>
-<script src="./dashboard-v58.js"></script>
-<script src="./dashboard-v60.js"></script>
+<!-- disabled conflicting v58 -->
+<!-- disabled conflicting v60 -->
 <script src="./dashboard-v61-fix.js"></script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[data-next-step]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      setTimeout(function(){
+        if(window.renderStep3){ 
+          try { 
+            window.renderStep3(); 
+            console.log('[POPE V62] renderStep3 forced');
+          } catch(e){ console.error(e); }
+        }
+      },150);
+    });
+  });
+});
+</script>
+
 </body>
 </html>
