@@ -1217,24 +1217,117 @@ function v58Toggle(id){
 // v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
 </script>
-<!-- disabled conflicting v58 -->
-<!-- disabled conflicting v60 -->
+<script src="./dashboard-v58.js"></script>
+<script src="./dashboard-v60.js"></script>
 <script src="./dashboard-v61-fix.js"></script>
 
 <script>
 window.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('[data-next-step]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      setTimeout(function(){
-        if(window.renderStep3){ 
-          try { 
-            window.renderStep3(); 
-            console.log('[POPE V62] renderStep3 forced');
-          } catch(e){ console.error(e); }
+
+  function ensureStep3(){
+
+    const s3 =
+      document.querySelector('[data-step="3"]') ||
+      document.getElementById('step-3') ||
+      document.getElementById('step3');
+
+    if(!s3){
+      console.warn('[POPE V62.4] étape 3 introuvable');
+      return;
+    }
+
+    s3.style.display='block';
+    s3.style.visibility='visible';
+    s3.style.opacity='1';
+
+    if(!s3.innerHTML || s3.innerHTML.trim().length < 50){
+
+      s3.innerHTML = `
+        <div class="pope-step3-wrapper" style="padding:24px">
+          <h2 style="margin-bottom:18px">Documents et éléments complémentaires</h2>
+
+          <div style="border:2px dashed #cfd8e3;border-radius:16px;padding:28px;text-align:center;margin-bottom:20px">
+            <p style="font-weight:600;margin-bottom:10px">Déposez vos documents</p>
+            <input type="file" id="popeFileInput" multiple />
+          </div>
+
+          <div id="popeFilesList" style="margin-bottom:20px"></div>
+
+          <div style="padding:20px;border-radius:14px;background:#f7f9fc;margin-bottom:20px">
+            <h3 style="margin-bottom:10px">Drafts IA générés</h3>
+            <div id="popeDraftsContainer">
+              Chargement des drafts...
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end">
+            <button id="popeGoStep4"
+              style="padding:12px 20px;border:none;border-radius:10px;cursor:pointer">
+              Continuer vers la transmission expert
+            </button>
+          </div>
+        </div>
+      `;
+
+      const draftsContainer = document.getElementById('popeDraftsContainer');
+
+      try{
+        const drafts = JSON.parse(localStorage.getItem('pope_generations') || '[]');
+
+        if(drafts.length){
+          draftsContainer.innerHTML = drafts.map((d,i)=>
+            `<div style="padding:12px;border:1px solid #dbe3ee;border-radius:10px;margin-bottom:10px">
+              <strong>Draft ${i+1}</strong>
+            </div>`
+          ).join('');
+        }else{
+          draftsContainer.innerHTML = '<p>Aucun draft généré pour le moment.</p>';
         }
-      },150);
-    });
-  });
+
+      }catch(e){
+        draftsContainer.innerHTML = '<p>Impossible de charger les drafts.</p>';
+      }
+
+      const input = document.getElementById('popeFileInput');
+      const list = document.getElementById('popeFilesList');
+
+      input?.addEventListener('change', function(){
+        list.innerHTML = '';
+
+        [...input.files].forEach(file=>{
+          const div = document.createElement('div');
+          div.style.padding='10px';
+          div.style.border='1px solid #dbe3ee';
+          div.style.borderRadius='10px';
+          div.style.marginBottom='8px';
+          div.textContent = file.name;
+          list.appendChild(div);
+        });
+      });
+
+      document.getElementById('popeGoStep4')?.addEventListener('click', function(){
+
+        if(window.goStep){
+          window.goStep(4);
+        }else{
+          const s4 =
+            document.querySelector('[data-step="4"]') ||
+            document.getElementById('step-4') ||
+            document.getElementById('step4');
+
+          if(s4){
+            s4.style.display='block';
+          }
+        }
+
+      });
+
+    }
+
+  }
+
+  setTimeout(ensureStep3, 250);
+
 });
 </script>
 

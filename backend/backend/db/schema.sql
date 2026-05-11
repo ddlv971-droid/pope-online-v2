@@ -1,0 +1,156 @@
+
+create extension if not exists pgcrypto;
+
+create table if not exists users (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  password_hash text not null,
+  full_name text,
+  organization text,
+  account_space text not null default 'public',
+  is_email_verified boolean not null default false,
+  is_suspicious boolean not null default false,
+  created_at timestamptz not null default now(),
+  last_login_at timestamptz
+);
+
+create table if not exists email_verifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  token_hash text not null,
+  expires_at timestamptz not null,
+  used_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists devices (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  fp_hash text not null,
+  ip_hash text not null,
+  user_agent_hash text not null,
+  first_seen_at timestamptz not null default now(),
+  last_seen_at timestamptz not null default now()
+);
+
+create unique index if not exists uq_devices_user_fp on devices(user_id, fp_hash);
+create index if not exists idx_devices_fp on devices(fp_hash);
+create index if not exists idx_devices_ip on devices(ip_hash);
+
+create table if not exists wallets (
+  user_id uuid primary key references users(id) on delete cascade,
+  plan_code text not null default 'FREE',
+  status text not null default 'pending_verification',
+  tickets_ai integer not null default 0,
+  tickets_expert integer not null default 0,
+  public_dossiers_used integer not null default 0,
+  private_dossiers_used integer not null default 0,
+  public_dossiers_limit integer not null default 1,
+  private_dossiers_limit integer not null default 1,
+  private_users_limit integer not null default 1,
+  trial_started_at timestamptz,
+  trial_expires_at timestamptz,
+  updated_at timestamptz not null default now()
+);
+
+alter table wallets add column if not exists plan_code text not null default 'FREE';
+alter table wallets add column if not exists status text not null default 'pending_verification';
+alter table wallets add column if not exists public_dossiers_used integer not null default 0;
+alter table wallets add column if not exists private_dossiers_used integer not null default 0;
+alter table wallets add column if not exists public_dossiers_limit integer not null default 1;
+alter table wallets add column if not exists private_dossiers_limit integer not null default 1;
+alter table wallets add column if not exists private_users_limit integer not null default 1;
+alter table wallets add column if not exists trial_started_at timestamptz;
+alter table wallets add column if not exists trial_expires_at timestamptz;
+
+create table if not exists usage_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  kind text not null,
+  meta jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_usage_user on usage_logs(user_id, created_at desc);
+
+create table if not exists expert_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete set null,
+  email text not null,
+  objective text not null,
+  expectations text not null,
+  context text,
+  status text not null default 'new',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists mission_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete set null,
+  email text not null,
+  subject text not null,
+  description text not null,
+  status text not null default 'new',
+  created_at timestamptz not null default now()
+);
+
+
+alter table users add column if not exists account_space text not null default 'public';
+
+
+alter table users add column if not exists phone_country text;
+alter table users add column if not exists phone_number text;
+alter table users add column if not exists phone_full text;
+alter table users add column if not exists role text not null default 'client';
+alter table users add column if not exists must_change_password boolean not null default false;
+
+alter table users add column if not exists session_version integer not null default 1;
+
+create table if not exists client_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete set null,
+  company_name text,
+  requester_name text,
+  requester_email text not null,
+  requester_phone text,
+  need_text text not null,
+  status text not null default 'new',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_client_messages_user on client_messages(user_id, created_at desc);
+
+
+create table if not exists password_resets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  token_hash text not null,
+  expires_at timestamptz not null,
+  used_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_password_resets_user on password_resets(user_id, created_at desc);
+
+alter table users add column if not exists satisfaction_mail_sent_at timestamptz;
+alter table users add column if not exists satisfaction_mail_sent_by uuid references users(id) on delete set null;
+
+alter table users add column if not exists satisfaction_response_received_at timestamptz;
+alter table users add column if not exists satisfaction_last_response jsonb;
+
+
+create table if not exists ephemeral_files (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  direction text not null default 'client_to_pope',
+  purpose text,
+  original_name text not null,
+  stored_name text not null,
+  mime_type text,
+  size_bytes integer not null default 0,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null default (now() + interval '48 hours')
+);
+
+create index if not exists idx_ephemeral_files_user on ephemeral_files(user_id, created_at desc);
+create index if not exists idx_ephemeral_files_expires on ephemeral_files(expires_at);

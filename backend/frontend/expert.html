@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Conseil Expert</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style id="v40-topbar-fix">
+/* ── Anti-conflits topbar V40 ── */
+html body header.v40-topbar{
+  position:sticky!important;top:0!important;z-index:200!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  display:flex!important;align-items:center!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;
+  background:rgba(7,22,42,.97)!important;
+  backdrop-filter:blur(16px)!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  overflow:visible!important;
+}
+html body header.v40-topbar .v40-topbar-inner{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;height:58px!important;
+  width:100%!important;padding:0 20px!important;gap:10px!important;
+}
+html body header.v40-topbar .v40-topbar-brand{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;gap:9px!important;
+  text-decoration:none!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand img{
+  height:28px!important;width:auto!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:baseline!important;gap:5px!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong,
+html body header.v40-topbar .v40-topbar-brand-text small{
+  white-space:nowrap!important;display:inline!important;width:auto!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong{
+  font-size:14px!important;font-weight:800!important;color:#fff!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text small{
+  font-size:11px!important;color:rgba(255,255,255,.4)!important;
+}
+html body header.v40-topbar .v40-topbar-nav{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+}
+html body header.v40-topbar #v40Burger{
+  display:none;flex-direction:column!important;gap:5px!important;
+  margin-left:auto!important;flex-shrink:0!important;
+  background:none!important;border:none!important;
+  cursor:pointer!important;padding:6px!important;width:auto!important;
+}
+html body header.v40-topbar #v40Burger span{
+  display:block!important;width:22px!important;height:2px!important;
+  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
+  transition:transform .25s ease,opacity .25s ease!important;
+}
+#v40MobileMenu{
+  display:none;position:fixed!important;
+  top:58px!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:201!important;
+  background:rgba(7,22,42,.98)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  padding:20px!important;overflow-y:auto!important;
+  flex-direction:column!important;gap:4px!important;
+}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:14px 18px!important;border-radius:12px!important;
+  font-size:15px!important;font-weight:600!important;
+  color:rgba(255,255,255,.85)!important;
+  text-decoration:none!important;background:none!important;
+  border:none!important;cursor:pointer!important;
+  width:100%!important;
+}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{
+  background:rgba(255,255,255,.07)!important;color:#fff!important;
+}
+.v40-mobile-menu-sep{
+  height:1px!important;background:rgba(255,255,255,.08)!important;
+  margin:8px 0!important;
+}
+@media(max-width:860px){
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
+  html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+</style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
+.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu.open{display:flex!important;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
+@media(max-width:860px){
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
+}
+</style>
+</head>
+<body data-logout-target="public.html" class="bg v36-page po-v5-harmony po-public-v24" data-forced-space="public">
+
+<header class="v40-topbar">
+  <div class="v40-topbar-inner">
+    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>Conseil &amp; Expertise</small>
+      </div>
+    </a>
+    <div class="v40-topbar-sep"></div>
+    <span class="v40-topbar-sub">Conseil Expert</span>
+    <nav class="v40-topbar-nav">
+      
+      <a class="v40-topbar-btn" href="mission.html">🎯 Sur mesure</a>
+      <a class="v40-topbar-btn" href="vault.html?space=public&return=expert.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="dashboard.html">🏠 Dashboard</a>
+  
+  <a href="mission.html">🎯 Sur mesure</a>
+  <div class="v40-mobile-menu-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+    <button data-logout>🚪 Déconnexion</button>
+</div>
+
+<main class="v36-expert-layout">
+
+  <!-- ═══ SIDEBAR GAUCHE ═══ -->
+  <aside class="v36-expert-sidebar">
+
+    <!-- Quota visuel -->
+    <div class="v36-quota-card" id="quotaCard">
+      <div class="v36-quota-label">Vos Conseils Expert disponibles</div>
+      <div class="v36-quota-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="8"
+            stroke-dasharray="264" id="quotaArc" stroke-dashoffset="264" stroke-linecap="round"/>
+        </svg>
+        <div class="v36-quota-ring-text">
+          <div class="v36-quota-n" id="quotaN">—</div>
+          <div class="v36-quota-sub">restantes</div>
+        </div>
+      </div>
+      <div class="v36-quota-detail" id="quotaDetail">Chargement…</div>
+    </div>
+
+    <!-- Garanties -->
+    <div class="v36-expert-guarantee">
+      <div style="font-size:13px;font-weight:700;color:#0b2440;margin-bottom:12px">Votre Conseil Expert inclut</div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">✍️</span>
+        <div><strong>Avis d'expert personnalisé</strong>Un conseiller qualifié analyse votre situation et vous apporte un avis structuré et opérationnel.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">⏱️</span>
+        <div><strong>Réponse sous 48h ouvrées</strong>Votre dossier est traité par un expert humain dédié — pas par un algorithme.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">📩</span>
+        <div><strong>Réponse dans votre espace</strong>Notification email + accès direct ici.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">🔒</span>
+        <div><strong>Confidentialité garantie</strong>Vos documents ne sont jamais partagés.</div>
+      </div>
+    </div>
+
+    <!-- Différence avec sur mesure -->
+    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:16px;font-size:13px">
+      <div style="font-weight:700;color:#0b2440;margin-bottom:6px">📌 Dossier complexe ?</div>
+      <div style="color:#50627a;line-height:1.6;margin-bottom:10px">Le Conseil Expert répond à un besoin ponctuel. Pour un accompagnement dans la durée ou un dossier multi-étapes, accédez à l'offre Sur Mesure.</div>
+      <a href="mission.html" style="color:#d97706;font-weight:700;font-size:13px">→ Accéder au Sur Mesure</a>
+    </div>
+
+  </aside>
+
+  <!-- ═══ CONTENU PRINCIPAL ═══ -->
+  <div class="v36-expert-main">
+
+    <!-- Formulaire de demande -->
+    <div class="v36-expert-card">
+      <div class="v36-expert-card-head">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,#059669,#10b981);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✍️</div>
+        <div>
+          <h2 id="expertTitle">Soumettre mon besoin à un expert</h2>
+          <p id="expertLead">Décrivez votre situation, choisissez le domaine d'expertise concerné et un conseiller POPE Online prend en charge votre dossier personnellement sous 48h ouvrées.</p>
+        </div>
+      </div>
+      <div class="v36-expert-card-body">
+        <div style="margin-bottom:16px">
+          <label class="label">Mon besoin en quelques mots <span style="color:#b91c1c">*</span></label>
+          <input class="input" id="subject" placeholder="Ex : Relecture d'une réponse à un marché public MAPA"/>
+          <div style="font-size:12px;color:#50627a;margin-top:6px">Soyez précis — cela aide votre conseiller à prioriser.</div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label">Contexte de votre situation</label>
+          <textarea class="input" id="context" rows="4"
+            placeholder="Décrivez votre organisation, le contexte de votre demande, les enjeux et délais éventuels."></textarea>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label" id="expertContentLabel">Description de votre besoin <span style="color:#b91c1c">*</span></label>
+          <textarea class="input" id="content" rows="10"
+            placeholder="Décrivez votre besoin avec précision. Si vous avez un document ou un draft à soumettre, collez-le ici&#10;&#10;Pour les documents longs, utilisez le dépôt sécurisé ci-dessous."></textarea>
+        </div>
+
+        <!-- Pièce jointe depuis archives -->
+        <div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-bottom:16px;display:none;border-radius:14px;padding:16px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
+            <div>
+              <h3 style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0b2440">Joindre un draft généré avec l'outil IA (optionnel)</h3>
+              <p class="muted" style="margin:0;font-size:12px" id="attachmentLead">Si vous avez utilisé l'outil de rédaction pour formaliser votre besoin, joignez le draft à votre demande expert.</p>
+            </div>
+            <span class="badge" id="attachmentStatus">Aucune sélection</span>
+          </div>
+          <select class="input" id="archiveAttachmentSelect" style="font-size:13px">
+            <option value="">Ne pas joindre de génération archivée</option>
+          </select>
+          <div id="attachmentPreview" class="fineprint" style="margin-top:10px;font-size:12px;color:#50627a"></div>
+        </div>
+
+        <!-- Pièces vault -->
+        <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces du dépôt sécurisé 48h</div>
+              <div style="font-size:12px;color:#50627a;margin-top:2px" id="expertVaultLead">Joignez des pièces complémentaires à votre demande.</div>
+            </div>
+            <a class="btn ghost" href="vault.html?space=public&amp;return=expert.html" style="font-size:13px">Gérer mes pièces</a>
+          </div>
+          <div id="vaultExpertList" class="vault-inline-list"></div>
+        </div>
+
+        <button class="v36-send-btn" id="btnSend" type="button">
+          ✍️ Soumettre à un expert
+        </button>
+        <div class="fineprint" id="msg" style="margin-top:10px;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Mes échanges experts -->
+    <div class="v36-requests-card" id="myRequestsPanel">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #f0f7fc;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="margin:0 0 3px;font-size:17px;font-weight:700;color:#0b2440">Mes échanges experts</h2>
+          <p style="margin:0;font-size:12px;color:#50627a">Historique de vos dossiers soumis et réponses de vos conseillers</p>
+        </div>
+        <button class="btn ghost" id="btnRefreshRequests" type="button" style="font-size:13px">🔄 Actualiser</button>
+      </div>
+      <div id="requestsList">
+        <div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Chargement…</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function(){
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
+  }
+  function getToken(){
+    return sessionStorage.getItem('pope_session_token')||
+           localStorage.getItem('pope_session_token')||'';
+  }
+  function getApiBase(){
+    var e=window.__POPE_API_BASE__||'';
+    if(e) return String(e).replace(/\/$/,'');
+    var h=window.location.hostname;
+    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+    return 'https://pope-online-v2.onrender.com';
+  }
+  function redirectToLogin(){
+    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
+    window.location.replace('login.html?next='+path);
+  }
+  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
+    'mission.html','private-onboarding.html','account.html','profile.html',
+    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
+    'mission-private.html','referral.html','tutoriel.html'];
+  var path=(window.location.pathname||'').toLowerCase();
+  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
+  if(!isProtected) return;
+  if(hasSession()){window.__popeAuthValidated=true;return;}
+  window.__popeAuthPending=true;
+  var headers={'Content-Type':'application/json'};
+  var token=getToken();
+  if(token) headers['Authorization']='Bearer '+token;
+  fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json().catch(function(){return {};});
+    })
+    .then(function(data){
+      if(data&&data.user){
+        localStorage.setItem('pope_session_active','1');
+        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
+        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        window.__popeAuthValidated=true;
+      } else throw new Error('missing_user');
+    })
+    .catch(function(){
+      window.__popeAuthValidated=false;
+      redirectToLogin();
+    })
+    .finally(function(){window.__popeAuthPending=false;});
+})();
+</script>
+<script type="module" src="./protected-topbar.js"></script>
+<script type="module" src="./expert-page.js"></script>
+<script type="module">
+import { apiFetch } from './api.js';
+
+// Mise à jour visuelle du quota
+async function updateQuota() {
+  try {
+    const me = await apiFetch('/auth/me');
+    const w  = me.wallet || {};
+    // Blocage si essai expiré (indépendamment du quota)
+    if (w.status === 'trial_expired' || w.trial_expired) {
+      const btnSend = document.getElementById('btnSend');
+      const msgEl   = document.getElementById('msg');
+      if (btnSend) { btnSend.disabled = true; btnSend.style.opacity = '0.5'; btnSend.style.cursor = 'not-allowed'; }
+      if (msgEl) {
+        msgEl.innerHTML = '⏰ Votre période d\'essai est terminée. '
+          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Choisissez un plan</a> '
+          + 'pour reprendre les relectures expertes.';
+        msgEl.style.display = 'block';
+      }
+      return;
+    }
+    const left  = w.expert_left  ?? 0;
+    const limit = w.expert_limit ?? 2;
+    document.getElementById('quotaN').textContent = left;
+    document.getElementById('quotaDetail').textContent =
+      left > 0
+        ? left + ' relecture' + (left > 1 ? 's' : '') + ' disponible' + (left > 1 ? 's' : '') + ' sur ' + limit + ' ce mois'
+        : 'Quota épuisé — passez à un abonnement';
+    // Arc SVG
+    const pct = limit > 0 ? left / limit : 0;
+    const arc = document.getElementById('quotaArc');
+    if (arc) arc.style.strokeDashoffset = String(264 * (1 - pct));
+    if (arc) arc.style.stroke = left === 0 ? '#ef4444' : left <= 2 ? '#f59e0b' : '#fff';
+    // Bloquer le bouton si quota épuisé
+    const btnSend = document.getElementById('btnSend');
+    const msgEl   = document.getElementById('msg');
+    if (left <= 0) {
+      if (btnSend) {
+        btnSend.disabled = true;
+        btnSend.style.opacity = '0.5';
+        btnSend.style.cursor  = 'not-allowed';
+      }
+      if (msgEl) {
+        msgEl.innerHTML = '⚠️ Vous avez utilisé toutes vos relectures expertes gratuites. '
+          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Passez à un abonnement</a> '
+          + 'pour continuer à bénéficier de l’expertise de nos conseillers.';
+        msgEl.style.display = 'block';
+      }
+    } else {
+      if (btnSend) { btnSend.disabled = false; btnSend.style.opacity = ''; btnSend.style.cursor = ''; }
+      if (msgEl && msgEl.innerHTML.includes('relectures expertes gratuites')) { msgEl.innerHTML = ''; }
+    }
+  } catch(e) {}
+}
+
+updateQuota();
+
+// Chargement des relectures avec style V36
+async function loadMyRequests() {
+  const list = document.getElementById('requestsList');
+  if (!list) return;
+  try {
+    const data = await apiFetch('/expert/my-requests');
+    const reqs = data.requests || [];
+    if (!reqs.length) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#50627a;font-size:14px">Aucun échange expert pour le moment.<br><a href="#" onclick="document.getElementById(\'subject\').focus();return false" style="color:#0079c1;font-weight:600">Soumettre votre premier besoin →</a></div>';
+      return;
+    }
+    const statusMap = {
+      new:         { label: 'En attente', cls: 'v36-status-new',      dot: '🟡' },
+      in_progress: { label: 'En cours',   cls: 'v36-status-progress', dot: '🔵' },
+      replied:     { label: 'Répondu',    cls: 'v36-status-replied',  dot: '🟢' },
+      closed:      { label: 'Clôturé',    cls: 'v36-status-closed',   dot: '⚪' }
+    };
+
+    function esc(v) { return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    list.innerHTML = reqs.map(function(r) {
+      var s = statusMap[r.status] || statusMap.new;
+      var date = new Date(r.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+      return '<div class="v36-request-item">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
+          '<div style="font-weight:700;font-size:14px;color:#0b2440;flex:1">' + esc(r.objective) + '</div>' +
+          '<span class="v36-request-status ' + s.cls + '">' + s.dot + ' ' + s.label + '</span>' +
+        '</div>' +
+        '<div style="font-size:12px;color:#7a8fa8">Demande du ' + date + '</div>' +
+        (r.reply_text ? '<div class="v36-reply-box"><div class="v36-reply-meta">✓ Réponse de votre conseiller — ' +
+          new Date(r.replied_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) +
+          '</div>' + esc(r.reply_text) + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Impossible de charger vos relectures.</div>';
+  }
+}
+
+loadMyRequests();
+var btnRef = document.getElementById('btnRefreshRequests');
+if (btnRef) btnRef.addEventListener('click', loadMyRequests);
+</script>
+<script>
+// Topbar mobile universelle V40 — burger + menu + croix
+(function() {
+  var burger  = document.getElementById('v40Burger');
+  var menu    = document.getElementById('v40MobileMenu');
+  if (!burger || !menu) return;
+
+  var spans = burger.querySelectorAll('span');
+
+  function setOpen(open) {
+    if (open) {
+      menu.classList.add('open');
+      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+    } else {
+      menu.classList.remove('open');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
+    }
+  }
+
+  burger.addEventListener('click', function() {
+    setOpen(!menu.classList.contains('open'));
+  });
+
+  // Fermer en cliquant un lien
+  menu.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('click', function() { setOpen(false); });
+  });
+
+  // Fermer en cliquant hors du menu
+  document.addEventListener('click', function(e) {
+    if (!burger.contains(e.target) && !menu.contains(e.target)) {
+      setOpen(false);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

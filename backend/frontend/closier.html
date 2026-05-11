@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Closier documentaire</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style>
+:root{--blue:#0079c1;--cyan:#03a0d7;--dark:#0b2440;--muted:#50627a;--line:#dce9f4}
+.closier-wrap{max-width:1100px;margin:0 auto;padding:32px 20px}
+.closier-hero{text-align:center;padding:40px 0 32px}
+.closier-hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;color:var(--dark);letter-spacing:-.02em;margin-bottom:12px}
+.closier-hero p{font-size:16px;color:var(--muted);max-width:560px;margin:0 auto}
+.closier-search{max-width:600px;margin:24px auto;display:flex;gap:12px}
+.closier-search input{flex:1;padding:13px 18px;border:1.5px solid var(--line);border-radius:14px;font-size:14px;outline:none;color:var(--dark)}
+.closier-search input:focus{border-color:var(--blue)}
+.closier-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;justify-content:center}
+.cat-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s}
+.cat-btn:hover,.cat-btn.active{border-color:var(--blue);color:var(--blue);background:#eef7ff}
+.closier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.doc-card{background:#fff;border-radius:18px;border:1.5px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s;cursor:pointer}
+.doc-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.doc-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue)}
+.doc-title{font-size:15px;font-weight:700;color:var(--dark);line-height:1.35}
+.doc-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.doc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.doc-type{font-size:11px;font-weight:600;color:var(--muted);background:#f0f7fc;border-radius:6px;padding:3px 8px}
+.doc-action{font-size:12px;font-weight:700;color:var(--blue);text-decoration:none}
+.doc-action:hover{text-decoration:underline}
+.closier-locked{background:linear-gradient(135deg,#fafafa,#f0f7fc);border:2px dashed var(--line);text-align:center;padding:40px;border-radius:18px;grid-column:1/-1}
+.closier-locked h3{font-size:18px;font-weight:800;color:var(--dark);margin-bottom:8px}
+.closier-locked p{font-size:14px;color:var(--muted);margin-bottom:16px}
+@media(max-width:768px){.closier-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.closier-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-logout-target="index.html" class="bg po-v5-harmony">
+<header class="topbar">
+  <div class="container row between">
+    <a class="brand link" href="dashboard.html">
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div><div class="brand-title">POPE Online</div><div class="brand-sub">Closier documentaire</div></div>
+    </a>
+    <div class="row gap">
+      <a class="btn ghost" href="dashboard.html">Mon espace</a>
+      <button class="btn ghost" onclick="localStorage.removeItem('pope_session_active');sessionStorage.removeItem('pope_session_token');window.location.href='login.html'">Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<div class="closier-wrap">
+  <div class="closier-hero">
+    <span class="badge">📚 Bibliothèque premium</span>
+    <h1>Closier documentaire</h1>
+    <p>Modèles prêts à l'emploi, documents types et ressources validées par les experts POPE Online.</p>
+  </div>
+
+  <div class="closier-search">
+    <input type="text" id="searchInput" placeholder="Rechercher un modèle, un type de document…" oninput="filterDocs()"/>
+  </div>
+
+  <div class="closier-cats" id="catsBar">
+    <button class="cat-btn active" data-cat="all" onclick="setCategory('all',this)">Tous</button>
+    <button class="cat-btn" data-cat="marches" onclick="setCategory('marches',this)">Marchés publics</button>
+    <button class="cat-btn" data-cat="courriers" onclick="setCategory('courriers',this)">Courriers</button>
+    <button class="cat-btn" data-cat="deliberations" onclick="setCategory('deliberations',this)">Délibérations</button>
+    <button class="cat-btn" data-cat="formalites" onclick="setCategory('formalites',this)">Formalités</button>
+    <button class="cat-btn" data-cat="rh" onclick="setCategory('rh',this)">RH & Social</button>
+  </div>
+
+  <div class="closier-grid" id="docGrid">
+    <!-- Rempli par JS -->
+  </div>
+</div>
+
+<script>
+// Bibliothèque documentaire — à alimenter via le dashboard admin
+const DOCS = [
+  {cat:"marches",title:"DC1 — Lettre de candidature",desc:"Formulaire officiel DC1 : habilitation du mandataire pour marchés publics.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_12481.do"},
+  {cat:"marches",title:"DC2 — Déclaration du candidat",desc:"Formulaire officiel DC2 : capacités techniques et financières du candidat.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_12482.do"},
+  {cat:"marches",title:"Modèles CCAP, RC, AE — DAJ",desc:"Bibliothèque complète de modèles types publiée par la Direction des Affaires Juridiques.",type:"Word/PDF",url:"https://www.economie.gouv.fr/daj/modeles-de-documents"},
+  {cat:"marches",title:"Guide pratique MAPA 2024",desc:"Guide officiel de la procédure adaptée : seuils, publicité, mise en concurrence.",type:"PDF",url:"https://www.economie.gouv.fr/daj/marches-publics-guide-pratique"},
+  {cat:"marches",title:"Rapport analyse des offres — DAJ",desc:"Trame officielle pour la rédaction du rapport d’analyse des candidatures et offres.",type:"Word",url:"https://www.economie.gouv.fr/daj/formulaires-et-modeles-documents"},
+  {cat:"courriers",title:"Bibliothèque lettres types — service-public.fr",desc:"Modèles officiels de courriers pour toutes situations : démarches, réclamations, demandes.",type:"Word/PDF",url:"https://www.service-public.fr/particuliers/vosdroits/N31"},
+  {cat:"courriers",title:"Lettre de mise en demeure",desc:"Modèle officiel avec structure légale, délai de réponse et mentions obligatoires.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F13180"},
+  {cat:"courriers",title:"Réponse à réclamation usager",desc:"Trame officielle de réponse à une réclamation d’usager ou de client.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F1149"},
+  {cat:"deliberations",title:"Modèles de délibérations — AMF",desc:"Bibliothèque AMF : modèles de délibérations municipales, mis à jour régulièrement.",type:"Word",url:"https://www.amf.asso.fr/documents-modeles-deliberations/"},
+  {cat:"deliberations",title:"Guide actes collectivités — DGCL",desc:"Guide officiel sur la légalité des actes administratifs des collectivités locales.",type:"PDF",url:"https://www.collectivites-locales.gouv.fr/"},
+  {cat:"formalites",title:"Formulaire P0 CMB — Micro-entrepreneur",desc:"Cerfa officiel de déclaration de début d’activité artisan ou commerçant.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_P0_CMB.do"},
+  {cat:"formalites",title:"Guichet unique — Formalités entreprises",desc:"Portail officiel de dépôt des formalités : création, modification, cessation d’activité.",type:"En ligne",url:"https://formalites.entreprises.gouv.fr/"},
+  {cat:"formalites",title:"Modèles statuts — Bpifrance Création",desc:"Statuts types pour SAS, SASU, SARL, EURL. Notice d’utilisation incluse.",type:"Word",url:"https://bpifrance-creation.fr/encyclopedie/structures-juridiques"},
+  {cat:"formalites",title:"Cerfa 13844 — Cessation d’activité",desc:"Formulaire officiel de déclaration de cessation pour entreprise individuelle.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_13844.do"},
+  {cat:"rh",title:"Cerfa 14598 — Rupture conventionnelle",desc:"Formulaire officiel d’homologation de rupture conventionnelle (art. L1237-14 CT).",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_14598.do"},
+  {cat:"rh",title:"Cerfa 13219 — Attestation employeur",desc:"Attestation employeur obligatoire à remettre au salarié à la rupture du contrat.",type:"PDF officiel",url:"https://www.formulaires.service-public.fr/gf/cerfa_13219.do"},
+  {cat:"rh",title:"Contrat CDI — Ministère du Travail",desc:"Trame officielle de CDI conforme au code du travail avec notice d’utilisation.",type:"Word",url:"https://www.service-public.fr/particuliers/vosdroits/F1906"},
+  {cat:"rh",title:"Conventions collectives — Légifrance",desc:"Accès direct à toutes les conventions collectives nationales en vigueur.",type:"En ligne",url:"https://www.legifrance.gouv.fr/liste/texte?nature=CONV_COLL"},
+];
+
+let currentCat = 'all';
+let searchTerm = '';
+
+function renderDocs() {
+  const grid = document.getElementById('docGrid');
+  const filtered = DOCS.filter(d => {
+    const matchCat  = currentCat === 'all' || d.cat === currentCat;
+    const matchSearch = !searchTerm || d.title.toLowerCase().includes(searchTerm) || d.desc.toLowerCase().includes(searchTerm);
+    return matchCat && matchSearch;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="closier-locked"><h3>Aucun document trouvé</h3><p>Essayez un autre terme ou une autre catégorie.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(d => `
+    <div class="doc-card">
+      <div class="doc-cat">${catLabel(d.cat)}</div>
+      <div class="doc-title">${d.title}</div>
+      <div class="doc-desc">${d.desc}</div>
+      <div class="doc-footer">
+        <span class="doc-type">${d.type}</span>
+        ${d.url !== '#' ? '<span style="background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px;margin-left:4px">✓ Officiel</span>' : ''}
+        <a href="${d.url}" class="doc-action" target="_blank" rel="noopener noreferrer"
+           onclick="${d.url === '#' ? 'return false' : ''}"
+           style="${d.url === '#' ? 'opacity:.4;cursor:not-allowed' : ''}">
+          ${d.url === '#' ? '⏳ Bientôt disponible' : '↗ Accéder à la source'}
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function catLabel(cat) {
+  return {marches:'Marchés publics',courriers:'Courriers',deliberations:'Délibérations',formalites:'Formalités',rh:'RH & Social'}[cat] || cat;
+}
+
+function setCategory(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDocs();
+}
+
+function filterDocs() {
+  searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+  renderDocs();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Vérifier le plan depuis localStorage (positionné à la connexion)
+  try {
+    var userRaw = localStorage.getItem('pope_session_user');
+    if (userRaw) {
+      var user = JSON.parse(userRaw);
+      var wallet = user.wallet || {};
+      var planLabel = wallet.plan_label || 'Free';
+      var trialExpired = wallet.trial_expired || false;
+      var status = wallet.status || '';
+      // Bloquer uniquement si plan Free ET essai expiré
+      if (planLabel === 'Free' && (trialExpired || status === 'trial_expired')) {
+        document.getElementById('docGrid').innerHTML =
+          '<div class="closier-locked">' +
+          '<div style="font-size:40px;margin-bottom:12px">🔒</div>' +
+          '<h3>Closier disponible dès le plan Starter</h3>' +
+          '<p>Votre période d\'essai est terminée. Souscrivez un plan pour accéder à la bibliothèque documentaire.</p>' +
+          '<a href="pricing.html" style="display:inline-flex;margin-top:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px 24px;font-weight:700;text-decoration:none">Voir les plans</a>' +
+          '</div>';
+        return;
+      }
+    }
+  } catch(e) {}
+  renderDocs();
+});
+</script>
+</body>
+</html>
