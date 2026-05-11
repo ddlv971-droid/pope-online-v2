@@ -751,6 +751,15 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
   </div><!-- /v5-journey -->
 
+  <!-- ══ INDICATEUR SUIVI DEMANDES ══ -->
+  <div id="requestsTracker" style="background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:16px 18px;margin-bottom:16px;display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:800;color:#0d1e30;">📋 Mes demandes en cours</div>
+      <a href="expert.html" style="font-size:12px;font-weight:600;color:#0079c1;text-decoration:none;">Tout voir →</a>
+    </div>
+    <div id="requestsTrackerList"></div>
+  </div>
+
   <!-- Liens rapides -->
   <div class="v5-quick-links">
     <a href="vault.html?space=public&amp;return=dashboard.html" class="v5-quick">📂 Dépôt sécurisé</a>
@@ -957,11 +966,12 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     sessionStorage.removeItem(TOKEN_KEY);
   }
   function logout(){
-    clearSession();
-    /* V68 : nettoyage étendu formulaires et état */
-    var extra = [STORAGE_KEY, 'pope_v67_priv', 'pope_v67_form_pub', 'pope_v67_form_priv',
-                 'pope_v58_state_public', 'pope_v58_state_private', 'pope_v57_state_public'];
-    extra.forEach(function(k){ try{localStorage.removeItem(k);}catch(e){} try{sessionStorage.removeItem(k);}catch(e){} });
+    /* V69 — nettoyage total localStorage + sessionStorage */
+    try{ sessionStorage.clear(); }catch(e){}
+    var keys = Object.keys(localStorage).filter(function(k){
+      return k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k.indexOf('pope')===0;
+    });
+    keys.forEach(function(k){ try{localStorage.removeItem(k);}catch(e){}; });
     location.href = 'public.html';
   }
   function requireAuth(){
@@ -1040,11 +1050,18 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     qsa('.v5-domain-pill').forEach(function(b){
       b.classList.toggle('selected', b.getAttribute('data-domain')===domain);
     });
-    // Badge step 2
-    var badge=$('domainBadge'), name=$('domainBadgeName'), ico=$('domainBadgeIcon');
+    // Badge step 2 (v58-domain-badge)
+    var badge=$('v58DomainBadge'), name=$('v58DomainName'), ico=$('v58DomainIcon');
     if(badge){ badge.classList.toggle('visible', !!domain); }
     if(name) name.textContent = domain||'—';
     if(ico) ico.textContent = icon;
+    // Badges discrets steps 3 & 4
+    [3,4].forEach(function(n){
+      var b=$('stepDomainBadge'+n), i=$('stepDomainBadge'+n+'Icon'), nm=$('stepDomainBadge'+n+'Name');
+      if(b) b.style.display = domain ? 'flex' : 'none';
+      if(i) i.textContent = icon;
+      if(nm) nm.textContent = domain;
+    });
     // Save
     saveState({domain:domain, domainIcon:icon});
   }
@@ -1081,7 +1098,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     window.scrollTo({top:0,behavior:'smooth'});
 
     // Hooks par étape
-    if(n===2){ renderDomainBadge(); updateDraftLink(); }
+    var _s = loadState();
+    applyDomain(_s.domain||'', _s.domainIcon||'🎯'); // sync badges on every step
+    if(n===2){ updateDraftLink(); }
     if(n===3){ loadDraftOptions(); loadVaultFiles(); updateDraftLink(); }
     if(n===4){ renderRecap(); }
   }
@@ -1276,6 +1295,45 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   }
   window.loadRequests = loadRequests;
 
+  /* ─── Tracker demandes (widget visible onglet besoin) ─── */
+  function refreshTracker(){
+    var tracker = $('requestsTracker');
+    var list = $('requestsTrackerList');
+    if(!tracker || !list) return;
+    apiFetch('/expert/my-requests').then(function(data){
+      var reqs = (data&&data.requests)||[];
+      // Filtrer les demandes actives (non archivées)
+      var active = reqs.filter(function(r){ return r.status !== 'archived'; }).slice(0,3);
+      if(!active.length){ tracker.style.display='none'; return; }
+      tracker.style.display='block';
+      list.innerHTML = active.map(function(r){
+        var isPending = r.status !== 'done' && r.status !== 'replied';
+        var statusBg = isPending ? '#fff7ed' : '#f0fdf4';
+        var statusColor = isPending ? '#d97706' : '#16a34a';
+        var statusLabel = isPending ? '⏳ En attente' : '✅ Répondu';
+        var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
+        return '<div onclick="location.href='expert.html?id='+esc(String(r.id||''))+''" '
+          + 'style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:.15s;" '
+          + 'onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">'
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:13px;font-weight:600;color:#0d1e30;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+          + esc(r.domain||'Expert') + ' — ' + esc(r.subject||r.title||r.need&&r.need.title||'Demande')
+          + '</div>'
+          + '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + date + '</div>'
+          + '</div>'
+          + '<span style="background:'+statusBg+';color:'+statusColor+';border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;">'
+          + statusLabel + '</span>'
+          + '</div>';
+      }).join('');
+      // Ajouter lien si plus de 3
+      if(reqs.length > 3){
+        list.innerHTML += '<div style="text-align:center;padding-top:10px;">'
+          + '<a href="expert.html" style="font-size:12px;color:#0079c1;font-weight:600;text-decoration:none;">'
+          + 'Voir toutes mes demandes (' + reqs.length + ') →</a></div>';
+      }
+    }).catch(function(){ /* silencieux */ });
+  }
+
   /* ─── User info ─── */
   function loadUser(){
     var u = getUser();
@@ -1367,10 +1425,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function init(){
     if(!requireAuth()) return;
 
-    // Topbar
-    document.querySelector('[data-logout]') && document.querySelector('[data-logout]').addEventListener('click', logout);
-    null /* handled by data-logout */ && null /* handled by data-logout */.addEventListener('click', logout);
-    document.querySelector('#trialExpiredOverlay button') && document.querySelector('#trialExpiredOverlay button').addEventListener('click', logout);
+    // Topbar — wire tous les boutons logout
+    document.querySelectorAll('[data-logout]').forEach(function(b){ b.addEventListener('click', logout); });
+    var _expBtn = document.querySelector('#trialExpiredOverlay button');
+    if(_expBtn) _expBtn.addEventListener('click', logout);
 
     // Burger
     var burger=$('poBurger'), menu=$('poMobileMenu');
@@ -1466,6 +1524,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
     // Routing initial
     restoreFromUrl();
+
+    // Tracker demandes
+    refreshTracker();
   }
 
   /* ─── Aperçus accordéons ─── */
