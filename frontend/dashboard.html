@@ -533,7 +533,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <!-- Tabs -->
 <div class="v5-tabs-bar">
-  <button class="v5-tab active" data-tab="besoin" onclick="switchTab(&quot;besoin&quot;)"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
   <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
   <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
   <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
@@ -897,7 +897,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v5-empty-ico">👤</div>
       <strong>Aucun échange expert pour le moment.</strong>
       <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
-      <button class="v5-btn-primary" onclick="switchTab(&quot;besoin&quot;)">🎯 Soumettre un besoin</button>
+      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
     </div>
   </div>
 </div>
@@ -1183,7 +1183,7 @@ function loadRequests() {
 function renderRequests(container, reqs) {
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab(&quot;besoin&quot;)">🎯 Soumettre un besoin</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
     return;
   }
   container.innerHTML = reqs.map(function(r){
