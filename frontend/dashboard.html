@@ -1,749 +1,1521 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>
+/* Init : API base URL selon l'environnement + anti-flash retour APP */
+(function(){
+  var h = location.hostname;
+  if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
+    window.__POPE_API_BASE__ = h.indexOf('localhost') !== -1 || h === '127.0.0.1'
+      ? 'http://localhost:3000'
+      : 'https://popeonline-staging.onrender.com';
+  }
+  /* Anti-flash : si retour depuis app, masquer step-panel-1 immédiatement */
+  try {
+    if (new URLSearchParams(location.search).get('from') === 'app') {
+      var st = document.createElement('style');
+      st.id = 'v67-antiflash';
+      st.textContent = '.v5-step-panel { display: none !important; }';
+      document.head && document.head.appendChild(st);
+    }
+  } catch(e) {}
+})();
+</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Tableau de bord</title>
+<link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<script>
-(function(){
-  var h=location.hostname;
-  window.__API__=h==='localhost'||h==='127.0.0.1'?'http://localhost:3000':h.indexOf('staging')!==-1?'https://popeonline-staging.onrender.com':'https://pope-online-v2.onrender.com';
-  window.__SPACE__='public'; window.__DASH__='dashboard.html'; window.__APP__='app.html';
-  window.__EXPERT_PAGE__='expert.html'; window.__MISSION_PAGE__='mission.html';
-})();
-</script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{font-size:16px;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#0d1e30;min-height:100vh;}
-button{font-family:inherit;cursor:pointer;}
-a{text-decoration:none;color:inherit;}
-textarea,input,select{font-family:inherit;}
-:root{
-  --navy:#07162a;--blue:#0059b3;--blue-lt:#e8f0fe;--blue-md:#3b82f6;
-  --green:#15803d;--green-lt:#dcfce7;--red:#dc2626;--orange:#f59e0b;
-  --ink:#0d1e30;--muted:#566477;--border:#dde3eb;
-  --bg:#f0f4f8;--surface:#ffffff;--surface2:#f7f9fc;
-  --radius:14px;--shadow:0 1px 4px rgba(13,30,48,.07),0 4px 16px rgba(13,30,48,.06);
+<style id="v40-topbar-fix">
+html body header.v40-topbar{
+  position:sticky!important;top:0!important;z-index:200!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  display:flex!important;align-items:center!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;
+  background:rgba(7,22,42,.97)!important;
+  backdrop-filter:blur(16px)!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  overflow:visible!important;
 }
-/* Topbar */
-.topbar{position:sticky;top:0;z-index:100;height:56px;background:rgba(7,22,42,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 20px;gap:10px;}
-.topbar-brand{display:flex;align-items:center;gap:8px;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;}
-.topbar-brand img{height:26px;}
-.topbar-sub{font-size:11px;color:rgba(255,255,255,.35);font-weight:600;padding:3px 9px;background:rgba(255,255,255,.07);border-radius:99px;flex-shrink:0;margin-left:2px;}
-.topbar-nav{display:flex;align-items:center;gap:5px;margin-left:auto;}
-.tbtn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);transition:.15s;white-space:nowrap;}
-.tbtn:hover{background:rgba(255,255,255,.12);color:#fff;}
-#burgerBtn{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;margin-left:auto;}
-#burgerBtn span{display:block;width:22px;height:2px;background:rgba(255,255,255,.8);border-radius:2px;}
-@media(max-width:820px){.topbar-nav{display:none;}#burgerBtn{display:flex;}}
-/* Mobile menu */
-#mobileMenu{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;z-index:99;background:rgba(7,22,42,.98);padding:16px;flex-direction:column;gap:3px;overflow-y:auto;}
-#mobileMenu.open{display:flex;}
-#mobileMenu a,#mobileMenu button{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:11px;font-size:14px;font-weight:600;color:rgba(255,255,255,.8);background:none;border:none;width:100%;text-align:left;}
-#mobileMenu a:hover,#mobileMenu button:hover{background:rgba(255,255,255,.07);color:#fff;}
-.msep{height:1px;background:rgba(255,255,255,.07);margin:6px 0;}
-/* Tabs */
-.tabs-bar{background:var(--surface);border-bottom:2px solid var(--border);display:flex;padding:0 20px;position:sticky;top:56px;z-index:80;box-shadow:0 2px 6px rgba(13,30,48,.04);overflow-x:auto;scrollbar-width:none;}
-.tabs-bar::-webkit-scrollbar{display:none;}
-.tab-btn{display:flex;align-items:center;gap:6px;padding:14px 14px;border:none;background:none;font-size:13px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.18s;white-space:nowrap;}
-.tab-btn:hover{color:var(--blue);}
-.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
-/* Tab panes */
-.tab-content{padding:20px;max-width:900px;margin:0 auto;}
-.tab-pane{display:none;}
-.tab-pane.active{display:block;}
-/* Trial alert */
-.trial-alert{display:flex;align-items:center;gap:14px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:12px 16px;margin:12px 20px 0;}
-.trial-alert strong{font-size:13px;color:var(--ink);}
-.trial-alert small{display:block;font-size:12px;color:var(--muted);margin-top:2px;}
-.trial-cta{margin-left:auto;background:var(--blue);color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
-/* Expired overlay */
-.expired-overlay{position:fixed;inset:0;z-index:999;background:rgba(7,22,42,.9);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
-.expired-card{background:#fff;border-radius:20px;padding:32px;max-width:440px;width:100%;text-align:center;}
-.expired-card h2{font-size:19px;font-weight:800;color:var(--ink);margin:0 0 10px;}
-.expired-card p{font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 22px;}
-/* Hero */
-.hero{background:linear-gradient(135deg,#07162a 0%,#0d3460 100%);border-radius:var(--radius);padding:22px 24px;display:flex;align-items:flex-start;gap:18px;margin-bottom:18px;position:relative;overflow:hidden;}
-.hero::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(0,121,193,.1);}
-.hero-text{flex:1;}
-.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:5px;}
-.hero-title{font-size:clamp(18px,2.5vw,24px);font-weight:800;color:#fff;margin:0 0 5px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.65;margin:0;}
-.kpi-row{display:flex;gap:10px;flex-shrink:0;}
-.kpi{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:12px 14px;text-align:center;min-width:70px;}
-.kpi-n{font-size:24px;font-weight:800;color:#fff;line-height:1;margin-bottom:3px;}
-.kpi-l{font-size:10px;color:rgba(255,255,255,.45);line-height:1.4;}
-@media(max-width:640px){.hero{flex-direction:column;gap:12px;}.kpi-row{width:100%;}.kpi{flex:1;}}
-/* Journey */
-.journey{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;}
-/* Steps nav */
-.steps-nav{display:flex;align-items:center;padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);}
-.step-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0;}
-.step-num{width:28px;height:28px;border-radius:50%;background:#e2e8f0;color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:.2s;}
-.step-item.active .step-num{background:var(--blue);color:#fff;}
-.step-item.done .step-num{background:var(--green);color:#fff;}
-.step-label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;}
-.step-item.active .step-label{color:var(--blue);}
-.step-item.done .step-label{color:var(--green);}
-.step-line{flex:1;height:2px;background:var(--border);margin:0 5px 14px;}
-/* ══ STEP PANELS — CSS only, no JS display override ══ */
-.step-panel{display:none;padding:20px 22px;}
-.step-panel.active{display:block;}
-/* Panel */
-.panel-head{margin-bottom:18px;}
-.panel-head h2{font-size:16px;font-weight:800;color:var(--ink);margin:0 0 4px;}
-.panel-head p{font-size:12px;color:var(--muted);margin:0;}
-/* Domain */
-.domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px;margin-bottom:18px;}
-.dpill{display:flex;align-items:center;gap:7px;padding:11px 13px;border-radius:11px;border:2px solid var(--border);background:var(--surface);font-size:13px;font-weight:600;color:var(--ink);text-align:left;transition:.15s;}
-.dpill:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt);}
-.dpill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
-@media(max-width:640px){.domain-grid{grid-template-columns:1fr 1fr;}}
-/* Domain badge */
-.domain-badge{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:11px;padding:10px 14px;margin-bottom:16px;}
-.domain-badge.visible{display:flex;}
-.domain-badge-icon{font-size:18px;}
-.domain-badge-name{font-size:13px;font-weight:800;color:#1d4ed8;flex:1;}
-.domain-badge-sub{display:block;font-size:11px;font-weight:400;color:#3b82f6;}
-.domain-change{background:none;border:1.5px solid #93c5fd;color:#3b82f6;border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;}
-/* Fields */
-.field{margin-bottom:14px;}
-.field-lbl{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;}
-.req{color:var(--blue);}
-.inp{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--ink);background:var(--surface);transition:.15s;}
-.inp:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,179,.1);}
-.txa{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--ink);background:var(--surface);resize:vertical;min-height:90px;transition:.15s;}
-.txa:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,179,.1);}
-/* Accordions */
-.acc{border:1.5px solid var(--border);border-radius:11px;margin-bottom:7px;overflow:hidden;}
-.acc-trigger{display:flex;align-items:center;gap:9px;width:100%;padding:12px 14px;background:none;border:none;text-align:left;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink);}
-.acc-trigger:hover{background:var(--surface2);}
-.acc-ico{font-size:15px;flex-shrink:0;}
-.acc-lbl{flex:1;min-width:0;}
-.acc-val{display:block;font-size:11px;font-weight:400;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
-.acc-dot{width:7px;height:7px;border-radius:50%;background:var(--green);opacity:0;transition:.2s;flex-shrink:0;}
-.acc.has-value .acc-dot{opacity:1;}
-.acc-chev{font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0;}
-.acc.open .acc-chev{transform:rotate(90deg);}
-.acc-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border);}
-.acc.open .acc-body{display:block;}
-.acc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
-@media(max-width:540px){.acc-row{grid-template-columns:1fr;}}
-.acc-field{display:flex;flex-direction:column;gap:4px;margin-top:10px;}
-.acc-field label{font-size:11px;font-weight:700;color:var(--ink);}
-/* Treatment cards */
-.trt-title{font-size:13px;font-weight:800;color:var(--ink);margin:16px 0 10px;}
-.trt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:540px){.trt-grid{grid-template-columns:1fr;}}
-.trt-card{display:flex;align-items:flex-start;gap:9px;border:2px solid var(--border);border-radius:11px;padding:13px;cursor:pointer;background:var(--surface);transition:.15s;}
-.trt-card:has(input:checked){border-color:var(--blue);background:var(--blue-lt);}
-.trt-card input{margin-top:2px;flex-shrink:0;accent-color:var(--blue);}
-.trt-head{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:4px;}
-.trt-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:7px;}
-.trt-tags{display:flex;gap:5px;flex-wrap:wrap;}
-.trt-tag{font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:var(--muted);}
-/* Draft promo */
-.draft-promo{display:flex;align-items:center;gap:12px;background:#f5f9ff;border:1.5px solid #d0e8ff;border-radius:11px;padding:13px 15px;margin-top:16px;}
-.draft-promo-ico{font-size:20px;}
-.draft-promo-body{flex:1;}
-.draft-promo-body strong{font-size:13px;font-weight:800;color:var(--ink);}
-.draft-badge{font-size:10px;background:var(--blue);color:#fff;padding:2px 7px;border-radius:99px;font-weight:600;margin-left:6px;}
-.draft-promo-body p{font-size:12px;color:var(--muted);margin:3px 0 0;line-height:1.4;}
-.draft-link{background:var(--blue);color:#fff;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
-.draft-link:hover{background:#004a99;color:#fff;}
-@media(max-width:580px){.draft-promo{flex-wrap:wrap;}}
-/* Attach boxes */
-.attach-box{border:1.5px solid var(--border);border-radius:12px;padding:15px;margin-bottom:11px;}
-.attach-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:12px;}
-.attach-ico{font-size:18px;width:38px;height:38px;background:var(--surface2);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.attach-head strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
-.attach-head p{font-size:12px;color:var(--muted);margin:0;}
-.attach-sel{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--ink);background:var(--surface);}
-.draft-ok-msg{display:none;margin-top:8px;font-size:12px;color:var(--green);font-weight:600;}
-.vault-list{font-size:12px;color:var(--muted);margin-top:4px;}
-.upload-zone{border:2px dashed var(--border);border-radius:11px;padding:18px;text-align:center;cursor:pointer;background:var(--surface);margin-top:10px;transition:.15s;}
-.upload-zone:hover,.upload-zone.dragover{background:var(--blue-lt);border-color:var(--blue-md);}
-.upload-zone strong{font-size:13px;color:var(--ink);display:block;margin-bottom:4px;}
-.upload-zone span{font-size:11px;color:var(--muted);}
-#localFilesList{margin-top:10px;}
-.file-row{display:flex;align-items:center;gap:7px;padding:8px 0;border-bottom:1px solid #eef2f7;}
-.file-row:last-child{border-bottom:none;}
-.file-name{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.file-sz{font-size:11px;color:var(--muted);}
-.file-rm{border:none;background:#f1f5f9;border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--muted);}
-.info-tip{background:var(--surface2);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--muted);border:1px solid var(--border);margin-top:10px;}
-/* Recap */
-.recap-card{border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
-.recap-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);align-items:baseline;}
-.recap-row:last-child{border-bottom:none;}
-.recap-key{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:80px;flex-shrink:0;}
-.recap-val{font-size:13px;color:var(--ink);font-weight:500;}
-.vmsg{font-size:13px;padding:10px 13px;border-radius:9px;margin-bottom:12px;display:none;}
-.vmsg.err{background:#fee2e2;color:#991b1b;display:block;}
-.vmsg.ok{background:var(--green-lt);color:#065f46;display:block;}
-/* Step footer */
-.step-footer{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:.18s;border:none;}
-.btn-primary{background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(0,89,179,.22);}
-.btn-primary:hover{background:#004a99;transform:translateY(-1px);}
-.btn-primary.send{background:linear-gradient(135deg,var(--blue),#2563eb);padding:12px 24px;font-size:14px;}
-.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border) !important;border-radius:10px;}
-.btn-ghost:hover{border-color:var(--ink) !important;color:var(--ink);}
-.btn-sm{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:.13s;display:inline-flex;align-items:center;gap:4px;}
-.btn-sm:hover{border-color:var(--ink);color:var(--ink);}
-/* Section head */
-.section-head{margin-bottom:18px;}
-.section-head h2{font-size:18px;font-weight:800;color:var(--ink);margin:0 0 3px;}
-.section-head p{font-size:13px;color:var(--muted);margin:0;}
-/* Requests */
-.requests-list{display:flex;flex-direction:column;gap:9px;}
-.req-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;}
-.req-card.replied{border-left:4px solid var(--green);}
-.req-card.pending{border-left:4px solid var(--orange);}
-.req-domain{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:5px;display:inline-block;margin-bottom:4px;}
-.req-title{font-size:13px;font-weight:700;color:var(--ink);margin:3px 0;}
-.req-date{font-size:11px;color:var(--muted);}
-.req-reply{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:9px 11px;margin-top:8px;font-size:12px;color:#065f46;line-height:1.6;}
-/* Empty state */
-.empty{text-align:center;padding:40px 20px;border:2px dashed var(--border);border-radius:14px;background:var(--surface);}
-.empty-ico{font-size:36px;margin-bottom:9px;}
-.empty strong{display:block;font-size:14px;color:var(--ink);margin-bottom:6px;}
-.empty p{font-size:13px;color:var(--muted);margin:0 0 16px;}
-/* Sur Mesure */
-.sm-card{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:16px;display:flex;gap:13px;align-items:flex-start;margin-bottom:12px;}
-.sm-ico{font-size:24px;flex-shrink:0;}
-.sm-card strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;}
-.sm-card p{font-size:12px;color:var(--muted);margin:0;line-height:1.6;}
-.sm-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-@media(max-width:480px){.sm-compare{grid-template-columns:1fr;}}
-.sm-col{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;overflow:hidden;}
-.sm-col-head{padding:9px 13px;font-size:12px;font-weight:700;}
-.sm-col-head.green{background:#d1fae5;color:#065f46;}
-.sm-col-head.blue{background:#dbeafe;color:#1e40af;}
-.sm-col ul{list-style:none;padding:10px 13px;display:flex;flex-direction:column;gap:5px;}
-.sm-col ul li{font-size:12px;color:var(--muted);padding-left:13px;position:relative;}
-.sm-col ul li::before{content:'•';position:absolute;left:0;color:var(--blue);}
-/* Espace */
-.espace-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
-@media(max-width:600px){.espace-grid{grid-template-columns:1fr 1fr;}}
-.espace-card{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:.18s;}
-.espace-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(0,89,179,.1);transform:translateY(-2px);}
-.espace-ico{font-size:24px;}
-.espace-card strong{font-size:12px;font-weight:700;color:var(--ink);}
-.espace-card span{font-size:11px;color:var(--muted);text-align:center;}
-/* Quick links */
-.quick-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;}
-.quick{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:11px;font-weight:600;color:var(--muted);transition:.13s;}
-.quick:hover{color:var(--blue);border-color:var(--blue);}
+html body header.v40-topbar .v40-topbar-inner{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;height:58px!important;
+  width:100%!important;padding:0 20px!important;gap:10px!important;
+}
+html body header.v40-topbar .v40-topbar-brand{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;gap:9px!important;
+  text-decoration:none!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand img{height:28px!important;width:auto!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand-text{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:baseline!important;gap:5px!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong,
+html body header.v40-topbar .v40-topbar-brand-text small{
+  white-space:nowrap!important;display:inline!important;width:auto!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+html body header.v40-topbar .v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+html body header.v40-topbar .v40-topbar-nav{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+}
+html body header.v40-topbar #v40Burger{
+  display:none;flex-direction:column!important;gap:5px!important;
+  margin-left:auto!important;flex-shrink:0!important;
+  background:none!important;border:none!important;
+  cursor:pointer!important;padding:6px!important;width:auto!important;
+}
+html body header.v40-topbar #v40Burger span{
+  display:block!important;width:22px!important;height:2px!important;
+  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
+}
+#v40MobileMenu{
+  display:none;position:fixed!important;
+  top:58px!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:201!important;background:rgba(7,22,42,.98)!important;
+  backdrop-filter:blur(20px)!important;padding:20px!important;
+  overflow-y:auto!important;flex-direction:column!important;gap:4px!important;
+}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:14px 18px!important;border-radius:12px!important;
+  font-size:15px!important;font-weight:600!important;
+  color:rgba(255,255,255,.85)!important;
+  text-decoration:none!important;background:none!important;
+  border:none!important;cursor:pointer!important;width:100%!important;
+}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;}
+@media(max-width:860px){
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
+  html body header.v40-topbar #v40Burger{display:flex!important;}
+}
 </style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
+.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu.open{display:flex!important;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
+@media(max-width:860px){
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
+}
+</style>
+
+<style id="v5-workspace-css">
+:root{
+  --navy:#07162a;--blue:#0079c1;--cyan:#03a0d7;--pink:#c22e83;
+  --green:#16a34a;--red:#dc2626;--orange:#d97706;
+  --ink:#0d1e30;--muted:#566477;--border:rgba(13,30,48,.1);
+  --bg:#f8fafc;--bg2:#f1f5f9;--white:#fff;
+  --r:16px;--sh:0 2px 12px rgba(13,30,48,.08);
+}
+.v5-workspace{background:var(--bg);min-height:100vh;padding-bottom:60px;}
+.v5-tabs-bar{
+  background:var(--white);border-bottom:2px solid var(--border);
+  display:flex;align-items:stretch;padding:0 24px;gap:2px;
+  position:sticky;top:58px;z-index:90;
+  box-shadow:0 2px 8px rgba(13,30,48,.06);overflow-x:auto;
+}
+.v5-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:14px 16px;border:none;background:none;
+  cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--muted);border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:.2s;white-space:nowrap;font-family:inherit;
+}
+.v5-tab:hover{color:var(--blue);}
+.v5-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.v5-tab-ico{font-size:15px;}
+.v5-tab-content{padding:24px;max-width:920px;margin:0 auto;}
+.v5-tab-content[hidden]{display:none!important;}
+.v5-trial-alert{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(to right,#fffbeb,#fff8f0);
+  border:1.5px solid #fde68a;border-radius:14px;
+  padding:14px 18px;margin:12px 24px 0;
+}
+.v5-trial-alert strong{font-size:14px;color:var(--ink);}
+.v5-trial-alert div{font-size:13px;color:var(--muted);margin-top:2px;}
+.v5-trial-cta{
+  background:var(--blue);color:#fff;border-radius:10px;
+  padding:7px 14px;font-size:13px;font-weight:700;
+  text-decoration:none;white-space:nowrap;margin-left:auto;
+}
+.v5-expired-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(7,22,42,.9);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.v5-expired-card{
+  background:#fff;border-radius:22px;padding:36px;
+  max-width:460px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.v5-expired-card h2{font-size:20px;font-weight:800;color:var(--ink);margin:0 0 10px;}
+.v5-expired-card p{font-size:14px;color:var(--muted);line-height:1.65;margin:0 0 24px;}
+.v5-hero-bar{
+  display:flex;align-items:flex-start;gap:20px;
+  background:linear-gradient(135deg,var(--navy),#0d3460);
+  border-radius:18px;padding:24px 28px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.v5-hero-bar::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(0,121,193,.12);pointer-events:none;
+}
+.v5-hero-text{flex:1;}
+.v5-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px;}
+.v5-hero-title{font-size:clamp(20px,2.5vw,26px);font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.02em;}
+.v5-hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin:0;}
+.v5-kpi-row{display:flex;gap:12px;flex-shrink:0;}
+.v5-kpi{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:14px 16px;text-align:center;min-width:76px;
+}
+.v5-kpi-n{font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;min-height:28px;}
+.v5-kpi-l{font-size:10px;color:rgba(255,255,255,.5);line-height:1.4;}
+.v5-journey{background:var(--white);border-radius:18px;box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;}
+.v5-steps{
+  display:flex;align-items:center;
+  padding:16px 24px;background:var(--bg2);
+  border-bottom:1px solid var(--border);gap:0;
+}
+.v5-step{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:0 2px;}
+.v5-step-n{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.08);color:var(--muted);
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.v5-step.active .v5-step-n{background:var(--blue);color:#fff;}
+.v5-step.done .v5-step-n{background:var(--green);color:#fff;}
+.v5-step-label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.v5-step.active .v5-step-label{color:var(--blue);}
+.v5-step-line{flex:1;height:2px;background:var(--border);margin:0 6px;margin-bottom:15px;}
+.v5-step-panel{padding:24px;display:none;}
+.v5-step-panel.active{display:block!important;visibility:visible!important;}
+.v5-panel-head{margin-bottom:20px;}
+.v5-panel-head h2{font-size:17px;font-weight:800;color:var(--ink);margin:0 0 5px;}
+.v5-panel-head p{font-size:13px;color:var(--muted);margin:0;}
+.v5-domain-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:10px;margin-bottom:20px;
+}
+.v5-domain-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 14px;border-radius:12px;
+  border:2px solid var(--border);background:var(--white);
+  font-size:13px;font-weight:600;color:var(--ink);
+  cursor:pointer;text-align:left;transition:.15s;font-family:inherit;
+}
+.v5-domain-pill:hover{border-color:var(--blue);color:var(--blue);background:#f0f8ff;}
+.v5-domain-pill.selected{border-color:var(--blue);background:var(--blue);color:#fff;}
+.v5-field-group{margin-bottom:16px;}
+.v5-label{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.v5-req{color:var(--blue);}
+.v5-input{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;color:var(--ink);
+  background:var(--white);transition:.15s;box-sizing:border-box;
+}
+.v5-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+.v5-recap-card{border:1.5px solid var(--border);border-radius:13px;padding:18px;margin-bottom:18px;}
+.v5-recap-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);align-items:baseline;}
+.v5-recap-row:last-child{border-bottom:none;}
+.v5-recap-key{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:90px;flex-shrink:0;}
+.v5-recap-val{font-size:13px;color:var(--ink);font-weight:500;}
+.v5-step-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.v5-btn-primary{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:11px;padding:11px 20px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  text-decoration:none;transition:.2s;font-family:inherit;
+  box-shadow:0 4px 12px rgba(0,121,193,.28);
+}
+.v5-btn-primary:hover{background:#0068a8;transform:translateY(-1px);}
+.v5-btn-primary-send{background:linear-gradient(135deg,var(--blue),var(--cyan));padding:13px 26px;font-size:14px;}
+.v5-btn-ghost{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:var(--muted);
+  border:1.5px solid var(--border);border-radius:11px;
+  padding:11px 18px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
+}
+.v5-btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
+.v5-btn-ghost-sm{
+  display:inline-flex;align-items:center;gap:5px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;
+  padding:5px 10px;font-size:11px;font-weight:600;
+  cursor:pointer;transition:.15s;text-decoration:none;font-family:inherit;
+}
+.v5-msg{font-size:13px;padding:10px 14px;border-radius:9px;display:none;margin-bottom:12px;}
+.v5-msg.err-show{background:#fee2e2;color:#991b1b;display:block;}
+.v5-msg.ok-show{background:#d1fae5;color:#065f46;display:block;}
+.v5-section-head{margin-bottom:20px;}
+.v5-section-head h2{font-size:19px;font-weight:800;color:var(--ink);margin:0 0 4px;}
+.v5-section-head p{font-size:13px;color:var(--muted);margin:0;}
+.v5-requests-list{display:flex;flex-direction:column;gap:10px;}
+.v5-request-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;}
+.v5-request-card.replied{border-left:4px solid var(--green);}
+.v5-request-card.pending{border-left:4px solid var(--orange);}
+.v5-req-domain{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);background:#e0f2fe;padding:2px 7px;border-radius:5px;display:inline-block;}
+.v5-req-title{font-size:13px;font-weight:700;color:var(--ink);margin:5px 0 3px;}
+.v5-req-date{font-size:11px;color:var(--muted);}
+.v5-req-reply{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-top:8px;font-size:12px;color:#065f46;line-height:1.6;}
+.v5-empty-state{text-align:center;padding:44px 24px;border:2px dashed var(--border);border-radius:18px;background:var(--white);}
+.v5-empty-ico{font-size:38px;margin-bottom:10px;}
+.v5-empty-state strong{display:block;font-size:15px;color:var(--ink);margin-bottom:6px;}
+.v5-empty-state p{font-size:13px;color:var(--muted);margin:0 0 18px;}
+.v5-attach-box{border:1.5px solid var(--border);border-radius:13px;padding:16px;margin-bottom:12px;}
+.v5-attach-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.v5-attach-ico{font-size:20px;width:40px;height:40px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.v5-attach-head strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.v5-attach-head p{font-size:12px;color:var(--muted);margin:0;}
+.v5-sm-intro{display:flex;flex-direction:column;gap:14px;}
+.v5-sm-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;display:flex;gap:14px;align-items:flex-start;}
+.v5-sm-ico{font-size:26px;flex-shrink:0;}
+.v5-sm-card strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.v5-sm-card p{font-size:12px;color:var(--muted);margin:0 0 6px;line-height:1.6;}
+.v5-sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.v5-sm-col{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.v5-sm-col-head{padding:10px 14px;font-size:12px;font-weight:700;}
+.v5-sm-col-head.green{background:#d1fae5;color:#065f46;}
+.v5-sm-col-head.blue{background:#dbeafe;color:#1e40af;}
+.v5-sm-col ul{list-style:none;margin:0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+.v5-sm-col ul li{font-size:12px;color:var(--muted);padding-left:14px;position:relative;}
+.v5-sm-col ul li::before{content:'•';position:absolute;left:0;color:var(--blue);}
+.v5-espace-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.v5-espace-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:20px 16px;text-align:center;
+  text-decoration:none;transition:.2s;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+}
+.v5-espace-card:hover{border-color:var(--blue);box-shadow:0 4px 18px rgba(0,121,193,.1);transform:translateY(-2px);}
+.v5-espace-ico{font-size:26px;}
+.v5-espace-card strong{font-size:13px;font-weight:700;color:var(--ink);}
+.v5-espace-card span{font-size:11px;color:var(--muted);text-align:center;}
+.v5-quick-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px;}
+.v5-quick{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:6px 11px;font-size:11px;font-weight:600;
+  color:var(--muted);text-decoration:none;transition:.15s;
+}
+.v5-quick:hover{color:var(--blue);border-color:var(--blue);}
+/* Flash message */
+.v67-flash{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#0d1e30;color:#fff;border-radius:10px;
+  padding:11px 20px;font-size:13px;font-weight:600;
+  z-index:9999;opacity:0;transition:opacity .3s;
+  pointer-events:none;white-space:nowrap;
+}
+.v67-flash.show{opacity:1;}
+@media(max-width:768px){
+  .v5-tabs-bar{padding:0 8px;}
+  .v5-tab{padding:12px 10px;font-size:11px;gap:4px;}
+  .v5-tab-ico{font-size:14px;}
+  .v5-tab-content{padding:16px;}
+  .v5-hero-bar{flex-direction:column;gap:14px;padding:18px;}
+  .v5-kpi-row{width:100%;}
+  .v5-kpi{flex:1;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .v5-domain-pill{font-size:12px;padding:10px 11px;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+  .v5-sm-grid{grid-template-columns:1fr;}
+  .v5-steps{padding:12px 16px;}
+  .v5-step-label{font-size:9px;}
+  .v5-step-panel{padding:18px 14px;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+<link rel="stylesheet" href="v58-styles.css">
 </head>
-<body>
-<!-- Topbar -->
-<header class="topbar">
-  <a class="topbar-brand" href="dashboard.html"><img src="./assets/popeonline-logo.png" alt="POPE Online"/>POPE Online</a>
-  <span class="topbar-sub">Espace public</span>
-  <nav class="topbar-nav">
-    <a class="tbtn" href="vault.html?space=public&return=dashboard.html">📂 Dépôt</a>
-    <a class="tbtn" href="clausier.html">📚 Clausier</a>
-    <a class="tbtn" href="referral.html">🎁 Parrainage</a>
-    <a class="tbtn" href="profile.html">Mon compte</a>
-    <button class="tbtn" id="logoutBtn">Déconnexion</button>
-  </nav>
-  <button id="burgerBtn" aria-label="Menu" onclick="document.getElementById('mobileMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
+<body data-logout-target="public.html" class="bg po-v14-dashboard">
+
+<header class="v40-topbar">
+  <div class="v40-topbar-inner">
+    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>Conseil &amp; Expertise</small>
+      </div>
+    </a>
+    <div class="v40-topbar-sep"></div>
+    <span class="v40-topbar-sub">Espace public</span>
+    <nav class="v40-topbar-nav">
+      <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=dashboard.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="clausier.html">📚 Clausier</a>
+      <a class="v40-topbar-btn" href="referral.html">🎁 Parrainage</a>
+      <a class="v40-topbar-btn" href="profile.html">Mon compte</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
-<div id="mobileMenu">
-  <a href="vault.html?space=public&return=dashboard.html">📂 Dépôt sécurisé</a>
+<div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="vault.html?space=public&amp;return=dashboard.html">📂 Dépôt</a>
   <a href="clausier.html">📚 Clausier</a>
   <a href="referral.html">🎁 Parrainage</a>
   <a href="profile.html">👤 Mon compte</a>
-  <div class="msep"></div>
-  <button id="mobileLogoutBtn">🚪 Déconnexion</button>
+  <div class="v40-mobile-menu-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
 </div>
-<!-- Trial alert -->
-<div id="trialAlert" style="display:none" class="trial-alert">
-  <span style="font-size:20px">⏳</span>
-  <div><strong id="trialTitle">Période d'essai</strong><small id="trialBody"></small></div>
-  <a href="pricing.html" class="trial-cta">Voir les offres →</a>
-</div>
-<!-- Expired overlay -->
-<div id="expiredOverlay" style="display:none" class="expired-overlay">
-  <div class="expired-card">
-    <div style="font-size:38px;margin-bottom:12px">⏰</div>
-    <h2>Période d'essai terminée</h2>
-    <p>L'accès au Conseil Expert est suspendu. Choisissez un plan pour reprendre immédiatement.</p>
-    <a href="pricing.html" class="btn btn-primary" style="display:inline-flex;margin-bottom:10px">🚀 Voir les offres</a><br>
-    <button class="btn-sm" style="margin-top:8px" onclick="document.getElementById('expiredOverlay').style.display='none'">Continuer en accès limité</button>
-  </div>
-</div>
+
+<main class="v5-workspace">
+
+<script>var EXPERT_PAGE='expert.html';var EXPERT_PAGE_MISSION='mission.html';</script>
+
 <!-- Tabs -->
-<div class="tabs-bar">
-  <button class="tab-btn active" data-tab="besoin" onclick="switchTab('besoin')">🎯 Mon Besoin</button>
-  <button class="tab-btn" data-tab="experts" onclick="switchTab('experts')">👤 Mes Experts</button>
-  <button class="tab-btn" data-tab="surmesure" onclick="switchTab('surmesure')">📋 Sur Mesure</button>
-  <button class="tab-btn" data-tab="espace" onclick="switchTab('espace')">⚙️ Mon Espace</button>
+<div class="v5-tabs-bar">
+  <button class="v5-tab active" data-tab="besoin"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab" data-tab="experts"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
+  <button class="v5-tab" data-tab="surmesure"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
+  <button class="v5-tab" data-tab="espace"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
 </div>
-<main>
-<!-- BESOIN -->
-<div id="tab-besoin" class="tab-pane active"><div class="tab-content">
-  <div class="hero">
-    <div class="hero-text">
-      <div class="hero-eyebrow">🏛️ Espace public — Collectivités &amp; organisations</div>
-      <h1 id="heroWelcome" class="hero-title">Bonjour 👋</h1>
-      <p class="hero-sub">Exprimez votre besoin. Un expert qualifié prend en charge votre dossier sous 48h ouvrées.</p>
+
+<!-- Alerte trial -->
+<div id="trialAlert" hidden class="v5-trial-alert">
+  <span style="font-size:20px">⏳</span>
+  <div>
+    <strong id="trialAlertTitle">Période d'essai</strong>
+    <div id="trialAlertBody"></div>
+  </div>
+  <a href="pricing.html" class="v5-trial-cta">Voir les plans →</a>
+</div>
+
+<!-- Overlay expiré -->
+<div id="trialExpiredOverlay" hidden class="v5-expired-overlay">
+  <div class="v5-expired-card">
+    <div style="font-size:42px;margin-bottom:14px">⏰</div>
+    <h2>Votre période d'essai est terminée</h2>
+    <p>L'accès au Conseil Expert est suspendu. Choisissez un plan pour reprendre immédiatement.</p>
+    <a href="pricing.html" class="v5-btn-primary" style="display:inline-flex;margin-bottom:10px">🚀 Voir les offres</a><br>
+    <button onclick="document.getElementById('trialExpiredOverlay').setAttribute('hidden','')" class="v5-btn-ghost-sm">Continuer en accès limité</button>
+  </div>
+</div>
+
+<!-- Flash -->
+<div class="v67-flash" id="v67Flash"></div>
+
+<!-- ══ ONGLET MON BESOIN ══ -->
+<div id="tab-besoin" class="v5-tab-content">
+
+  <!-- Hero KPIs -->
+  <div class="v5-hero-bar">
+    <div class="v5-hero-text">
+      <div class="v5-hero-eyebrow">🏛️ Espace public — Collectivités &amp; organisations</div>
+      <h1 id="dashWelcome" class="v5-hero-title">Bonjour 👋</h1>
+      <p class="v5-hero-sub">Exprimez votre besoin. Un expert qualifié prend en charge votre dossier sous 48h ouvrées.</p>
     </div>
-    <div class="kpi-row">
-      <div class="kpi"><div class="kpi-n" id="kpiExpert">—</div><div class="kpi-l">Conseils<br>disponibles</div></div>
-      <div class="kpi"><div class="kpi-n" id="kpiPlan">—</div><div class="kpi-l">Plan actif</div></div>
+    <div class="v5-kpi-row">
+      <div class="v5-kpi">
+        <div class="v5-kpi-n" id="expertLeftN">—</div>
+        <div class="v5-kpi-l">Conseils Expert<br>disponibles</div>
+      </div>
+      <div class="v5-kpi">
+        <div class="v5-kpi-n" id="planN">—</div>
+        <div class="v5-kpi-l">Plan actif</div>
+      </div>
     </div>
   </div>
-  <div class="journey">
-    <!-- Steps nav -->
-    <div class="steps-nav">
-      <div class="step-item active" id="sn1" onclick="goStep(1)"><div class="step-num">1</div><div class="step-label">Domaine</div></div>
-      <div class="step-line"></div>
-      <div class="step-item" id="sn2" onclick="goStep(2)"><div class="step-num">2</div><div class="step-label">Besoin</div></div>
-      <div class="step-line"></div>
-      <div class="step-item" id="sn3" onclick="goStep(3)"><div class="step-num">3</div><div class="step-label">Documents</div></div>
-      <div class="step-line"></div>
-      <div class="step-item" id="sn4" onclick="goStep(4)"><div class="step-num">4</div><div class="step-label">Envoi</div></div>
-    </div>
-    <!-- Step 1 -->
-    <div class="step-panel active" id="step-panel-1">
-      <div class="panel-head"><h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2><p>Sélectionnez le domaine le plus proche de votre situation.</p></div>
-      <div class="domain-grid" id="domainGrid">
-        <button class="dpill" data-domain="Droit et Juridique" onclick="selectDomain(this)">⚖️ Droit &amp; Juridique</button>
-        <button class="dpill" data-domain="Marches publics" onclick="selectDomain(this)">🏛️ Marchés publics</button>
-        <button class="dpill" data-domain="Travaux et MOA" onclick="selectDomain(this)">🏗️ Travaux &amp; MOA</button>
-        <button class="dpill" data-domain="Management et Strategie" onclick="selectDomain(this)">📊 Management &amp; Stratégie</button>
-        <button class="dpill" data-domain="Finances et Gestion" onclick="selectDomain(this)">💰 Finances &amp; Gestion</button>
-        <button class="dpill" data-domain="Ressources humaines" onclick="selectDomain(this)">👥 Ressources humaines</button>
-        <button class="dpill" data-domain="Audit et Diagnostic" onclick="selectDomain(this)">🔍 Audit &amp; Diagnostic</button>
-        <button class="dpill" data-domain="Cybersecurite et SI" onclick="selectDomain(this)">🛡️ Cybersécurité &amp; SI</button>
-        <button class="dpill" data-domain="Transition ecologique" onclick="selectDomain(this)">🌿 Transition écologique</button>
-        <button class="dpill" data-domain="Communication" onclick="selectDomain(this)">📣 Communication</button>
-        <button class="dpill" data-domain="Mediation et Conflits" onclick="selectDomain(this)">🤝 Médiation &amp; Conflits</button>
-        <button class="dpill" data-domain="Intelligence artificielle" onclick="selectDomain(this)">🤖 Intelligence artificielle</button>
-        <button class="dpill" data-domain="Autre domaine" onclick="selectDomain(this)">➕ Autre domaine</button>
+
+  <!-- Parcours 4 étapes -->
+  <div class="v5-journey">
+    <div class="v5-steps">
+      <div class="v5-step active" data-step="1">
+        <div class="v5-step-n">1</div>
+        <div class="v5-step-label">Domaine</div>
       </div>
-      <div id="domainErr" style="display:none;font-size:12px;color:#dc2626;margin-bottom:10px">⚠️ Veuillez sélectionner un domaine avant de continuer.</div>
-      <div class="step-footer"><button class="btn btn-primary" onclick="goStep(2)">Continuer →</button></div>
-    </div>
-    <!-- Step 2 -->
-    <div class="step-panel" id="step-panel-2">
-      <div class="panel-head">
-        <div class="domain-badge" id="domainBadge"><span class="domain-badge-icon" id="dBIcon">🎯</span><div style="flex:1"><span class="domain-badge-name" id="dBName">—</span><span class="domain-badge-sub">Domaine sélectionné</span></div><button class="domain-change" onclick="goStep(1)">✕ Changer</button></div>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="2">
+        <div class="v5-step-n">2</div>
+        <div class="v5-step-label">Besoin</div>
       </div>
-      <div class="field"><label class="field-lbl" for="fTitle">En quelques mots <span class="req">★</span></label><input class="inp" id="fTitle" placeholder="Ex : avis juridique sur un marché public, analyse d'un bail…" maxlength="120"/></div>
-      <div id="accordions">
-        <div class="acc open" id="accCtx">
-          <button type="button" class="acc-trigger" onclick="toggleAcc('accCtx')"><span class="acc-ico">🏢</span><span class="acc-lbl">Contexte de la demande<span class="acc-val" id="pCtx">Qui vous êtes, votre organisation…</span></span><span class="acc-dot"></span><span class="acc-chev">▶</span></button>
-          <div class="acc-body">
-            <div class="acc-field"><label for="fCtx">Contexte &amp; organisation</label><textarea class="txa" id="fCtx" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel…" oninput="updAcc('accCtx','fCtx','pCtx')"></textarea></div>
-            <div class="acc-field"><label for="fProb">Problème à résoudre</label><textarea class="txa" id="fProb" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea></div>
-          </div>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="3">
+        <div class="v5-step-n">3</div>
+        <div class="v5-step-label">Documents</div>
+      </div>
+      <div class="v5-step-line"></div>
+      <div class="v5-step" data-step="4">
+        <div class="v5-step-n">4</div>
+        <div class="v5-step-label">Envoi</div>
+      </div>
+    </div>
+
+    <!-- Étape 1 : Domaine -->
+    <div class="v5-step-panel active" id="step-panel-1">
+      <div class="v5-panel-head">
+        <h2>Quel domaine d'expertise souhaitez-vous mobiliser ?</h2>
+        <p>Sélectionnez le domaine le plus proche de votre situation.</p>
+      </div>
+      <div class="v5-domain-grid" id="domainGrid">
+        <button class="v5-domain-pill" data-domain="Droit et Juridique">⚖️ Droit &amp; Juridique</button>
+        <button class="v5-domain-pill" data-domain="Marches publics">🏛️ Marchés publics</button>
+        <button class="v5-domain-pill" data-domain="Travaux et MOA">🏗️ Travaux &amp; MOA</button>
+        <button class="v5-domain-pill" data-domain="Management et Strategie">📊 Management &amp; Stratégie</button>
+        <button class="v5-domain-pill" data-domain="Finances et Gestion">💰 Finances &amp; Gestion</button>
+        <button class="v5-domain-pill" data-domain="Ressources humaines">👥 Ressources humaines</button>
+        <button class="v5-domain-pill" data-domain="Audit et Diagnostic">🔍 Audit &amp; Diagnostic</button>
+        <button class="v5-domain-pill" data-domain="Cybersecurite et SI">🛡️ Cybersécurité &amp; SI</button>
+        <button class="v5-domain-pill" data-domain="Transition ecologique">🌿 Transition écologique</button>
+        <button class="v5-domain-pill" data-domain="Communication">📣 Communication</button>
+        <button class="v5-domain-pill" data-domain="Mediation et Conflits">🤝 Médiation &amp; Conflits</button>
+        <button class="v5-domain-pill" data-domain="Intelligence artificielle">🤖 Intelligence artificielle</button>
+        <button class="v5-domain-pill" data-domain="Autre domaine">➕ Autre domaine</button>
+      </div>
+      <div class="v5-step-footer">
+        <button class="v5-btn-primary" id="btnStep1Next">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Étape 2 : Description -->
+    <div class="v5-step-panel" id="step-panel-2">
+      <div class="v5-panel-head">
+        <div class="v58-domain-badge" id="v58DomainBadge">
+          <span class="v58-domain-badge-icon" id="v58DomainIcon">🎯</span>
+          <span class="v58-domain-badge-text">
+            <span id="v58DomainName">—</span>
+            <span class="v58-domain-badge-sub">Domaine d'expertise sélectionné</span>
+          </span>
+          <button class="v58-domain-change" type="button" id="btnChangeDomain">✕ Changer</button>
         </div>
-        <div class="acc" id="accObj">
-          <button type="button" class="acc-trigger" onclick="toggleAcc('accObj')"><span class="acc-ico">🎯</span><span class="acc-lbl">Objectif &amp; résultat attendu<span class="acc-val" id="pObj">Ce que vous attendez de l'expert…</span></span><span class="acc-dot"></span><span class="acc-chev">▶</span></button>
-          <div class="acc-body">
-            <div class="acc-field"><label for="fObj">Objectif recherché</label><textarea class="txa" id="fObj" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, arbitrage, rédaction…" oninput="updAcc('accObj','fObj','pObj')"></textarea></div>
-            <div class="acc-row">
-              <div class="acc-field"><label for="fDecision">Décision attendue</label><input class="inp" id="fDecision" placeholder="Valider, refuser, arbitrer…"/></div>
-              <div class="acc-field"><label for="fLivrable">Livrable attendu</label><input class="inp" id="fLivrable" placeholder="Note, courrier, analyse, avis…"/></div>
+
+        <div class="v5-field-group">
+          <label class="v5-label">En quelques mots <span class="v5-req">★</span></label>
+          <input class="v5-input" id="besoInTitle" placeholder="Ex : avis juridique sur un marché public, analyse d'un bail commercial…" maxlength="120"/>
+        </div>
+
+        <!-- Accordéons structurés -->
+        <div id="v58DescAccordion">
+
+          <div class="v58-acc is-open" id="v58AccCtx">
+            <button type="button" class="v58-acc-trigger">
+              <span class="v58-acc-ico">🏢</span>
+              <span class="v58-acc-lbl">Contexte de la demande<span class="v58-acc-val" id="prevCtx">Qui vous êtes, votre organisation…</span></span>
+              <span class="v58-acc-dot"></span>
+              <span class="v58-acc-chevron">▶</span>
+            </button>
+            <div class="v58-acc-body">
+              <div class="v58-field">
+                <label>Contexte &amp; organisation</label>
+                <textarea class="v58-textarea" id="descContexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel de la demande…"></textarea>
+              </div>
+              <div class="v58-field">
+                <label>Problème à résoudre</label>
+                <textarea class="v58-textarea" id="descProbleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="acc" id="accCon">
-          <button type="button" class="acc-trigger" onclick="toggleAcc('accCon')"><span class="acc-ico">⚠️</span><span class="acc-lbl">Contraintes &amp; risques<span class="acc-val" id="pCon">Délais, sensibilité, points bloquants…</span></span><span class="acc-dot"></span><span class="acc-chev">▶</span></button>
-          <div class="acc-body">
-            <div class="acc-field"><label for="fContraintes">Contraintes connues</label><textarea class="txa" id="fContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…" oninput="updAcc('accCon','fContraintes','pCon')"></textarea></div>
-            <div class="acc-field"><label for="fRisques">Points sensibles ou risques</label><textarea class="txa" id="fRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea></div>
-          </div>
-        </div>
-        <div class="acc" id="accAct">
-          <button type="button" class="acc-trigger" onclick="toggleAcc('accAct')"><span class="acc-ico">👥</span><span class="acc-lbl">Acteurs, échéance &amp; pièces<span class="acc-val" id="pAct">Qui est impliqué, délais, documents…</span></span><span class="acc-dot"></span><span class="acc-chev">▶</span></button>
-          <div class="acc-body">
-            <div class="acc-row">
-              <div class="acc-field"><label for="fActeurs">Acteurs concernés</label><input class="inp" id="fActeurs" placeholder="Élu, DG, prestataire, usager…"/></div>
-              <div class="acc-field"><label for="fDeadline">Échéance souhaitée</label><input class="inp" id="fDeadline" placeholder="Avant vendredi / sous 10 jours…"/></div>
+
+          <div class="v58-acc" id="v58AccObj">
+            <button type="button" class="v58-acc-trigger">
+              <span class="v58-acc-ico">🎯</span>
+              <span class="v58-acc-lbl">Objectif &amp; résultat attendu<span class="v58-acc-val" id="prevObj">Ce que vous attendez de l'expert…</span></span>
+              <span class="v58-acc-dot"></span>
+              <span class="v58-acc-chevron">▶</span>
+            </button>
+            <div class="v58-acc-body">
+              <div class="v58-field">
+                <label>Objectif recherché</label>
+                <textarea class="v58-textarea" id="descObjectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, réponse, arbitrage, rédaction…"></textarea>
+              </div>
+              <div class="v58-row">
+                <div class="v58-field">
+                  <label>Décision attendue</label>
+                  <input type="text" class="v58-input" id="descDecision" placeholder="Valider, refuser, arbitrer, répondre…"/>
+                </div>
+                <div class="v58-field">
+                  <label>Livrable attendu</label>
+                  <input type="text" class="v58-input" id="descLivrable" placeholder="Note, courrier, analyse, trame, avis…"/>
+                </div>
+              </div>
             </div>
-            <div class="acc-row">
-              <div class="acc-field"><label for="fPublic">Destinataire final</label><input class="inp" id="fPublic" placeholder="Conseil municipal, commission…" oninput="updAcc('accAct','fPublic','pAct')"/></div>
-              <div class="acc-field"><label for="fPieces">Pièces disponibles</label><input class="inp" id="fPieces" placeholder="Contrat, rapport, délibération…"/></div>
+          </div>
+
+          <div class="v58-acc" id="v58AccCon">
+            <button type="button" class="v58-acc-trigger">
+              <span class="v58-acc-ico">⚠️</span>
+              <span class="v58-acc-lbl">Contraintes &amp; risques<span class="v58-acc-val" id="prevCon">Délais, sensibilité, points bloquants…</span></span>
+              <span class="v58-acc-dot"></span>
+              <span class="v58-acc-chevron">▶</span>
+            </button>
+            <div class="v58-acc-body">
+              <div class="v58-field">
+                <label>Contraintes connues</label>
+                <textarea class="v58-textarea" id="descContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…"></textarea>
+              </div>
+              <div class="v58-field">
+                <label>Points sensibles ou risques</label>
+                <textarea class="v58-textarea" id="descRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="acc" id="accPlus">
-          <button type="button" class="acc-trigger" onclick="toggleAcc('accPlus')"><span class="acc-ico">💬</span><span class="acc-lbl">Précisions complémentaires<span class="acc-val" id="pPlus">Niveau de détail, historique…</span></span><span class="acc-dot"></span><span class="acc-chev">▶</span></button>
-          <div class="acc-body">
-            <div class="acc-field"><label for="fNiveau">Niveau de détail souhaité</label><input class="inp" id="fNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/></div>
-            <div class="acc-field"><label for="fDesc">Informations complémentaires libres</label><textarea class="txa" id="fDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…" oninput="updAcc('accPlus','fDesc','pPlus')"></textarea></div>
+
+          <div class="v58-acc" id="v58AccAct">
+            <button type="button" class="v58-acc-trigger">
+              <span class="v58-acc-ico">👥</span>
+              <span class="v58-acc-lbl">Acteurs, échéance &amp; pièces<span class="v58-acc-val" id="prevAct">Qui est impliqué, délais, documents…</span></span>
+              <span class="v58-acc-dot"></span>
+              <span class="v58-acc-chevron">▶</span>
+            </button>
+            <div class="v58-acc-body">
+              <div class="v58-row">
+                <div class="v58-field">
+                  <label>Acteurs concernés</label>
+                  <input type="text" class="v58-input" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
+                </div>
+                <div class="v58-field">
+                  <label>Public / destinataire final</label>
+                  <input type="text" class="v58-input" id="descPublic" placeholder="Conseil municipal, commission, direction…"/>
+                </div>
+              </div>
+              <div class="v58-row">
+                <div class="v58-field">
+                  <label>Échéance souhaitée</label>
+                  <input type="text" class="v58-input" id="needDeadline" placeholder="Avant vendredi / sous 10 jours…"/>
+                </div>
+                <div class="v58-field">
+                  <label>Pièces disponibles</label>
+                  <input type="text" class="v58-input" id="descPieces" placeholder="Contrat, rapport, délibération, DCE…"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="v58-acc" id="v58AccPlus">
+            <button type="button" class="v58-acc-trigger">
+              <span class="v58-acc-ico">💬</span>
+              <span class="v58-acc-lbl">Précisions complémentaires<span class="v58-acc-val" id="prevPlus">Niveau de détail, historique…</span></span>
+              <span class="v58-acc-dot"></span>
+              <span class="v58-acc-chevron">▶</span>
+            </button>
+            <div class="v58-acc-body">
+              <div class="v58-field">
+                <label>Niveau de détail souhaité</label>
+                <input type="text" class="v58-input" id="descNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/>
+              </div>
+              <div class="v58-field">
+                <label>Informations complémentaires libres</label>
+                <textarea class="v58-textarea" id="besoInDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…"></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /v58DescAccordion -->
+
+        <!-- Nature du traitement -->
+        <div class="v58-trt">
+          <div class="v58-trt-title">🔧 Nature du traitement attendu</div>
+          <div class="v58-trt-grid">
+            <label class="v58-trt-card">
+              <input type="radio" name="besoType" value="conseil" checked/>
+              <div class="v58-trt-head">🎯 Conseil Expert ponctuel</div>
+              <div class="v58-trt-desc">Réponse ciblée à un besoin précis, sécurisation juridique ou arbitrage.</div>
+              <div class="v58-trt-tags"><span class="v58-trt-tag">⏱ Sous 48h ouvrées</span><span class="v58-trt-tag">Ponctuel</span></div>
+            </label>
+            <label class="v58-trt-card">
+              <input type="radio" name="besoType" value="surmesure"/>
+              <div class="v58-trt-head">📋 Accompagnement approfondi</div>
+              <div class="v58-trt-desc">Dossier sensible, multi-acteurs ou nécessitant un cadrage complet Sur Mesure.</div>
+              <div class="v58-trt-tags"><span class="v58-trt-tag">📅 Planning à définir</span><span class="v58-trt-tag">Sur Mesure</span></div>
+            </label>
           </div>
         </div>
+
+        <!-- Draft IA -->
+        <div class="v58-draft">
+          <span class="v58-draft-ico">🛠️</span>
+          <div class="v58-draft-body">
+            <strong>Préparer un draft IA <span class="v58-draft-badge">Optionnel</span></strong>
+            <p>Générez un document de travail avant de soumettre à votre expert. Votre saisie est conservée et pré-remplie.</p>
+          </div>
+          <a href="app.html" id="lnkDraftTool" class="v58-draft-btn">Accéder à l'outil →</a>
+        </div>
+
       </div>
-      <div class="trt-title">🔧 Nature du traitement attendu</div>
-      <div class="trt-grid">
-        <label class="trt-card"><input type="radio" name="besoType" value="conseil" checked/><div><div class="trt-head">🎯 Conseil Expert ponctuel</div><div class="trt-desc">Réponse ciblée à un besoin précis, sécurisation juridique ou arbitrage.</div><div class="trt-tags"><span class="trt-tag">⏱ Sous 48h ouvrées</span><span class="trt-tag">Ponctuel</span></div></div></label>
-        <label class="trt-card"><input type="radio" name="besoType" value="surmesure"/><div><div class="trt-head">📋 Accompagnement approfondi</div><div class="trt-desc">Dossier sensible, multi-acteurs ou nécessitant un cadrage complet Sur Mesure.</div><div class="trt-tags"><span class="trt-tag">📅 Planning à définir</span><span class="trt-tag">Sur Mesure</span></div></div></label>
-      </div>
-      <div class="draft-promo">
-        <span class="draft-promo-ico">🛠️</span>
-        <div class="draft-promo-body"><strong>Préparer un draft IA <span class="draft-badge">Optionnel</span></strong><p>Générez un document de travail avant de soumettre à votre expert.</p></div>
-        <a href="app.html" id="lnkDraftTool" class="draft-link">Accéder →</a>
-      </div>
-      <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goStep(1)">← Retour</button>
-        <button class="btn btn-primary" onclick="goStep(3)">Continuer →</button>
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" id="btnStep2Back">← Retour</button>
+        <button class="v5-btn-primary" id="btnStep2Next">Continuer →</button>
       </div>
     </div>
-    <!-- Step 3 -->
-    <div class="step-panel" id="step-panel-3">
-      <div class="panel-head"><h2>📎 Joindre des documents <span style="font-size:12px;color:var(--muted);font-weight:400">(optionnel)</span></h2><p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p></div>
-      <div class="attach-box" style="border-color:#bbf7d0;background:#f0fdf4">
-        <div class="attach-head">
-          <div class="attach-ico" style="background:#dcfce7">🛠️</div>
-          <div style="flex:1"><strong style="color:#14532d">Joindre un draft IA préparé</strong><p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici.</p></div>
-          <a href="app.html" id="lnkDraftStep3" class="btn-sm" style="flex-shrink:0;white-space:nowrap">Créer →</a>
-        </div>
-        <select class="attach-sel" id="archiveAttachSelect" style="border-color:#bbf7d0"><option value="">Ne pas joindre de draft préparé</option></select>
-        <div id="draftOkMsg" class="draft-ok-msg">✅ Draft disponible et sélectionné</div>
+
+    <!-- Étape 3 : Documents -->
+    <div class="v5-step-panel" id="step-panel-3">
+      <div class="v5-panel-head">
+        <h2>📎 Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
+        <p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
       </div>
-      <div class="attach-box">
-        <div class="attach-head">
-          <div class="attach-ico">📂</div>
-          <div style="flex:1"><strong>Pièces du dépôt sécurisé 48h</strong><p>Joignez des documents complémentaires depuis votre espace sécurisé.</p></div>
-          <a href="vault.html?space=public&return=dashboard.html" class="btn-sm" style="flex-shrink:0;white-space:nowrap">Gérer →</a>
+
+      <!-- Draft IA -->
+      <div class="v5-attach-box" style="border-color:#bbf7d0;background:#f0fdf4">
+        <div class="v5-attach-head">
+          <div class="v5-attach-ico" style="background:#dcfce7">🛠️</div>
+          <div style="flex:1">
+            <strong style="color:#14532d">Joindre un draft IA préparé</strong>
+            <p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici et peut être joint à votre demande expert.</p>
+          </div>
+          <a href="app.html" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:12px;padding:7px 14px;background:#16a34a">Créer un draft →</a>
         </div>
-        <div id="vaultExpertList" class="vault-list">Aucune pièce disponible.</div>
-      </div>
-      <div class="attach-box">
-        <div class="attach-head">
-          <div class="attach-ico">📎</div>
-          <div style="flex:1"><strong>Ajouter des fichiers depuis votre ordinateur</strong><p>Conservés dans le parcours courant et communiqués à l'expert avec votre demande.</p></div>
+        <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0;border-color:#bbf7d0">
+          <option value="">Ne pas joindre de draft préparé</option>
+        </select>
+        <div id="v59DraftStatus" style="display:none;margin-top:8px;font-size:12px;color:#166534;font-weight:600">
+          ✅ Draft disponible et sélectionné
         </div>
-        <label id="uploadZone" class="upload-zone" for="fileInput">
-          <strong>Glissez-déposez vos fichiers ici</strong><span>ou cliquez pour sélectionner</span>
-          <input id="fileInput" type="file" multiple style="display:none"/>
-        </label>
-        <div id="localFilesList"></div>
       </div>
-      <div class="info-tip">💡 <strong>Conseil :</strong> Un draft bien préparé augmente la qualité et la rapidité de la réponse experte.</div>
-      <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goStep(2)">← Retour</button>
-        <button class="btn btn-primary" onclick="goStep(4)">Continuer →</button>
+
+      <!-- Pièces vault -->
+      <div class="v5-attach-box">
+        <div class="v5-attach-head">
+          <div class="v5-attach-ico">📂</div>
+          <div style="flex:1">
+            <strong>Pièces du dépôt sécurisé 48h</strong>
+            <p>Joignez des documents complémentaires depuis votre espace sécurisé (contrats, rapports, délibérations…).</p>
+          </div>
+          <a href="vault.html?space=public&amp;return=dashboard.html" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap">Gérer le dépôt →</a>
+        </div>
+        <div id="vaultExpertList" style="font-size:12px;margin-top:4px;color:var(--muted)">Chargement…</div>
+      </div>
+
+      <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;margin-top:4px">
+        💡 <strong>Conseil :</strong> Un draft bien préparé augmente significativement la qualité et la rapidité de la réponse experte.
+      </div>
+
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" id="btnStep3Back">← Retour</button>
+        <button class="v5-btn-primary" id="btnStep3Next">Continuer →</button>
       </div>
     </div>
-    <!-- Step 4 -->
-    <div class="step-panel" id="step-panel-4">
-      <div class="panel-head"><h2>Récapitulatif de votre demande</h2><p>Vérifiez les informations avant d'envoyer à votre expert.</p></div>
-      <div class="recap-card">
-        <div class="recap-row"><span class="recap-key">Domaine</span><span class="recap-val" id="rDomain">—</span></div>
-        <div class="recap-row"><span class="recap-key">Objet</span><span class="recap-val" id="rTitle">—</span></div>
-        <div class="recap-row"><span class="recap-key">Type</span><span class="recap-val" id="rType">—</span></div>
-        <div class="recap-row"><span class="recap-key">Quota</span><span class="recap-val" id="rQuota">—</span></div>
-        <div class="recap-row" id="rFilesRow" style="display:none"><span class="recap-key">Fichiers</span><span class="recap-val" id="rFiles">—</span></div>
+
+    <!-- Étape 4 : Envoi -->
+    <div class="v5-step-panel" id="step-panel-4">
+      <div class="v5-panel-head">
+        <h2>Récapitulatif de votre demande</h2>
+        <p>Vérifiez avant d'envoyer à votre expert.</p>
       </div>
-      <div class="vmsg" id="msgBesoin"></div>
-      <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goStep(3)">← Retour</button>
-        <button class="btn btn-primary send" id="btnSend" onclick="submitBesoin()">🎯 Soumettre à un expert</button>
+      <div class="v5-recap-card">
+        <div class="v5-recap-row"><span class="v5-recap-key">Domaine</span><span class="v5-recap-val" id="recapDomain">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Objet</span><span class="v5-recap-val" id="recapTitle">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Type</span><span class="v5-recap-val" id="recapType">—</span></div>
+        <div class="v5-recap-row"><span class="v5-recap-key">Quota</span><span class="v5-recap-val" id="recapQuota">—</span></div>
+      </div>
+      <div class="v5-msg" id="msgBesoin"></div>
+      <div class="v5-step-footer">
+        <button class="v5-btn-ghost" id="btnStep4Back">← Retour</button>
+        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend">🎯 Soumettre à un expert</button>
       </div>
     </div>
-  </div><!-- /journey -->
-  <div class="quick-links">
-    <a href="vault.html?space=public&return=dashboard.html" class="quick">📂 Dépôt sécurisé</a>
-    <a href="clausier.html" class="quick">📚 Clausier</a>
-    <a href="tutoriel.html" class="quick">▶️ Tutoriel</a>
-    <a href="referral.html" class="quick">🎁 Parrainage</a>
+
+  </div><!-- /v5-journey -->
+
+  <!-- Liens rapides -->
+  <div class="v5-quick-links">
+    <a href="vault.html?space=public&amp;return=dashboard.html" class="v5-quick">📂 Dépôt sécurisé</a>
+    <a href="clausier.html" class="v5-quick">📚 Clausier</a>
+    <a href="tutoriel.html" class="v5-quick">▶️ Tutoriel</a>
+    <a href="referral.html" class="v5-quick">🎁 Parrainage</a>
   </div>
-</div></div>
-<!-- EXPERTS -->
-<div id="tab-experts" class="tab-pane"><div class="tab-content">
-  <div class="section-head"><h2>Mes échanges experts</h2><p>Historique de vos dossiers soumis et réponses de vos conseillers.</p><button class="btn-sm" onclick="loadRequests()" style="margin-top:8px">🔄 Actualiser</button></div>
-  <div id="expertRequestsList" class="requests-list"><div class="empty"><div class="empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p><button class="btn btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div></div>
-</div></div>
-<!-- SUR MESURE -->
-<div id="tab-surmesure" class="tab-pane"><div class="tab-content">
-  <div class="section-head"><h2>Sur Mesure</h2><p>Pour les dossiers complexes qui nécessitent un accompagnement dans la durée.</p></div>
-  <div class="sm-card"><div class="sm-ico">📋</div><div><strong>Qu'est-ce que le Sur Mesure ?</strong><p>Pour les dossiers multi-étapes, les accompagnements sur plusieurs semaines ou le pilotage de projet complexe. Un expert Pope Online est mobilisé sur la durée.</p></div></div>
-  <div class="sm-compare">
-    <div class="sm-col"><div class="sm-col-head green">🎯 Conseil Expert</div><ul><li>Besoin ponctuel identifié</li><li>Avis sous 48h ouvrées</li><li>Inclus dans votre offre</li></ul></div>
-    <div class="sm-col"><div class="sm-col-head blue">📋 Sur Mesure</div><ul><li>Dossier complexe, multi-étapes</li><li>Expert mobilisé en continu</li><li>Devis personnalisé</li></ul></div>
+
+</div><!-- /tab-besoin -->
+
+<!-- ══ ONGLET MES EXPERTS ══ -->
+<div id="tab-experts" class="v5-tab-content" hidden>
+  <div class="v5-section-head">
+    <h2>Mes échanges experts</h2>
+    <p>Historique de vos dossiers soumis et réponses de vos conseillers.</p>
+    <button class="v5-btn-ghost-sm" id="btnRefreshRequests" style="margin-top:8px">🔄 Actualiser</button>
   </div>
-  <div style="text-align:center"><a href="mission.html" class="btn btn-primary">📋 Qualifier mon besoin Sur Mesure →</a></div>
-</div></div>
-<!-- MON ESPACE -->
-<div id="tab-espace" class="tab-pane"><div class="tab-content">
-  <div class="section-head"><h2>Mon Espace</h2></div>
-  <div class="espace-grid">
-    <a href="profile.html" class="espace-card"><div class="espace-ico">👤</div><strong>Mon profil</strong><span>Informations, sécurité</span></a>
-    <a href="profile.html#abonnement" class="espace-card"><div class="espace-ico">💎</div><strong>Mon abonnement</strong><span>Plan, factures, résiliation</span></a>
-    <a href="vault.html?space=public&return=dashboard.html" class="espace-card"><div class="espace-ico">📂</div><strong>Dépôt sécurisé</strong><span>Mes documents 48h</span></a>
-    <a href="app.html" class="espace-card"><div class="espace-ico">🛠️</div><strong>Outil de rédaction IA</strong><span>Préparer un draft — illimité</span></a>
-    <a href="clausier.html" class="espace-card"><div class="espace-ico">📚</div><strong>Clausier documentaire</strong><span>Modèles officiels</span></a>
-    <a href="referral.html" class="espace-card"><div class="espace-ico">🎁</div><strong>Parrainage</strong><span>Inviter mes contacts</span></a>
+  <div id="expertRequestsList" class="v5-requests-list">
+    <div class="v5-empty-state">
+      <div class="v5-empty-ico">👤</div>
+      <strong>Aucun échange expert pour le moment.</strong>
+      <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
+      <button class="v5-btn-primary" id="btnGoToBesoin">🎯 Soumettre un besoin</button>
+    </div>
   </div>
-</div></div>
+</div>
+
+<!-- ══ ONGLET SUR MESURE ══ -->
+<div id="tab-surmesure" class="v5-tab-content" hidden>
+  <div class="v5-section-head">
+    <h2>Sur Mesure</h2>
+    <p>Pour les dossiers complexes qui nécessitent un accompagnement dans la durée.</p>
+  </div>
+  <div class="v5-sm-intro">
+    <div class="v5-sm-card">
+      <div class="v5-sm-ico">📋</div>
+      <div>
+        <strong>Qu'est-ce que le Sur Mesure ?</strong>
+        <p>Pour les dossiers multi-étapes, les accompagnements sur plusieurs semaines ou le pilotage de projet complexe. Un expert Pope Online est mobilisé sur la durée.</p>
+      </div>
+    </div>
+    <div class="v5-sm-grid">
+      <div class="v5-sm-col">
+        <div class="v5-sm-col-head green">🎯 Conseil Expert</div>
+        <ul>
+          <li>Besoin ponctuel identifié</li>
+          <li>Avis sous 48h ouvrées</li>
+          <li>Inclus dans votre offre</li>
+        </ul>
+      </div>
+      <div class="v5-sm-col">
+        <div class="v5-sm-col-head blue">📋 Sur Mesure</div>
+        <ul>
+          <li>Dossier complexe, multi-étapes</li>
+          <li>Expert mobilisé en continu</li>
+          <li>Devis personnalisé</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <a href="mission.html" class="v5-btn-primary">📋 Qualifier mon besoin Sur Mesure →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ONGLET MON ESPACE ══ -->
+<div id="tab-espace" class="v5-tab-content" hidden>
+  <div class="v5-section-head"><h2>Mon Espace</h2></div>
+  <div class="v5-espace-grid">
+    <a href="profile.html" class="v5-espace-card"><div class="v5-espace-ico">👤</div><strong>Mon profil</strong><span>Informations, sécurité</span></a>
+    <a href="profile.html#abonnement" class="v5-espace-card"><div class="v5-espace-ico">💎</div><strong>Mon abonnement</strong><span>Plan, factures, résiliation</span></a>
+    <a href="vault.html?space=public&amp;return=dashboard.html" class="v5-espace-card"><div class="v5-espace-ico">📂</div><strong>Dépôt sécurisé</strong><span>Mes documents 48h</span></a>
+    <a href="app.html" class="v5-espace-card"><div class="v5-espace-ico">🛠️</div><strong>Outil de rédaction IA</strong><span>Préparer un draft — illimité</span></a>
+    <a href="clausier.html" class="v5-espace-card"><div class="v5-espace-ico">📚</div><strong>Clausier documentaire</strong><span>Modèles officiels</span></a>
+    <a href="referral.html" class="v5-espace-card"><div class="v5-espace-ico">🎁</div><strong>Parrainage</strong><span>Inviter mes contacts</span></a>
+  </div>
+</div>
+
 </main>
+
+<!-- Auth check inline -->
 <script>
-/*
- * POPE Online V67 — Dashboard public
- * Architecture: zero external patch scripts. Single IIFE, single goStep.
- */
 (function(){
-'use strict';
-var API=window.__API__||'https://pope-online-v2.onrender.com';
-var FILES_KEY='pope_v67_local_files_public';
-var _domain='', _kpiExpert='—', _uploadReady=false;
-
-function $(i){return document.getElementById(i);}
-function tok(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
-function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function readJson(k){try{var r=localStorage.getItem(k)||sessionStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
-function writeJson(k,v){try{var s=JSON.stringify(v);localStorage.setItem(k,s);sessionStorage.setItem(k,s);}catch(e){}}
-
-function apiFetch(path,opts){
-  var h=Object.assign({'Content-Type':'application/json'},opts&&opts.headers);
-  var t=tok(); if(t) h['Authorization']='Bearer '+t;
-  return fetch(API+path,Object.assign({credentials:'include'},opts,{headers:h})).then(function(r){return r.ok?r.json():Promise.reject(r.status);});
-}
-
-function readState(){
-  var keys=['pope_v67_state_public','pope_v61_state_public','pope_v58_state_public'];
-  for(var i=0;i<keys.length;i++){var s=readJson(keys[i]);if(s&&Object.keys(s).length)return s;}
-  return {};
-}
-function saveState(patch){
-  var d=Object.assign({},readState(),patch||{});
-  ['pope_v67_state_public','pope_v61_state_public','pope_v58_state_public'].forEach(function(k){writeJson(k,d);});
-}
-
-/* Tab switch */
-window.switchTab=function(name){
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name);});
-  document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.toggle('active',p.id==='tab-'+name);});
-  if(name==='experts') loadRequests();
-};
-
-/* ══ goStep — Single, simple, never overridden ══ */
-window.goStep=function(n){
-  n=parseInt(n,10)||1;
-  if(n>1&&!_domain){
-    var g=$('domainGrid');
-    if(g){g.style.boxShadow='0 0 0 3px #ef4444';g.style.borderRadius='14px';setTimeout(function(){g.style.boxShadow='';g.style.borderRadius='';},1400);}
-    var e=$('domainErr');if(e)e.style.display='block';
-    return;
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
   }
-  var e=$('domainErr');if(e)e.style.display='none';
-  saveState({step:n});
-  [1,2,3,4].forEach(function(i){
-    var nav=$('sn'+i);if(!nav)return;
-    nav.classList.toggle('active',i===n);
-    nav.classList.toggle('done',i<n);
-  });
-  document.querySelectorAll('.step-panel').forEach(function(p){
-    p.classList.toggle('active',p.id==='step-panel-'+n);
-  });
-  if(n===3)enrichStep3();
-  if(n===4)updateRecap();
-};
+  function getToken(){
+    return sessionStorage.getItem('pope_session_token')||
+           localStorage.getItem('pope_session_token')||'';
+  }
+  function getApiBase(){
+    var e=window.__POPE_API_BASE__||'';
+    if(e) return String(e).replace(/\/$/,'');
+    var h=window.location.hostname;
+    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+    return 'https://pope-online-v2.onrender.com';
+  }
+  function redirectToLogin(){
+    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
+    window.location.replace('login.html?next='+path);
+  }
+  if(hasSession()){window.__popeAuthValidated=true;return;}
+  window.__popeAuthPending=true;
+  var headers={'Content-Type':'application/json'};
+  var token=getToken();
+  if(token) headers['Authorization']='Bearer '+token;
+  fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json().catch(function(){return{};});
+    })
+    .then(function(data){
+      if(data&&data.user){
+        localStorage.setItem('pope_session_active','1');
+        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
+        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        window.__popeAuthValidated=true;
+      } else throw new Error('missing_user');
+    })
+    .catch(function(){
+      window.__popeAuthValidated=false;
+      redirectToLogin();
+    })
+    .finally(function(){window.__popeAuthPending=false;});
+})();
+</script>
 
-/* Domain select */
-window.selectDomain=function(btn){
-  document.querySelectorAll('.dpill').forEach(function(b){b.classList.remove('selected');});
-  btn.classList.add('selected');
-  _domain=btn.getAttribute('data-domain');
-  window._domain=_domain;
-  saveState({domain:_domain,domainIcon:btn.textContent.trim().split(' ')[0]||'🎯'});
-  var b=$('domainBadge'),ic=$('dBIcon'),nm=$('dBName');
-  if(b)b.classList.add('visible');
-  if(ic)ic.textContent=btn.textContent.trim().split(' ')[0]||'🎯';
-  if(nm)nm.textContent=_domain;
-};
+<!-- Topbar mobile burger -->
+<script>
+(function(){
+  var burger=document.getElementById('v40Burger');
+  var menu=document.getElementById('v40MobileMenu');
+  if(!burger||!menu) return;
+  var spans=burger.querySelectorAll('span');
+  function setOpen(open){
+    if(open){
+      menu.classList.add('open');
+      spans[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';
+      spans[1].style.cssText='opacity:0;transform:scaleX(0)';
+      spans[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';
+    }else{
+      menu.classList.remove('open');
+      spans[0].style.cssText='';spans[1].style.cssText='';spans[2].style.cssText='';
+    }
+  }
+  burger.addEventListener('click',function(){setOpen(!menu.classList.contains('open'));});
+  menu.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){setOpen(false);});});
+  document.addEventListener('click',function(e){if(!burger.contains(e.target)&&!menu.contains(e.target))setOpen(false);});
+})();
+</script>
 
-/* Accordion */
-window.toggleAcc=function(id){var a=$(id);if(a)a.classList.toggle('open');};
-window.updAcc=function(accId,fieldId,prevId){
-  var field=$(fieldId);if(!field)return;
-  var acc=$(accId),prev=$(prevId),val=field.value.trim();
-  if(acc)acc.classList.toggle('has-value',val.length>0);
-  if(prev)prev.textContent=val?val.substring(0,50)+(val.length>50?'…':''):(prev.getAttribute('data-default')||prev.textContent);
-};
+<script>
+(function(){
+  'use strict';
 
-/* Enrich step 3 — called once per step 3 visit */
-function enrichStep3(){
-  /* Draft select */
-  var sel=$('archiveAttachSelect');
-  if(sel){
-    var keys=['pope_v54_generations','pope_v53_generations','pope_generations','pope_v61_generations','pope_ai_generations','pope_drafts'];
-    var gens=[];
-    for(var i=0;i<keys.length;i++){var g=readJson(keys[i]);if(Array.isArray(g)&&g.length){gens=g;break;}}
-    var selected=sessionStorage.getItem('pope_v61_attached_gen')||sessionStorage.getItem('pope_v58_attached_gen')||'';
-    sel.innerHTML='<option value="">Ne pas joindre de draft préparé</option>'+gens.map(function(g,i){
-      var id=String(g.id!=null?g.id:i);
-      var label=g.title||g.usecaseLabel||g.name||('Draft IA '+(i+1));
-      var suffix=g.createdAt?' — '+new Date(g.createdAt).toLocaleString('fr-FR'):'';
-      return '<option value="'+esc(id)+'">'+esc(label+suffix)+'</option>';
-    }).join('');
-    if(selected)sel.value=selected;
-    var ok=$('draftOkMsg');
-    if(ok)ok.style.display=(gens.length&&sel.value)?'block':'none';
-    sel.onchange=function(){
-      sessionStorage.setItem('pope_v61_attached_gen',sel.value||'');
-      var ok=$('draftOkMsg');if(ok)ok.style.display=sel.value?'block':'none';
+  /* ─── Config ─── */
+  var API = (function(){
+    var h = location.hostname;
+    if(h === 'localhost' || h === '127.0.0.1') return 'http://localhost:3000';
+    if(h.indexOf('staging') !== -1) return 'https://popeonline-staging.onrender.com';
+    return 'https://pope-online-v2.onrender.com';
+  })();
+  var SPACE = 'public';
+  var STORAGE_KEY = 'pope_v67_pub';
+  var TOKEN_KEY = 'pope_session_token';
+
+  /* ─── Helpers ─── */
+  function $(id){ return document.getElementById(id); }
+  function qs(sel,root){ return (root||document).querySelector(sel); }
+  function qsa(sel,root){ return Array.from((root||document).querySelectorAll(sel)); }
+  function token(){ return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || ''; }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+  function apiHeaders(){
+    var h = {'Content-Type':'application/json'};
+    var t = token();
+    if(t) h['Authorization'] = 'Bearer ' + t;
+    return h;
+  }
+  function apiFetch(path, opts){
+    opts = opts||{};
+    return fetch(API + path, {
+      method: opts.method||'GET',
+      headers: apiHeaders(),
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+      credentials: 'include'
+    }).then(function(r){
+      return r.json().catch(function(){return{};}).then(function(d){
+        if(!r.ok){ var e=new Error(d&&d.error||'HTTP '+r.status); e.status=r.status; e.data=d; throw e; }
+        return d;
+      });
+    });
+  }
+
+  /* ─── Auth ─── */
+  function getUser(){
+    try{ var r=localStorage.getItem('pope_session_user'); return r?JSON.parse(r):null; }catch(e){ return null; }
+  }
+  function clearSession(){
+    ['pope_session_active','pope_session_user','pope_session_token','pope_token']
+      .forEach(function(k){ localStorage.removeItem(k); });
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+  function logout(){
+    clearSession();
+    location.href = 'public.html';
+  }
+  function requireAuth(){
+    if(token()) return true;
+    if(localStorage.getItem('pope_session_active') === '1') return true;
+    location.href = 'login.html?next=dashboard.html';
+    return false;
+  }
+
+  /* ─── State ─── */
+  function defaultState(){
+    return {
+      step:1, domain:'', domainIcon:'🎯',
+      need:{}, selectedDraft:'', localFiles:[]
     };
-    var lnk=$('lnkDraftStep3');if(lnk)lnk.href='app.html?from=dashboard&step=2';
   }
-  /* Vault list */
-  var vault=$('vaultExpertList');
-  if(vault&&(!vault.textContent||/Aucune pièce disponible/i.test(vault.textContent))){
-    vault.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">'
-      +'<span style="font-size:12px;color:var(--muted)">Aucune pièce dans le dépôt sécurisé — optionnel.</span>'
-      +'<a href="vault.html?space=public&return='+encodeURIComponent('dashboard.html?step=3')+'" style="font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap">📂 Déposer →</a>'
-      +'</div>';
+  function loadState(){
+    try{
+      var raw = sessionStorage.getItem(STORAGE_KEY) || localStorage.getItem(STORAGE_KEY);
+      return raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
+    }catch(e){ return defaultState(); }
   }
-  /* Upload */
-  if(!_uploadReady){
-    _uploadReady=true;
-    var zone=$('uploadZone'),input=$('fileInput');
-    if(zone&&input){
-      function addFiles(list){
-        var cur=readJson(FILES_KEY)||[];
-        Array.prototype.slice.call(list||[]).forEach(function(f){cur.push({name:f.name,size:f.size?Math.ceil(f.size/1024)+' Ko':''});});
-        writeJson(FILES_KEY,cur);renderLocalFiles();
+  function saveState(patch){
+    var s = loadState();
+    if(patch) Object.assign(s, patch);
+    var json = JSON.stringify(s);
+    try{ sessionStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    return s;
+  }
+
+  /* ─── Collect form ─── */
+  function fieldVal(id){ var e=$(id); return e?(e.value||'').trim():''; }
+  function collectNeed(){
+    var radio = qs('input[name="besoType"]:checked');
+    return {
+      title:     fieldVal('besoInTitle'),
+      context:   fieldVal('descContexte'),
+      problem:   fieldVal('descProbleme'),
+      objective: fieldVal('descObjectif'),
+      decision:  fieldVal('descDecision'),
+      deliverable:fieldVal('descLivrable'),
+      constraints:fieldVal('descContraintes'),
+      risks:     fieldVal('descRisques'),
+      actors:    fieldVal('descActeurs'),
+      audience:  fieldVal('descPublic'),
+      deadline:  fieldVal('needDeadline'),
+      pieces:    fieldVal('descPieces'),
+      detailLevel:fieldVal('descNiveau'),
+      description:fieldVal('besoInDesc'),
+      treatment: radio ? radio.value : 'conseil'
+    };
+  }
+  function hydrateNeed(n){
+    n = n||{};
+    var fields = {
+      besoInTitle:n.title, descContexte:n.context, descProbleme:n.problem,
+      descObjectif:n.objective, descDecision:n.decision, descLivrable:n.deliverable,
+      descContraintes:n.constraints, descRisques:n.risks, descActeurs:n.actors,
+      descPublic:n.audience, needDeadline:n.deadline, descPieces:n.pieces,
+      descNiveau:n.detailLevel, besoInDesc:n.description
+    };
+    Object.keys(fields).forEach(function(id){
+      var el=$(id); if(el && fields[id]!=null) el.value=fields[id];
+    });
+    if(n.treatment){
+      var r = qs('input[name="besoType"][value="'+n.treatment+'"]');
+      if(r) r.checked=true;
+    }
+  }
+
+  /* ─── Domain ─── */
+  function applyDomain(domain, icon){
+    domain = domain||''; icon = icon||'🎯';
+    // Pills
+    qsa('.v5-domain-pill').forEach(function(b){
+      b.classList.toggle('selected', b.getAttribute('data-domain')===domain);
+    });
+    // Badge step 2
+    var badge=$('domainBadge'), name=$('domainBadgeName'), ico=$('domainBadgeIcon');
+    if(badge){ badge.classList.toggle('visible', !!domain); }
+    if(name) name.textContent = domain||'—';
+    if(ico) ico.textContent = icon;
+    // Save
+    saveState({domain:domain, domainIcon:icon});
+  }
+
+  /* ─── Navigation : LA SEULE FONCTION, UNE SEULE FOIS ─── */
+  function goStep(n){
+    n = parseInt(n,10)||1;
+    var s = loadState();
+
+    // Guard : besoin domaine pour avancer
+    if(n > 1 && !s.domain){
+      flash('Veuillez d\'abord sélectionner un domaine.', 'info');
+      n = 1;
+    }
+
+    // Persist step + need
+    var need = (n>=2) ? collectNeed() : s.need;
+    saveState({step:n, need:need});
+
+    // Panels
+    for(var i=1;i<=4;i++){
+      var panel = $('step-panel-'+i);
+      if(panel){ panel.classList.toggle('active', i===n); }
+    }
+
+    // Stepper (V66 uses .v5-step[data-step])
+    document.querySelectorAll('.v5-step').forEach(function(st){
+      var sn = parseInt(st.getAttribute('data-step'),10);
+      st.classList.toggle('active', sn===n);
+      st.classList.toggle('done', sn<n);
+    });
+
+    // Scroll top
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    // Hooks par étape
+    if(n===2){ renderDomainBadge(); updateDraftLink(); }
+    if(n===3){ loadDraftOptions(); loadVaultFiles(); updateDraftLink(); }
+    if(n===4){ renderRecap(); }
+  }
+  // Exposer globalement pour compatibilité onclick résiduels
+  window.goStep = goStep;
+  window.forceStep = goStep;
+
+  /* ─── Flash message ─── */
+  function flash(msg, type){
+    var el = $('msgBesoin');
+    if(!el) return;
+    el.textContent = msg;
+    el.className = 'po-msg ' + (type||'info');
+    setTimeout(function(){ el.className='po-msg'; }, 4000);
+  }
+
+  /* ─── Step 2 : badge domaine ─── */
+  function renderDomainBadge(){
+    var s = loadState();
+    applyDomain(s.domain, s.domainIcon);
+  }
+
+  /* ─── Step 3 : options draft ─── */
+  function loadDraftOptions(){
+    var sel = $('archiveAttachSelect');
+    if(!sel) return;
+    var gens = [];
+    var keys = ['pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+    keys.forEach(function(k){
+      try{
+        var arr = JSON.parse(localStorage.getItem(k)||'[]');
+        if(Array.isArray(arr)) gens = gens.concat(arr);
+      }catch(e){}
+    });
+    // Dédoublonner par id
+    var seen = {}; gens = gens.filter(function(g){
+      if(!g||seen[g.id]) return false; seen[g.id]=1; return true;
+    });
+    var s = loadState();
+    var html = '<option value="">Ne pas joindre de draft préparé</option>';
+    gens.slice(0,20).forEach(function(g){
+      var id = String(g.id!=null?g.id:'');
+      var lbl = esc((g.title||g.usecaseLabel||'Draft préparé') + (g.createdAt?' — '+new Date(g.createdAt).toLocaleString('fr-FR'):''));
+      html += '<option value="'+esc(id)+'">' + lbl + '</option>';
+    });
+    sel.innerHTML = html;
+    if(s.selectedDraft) sel.value = s.selectedDraft;
+    // Mise à jour état lors du changement
+    sel.onchange = function(){ saveState({selectedDraft:sel.value}); };
+  }
+
+  /* ─── Step 3 : vault files ─── */
+  function loadVaultFiles(){
+    var container = $('vaultExpertList');
+    if(!container) return;
+    container.innerHTML = '<div style="font-size:12px;color:var(--muted);">Chargement…</div>';
+    apiFetch('/vault/list?space='+SPACE).then(function(data){
+      var files = (data&&data.files)||[];
+      if(!files.length){
+        container.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+          '<span style="font-size:12px;color:var(--muted);">Aucune pièce dans le dépôt — optionnel.</span>' +
+          '<a href="vault.html?space='+SPACE+'&return=dashboard.html%3Fstep%3D3" style="font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap;">📂 Déposer des pièces →</a>' +
+          '</div>';
+        return;
       }
-      input.addEventListener('change',function(){addFiles(input.files);input.value='';});
-      ['dragenter','dragover'].forEach(function(ev){zone.addEventListener(ev,function(e){e.preventDefault();zone.classList.add('dragover');});});
-      ['dragleave','drop'].forEach(function(ev){zone.addEventListener(ev,function(e){e.preventDefault();zone.classList.remove('dragover');});});
-      zone.addEventListener('drop',function(e){addFiles(e.dataTransfer&&e.dataTransfer.files);});
-    }
-  }
-  renderLocalFiles();
-}
-
-function renderLocalFiles(){
-  var list=$('localFilesList');if(!list)return;
-  var files=readJson(FILES_KEY)||[];
-  if(!files.length){list.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 0">Aucun fichier ajouté.</div>';return;}
-  list.innerHTML=files.map(function(f,i){
-    return '<div class="file-row"><span>📄</span><span class="file-name">'+esc(f.name)+'</span><span class="file-sz">'+esc(f.size)+'</span><button class="file-rm" data-idx="'+i+'">Retirer</button></div>';
-  }).join('');
-  list.querySelectorAll('[data-idx]').forEach(function(btn){
-    btn.addEventListener('click',function(){var cur=readJson(FILES_KEY)||[];cur.splice(parseInt(btn.getAttribute('data-idx'),10),1);writeJson(FILES_KEY,cur);renderLocalFiles();});
-  });
-}
-
-function updateRecap(){
-  var title=($('fTitle')||{}).value||'—';
-  var type=document.querySelector('input[name="besoType"]:checked');
-  var tLabel=type&&type.value==='surmesure'?'📋 Sur Mesure':'🎯 Conseil Expert (48h)';
-  var files=readJson(FILES_KEY)||[];
-  function r(id,v){var e=$(id);if(e)e.textContent=v;}
-  r('rDomain',_domain||'—');r('rTitle',title);r('rType',tLabel);r('rQuota',_kpiExpert+' Conseil(s) Expert disponible(s)');
-  var fr=$('rFilesRow'),fv=$('rFiles');
-  if(fr)fr.style.display=files.length?'flex':'none';
-  if(fv)fv.textContent=files.length+' fichier(s) joint(s)';
-}
-
-window.submitBesoin=function(){
-  var title=($('fTitle')||{}).value||'';
-  var ctx=($('fCtx')||{}).value||'';
-  var obj=($('fObj')||{}).value||'';
-  var desc=($('fDesc')||{}).value||'';
-  var msg=$('msgBesoin');
-  function showErr(t){if(msg){msg.className='vmsg err';msg.textContent=t;}}
-  if(msg)msg.className='vmsg';
-  if(!title.trim()){showErr("Remplissez l'objet de votre demande.");return;}
-  if(!ctx.trim()&&!obj.trim()&&!desc.trim()){showErr("Remplissez au moins le contexte ou l'objectif.");toggleAcc('accCtx');return;}
-  var type=document.querySelector('input[name="besoType"]:checked');
-  if(type&&type.value==='surmesure'){window.location.href='mission.html';return;}
-  try{sessionStorage.setItem('v5_prefill',JSON.stringify({domain:_domain,subject:title,context:ctx+'\n'+obj+'\n'+desc}));}catch(e){}
-  window.location.href='expert.html';
-};
-
-window.loadRequests=function(){
-  var c=$('expertRequestsList');if(!c)return;
-  apiFetch('/expert/my-requests')
-    .then(function(d){renderRequests(c,Array.isArray(d)?d:(d.requests||[]));})
-    .catch(function(){renderRequests(c,[]);});
-};
-
-function renderRequests(c,reqs){
-  if(!reqs.length){c.innerHTML='<div class="empty"><div class="empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="btn btn-primary" onclick="switchTab(\'besoin\')">🎯 Soumettre un besoin</button></div>';return;}
-  c.innerHTML=reqs.map(function(r){
-    var ok=r.reply_text&&r.reply_text.trim();
-    var date=r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR'):'—';
-    return '<div class="req-card '+(ok?'replied':'pending')+'"><div class="req-domain">'+esc(r.domain||'Expert')+'</div><div class="req-title">'+esc(r.subject||r.content||'—')+'</div><div class="req-date">'+(ok?'✅ Répondu':'⏳ En attente')+' · '+date+'</div>'+(ok?'<div class="req-reply">'+esc(r.reply_text).substring(0,300)+(r.reply_text.length>300?'…':'')+'</div>':'')+'</div>';
-  }).join('');
-}
-
-/* Logout */
-function doLogout(){['pope_session_token','pope_session_active','pope_session_user'].forEach(function(k){localStorage.removeItem(k);sessionStorage.removeItem(k);});window.location.replace('public.html');}
-
-/* ── Init ── */
-document.addEventListener('DOMContentLoaded',function(){
-  var lb=$('logoutBtn');if(lb)lb.addEventListener('click',doLogout);
-  var mlb=$('mobileLogoutBtn');if(mlb)mlb.addEventListener('click',doLogout);
-
-  /* Auth */
-  var hasSession=localStorage.getItem('pope_session_active')==='1'||!!tok();
-  if(!hasSession){
-    apiFetch('/auth/me').then(function(d){if(d&&d.user)localStorage.setItem('pope_session_active','1');else window.location.replace('login.html?next=dashboard.html');}).catch(function(){window.location.replace('login.html?next=dashboard.html');});
+      container.innerHTML = files.map(function(f){
+        return '<div class="po-attach-item"><span class="po-attach-item-ico">📄</span>' +
+          '<span class="po-attach-item-name">'+esc(f.filename||f.name||'Fichier')+'</span>' +
+          '<span class="po-attach-item-size">'+esc(f.size_label||'')+'</span></div>';
+      }).join('');
+    }).catch(function(){
+      container.innerHTML = '<div style="font-size:12px;color:var(--muted);">Impossible de charger le coffre. <a href="vault.html?space='+SPACE+'&return=dashboard.html%3Fstep%3D3" style="color:var(--blue);">Ouvrir le coffre →</a></div>';
+    });
   }
 
-  /* Load user data */
-  apiFetch('/auth/me').then(function(me){
-    var u=me.user||{},w=me.wallet||{};
-    var name=u.full_name?u.full_name.split(' ')[0]:'';
-    if(name)$('heroWelcome').textContent='Bonjour '+name+' 👋';
-    _kpiExpert=w.expert_left!=null?w.expert_left:'—';
-    var ke=$('kpiExpert');if(ke)ke.textContent=_kpiExpert;
-    var kp=$('kpiPlan');if(kp)kp.textContent=w.plan_label||'Free';
-    /* Trial */
-    var ta=$('trialAlert');
-    if(w.status==='trial_active'&&w.trial_days_left!=null){
-      if(ta)ta.style.display='flex';
-      $('trialTitle').textContent='Essai gratuit — '+w.trial_days_left+' jour'+(w.trial_days_left>1?'s':'')+' restant'+(w.trial_days_left>1?'s':'');
-      var exp=w.trial_expires_at?new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
-      $('trialBody').textContent=(exp?'Expire le '+exp+'. ':'')+'Souscrivez un plan pour continuer.';
-    }
-    if(w.status==='trial_expired'){
-      if(ta){ta.style.display='flex';ta.style.background='linear-gradient(to right,#fef2f2,#fff0f0)';ta.style.borderColor='#fecaca';}
-      $('trialTitle').textContent='Période d\'essai terminée';$('trialBody').textContent='Génération et Conseils Expert suspendus.';
-      var ov=$('expiredOverlay');if(ov)ov.style.display='flex';
-    }
-    if(w.status==='verified_no_trial'){
-      if(ta){ta.style.display='flex';ta.style.background='linear-gradient(to right,#f0f9ff,#e0f2fe)';ta.style.borderColor='#bae6fd';}
-      $('trialTitle').textContent='💡 Offre gratuite — 2 Conseils Expert offerts';
-      $('trialBody').textContent='La génération IA est illimitée. Passez à Starter ou Pro pour plus de Conseils Expert.';
-    }
-  }).catch(function(){});
-
-  /* Restore state */
-  var sp=new URLSearchParams(location.search);
-  var state=readState();
-  var isReturn=sp.get('from')==='app'||sp.has('step')||sp.has('attach');
-  if(!isReturn){
-    saveState({step:1,domain:'',domainIcon:''});
-  } else if(state.domain){
-    _domain=state.domain;window._domain=_domain;
-    document.querySelectorAll('.dpill').forEach(function(b){if(b.getAttribute('data-domain')===_domain)b.classList.add('selected');});
-    var b=$('domainBadge'),ic=$('dBIcon'),nm=$('dBName');
-    if(b)b.classList.add('visible');if(ic)ic.textContent=state.domainIcon||'🎯';if(nm)nm.textContent=_domain;
+  /* ─── Step 3 : upload local ─── */
+  var localFiles = [];
+  function renderLocalFiles(){
+    var list = $('localFilesList');
+    if(!list) return;
+    if(!localFiles.length){ list.innerHTML=''; return; }
+    list.innerHTML = localFiles.map(function(f,i){
+      var kb = Math.round(f.size/1024);
+      return '<div class="po-attach-item" data-idx="'+i+'">' +
+        '<span class="po-attach-item-ico">📄</span>' +
+        '<span class="po-attach-item-name">'+esc(f.name)+'</span>' +
+        '<span class="po-attach-item-size">'+kb+' Ko</span>' +
+        '<button class="po-attach-item-del" data-del="'+i+'" type="button" title="Supprimer">✕</button>' +
+        '</div>';
+    }).join('');
   }
-  var targetStep=parseInt(sp.get('step')||state.step||'1',10);
-  goStep(_domain?Math.min(Math.max(targetStep,1),4):1);
-});
+  function addFiles(fileList){
+    Array.from(fileList).forEach(function(f){
+      if(f.size>10*1024*1024){ flash('Fichier trop lourd (max 10 Mo) : '+f.name,'err'); return; }
+      localFiles.push(f);
+    });
+    renderLocalFiles();
+  }
+
+  /* ─── Step 3 : draft link ─── */
+  function updateDraftLink(){
+    var s = loadState();
+    var appUrl = 'app.html?from=dashboard&step=2';
+    if(s.domain) appUrl += '&domain='+encodeURIComponent(s.domain);
+    var l1=$('lnkDraftTool'), l2=$('lnkDraftStep3');
+    if(l1) l1.href=appUrl;
+    if(l2) l2.href=appUrl;
+  }
+
+  /* ─── Step 4 : récap ─── */
+  function renderRecap(){
+    var s = loadState();
+    var n = s.need||{};
+    var type = n.treatment==='surmesure' ? '📋 Accompagnement approfondi' : '🎯 Conseil Expert ponctuel';
+    var rd=$('recapDomain'),rt=$('recapTitle'),rtype=$('recapType'),rdraft=$('recapDraft');
+    if(rd) rd.textContent = s.domain||'—';
+    if(rt) rt.textContent = n.title||'—';
+    if(rtype) rtype.textContent = type;
+    if(rdraft){
+      var sel=$('archiveAttachSelect');
+      var dval = sel?sel.value:(s.selectedDraft||'');
+      rdraft.textContent = dval ? '✅ Draft joint' : 'Aucun';
+    }
+    // Quota
+    apiFetch('/auth/me').then(function(data){
+      var rq=$('recapQuota');
+      if(rq && data){
+        var tickets = data.wallet&&data.wallet.tickets!=null ? data.wallet.tickets : (data.tickets!=null?data.tickets:'—');
+        rq.textContent = tickets + ' demande(s) disponible(s)';
+      }
+    }).catch(function(){
+      var rq=$('recapQuota'); if(rq) rq.textContent='—';
+    });
+  }
+
+  /* ─── Submit ─── */
+  function submitBesoin(){
+    var s = saveState({need:collectNeed()});
+    var n = s.need||{};
+    if(!s.domain){ flash('Domaine manquant.','err'); goStep(1); return; }
+    if(!n.title){ flash('Objet de la demande manquant.','err'); return; }
+
+    var btn=$('btnSend');
+    if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
+
+    var sel=$('archiveAttachSelect');
+    var payload = {
+      space: SPACE,
+      domain: s.domain,
+      need: n,
+      selectedDraft: sel?sel.value:'',
+      localFilesCount: localFiles.length
+    };
+
+    apiFetch('/expert/submit-need', {method:'POST', body:payload}).then(function(data){
+      flash('✅ Demande envoyée à votre expert !','ok');
+      saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
+      setTimeout(function(){ location.href='expert.html'; }, 1500);
+    }).catch(function(e){
+      var msg = (e&&e.data&&e.data.error_label) || (e&&e.data&&e.data.message) || (e&&e.message) || 'Erreur lors de l\'envoi.';
+      flash(msg,'err');
+      if(btn){ btn.disabled=false; btn.textContent='🎯 Soumettre à un expert'; }
+    });
+  }
+
+  /* ─── Requests list ─── */
+  function loadRequests(){
+    var list=$('expertRequestsList');
+    if(!list) return;
+    list.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px;">Chargement…</div>';
+    apiFetch('/expert/my-requests').then(function(data){
+      var reqs = (data&&data.requests)||[];
+      if(!reqs.length){
+        list.innerHTML='<div class="po-empty-state"><div class="po-empty-ico">👤</div><strong>Aucun échange expert.</strong><p>Soumettez votre premier besoin.</p></div>';
+        return;
+      }
+      list.innerHTML = reqs.map(function(r){
+        var status = r.status==='done'?'done':'pending';
+        var label = r.status==='done'?'Répondu':'En attente';
+        return '<div class="po-request-card" onclick="location.href=\'expert.html?id='+esc(r.id)+'\'">' +
+          '<div class="po-request-head">' +
+          '<span class="po-request-domain">'+esc(r.domain||'Général')+'</span>' +
+          '<span class="po-request-status '+status+'">'+label+'</span></div>' +
+          '<div class="po-request-title">'+esc(r.title||r.need&&r.need.title||'Demande')+'</div>' +
+          '<div class="po-request-meta">'+esc(r.createdAt?new Date(r.createdAt).toLocaleDateString('fr-FR'):'')+'</div>' +
+          '</div>';
+      }).join('');
+    }).catch(function(e){
+      list.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px;">Impossible de charger les échanges. <button class="po-btn-ghost po-btn-sm" onclick="loadRequests()">Réessayer</button></div>';
+    });
+  }
+  window.loadRequests = loadRequests;
+
+  /* ─── User info ─── */
+  function loadUser(){
+    var u = getUser();
+    if(!u){
+      apiFetch('/auth/me').then(function(data){
+        hydrateUser(data);
+      }).catch(function(){});
+    } else {
+      hydrateUser(u);
+    }
+  }
+  function hydrateUser(u){
+    if(!u) return;
+    var initials = (u.name||u.email||'?').charAt(0).toUpperCase();
+    var av=$('poAvatar'); if(av) av.textContent=initials;
+    var un=$('espaceUserName'); if(un) un.textContent=u.name||u.email||'—';
+    var ue=$('espaceUserEmail'); if(ue) ue.textContent=u.email||'—';
+    var w = u.wallet||{};
+    var planEl=$('espacePlan');
+    if(planEl){
+      var planTxt = w.plan ? '🏅 Plan : <strong>'+esc(w.plan)+'</strong>' : '';
+      if(w.tickets!=null) planTxt += ' · ' + w.tickets + ' demande(s)';
+      planEl.innerHTML = '<span style="font-size:12px;color:var(--muted);">'+planTxt+'</span>';
+    }
+    // Bandeau essai
+    if(w.is_trial){
+      var banner=$('poTrialBanner');
+      if(banner){ banner.style.display='flex'; }
+      var daysEl=$('poTrialDays');
+      if(daysEl && w.trial_ends_at){
+        var diff = Math.ceil((new Date(w.trial_ends_at)-Date.now())/(1000*60*60*24));
+        daysEl.textContent = diff>0 ? 'Essai gratuit — '+diff+' jour(s) restant(s)' : 'Essai expiré';
+      }
+    }
+    // Accès expiré
+    if(w.expired){
+      var ol=$('trialExpiredOverlay'); if(ol) ol.classList.add('show');
+    }
+  }
+
+  /* ─── Tabs ─── */
+  function switchTab(name){
+    qsa('.v5-tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-tab')===name); });
+    qsa('.v5-tab-content').forEach(function(c){ if(c.id==='tab-'+name){ c.removeAttribute('hidden'); } else { c.setAttribute('hidden',''); }; });
+    if(name==='experts') loadRequests();
+  }
+  window.switchTab = switchTab;
+
+  /* ─── Accordéons ─── */
+  function toggleAcc(el){
+    if(!el) return;
+    el.classList.toggle('is-open');
+  }
+
+  /* ─── Restore depuis URL params ─── */
+  function restoreFromUrl(){
+    var sp = new URLSearchParams(location.search);
+    var s = loadState();
+
+    // Retour depuis app
+    if(sp.get('from')==='app'){
+      // Attacher la dernière génération si ?attach=last
+      if(sp.get('attach')==='last'){
+        var lastId = localStorage.getItem('pope_v61_last_gen') ||
+                     localStorage.getItem('pope_v54_last_generation_id') ||
+                     localStorage.getItem('pope_v58_last_gen');
+        if(lastId) saveState({selectedDraft:lastId});
+      }
+      if(s.domain) applyDomain(s.domain, s.domainIcon);
+      goStep(2);
+      return;
+    }
+
+    // Étape forcée
+    var stepParam = parseInt(sp.get('step')||'0',10);
+    if(stepParam>=1 && stepParam<=4){
+      if(s.domain) applyDomain(s.domain, s.domainIcon);
+      goStep(stepParam);
+      return;
+    }
+
+    // Chargement normal : étape 1, reset domaine
+    applyDomain('','🎯');
+    saveState({step:1, domain:'', domainIcon:'🎯'});
+    goStep(1);
+  }
+
+  /* ─── Init ─── */
+  function init(){
+    if(!requireAuth()) return;
+
+    // Topbar
+    document.querySelector('[data-logout]') && document.querySelector('[data-logout]').addEventListener('click', logout);
+    null /* handled by data-logout */ && null /* handled by data-logout */.addEventListener('click', logout);
+    document.querySelector('#trialExpiredOverlay button') && document.querySelector('#trialExpiredOverlay button').addEventListener('click', logout);
+
+    // Burger
+    var burger=$('poBurger'), menu=$('poMobileMenu');
+    if(burger && menu){
+      burger.addEventListener('click', function(){
+        menu.classList.toggle('open');
+      });
+    }
+
+    // Tabs
+    qsa('.v5-tab').forEach(function(t){
+      t.addEventListener('click', function(){ switchTab(t.getAttribute('data-tab')); });
+    });
+
+    // Stepper clics
+    qsa('.v5-step').forEach(function(st){
+      st.addEventListener('click', function(){
+        var n = parseInt(st.getAttribute('data-step'),10);
+        if(!isNaN(n)) goStep(n);
+      });
+    });
+
+    // Domain pills
+    document.addEventListener('click', function(e){
+      var pill = e.target.closest('.v5-domain-pill');
+      if(pill){
+        var domain = pill.getAttribute('data-domain')||'';
+        var icon = (pill.textContent||'').trim().split(/\s/)[0]||'🎯';
+        applyDomain(domain, icon);
+        saveState({domain:domain, domainIcon:icon});
+      }
+    });
+
+    // Accordéons
+    document.addEventListener('click', function(e){
+      var trigger = e.target.closest('.v58-acc-trigger');
+      if(trigger){
+        var acc = trigger.closest('.v58-acc');
+        if(acc) toggleAcc(acc);
+      }
+    });
+
+    // Auto-save sur input
+    document.addEventListener('input', function(e){
+      if(e.target.closest('#step-panel-2')){
+        saveState({need:collectNeed()});
+        // Mise à jour aperçu accord
+        updateAccPreviews();
+      }
+    });
+
+    // Navigation buttons
+    $('btnStep1Next') && $('btnStep1Next').addEventListener('click', function(){ goStep(2); });
+    $('btnStep2Back') && $('btnStep2Back').addEventListener('click', function(){ goStep(1); });
+    $('btnStep2Next') && $('btnStep2Next').addEventListener('click', function(){ goStep(3); });
+    $('btnStep3Back') && $('btnStep3Back').addEventListener('click', function(){ goStep(2); });
+    $('btnStep3Next') && $('btnStep3Next').addEventListener('click', function(){ goStep(4); });
+    $('btnStep4Back') && $('btnStep4Back').addEventListener('click', function(){ goStep(3); });
+    $('btnSend') && $('btnSend').addEventListener('click', submitBesoin);
+    document.getElementById('btnChangeDomain') && document.getElementById('btnChangeDomain').addEventListener('click', function(){ goStep(1); });
+    $('btnGoToBesoin') && $('btnGoToBesoin').addEventListener('click', function(){ switchTab('besoin'); });
+    $('btnRefreshRequests') && $('btnRefreshRequests').addEventListener('click', loadRequests);
+
+    // Upload zone
+    var zone=$('uploadZone'), finput=$('fileInput');
+    if(zone && finput){
+      zone.addEventListener('click', function(){ finput.click(); });
+      zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
+      zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
+      zone.addEventListener('drop', function(e){
+        e.preventDefault(); zone.classList.remove('drag');
+        addFiles(e.dataTransfer.files);
+      });
+      finput.addEventListener('change', function(){ addFiles(finput.files); finput.value=''; });
+    }
+
+    // Supprimer fichier local
+    document.addEventListener('click', function(e){
+      var del = e.target.closest('[data-del]');
+      if(del && del.closest('#localFilesList')){
+        var idx = parseInt(del.getAttribute('data-del'),10);
+        localFiles.splice(idx,1);
+        renderLocalFiles();
+      }
+    });
+
+    // Hydrater need depuis state
+    var s = loadState();
+    hydrateNeed(s.need);
+
+    // Loader user
+    loadUser();
+
+    // Routing initial
+    restoreFromUrl();
+  }
+
+  /* ─── Aperçus accordéons ─── */
+  function updateAccPreviews(){
+    var map = {
+      prevCtx: ['descContexte','descProbleme'],
+      prevObj: ['descObjectif','descDecision'],
+      prevCon: ['descContraintes','descRisques'],
+      prevAct: ['descActeurs','needDeadline'],
+      prevPlus: ['descNiveau','besoInDesc']
+    };
+    Object.keys(map).forEach(function(previewId){
+      var el=$(previewId); if(!el) return;
+      var val = map[previewId].map(function(fid){
+        var f=$(fid); return f?(f.value||'').trim():'';
+      }).filter(Boolean).join(' · ').slice(0,60);
+      if(val) el.textContent=val;
+    });
+    // Dot filled
+    qsa('.v58-acc').forEach(function(acc){
+      var filled = qsa('input,textarea',acc).some(function(i){ return (i.value||'').trim(); });
+      acc.classList.toggle('has-value', filled);
+    });
+  }
+
+  // Lancer au DOMContentLoaded
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
 })();
 </script>
-<script type="module" src="./protected-topbar.js"></script>
+
+<!-- API user loader (factorized from V66) -->
 <script type="module">
-import { requireLogin, wireLogout } from './app.js';
-if(!requireLogin('dashboard.html')){}
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
+if (!requireLogin('dashboard.html')) {}
 wireLogout();
+(async () => {
+  try {
+    const me = await apiFetch('/auth/me');
+    setTicketsBadge(me.wallet);
+    const u = me.user || {};
+    const w = me.wallet || {};
+    const name = u.full_name ? u.full_name.split(' ')[0] : '';
+    if (name) { const el=document.getElementById('dashWelcome'); if(el) el.textContent='Bonjour '+name+' 👋'; }
+    const leftN=document.getElementById('expertLeftN'); if(leftN) leftN.textContent=w.expert_left??'—';
+    const planN=document.getElementById('planN'); if(planN) planN.textContent=w.plan_label||'Free';
+    if (w.status === 'trial_active' && w.trial_days_left !== null) {
+      const alert=document.getElementById('trialAlert'); if(alert) alert.removeAttribute('hidden');
+      const trialEnd=w.trial_expires_at?new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
+      const t=document.getElementById('trialAlertTitle'); if(t) t.textContent='Essai gratuit — '+w.trial_days_left+' jour'+(w.trial_days_left>1?'s':'')+' restant'+(w.trial_days_left>1?'s':'');
+      const b=document.getElementById('trialAlertBody'); if(b) b.textContent=(trialEnd?'Expire le '+trialEnd+'. ':'')+'Souscrivez un plan pour continuer après votre essai.';
+    }
+    if (w.status === 'trial_expired') {
+      const ov=document.getElementById('trialExpiredOverlay'); if(ov) ov.removeAttribute('hidden');
+    }
+  } catch {}
+})();
 </script>
+
+<script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 </body>
 </html>

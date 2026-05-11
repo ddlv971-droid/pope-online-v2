@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head><script>
-/* Détection staging */
 (function(){
   var h = location.hostname;
   if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
@@ -13,96 +12,26 @@
 </script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Génération guidée</title>
+<title>POPE Online — Génération guidée (Espace Privé)</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style id="v40-topbar-fix">
-/* ── Anti-conflits topbar V40 ── */
-html body header.v40-topbar{
-  position:sticky!important;top:0!important;z-index:200!important;
-  height:58px!important;min-height:58px!important;max-height:58px!important;
-  display:flex!important;align-items:center!important;
-  flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
-  backdrop-filter:blur(16px)!important;
-  border-bottom:1px solid rgba(255,255,255,.07)!important;
-  overflow:visible!important;
-}
-html body header.v40-topbar .v40-topbar-inner{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;height:58px!important;
-  width:100%!important;padding:0 20px!important;gap:10px!important;
-}
-html body header.v40-topbar .v40-topbar-brand{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;gap:9px!important;
-  text-decoration:none!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand img{
-  height:28px!important;width:auto!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:baseline!important;gap:5px!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong,
-html body header.v40-topbar .v40-topbar-brand-text small{
-  white-space:nowrap!important;display:inline!important;width:auto!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong{
-  font-size:14px!important;font-weight:800!important;color:#fff!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text small{
-  font-size:11px!important;color:rgba(255,255,255,.4)!important;
-}
-html body header.v40-topbar .v40-topbar-nav{
-  display:flex!important;align-items:center!important;gap:6px!important;
-  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
-}
-html body header.v40-topbar #v40Burger{
-  display:none;flex-direction:column!important;gap:5px!important;
-  margin-left:auto!important;flex-shrink:0!important;
-  background:none!important;border:none!important;
-  cursor:pointer!important;padding:6px!important;width:auto!important;
-}
-html body header.v40-topbar #v40Burger span{
-  display:block!important;width:22px!important;height:2px!important;
-  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
-  transition:transform .25s ease,opacity .25s ease!important;
-}
-#v40MobileMenu{
-  display:none;position:fixed!important;
-  top:58px!important;left:0!important;right:0!important;bottom:0!important;
-  z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
-  backdrop-filter:blur(20px)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  padding:20px!important;overflow-y:auto!important;
-  flex-direction:column!important;gap:4px!important;
-}
+html body header.v40-topbar{position:sticky!important;top:0!important;z-index:200!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;}
+html body header.v40-topbar .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;height:58px!important;width:100%!important;padding:0 20px!important;gap:10px!important;}
+html body header.v40-topbar .v40-topbar-brand{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:9px!important;text-decoration:none!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand img{height:28px!important;width:auto!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong,html body header.v40-topbar .v40-topbar-brand-text small{white-space:nowrap!important;display:inline!important;width:auto!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+html body header.v40-topbar .v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+html body header.v40-topbar .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+html body header.v40-topbar #v40Burger{display:none;flex-direction:column!important;gap:5px!important;margin-left:auto!important;flex-shrink:0!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;width:auto!important;}
+html body header.v40-topbar #v40Burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;}
+#v40MobileMenu{display:none;position:fixed!important;top:58px!important;left:0!important;right:0!important;bottom:0!important;z-index:201!important;background:rgba(7,22,42,.98)!important;backdrop-filter:blur(20px)!important;padding:20px!important;overflow-y:auto!important;flex-direction:column!important;gap:4px!important;}
 #v40MobileMenu.open{display:flex!important;}
-#v40MobileMenu a,#v40MobileMenu button{
-  display:flex!important;align-items:center!important;gap:10px!important;
-  padding:14px 18px!important;border-radius:12px!important;
-  font-size:15px!important;font-weight:600!important;
-  color:rgba(255,255,255,.85)!important;
-  text-decoration:none!important;background:none!important;
-  border:none!important;cursor:pointer!important;
-  width:100%!important;
-}
-#v40MobileMenu a:hover,#v40MobileMenu button:hover{
-  background:rgba(255,255,255,.07)!important;color:#fff!important;
-}
-.v40-mobile-menu-sep{
-  height:1px!important;background:rgba(255,255,255,.08)!important;
-  margin:8px 0!important;
-}
-@media(max-width:860px){
-  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
-  html body header.v40-topbar #v40Burger{display:flex!important;}
-}
+#v40MobileMenu a,#v40MobileMenu button{display:flex!important;align-items:center!important;gap:10px!important;padding:14px 18px!important;border-radius:12px!important;font-size:15px!important;font-weight:600!important;color:rgba(255,255,255,.85)!important;text-decoration:none!important;background:none!important;border:none!important;cursor:pointer!important;width:100%!important;}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;}
+@media(max-width:860px){html body header.v40-topbar .v40-topbar-nav{display:none!important;}html body header.v40-topbar .v40-topbar-sub{display:none!important;}html body header.v40-topbar .v40-topbar-sep{display:none!important;}html body header.v40-topbar #v40Burger{display:flex!important;}}
 </style>
 <style id="v40-override">
 header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
@@ -122,18 +51,42 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v40-mobile-menu.open{display:flex!important;}
 .v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
-.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
-@media(max-width:860px){
-  .v40-topbar-nav{display:none!important;}
-  .v40-topbar-sub{display:none!important;}
-  .v40-topbar-sep{display:none!important;}
-  .v40-burger{display:flex!important;}
-}
+@media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
 </style>
 <style id="v54-app-style">.v40-topbar-nav a[href*="expert"],.v40-topbar-nav a[href*="mission"],#v40MobileMenu a[href*="expert"],#v40MobileMenu a[href*="mission"]{display:none!important}</style>
+<style>
+/* V67 vault inline styles */
+.v36-vault-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
+.v36-vault-item:last-child{border-bottom:none;}
+.v36-vault-item-name{flex:1;font-size:13px;color:#0b2440;cursor:pointer;}
+.v36-vault-item-size{font-size:11px;color:#50627a;}
+/* Archive items */
+.v36-archive-item{padding:10px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;}
+.v36-archive-item:last-child{border-bottom:none;}
+.v36-archive-item:hover .v36-archive-item-title{color:#0079c1;}
+.v36-archive-item-title{font-size:13px;font-weight:600;color:#0b2440;}
+.v36-archive-item-meta{font-size:11px;color:#50627a;margin-top:2px;}
+/* Result card show class */
+.v36-result-card{display:none;}
+.v36-result-card.show{display:block;}
+/* Toast compat */
+.po-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d1e30;color:#fff;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.po-toast.show{opacity:1;}
+.po-toast.err{background:#dc2626;}
+.po-toast.ok{background:#16a34a;}
+/* v36-loading show */
+.v36-loading{display:none;}
+.v36-loading.active{display:flex;}
+/* Mobile responsive */
+@media(max-width:900px){
+  .v36-gen-layout{grid-template-columns:1fr!important;}
+  .v36-form-col{position:static!important;}
+  .v36-next-btns{grid-template-columns:1fr!important;}
+}
+</style>
 <link rel="stylesheet" href="v58-styles.css">
 </head>
-<body data-logout-target="private.html" class="bg v36-page po-v8-public" data-forced-space="private">
+<body data-logout-target="private.html" class="bg v36-page po-v8-public" data-forced-space="public">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
@@ -145,9 +98,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub" id="appSubTitle">Génération privée</span>
+    <span class="v40-topbar-sub" id="appSubTitle">Génération guidée</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="vault.html?space=private&return=app-private.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="vault.html?space=private&amp;return=app.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
     <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
@@ -159,13 +112,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
-    <button data-logout>🚪 Déconnexion</button>
-</div>
 
-<!-- Barre workflow -->
-<!-- v58: Barre retour parcours -->
+<!-- Barre retour parcours -->
 <div class="v58-retour-bar" id="v58RetourBar">
-  <a href="dashboard-private.html?from=app&step=2" id="btnRetourDashboard" class="v58-retour-btn">
+  <a href="dashboard-private.html?from=app&amp;step=2" id="btnRetourDashboard" class="v58-retour-btn">
     ← Retour à mon parcours
   </a>
   <span class="v58-retour-info" id="v58RetourInfo">
@@ -173,6 +123,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </span>
   <span class="v58-draft-ready" id="v58DraftReady">✅ Draft prêt à joindre</span>
 </div>
+
+<!-- Barre workflow 3 étapes -->
 <div class="v36-workflow-bar">
   <div class="v36-workflow-inner">
     <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
@@ -181,17 +133,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </div>
 
-
-
-<!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
+<!-- IDs fantômes pour compat -->
 <span id="spaceBadge" hidden></span>
 <span id="heroTitle" hidden></span>
 <span id="heroCopy" hidden></span>
 <span id="formCopy" hidden></span>
 <span id="status" hidden></span>
-<span id="archiveModeLabel" hidden></span>
-<span id="safeNote" hidden></span>
-<span id="factsLabel" hidden></span>
+<span id="poToast" class="po-toast"></span>
 
 <main class="v36-gen-layout">
 
@@ -200,8 +148,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
     <!-- Sélecteur type de livrable -->
     <div class="v36-usecase-selector">
-      <label for="usecase" id="usecaseLabel">Quel type de livrable ?</label>
-      <select id="usecase" aria-label="Type de livrable"></select>
+      <label for="usecase">Quel type de livrable ?</label>
+      <select id="usecase" aria-label="Type de livrable">
+        <option value="">— Sélectionnez un type —</option>
+        <option value="note_strategique">📋 Note stratégique</option>
+        <option value="courrier">✉️ Courrier / URSSAF</option>
+        <option value="deliberation">🏛️ Marché public</option>
+        <option value="synthese_reunion">📝 Synthèse de réunion</option>
+        <option value="cadrage_projet">🗂️ Cadrage projet</option>
+        <option value="rapport_synthese_argumente_public">📊 Rapport argumenté</option>
+        <option value="formalite_juridique">⚖️ Formalité juridique</option>
+      </select>
       <div class="v36-usecase-hint" id="usecaseInsight"></div>
     </div>
 
@@ -210,14 +167,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v36-form-card-head">
         <div class="v36-form-icon blue">📋</div>
         <div>
-          <h3 id="contextLabel">Contexte &amp; Objectif</h3>
+          <h3>Contexte &amp; Objectif</h3>
           <p>Cadrez la situation et le résultat attendu</p>
         </div>
       </div>
-      <label class="label" id="contextLabelFull">Contexte</label>
-      <textarea class="input" id="context" rows="5" style="margin-bottom:14px"></textarea>
-      <label class="label" id="objectiveLabel">Objectif du livrable</label>
-      <textarea class="input" id="objective" rows="4"></textarea>
+      <label class="label">Contexte</label>
+      <textarea class="input" id="context" rows="5" style="margin-bottom:14px" placeholder="Décrivez votre organisation, le cadre de la demande, le contexte de votre besoin…"></textarea>
+      <label class="label">Objectif du livrable</label>
+      <textarea class="input" id="objective" rows="4" placeholder="Quel résultat souhaitez-vous obtenir ? Quelle décision doit éclairer ce document ?"></textarea>
     </div>
 
     <!-- Éléments factuels -->
@@ -229,7 +186,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           <p>Données, chiffres, acteurs, dates clés</p>
         </div>
       </div>
-      <textarea class="input" id="facts" rows="5"></textarea>
+      <textarea class="input" id="facts" rows="5" placeholder="Chiffres, noms, dates, textes de référence, précédents, données budgétaires…"></textarea>
     </div>
 
     <!-- Pièces vault -->
@@ -237,19 +194,19 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v36-form-card-head">
         <div class="v36-form-icon amber">📎</div>
         <div>
-          <h3 id="vaultInlineTitle">Pièces temporaires 48h</h3>
-          <p id="vaultInlineCopy">Les fichiers texte alimentent directement l'IA</p>
+          <h3>Pièces temporaires 48h</h3>
+          <p>Les fichiers texte alimentent directement l'IA</p>
         </div>
       </div>
-      <div id="vaultInlineList" class="vault-inline-list">
-        <div class="muted" style="font-size:13px">Aucune pièce disponible.</div>
+      <div id="vaultInlineList">
+        <div style="font-size:13px;color:#50627a">Aucune pièce disponible.</div>
       </div>
-      <a class="btn ghost" href="vault.html?space=private&return=app-private.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
+      <a class="btn ghost" href="vault.html?space=private&amp;return=app.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
     </div>
 
     <!-- Bouton générer -->
     <button class="v36-generate-btn" id="btnGenerate" type="button">
-      <span>⚡</span> <span id="btnGenerateLabel">Produire un livrable sécurisé</span>
+      <span>⚡</span> <span id="btnGenerateText">Produire un livrable sécurisé</span>
     </button>
 
     <!-- Indicateur chargement -->
@@ -279,77 +236,48 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
 
     <!-- Résultat généré -->
-    <div class="v36-result-card" id="resultCard" hidden>
+    <div class="v36-result-card" id="resultCard">
       <div class="v36-result-header">
         <div>
-          <h2>Résultat généré</h2>
+          <h2 id="resultCardTitle">Résultat généré</h2>
           <div style="font-size:12px;color:#50627a;margin-top:2px" id="resultMeta"></div>
         </div>
         <div class="v36-result-actions">
-          <button class="btn ghost icon-only" id="btnCopy" title="Copier" aria-label="Copier le résultat">📋</button>
-          <select class="input" id="exportFormat" style="font-size:13px;padding:7px 10px;width:auto" aria-label="Format d'export">
-            <option value="">Exporter…</option>
-            <option value="txt">TXT</option>
-            <option value="csv">CSV</option>
-            <option value="doc">DOC</option>
-            <option value="pdf">PDF</option>
-          </select>
-          <button class="btn ghost" id="btnExport" type="button">Exporter</button>
-          <button class="btn ghost" id="btnArchiveCurrent" type="button">🗄 Archiver</button>
+          <button class="btn ghost" id="btnCopyResult" title="Copier" aria-label="Copier le résultat">📋 Copier</button>
+          <button class="btn ghost" id="btnSaveResult" type="button">🗄 Archiver</button>
         </div>
       </div>
       <div class="v36-result-body">
-        <section class="dossier-intel-panel" id="dossierIntel" hidden></section>
-        <div class="v36-output output output-rich-v11" id="output" data-raw=""></div>
+        <div class="v36-output" id="output" id="resultText" data-raw=""></div>
       </div>
     </div>
 
     <!-- Actions suivantes -->
-    <div class="v36-next-actions" id="nextActions" hidden>
+    <div class="v36-next-actions" id="nextActions" style="display:none">
       <h3>Et maintenant ?</h3>
       <div class="v36-next-btns">
-        <a class="v36-next-btn" href="dashboard-private.html?from=app&attach=last&step=2" id="resultExpertLink">
+        <a class="v36-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=2" id="resultExpertLink">
           <span class="v36-next-btn-icon">✍️</span>
           <div class="v36-next-btn-text"><strong>Revenir au parcours</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="dashboard-private.html?from=app&attach=last&step=2" id="resultMissionLink">
+        <a class="v36-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=2" id="nextExpertLink">
           <span class="v36-next-btn-icon">🎯</span>
           <div class="v36-next-btn-text"><strong>Continuer le cadrage</strong><span>Finaliser la qualification du besoin</span></div>
         </a>
-        <button class="v36-next-btn" id="btnRefine" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
-          <span class="v36-next-btn-icon">✨</span>
-          <div class="v36-next-btn-text"><strong>Affiner</strong><span>Améliorer la qualité</span></div>
-        </button>
-        <button class="v36-next-btn" id="btnRiskCheck" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
-          <span class="v36-next-btn-icon">⚠️</span>
-          <div class="v36-next-btn-text"><strong>Vérifier les risques</strong><span>Analyse des points sensibles</span></div>
-        </button>
       </div>
     </div>
 
-    <!-- Archivage local -->
+    <!-- Archive locale -->
     <div class="v36-archive-card" id="archivePanel">
       <div class="v36-archive-head">
         <div>
           <h3>Archivage local</h3>
           <p style="margin:2px 0 0;font-size:12px;color:#50627a">Conservez vos générations sur cet appareil</p>
         </div>
-        <label class="archive-auto-v10" style="font-size:13px">
-          <input type="checkbox" id="archiveAutoSave"/>
-          <span>Auto-archiver</span>
-        </label>
-      </div>
-      <div class="v36-archive-toolbar">
-        <button class="btn ghost" id="btnExportArchive" type="button" style="font-size:13px">Exporter</button>
-        <label class="btn ghost archive-import-v10" for="archiveImportInput" style="font-size:13px">Importer</label>
-        <input id="archiveImportInput" type="file" accept=".txt,.csv,.doc,text/plain,text/csv,application/msword" hidden/>
-        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button" style="font-size:13px">Vider</button>
-        <input class="input archive-search-input-v10" id="archiveSearch" type="search" placeholder="Rechercher…" style="font-size:13px"/>
       </div>
       <div class="v36-archive-body">
-        <div class="archive-v10-summary" id="archiveSummary"></div>
-        <div class="archive-v10-list" id="archiveList">
-          <div class="muted" style="font-size:13px">Aucune génération archivée.</div>
+        <div class="v36-archive-body" id="archiveList">
+          <div style="font-size:13px;color:#50627a">Aucune génération archivée.</div>
         </div>
       </div>
     </div>
@@ -357,216 +285,78 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 </main>
 
-<script>
-function setWorkflowStep(n) {
-  ['wfStep1','wfStep2','wfStep3'].forEach(function(id,i) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('active','done');
-    if (i+1 === n) el.classList.add('active');
-    else if (i+1 < n) el.classList.add('done');
-  });
-}
-window.setWorkflowStep = setWorkflowStep;
-// Step 2 au clic sur générer
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('btnGenerate');
-  if (btn) btn.addEventListener('click', function() { setWorkflowStep(2); }, true);
-});
-</script>
+<!-- Auth check -->
 <script>
 (function(){
-  function hasSession(){
-    return localStorage.getItem('pope_session_active')==='1'||
-           !!sessionStorage.getItem('pope_session_token')||
-           !!localStorage.getItem('pope_session_token');
-  }
-  function getToken(){
-    return sessionStorage.getItem('pope_session_token')||
-           localStorage.getItem('pope_session_token')||'';
-  }
-  function getApiBase(){
-    var e=window.__POPE_API_BASE__||'';
-    if(e) return String(e).replace(/\/$/,'');
-    var h=window.location.hostname;
-    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
-    return 'https://pope-online-v2.onrender.com';
-  }
-  function redirectToLogin(){
-    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
-    window.location.replace('login.html?next='+path);
-  }
-  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
-    'mission.html','private-onboarding.html','account.html','profile.html',
-    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
-    'mission-private.html','referral.html','tutoriel.html'];
-  var path=(window.location.pathname||'').toLowerCase();
-  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
-  if(!isProtected) return;
+  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
+  function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
+  function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
+  function redirectToLogin(){var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'app-private.html');window.location.replace('login.html?next='+path);}
   if(hasSession()){window.__popeAuthValidated=true;return;}
   window.__popeAuthPending=true;
   var headers={'Content-Type':'application/json'};
   var token=getToken();
-  if(token) headers['Authorization']='Bearer '+token;
+  if(token)headers['Authorization']='Bearer '+token;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      return res.json().catch(function(){return {};});
-    })
-    .then(function(data){
-      if(data&&data.user){
-        localStorage.setItem('pope_session_active','1');
-        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
-        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
-        window.__popeAuthValidated=true;
-      } else throw new Error('missing_user');
-    })
-    .catch(function(){
-      window.__popeAuthValidated=false;
-      redirectToLogin();
-    })
+    .then(function(res){if(!res.ok)throw new Error('HTTP '+res.status);return res.json().catch(function(){return{};});})
+    .then(function(data){if(data&&data.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(data.user));window.__popeAuthValidated=true;}else throw new Error('missing_user');})
+    .catch(function(){window.__popeAuthValidated=false;redirectToLogin();})
     .finally(function(){window.__popeAuthPending=false;});
 })();
 </script>
-<script type="module" src="./protected-topbar.js"></script>
-<script type="module" src="./app-page.js"></script>
-<script src="./app-v54.js"></script>
+
+<!-- Burger mobile -->
 <script>
-// Topbar mobile universelle V40 — burger + menu + croix
-(function() {
-  var burger  = document.getElementById('v40Burger');
-  var menu    = document.getElementById('v40MobileMenu');
-  if (!burger || !menu) return;
-
-  var spans = burger.querySelectorAll('span');
-
-  function setOpen(open) {
-    if (open) {
-      menu.classList.add('open');
-      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
-      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
-      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
-    } else {
-      menu.classList.remove('open');
-      spans[0].style.cssText = '';
-      spans[1].style.cssText = '';
-      spans[2].style.cssText = '';
-    }
-  }
-
-  burger.addEventListener('click', function() {
-    setOpen(!menu.classList.contains('open'));
-  });
-
-  // Fermer en cliquant un lien
-  menu.querySelectorAll('a, button').forEach(function(el) {
-    el.addEventListener('click', function() { setOpen(false); });
-  });
-
-  // Fermer en cliquant hors du menu
-  document.addEventListener('click', function(e) {
-    if (!burger.contains(e.target) && !menu.contains(e.target)) {
-      setOpen(false);
-    }
-  });
-})();
-
-</script>
-<script src="./app-v53-bridge.js"></script>
-<script src="./app-v60-bridge.js"></script>
-<script src="./app-v61-bridge.js"></script>
-
-
-
-<script>
-// v57: restore dashboard context into app generation form
 (function(){
-  var STATE_KEY = 'pope_v57_state_' + (location.pathname.indexOf('private')>-1?'private':'public');
-  function _restoreCtxInApp(){
-    try{
-      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if(!raw) return;
-      var d = JSON.parse(raw);
-      // Pre-fill context field if empty
-      var ctx = document.getElementById('context');
-      if(ctx && !ctx.value && (d.contexte||d.objectif)){
-        var parts=[];
-        if(d.contexte) parts.push('Contexte : '+d.contexte);
-        if(d.objectif) parts.push('Objectif : '+d.objectif);
-        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
-        if(d.acteurs) parts.push('Acteurs : '+d.acteurs);
-        if(d.pieces) parts.push('Pièces : '+d.pieces);
-        if(d.desc) parts.push(d.desc);
-        ctx.value = parts.join('\n');
-      }
-      // Pre-fill objective if empty
-      var obj = document.getElementById('objective');
-      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
-      // Show domain badge in app
-      if(d.domain){
-        var info=document.getElementById('v56RetourInfo');
-        if(info) info.textContent = 'Domaine : '+d.domain+' — Votre saisie est pré-remplie depuis le parcours.';
-      }
-    }catch(e){}
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(_restoreCtxInApp, 600);
-  });
+  var burger=document.getElementById('v40Burger');
+  var menu=document.getElementById('v40MobileMenu');
+  if(!burger||!menu)return;
+  var spans=burger.querySelectorAll('span');
+  function setOpen(open){if(open){menu.classList.add('open');spans[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';spans[1].style.cssText='opacity:0;transform:scaleX(0)';spans[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{menu.classList.remove('open');spans[0].style.cssText='';spans[1].style.cssText='';spans[2].style.cssText='';}}
+  burger.addEventListener('click',function(){setOpen(!menu.classList.contains('open'));});
+  menu.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){setOpen(false);});});
+  document.addEventListener('click',function(e){if(!burger.contains(e.target)&&!menu.contains(e.target))setOpen(false);});
 })();
 </script>
+
 <script>
-// v58: gestion dynamique barre retour
 (function(){
-  var DASH = 'dashboard-private.html';
-  var STATE_KEY = 'pope_v58_state_private';
-  function _init(){
-    var gens=[]; try{gens=JSON.parse(localStorage.getItem('pope_v54_generations')||'[]');}catch(e){}
-    var lastId = sessionStorage.getItem('pope_v54_last_generation_id') || (gens.length?gens[0].id:'');
-    var btn    = document.getElementById('btnRetourDashboard');
-    var badge  = document.getElementById('v58DraftReady');
-    var info   = document.getElementById('v58RetourInfo');
-    if(lastId && btn){
-      btn.href = DASH + '?from=app&attach=last&step=2';
-      if(badge) badge.classList.add('visible');
-      if(info)  info.textContent = 'Draft généré ! Revenez pour le joindre à l\'étape Documents (étape 3).';
-    }
-    // Restore context into app form from dashboard state
-    try{
-      var raw = sessionStorage.getItem(STATE_KEY) || localStorage.getItem(STATE_KEY);
-      if(!raw) return;
-      var d = JSON.parse(raw);
-      var ctx = document.getElementById('context');
-      var obj = document.getElementById('objective');
-      if(ctx && !ctx.value){
-        var parts=[];
-        if(d.contexte)    parts.push('Contexte : '+d.contexte);
-        if(d.probleme)    parts.push('Problème : '+d.probleme);
-        if(d.objectif)    parts.push('Objectif : '+d.objectif);
-        if(d.contraintes) parts.push('Contraintes : '+d.contraintes);
-        if(d.risques)     parts.push('Points sensibles : '+d.risques);
-        if(d.acteurs)     parts.push('Acteurs : '+d.acteurs);
-        if(d.deadline)    parts.push('Échéance : '+d.deadline);
-        if(d.pieces)      parts.push('Pièces : '+d.pieces);
-        if(d.desc)        parts.push(d.desc);
-        if(parts.length) ctx.value = parts.join('\n');
-      }
-      if(obj && !obj.value && d.objectif) obj.value = d.objectif;
-      if(d.domain){
-        var info2 = document.getElementById('v58RetourInfo');
-        if(info2 && !badge.classList.contains('visible'))
-          info2.textContent = 'Domaine : ' + d.domain + ' — Contexte pré-rempli depuis votre parcours.';
-      }
-    }catch(e){}
-  }
-  document.addEventListener('DOMContentLoaded', function(){ setTimeout(_init, 500); });
-  window.addEventListener('pope_generation_done', function(){
-    setTimeout(_init, 300);
-  });
-  window.addEventListener('storage', function(e){
-    if(e.key==='pope_v54_generations') _init();
-  });
-  setTimeout(_init, 800);
+'use strict';
+var API=(function(){var h=location.hostname;if(h==='localhost'||h==='127.0.0.1')return 'http://localhost:3000';if(h.indexOf('staging')!==-1)return 'https://popeonline-staging.onrender.com';return 'https://pope-online-v2.onrender.com';})();
+var SPACE='private';
+var DASH_KEY='pope_v67_priv';
+var GENS_KEY='pope_v67_gens_priv';
+var FORM_KEY='pope_v67_form_priv';
+var TOKEN_KEY='pope_session_token';
+function $(id){return document.getElementById(id);}
+function qsa(s,r){return Array.from((r||document).querySelectorAll(s));}
+function token(){return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||'';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h.Authorization='Bearer '+t;return h;}
+function apiFetch(path,opts){opts=opts||{};return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'}).then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error_label||d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});}
+function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app-private.html';return false;}
+function logout(){['pope_session_active','pope_session_user','pope_session_token','pope_token'].forEach(function(k){localStorage.removeItem(k);});sessionStorage.removeItem(TOKEN_KEY);location.href='private.html';}
+var toastT;
+function toast(m,t){var el=$('poToast');if(!el)return;el.textContent=m;el.className='po-toast '+(t||'');requestAnimationFrame(function(){el.classList.add('show');});clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show');},3500);}
+function saveForm(){try{localStorage.setItem(FORM_KEY,JSON.stringify({usecase:($('usecase')||{}).value||'',context:($('context')||{}).value||'',objective:($('objective')||{}).value||'',facts:($('facts')||{}).value||''}));}catch(e){}}
+function restoreForm(){try{var raw=localStorage.getItem(FORM_KEY);if(!raw)return;var f=JSON.parse(raw);if(f.usecase&&$('usecase'))$('usecase').value=f.usecase;if(f.context&&$('context'))$('context').value=f.context;if(f.objective&&$('objective'))$('objective').value=f.objective;if(f.facts&&$('facts'))$('facts').value=f.facts;}catch(e){}}
+function prefill(){try{var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY);if(!raw)return;var s=JSON.parse(raw);var n=s.need||{};var ctx=$('context');if(ctx&&!ctx.value){var p=[];if(s.domain)p.push('Domaine : '+s.domain);if(n.title)p.push('Objet : '+n.title);if(n.context)p.push('Contexte : '+n.context);if(n.problem)p.push('Probleme : '+n.problem);if(n.constraints)p.push('Contraintes : '+n.constraints);if(n.actors)p.push('Acteurs : '+n.actors);if(n.deadline)p.push('Echeance : '+n.deadline);if(p.length)ctx.value=p.join('\n');}var obj=$('objective');if(obj&&!obj.value&&(n.objective||n.title))obj.value=n.objective||n.title||'';}catch(e){}}
+function loadVault(){var list=$('vaultInlineList');if(!list)return;list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Chargement...</div>';apiFetch('/vault?space='+SPACE).then(function(data){var files=(data&&data.files)||[];if(!files.length){list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Aucune piece. <a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);font-weight:600;">Deposer</a></div>';return;}list.innerHTML=files.map(function(f){var id=esc(f.id||f.filename);var name=esc(f.filename||'Fichier');var sz=esc(f.size_label||'');return'<div class="po-vault-item"><input type="checkbox" data-vault-select value="'+id+'" id="vf'+id+'"/><label class="v36-vault-item-name" for="vf'+id+'">'+name+'</label><span class="v36-vault-item-size">'+sz+'</span></div>';}).join('');}).catch(function(){list.innerHTML='<div style="font-size:13px;color:#50627a;padding:8px 0">'Coffre indisponible. <a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);">Ouvrir</a></div>';});}
+var UH={note_strategique:{t:'Note strategique',b:'Produit une note de cadrage pour eclairer une decision. Precisez les options, contraintes et decision attendue.'},courrier:{t:'Courrier / URSSAF',b:'Redige un courrier ou reponse URSSAF structure. Indiquez la reference, objet et contexte.'},deliberation:{t:'Marche public',b:'Produit un document de marche public. Precisez le type, les textes de reference et enjeux.'},synthese_reunion:{t:'Synthese de reunion',b:'Produit une synthese structuree. Decrivez contexte, participants, points abordes et decisions.'},cadrage_projet:{t:'Cadrage projet',b:'Produit une note de cadrage. Precisez objectifs, jalons, risques et parties prenantes.'},rapport_synthese_argumente_public:{t:'Rapport argumente',b:'Produit un rapport argumente. Joignez vos documents depuis le coffre pour enrichir la generation.'},formalite_juridique:{t:'Formalite juridique',b:'Redige un document pour une formalite juridique. Precisez la nature, les parties et le contexte legal.'}};
+function updateHelp(){var v=($('usecase')||{}).value||'';var h=UH[v];var el=$('usecaseInsight');if(!el)return;if(h){el.textContent=h.t+' — '+h.b;}else el.textContent='';}
+function updateCC(){}
+function setWF(n){for(var i=1;i<=3;i++){var el=$('wfStep'+i);if(!el)continue;el.classList.remove('active','done');if(i===n)el.classList.add('active');else if(i<n)el.classList.add('done');}}
+function loadGens(){var g=[];['pope_v67_gens_pub','pope_v61_generations','pope_v54_generations','pope_v53_generations'].forEach(function(k){try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}});var seen={};return g.filter(function(x){if(!x||seen[x.id])return false;seen[x.id]=1;return true;});}
+function saveGen(g){var gens=[];try{gens=JSON.parse(localStorage.getItem(GENS_KEY)||'[]');}catch(e){}gens.unshift(g);if(gens.length>30)gens=gens.slice(0,30);try{localStorage.setItem(GENS_KEY,JSON.stringify(gens));}catch(e){}try{localStorage.setItem('pope_v61_last_gen',String(g.id));}catch(e){}try{localStorage.setItem('pope_v54_last_generation_id',String(g.id));}catch(e){}try{window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g}));}catch(e){}}
+function showResult(text,title,meta){$('resultEmpty').style.display='none';$('generationIndicator').setAttribute('hidden','');$('resultCard').classList.add('show');$('resultCardTitle').textContent=title||'Document genere';$('resultMeta').textContent=meta||'';var out=$('output');out.textContent=text;var rb=$('resultBody');if(rb){rb.dataset.raw=text;rb.textContent=text;}var rt=$('resultText');if(rt)rt.textContent=text;$('nextActions').style.display='block';$('v58DraftReady') && $('v58DraftReady').classList.add('visible');setWF(3);renderArchive();}
+function generate(){var uc=($('usecase')||{}).value||'',ctx=($('context')||{}).value||'',obj=($('objective')||{}).value||'';if(!uc){toast('Selectionnez un type de document.','err');return;}if(!ctx.trim()){toast('Le contexte est obligatoire.','err');$('context').focus();return;}if(!obj.trim()){toast("L'objectif est obligatoire.",'err');$('objective').focus();return;}saveForm();setWF(2);var btn=$('btnGenerate');btn.disabled=true;btn.classList.add('loading');$('btnGenerateText').textContent='Generation en cours...';$('resultEmpty').style.display='none';$('resultCard').classList.remove('show');$('nextActions').style.display='none';$('generationIndicator').removeAttribute('hidden');var vids=qsa('[data-vault-select]:checked').map(function(n){return n.value;});var payload={mode:'generate',usecase:uc,context:ctx.trim(),objective:obj.trim(),facts:($('facts')||{}).value||'',locale:'fr-FR',accountSpace:SPACE,uploaded_file_ids:vids};function done(){btn.disabled=false;btn.classList.remove('loading');$('btnGenerateText').textContent='Produire un livrable securise';}apiFetch('/ai/generate',{method:'POST',body:payload}).then(function(data){var text=data&&(data.result||data.output||data.text)||'';if(!text)throw new Error('Reponse vide.');var ucEl=$('usecase');var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||uc;var title=obj.slice(0,60);var now=new Date();var meta=label+' - '+now.toLocaleString('fr-FR');var gr={id:'g_'+Date.now(),title:title,usecaseLabel:label,usecase:uc,createdAt:now.toISOString(),result:text,domain:'',prompt:{context:ctx,objective:obj,facts:($('facts')||{}).value||''},source:'app-private-v67'};saveGen(gr);$('resultExpertLink').href='dashboard.html?from=app&attach=last';/* nextExpertLink */var _nel=$('resultExpertLink');if(_nel)_nel.href='dashboard.html?from=app&attach=last';$('btnRetourDashboard').href='dashboard.html?from=app&attach=last';showResult(text,title,meta);toast('Document genere !','ok');done();}).catch(function(e){$('generationIndicator').removeAttribute('hidden');$('resultEmpty').style.display='flex';toast((e&&e.data&&e.data.error_label)||(e&&e.message)||'Erreur lors de la generation.','err');setWF(1);done();});}
+function renderArchive(){var gens=loadGens();var s=$('archivePanel');if(!gens.length){if(s)s.style.display='none';return;}if(s)s.style.display='block';var list=$('archiveList');if(!list)return;list.innerHTML=gens.slice(0,8).map(function(g){var d=g.createdAt?new Date(g.createdAt).toLocaleString('fr-FR'):'';return'<div class="v36-archive-item"' data-gen-id="'+esc(g.id)+'"><div class="po-archive-item-title">'+esc(g.title||g.usecaseLabel||'Draft')+'</div><div class="po-archive-item-meta">'+esc((g.usecaseLabel||'')+' - '+d)+'</div></div>';}).join('');}
+function copyResult(){var out=$('output');if(!out)return;var t=out.textContent||'';navigator.clipboard.writeText(t).then(function(){toast('Copie !','ok');}).catch(function(){toast('Impossible de copier.','err');});}
+function init(){if(!requireAuth())return;document.querySelectorAll('[data-logout]').forEach(function(b){b.addEventListener('click',logout);});/* handled above *//* burger handled by separate script */$('usecase')&&$('usecase').addEventListener('change',function(){updateHelp();saveForm();});$('context')&&$('context').addEventListener('input',function(){updateCC();saveForm();});$('objective')&&$('objective').addEventListener('input',saveForm);$('facts')&&$('facts').addEventListener('input',saveForm);$('btnGenerate')&&$('btnGenerate').addEventListener('click',generate);$('btnCopyResult')&&$('btnCopyResult').addEventListener('click',copyResult);$('btnSaveResult')&&$('btnSaveResult').addEventListener('click',function(){toast('Draft archive localement.','ok');});$('archiveList')&&$('archiveList').addEventListener('click',function(e){var item=e.target.closest('[data-gen-id]');if(!item)return;var id=item.getAttribute('data-gen-id');var g=loadGens().find(function(x){return String(x.id)===String(id);});if(g)showResult(g.result||'',g.title||'Draft',g.usecaseLabel||'');});restoreForm();prefill();updateHelp();updateCC();loadVault();renderArchive();apiFetch('/auth/me').then(function(data){if(data){var i=(data.name||data.email||'?').charAt(0).toUpperCase();var av=null;if(av)av.textContent=i;}}).catch(function(){});setWF(1);}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 })();
 </script>
+
+<script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 </body>
 </html>
