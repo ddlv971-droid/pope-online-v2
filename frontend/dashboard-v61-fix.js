@@ -291,7 +291,6 @@
   }
   window.buildFullDescription = function() { return buildDescription(writeState()); };
 
-  window.renderStep3 = renderStep3;
   function renderStep4() {
     // Appeler updateRecap de dashboard-v5.js pour pré-remplir recapDomain/Title/Type/Quota
     if (typeof window.updateRecap === 'function') {
@@ -327,8 +326,6 @@
         esc((buildDescription(s) || 'Aucun contexte détaillé saisi.').slice(0, 900)) + '</div>';
     }
   }
-
-    window.renderStep4 = renderStep4;
 
   /* ── Bandeau utilisateur ────────────────────────────────
      BUG CORRIGÉ : utilise full_name en priorité, capitalize

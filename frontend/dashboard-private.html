@@ -531,7 +531,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
 <!-- Tabs -->
 <div class="v5-tabs-bar">
-  <button class="v5-tab active" data-tab="besoin" onclick="switchTab(\'besoin\')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
+  <button class="v5-tab active" data-tab="besoin" onclick="switchTab('besoin')"><span class="v5-tab-ico">🎯</span><span>Mon Besoin</span></button>
   <button class="v5-tab" data-tab="experts" onclick="switchTab('experts')"><span class="v5-tab-ico">👤</span><span>Mes Experts</span></button>
   <button class="v5-tab" data-tab="surmesure" onclick="switchTab('surmesure')"><span class="v5-tab-ico">📋</span><span>Sur Mesure</span></button>
   <button class="v5-tab" data-tab="espace" onclick="switchTab('espace')"><span class="v5-tab-ico">⚙️</span><span>Mon Espace</span></button>
@@ -895,7 +895,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v5-empty-ico">👤</div>
       <strong>Aucun échange expert pour le moment.</strong>
       <p>Soumettez votre premier besoin depuis l'onglet Mon Besoin.</p>
-      <button class="v5-btn-primary" onclick="switchTab(\'besoin\')">🎯 Soumettre un besoin</button>
+      <button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button>
     </div>
   </div>
 </div>
@@ -1181,7 +1181,7 @@ function loadRequests() {
 function renderRequests(container, reqs) {
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   if (!reqs.length) {
-    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab(\'besoin\')">🎯 Soumettre un besoin</button></div>';
+    container.innerHTML = '<div class="v5-empty-state"><div class="v5-empty-ico">👤</div><strong>Aucun échange expert pour le moment.</strong><p>Soumettez votre premier besoin depuis l\'onglet Mon Besoin.</p><button class="v5-btn-primary" onclick="switchTab('besoin')">🎯 Soumettre un besoin</button></div>';
     return;
   }
   container.innerHTML = reqs.map(function(r){
@@ -1217,151 +1217,83 @@ function v58Toggle(id){
 // v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
 </script>
-<script src="./dashboard-v58.js"></script>
-<script src="./dashboard-v60.js"></script>
+
+
 <script src="./dashboard-v61-fix.js"></script>
 
-<script id="pope-v62-final-step-engine">
+<script>
 (function(){
-  'use strict';
-  if (window.__POPE_V62_STEP_ENGINE__) return;
-  window.__POPE_V62_STEP_ENGINE__ = true;
 
-  var isPrivate = /dashboard-private\.html/i.test(location.pathname);
-  var stateKey = 'pope_v62_dashboard_state_' + (isPrivate ? 'private' : 'public');
-  var legacyKeys = [
-    'pope_v61_state_' + (isPrivate ? 'private' : 'public'),
-    'pope_v60_state_' + (isPrivate ? 'priv' : 'pub'),
-    'pope_v58_state_' + (isPrivate ? 'private' : 'public')
-  ];
+function popeShowStep(step){
 
-  function $(id){ return document.getElementById(id); }
-  function readJSON(k){ try { var raw=sessionStorage.getItem(k)||localStorage.getItem(k); return raw?JSON.parse(raw):null; } catch(e){ return null; } }
-  function readState(){
-    var s = readJSON(stateKey);
-    if (!s) for (var i=0;i<legacyKeys.length;i++){ s = readJSON(legacyKeys[i]); if (s) break; }
-    return s || {};
+  const steps = document.querySelectorAll(
+    '[data-step], .step-content, .dashboard-step, .step-panel'
+  );
+
+  steps.forEach(el=>{
+    el.style.display='none';
+    el.classList.remove('active','current','show');
+  });
+
+  const target =
+    document.querySelector('[data-step="'+step+'"]') ||
+    document.getElementById('step-'+step) ||
+    document.getElementById('step'+step);
+
+  if(target){
+    target.style.display='block';
+    target.classList.add('active','current','show');
   }
-  function writeState(patch){
-    var s = Object.assign({}, readState(), patch || {}, collectFields());
-    var json = JSON.stringify(s);
-    [stateKey].concat(legacyKeys).forEach(function(k){ try{ sessionStorage.setItem(k,json); localStorage.setItem(k,json); }catch(e){} });
-    return s;
+
+  localStorage.setItem('pope_current_step', step);
+}
+
+window.goStep = popeShowStep;
+
+window.addEventListener('DOMContentLoaded', function(){
+
+  // RESET domaine persistant à chaque nouvelle connexion/dashboard
+  if(!window.location.search.includes('from=app')){
+    localStorage.removeItem('selectedDomain');
+    localStorage.removeItem('pope_selected_domain');
   }
-  function collectFields(){
-    var ids = {
-      title:'besoInTitle', contexte:'descContexte', probleme:'descProbleme', objectif:'descObjectif',
-      decision:'descDecision', livrable:'descLivrable', contraintes:'descContraintes', risques:'descRisques',
-      acteurs:'descActeurs', public_c:'descPublic', deadline:'needDeadline', pieces:'descPieces',
-      niveau:'descNiveau', desc:'besoInDesc'
-    };
-    var out = { step: Number(window._step || 1), domain: window._domain || '' };
-    Object.keys(ids).forEach(function(k){ var e=$(ids[k]); if(e) out[k]=e.value||''; });
-    var r=document.querySelector('input[name="besoType"]:checked'); if(r) out.type=r.value;
-    var sel=$('archiveAttachSelect'); if(sel) out.attachedGenId=sel.value||'';
-    return out;
+
+  // Toujours démarrer étape 1 sauf retour app
+  const params = new URLSearchParams(window.location.search);
+  const forced = params.get('step');
+
+  if(forced){
+    popeShowStep(forced);
+  }else{
+    popeShowStep(1);
   }
-  function restoreFields(){
-    var s=readState();
-    var map={besoInTitle:s.title,descContexte:s.contexte,descProbleme:s.probleme,descObjectif:s.objectif,descDecision:s.decision,descLivrable:s.livrable,descContraintes:s.contraintes,descRisques:s.risques,descActeurs:s.acteurs,descPublic:s.public_c,needDeadline:s.deadline,descPieces:s.pieces,descNiveau:s.niveau,besoInDesc:s.desc};
-    Object.keys(map).forEach(function(id){ var e=$(id); if(e && map[id] && !e.value) e.value=map[id]; });
-    if(s.type){ var rr=document.querySelector('input[name="besoType"][value="'+s.type+'"]'); if(rr) rr.checked=true; }
-    if(s.domain) setDomain(s.domain, s.domainIcon || '🎯', true);
-  }
-  function setDomain(domain, icon, silent){
-    if(!domain) return;
-    window._domain = domain;
-    try { if (typeof _domain !== 'undefined') _domain = domain; } catch(e) {}
-    document.querySelectorAll('.v5-domain-pill').forEach(function(b){
-      var on = b.getAttribute('data-domain') === domain;
-      b.classList.toggle('selected', on);
-      if(on && !icon) icon=(b.textContent||'').trim().split(/\s+/)[0]||'🎯';
-    });
-    var pairs=[['selectedDomainBadge','selectedDomainLabel','selectedDomainIcon'],['v58DomainBadge','v58DomainName','v58DomainIcon']];
-    pairs.forEach(function(p){
-      var badge=$(p[0]), name=$(p[1]), ico=$(p[2]);
-      if(badge){ badge.style.display = p[0]==='v58DomainBadge' ? 'flex' : 'block'; badge.classList.add('visible'); }
-      if(name) name.textContent=domain;
-      if(ico) ico.textContent=icon||'🎯';
-    });
-    if(!silent) writeState({domain:domain, domainIcon:icon||'🎯'});
-  }
-  function hasDomain(){
-    var s=readState();
-    return !!(window._domain || s.domain || document.querySelector('.v5-domain-pill.selected'));
-  }
-  function renderStep3Safe(){
-    try { if (typeof window.renderStep3 === 'function') window.renderStep3(); } catch(e){ console.error('[POPE V62.5] renderStep3 error', e); }
-    var p=$('step-panel-3');
-    if(!p) return;
-    var sel=$('archiveAttachSelect');
-    if(sel && sel.options.length <= 1){
-      var gens=[];
-      try { gens=JSON.parse(localStorage.getItem('pope_v54_generations')||localStorage.getItem('pope_v53_generations')||'[]'); } catch(e) { gens=[]; }
-      gens.forEach(function(g,i){ var o=document.createElement('option'); o.value=String(g.id!=null?g.id:i); o.textContent=(g.title||g.usecaseLabel||'Draft IA')+(g.createdAt?' — '+new Date(g.createdAt).toLocaleDateString('fr-FR'):''); sel.appendChild(o); });
+
+  // Boutons continuer
+  document.querySelectorAll('button,a').forEach(btn=>{
+
+    const txt = (btn.textContent || '').toLowerCase();
+
+    if(txt.includes('continuer')){
+
+      btn.addEventListener('click', function(){
+
+        const current =
+          Number(localStorage.getItem('pope_current_step') || '1');
+
+        const next = current + 1;
+
+        setTimeout(()=>{
+          popeShowStep(next);
+        },50);
+
+      });
+
     }
-  }
-  function renderStep4Safe(){ try { if (typeof window.renderStep4 === 'function') window.renderStep4(); else if (typeof window.updateRecap === 'function') window.updateRecap(); } catch(e){ console.error('[POPE V62.5] renderStep4 error', e); } }
-  function showStep(n, opts){
-    opts=opts||{}; n=parseInt(n,10)||1;
-    if(n>1 && !hasDomain()) { n=1; }
-    var anti=$('v61-antiflash'); if(anti) anti.remove();
-    window._step=n; try { if (typeof _step !== 'undefined') _step=n; } catch(e) {}
-    document.querySelectorAll('.v5-step-panel').forEach(function(p){
-      var active = p.id === 'step-panel-' + n;
-      p.classList.toggle('active', active);
-      p.hidden = false;
-      p.removeAttribute('aria-hidden');
-      p.style.setProperty('display', active ? 'block' : 'none', 'important');
-      p.style.visibility = active ? 'visible' : 'hidden';
-      p.style.opacity = active ? '1' : '0';
-    });
-    document.querySelectorAll('.v5-step').forEach(function(s){
-      var sn=parseInt(s.dataset.step,10);
-      s.classList.toggle('active', sn===n);
-      s.classList.toggle('done', sn<n);
-    });
-    writeState({step:n});
-    if(n===3) renderStep3Safe();
-    if(n===4) renderStep4Safe();
-    if(!opts.noScroll){ var activePanel=$('step-panel-'+n); if(activePanel) activePanel.scrollIntoView({behavior:'smooth',block:'start'}); }
-  }
 
-  function targetFromUrl(){
-    var sp=new URLSearchParams(location.search);
-    if(sp.get('from')==='app') return 2;
-    var st=parseInt(sp.get('step')||'0',10);
-    return st>=1 && st<=4 ? st : 1;
-  }
-  function wire(){
-    restoreFields();
-    window.goStep = showStep;
-    window.goStep._v62patched = true;
-    window.selectDomain = function(btn){
-      var domain = btn && btn.getAttribute('data-domain');
-      if(!domain) return;
-      var icon=(btn.textContent||'').trim().split(/\s+/)[0]||'🎯';
-      setDomain(domain, icon, false);
-    };
-    document.addEventListener('click', function(e){
-      var d=e.target.closest && e.target.closest('.v5-domain-pill');
-      if(d){ window.selectDomain(d); return; }
-      var btn=e.target.closest && e.target.closest('button,a');
-      if(!btn) return;
-      var txt=(btn.textContent||'').toLowerCase();
-      if(txt.includes('continuer') && btn.closest('#step-panel-1')) { e.preventDefault(); e.stopPropagation(); showStep(2); }
-      else if(txt.includes('continuer') && btn.closest('#step-panel-2')) { e.preventDefault(); e.stopPropagation(); showStep(3); }
-      else if(txt.includes('continuer') && btn.closest('#step-panel-3')) { e.preventDefault(); e.stopPropagation(); showStep(4); }
-      else if(txt.includes('retour') && btn.closest('#step-panel-2')) { e.preventDefault(); e.stopPropagation(); showStep(1); }
-      else if(txt.includes('retour') && btn.closest('#step-panel-3')) { e.preventDefault(); e.stopPropagation(); showStep(2); }
-      else if(txt.includes('retour') && btn.closest('#step-panel-4')) { e.preventDefault(); e.stopPropagation(); showStep(3); }
-    }, true);
-    document.addEventListener('input', function(){ writeState(); }, true);
-    document.addEventListener('change', function(){ writeState(); }, true);
-    showStep(targetFromUrl(), {noScroll:true});
-    setTimeout(function(){ window.goStep=showStep; var n=Number(window._step||targetFromUrl()); showStep(n,{noScroll:true}); }, 700);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+  });
+
+});
+
 })();
 </script>
 
