@@ -1259,7 +1259,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     apiFetch('/expert/submit-need', {method:'POST', body:payload}).then(function(data){
       flash('✅ Demande envoyée à votre expert !','ok');
       saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
-      setTimeout(function(){ location.href='expert-private.html'; }, 1500);
+      setTimeout(function(){ location.href='expert.html'; }, 1500);
     }).catch(function(e){
       var msg = (e&&e.data&&e.data.error_label) || (e&&e.data&&e.data.message) || (e&&e.message) || 'Erreur lors de l\'envoi.';
       flash(msg,'err');
@@ -1302,35 +1302,40 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     if(!tracker || !list) return;
     apiFetch('/expert/my-requests').then(function(data){
       var reqs = (data&&data.requests)||[];
-      // Filtrer les demandes actives (non archivées)
       var active = reqs.filter(function(r){ return r.status !== 'archived'; }).slice(0,3);
       if(!active.length){ tracker.style.display='none'; return; }
       tracker.style.display='block';
-      list.innerHTML = active.map(function(r){
+      var html = '';
+      active.forEach(function(r){
         var isPending = r.status !== 'done' && r.status !== 'replied';
-        var statusBg = isPending ? '#fff7ed' : '#f0fdf4';
+        var statusBg    = isPending ? '#fff7ed' : '#f0fdf4';
         var statusColor = isPending ? '#d97706' : '#16a34a';
-        var statusLabel = isPending ? '⏳ En attente' : '✅ Répondu';
+        var statusLabel = isPending ? '&#9203; En attente' : '&#9989; Répondu';
         var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
-        return '<div onclick="location.href='expert-private.html?id='+esc(String(r.id||''))+''" '
-          + 'style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:.15s;" '
-          + 'onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">'
+        var rid = esc(String(r.id||''));
+        var subject = esc(r.domain||'Expert') + ' — ' + esc(r.subject||r.title||(r.need&&r.need.title)||'Demande');
+        html += '<div class="tracker-row" data-rid="' + rid + '" '
+          + 'style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
           + '<div style="flex:1;min-width:0;">'
           + '<div style="font-size:13px;font-weight:600;color:#0d1e30;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
-          + esc(r.domain||'Expert') + ' — ' + esc(r.subject||r.title||r.need&&r.need.title||'Demande')
-          + '</div>'
+          + subject + '</div>'
           + '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + date + '</div>'
           + '</div>'
-          + '<span style="background:'+statusBg+';color:'+statusColor+';border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;">'
+          + '<span style="background:' + statusBg + ';color:' + statusColor + ';border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;">'
           + statusLabel + '</span>'
           + '</div>';
-      }).join('');
-      // Ajouter lien si plus de 3
+      });
       if(reqs.length > 3){
-        list.innerHTML += '<div style="text-align:center;padding-top:10px;">'
+        html += '<div style="text-align:center;padding-top:10px;">'
           + '<a href="expert-private.html" style="font-size:12px;color:#0079c1;font-weight:600;text-decoration:none;">'
           + 'Voir toutes mes demandes (' + reqs.length + ') →</a></div>';
       }
+      list.innerHTML = html;
+      // Event delegation — pas d'onclick inline
+      list.addEventListener('click', function(e){
+        var row = e.target.closest('.tracker-row');
+        if(row){ location.href = 'expert-private.html?id=' + row.getAttribute('data-rid'); }
+      });
     }).catch(function(){ /* silencieux */ });
   }
 
