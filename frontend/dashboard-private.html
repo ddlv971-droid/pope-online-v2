@@ -1217,85 +1217,9 @@ function v58Toggle(id){
 // v59: saveDashboardState stub (overridden by dashboard-v58.js)
 function saveDashboardState(){}
 </script>
-
-
+<script src="./dashboard-v58.js"></script>
+<script src="./dashboard-v60.js"></script>
 <script src="./dashboard-v61-fix.js"></script>
-
-<script>
-(function(){
-
-function popeShowStep(step){
-
-  const steps = document.querySelectorAll(
-    '[data-step], .step-content, .dashboard-step, .step-panel'
-  );
-
-  steps.forEach(el=>{
-    el.style.display='none';
-    el.classList.remove('active','current','show');
-  });
-
-  const target =
-    document.querySelector('[data-step="'+step+'"]') ||
-    document.getElementById('step-'+step) ||
-    document.getElementById('step'+step);
-
-  if(target){
-    target.style.display='block';
-    target.classList.add('active','current','show');
-  }
-
-  localStorage.setItem('pope_current_step', step);
-}
-
-window.goStep = popeShowStep;
-
-window.addEventListener('DOMContentLoaded', function(){
-
-  // RESET domaine persistant à chaque nouvelle connexion/dashboard
-  if(!window.location.search.includes('from=app')){
-    localStorage.removeItem('selectedDomain');
-    localStorage.removeItem('pope_selected_domain');
-  }
-
-  // Toujours démarrer étape 1 sauf retour app
-  const params = new URLSearchParams(window.location.search);
-  const forced = params.get('step');
-
-  if(forced){
-    popeShowStep(forced);
-  }else{
-    popeShowStep(1);
-  }
-
-  // Boutons continuer
-  document.querySelectorAll('button,a').forEach(btn=>{
-
-    const txt = (btn.textContent || '').toLowerCase();
-
-    if(txt.includes('continuer')){
-
-      btn.addEventListener('click', function(){
-
-        const current =
-          Number(localStorage.getItem('pope_current_step') || '1');
-
-        const next = current + 1;
-
-        setTimeout(()=>{
-          popeShowStep(next);
-        },50);
-
-      });
-
-    }
-
-  });
-
-});
-
-})();
-</script>
-
+<script src="./pope-v64-step-state-fix.js"></script>
 </body>
 </html>
