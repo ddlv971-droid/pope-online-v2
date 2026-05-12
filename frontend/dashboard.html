@@ -672,56 +672,42 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
     </div>
 
-    <!-- Étape 3 : Documents -->
+    <!-- Étape 3 : Bibliothèque documentaire -->
     <div class="v5-step-panel" id="step-panel-3">
       <div class="v68-step-domain-badge" id="stepDomainBadge3" style="display:none;align-items:center;gap:7px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:7px 12px;margin-bottom:14px;font-size:12px;color:#0369a1;font-weight:600;">
-        <span id="stepDomainBadge3Icon">🎯</span>
+        <span id="stepDomainBadge3Icon">&#x1F3AF;</span>
         <span id="stepDomainBadge3Name"></span>
-        <button onclick="goStep(1)" style="margin-left:auto;font-size:11px;color:#0369a1;opacity:.7;background:none;border:none;cursor:pointer;padding:0;font-family:inherit">✕ Changer</button>
+        <button onclick="goStep(1)" style="margin-left:auto;font-size:11px;color:#0369a1;opacity:.7;background:none;border:none;cursor:pointer;padding:0;font-family:inherit">&#x2715; Changer</button>
       </div>
       <div class="v5-panel-head">
-        <h2>📎 Joindre des documents <span style="font-size:13px;color:var(--muted);font-weight:400">(optionnel)</span></h2>
-        <p>Enrichissez votre demande en joignant un draft préparé ou des pièces depuis votre dépôt sécurisé.</p>
+        <h2>&#x1F4DA; Biblioth&#232;que documentaire</h2>
+        <p>D&#233;posez vos pi&#232;ces et s&#233;lectionnez celles &#224; joindre &#224; votre demande expert.</p>
       </div>
-
-      <!-- Draft IA -->
-      <div class="v5-attach-box" style="border-color:#bbf7d0;background:#f0fdf4">
-        <div class="v5-attach-head">
-          <div class="v5-attach-ico" style="background:#dcfce7">🛠️</div>
-          <div style="flex:1">
-            <strong style="color:#14532d">Joindre un draft IA préparé</strong>
-            <p>Si vous avez généré un draft depuis l'outil IA, il apparaît ici et peut être joint à votre demande expert.</p>
+      <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:13px;padding:14px 16px;margin-bottom:14px;">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+          <div style="width:34px;height:34px;background:#dcfce7;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">&#x1F6E0;&#xFE0F;</div>
+          <div style="flex:1"><strong style="color:#14532d;font-size:13px">Joindre un draft IA pr&#233;par&#233;</strong><p style="font-size:11px;color:#50627a;margin:2px 0 0">Si vous avez g&#233;n&#233;r&#233; un document depuis l'outil IA, il appara&#238;t ici.</p></div>
+          <a href="app.html" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:11px;padding:6px 12px;background:#16a34a;flex-shrink:0">G&#233;n&#233;rer &#x2192;</a>
+        </div>
+        <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0;border-color:#bbf7d0"><option value="">Ne pas joindre de draft IA</option></select>
+      </div>
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:13px;padding:14px 16px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:34px;height:34px;background:#eef7ff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px">&#x1F4C2;</div>
+            <div><strong style="font-size:13px;color:var(--ink)">Mes pi&#232;ces d&#233;pos&#233;es</strong><div style="font-size:11px;color:var(--muted);margin-top:1px">Cochez les fichiers &#224; joindre &#224; votre demande</div></div>
           </div>
-          <a href="app.html" id="lnkDraftStep3" class="v58-draft-btn" style="font-size:12px;padding:7px 14px;background:#16a34a">Créer un draft →</a>
+          <a href="vault.html?space=public&amp;return=dashboard.html%3Fstep%3D3" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap;font-size:11px">&#x1F4E4; D&#233;poser des pi&#232;ces</a>
         </div>
-        <select class="v5-input" id="archiveAttachSelect" style="margin-bottom:0;border-color:#bbf7d0">
-          <option value="">Ne pas joindre de draft préparé</option>
-        </select>
-        <div id="v59DraftStatus" style="display:none;margin-top:8px;font-size:12px;color:#166534;font-weight:600">
-          ✅ Draft disponible et sélectionné
-        </div>
+        <div id="vaultExpertList" style="min-height:32px"><div style="font-size:12px;color:var(--muted);padding:8px 0">Chargement&#x2026;</div></div>
+        <div id="vaultSelCount" style="font-size:11px;color:var(--blue);font-weight:600;margin-top:8px;display:none"></div>
       </div>
-
-      <!-- Pièces vault -->
-      <div class="v5-attach-box">
-        <div class="v5-attach-head">
-          <div class="v5-attach-ico">📂</div>
-          <div style="flex:1">
-            <strong>Pièces du dépôt sécurisé 48h</strong>
-            <p>Joignez des documents complémentaires depuis votre espace sécurisé (contrats, rapports, délibérations…).</p>
-          </div>
-          <a href="vault.html?space=public&amp;return=dashboard.html%3Fstep%3D3" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap">📂 Gérer le dépôt →</a>
-        </div>
-        <div id="vaultExpertList" style="font-size:12px;margin-top:4px;color:var(--muted)">Chargement…</div>
+      <div style="background:#f8fafc;border-radius:10px;padding:10px 14px;font-size:12px;color:#64748b;border:1px solid #e2e8f0">
+        &#x1F4A1; <strong>Conseil :</strong> Joignez contrats, d&#233;lib&#233;rations, rapports ou tout document utile &#224; l'analyse de votre expert.
       </div>
-
-      <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;margin-top:4px">
-        💡 <strong>Conseil :</strong> Un draft bien préparé augmente significativement la qualité et la rapidité de la réponse experte.
-      </div>
-
       <div class="v5-step-footer">
-        <button class="v5-btn-ghost" id="btnStep3Back">← Retour</button>
-        <button class="v5-btn-primary" id="btnStep3Next">Continuer →</button>
+        <button class="v5-btn-ghost" id="btnStep3Back">&#x2190; Retour</button>
+        <button class="v5-btn-primary" id="btnStep3Next">Continuer &#x2192;</button>
       </div>
     </div>
 
@@ -1188,24 +1174,33 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function loadVaultFiles(){
     var container = $('vaultExpertList');
     if(!container) return;
-    container.innerHTML = '<div style="font-size:12px;color:var(--muted);">Chargement…</div>';
+    container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0">Chargement&#x2026;</div>';
     apiFetch('/vault').then(function(data){
       var files = (data&&data.items)||(data&&data.files)||[];
       if(!files.length){
-        container.innerHTML =
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
-          '<span style="font-size:12px;color:var(--muted);">Aucune pièce dans le dépôt — optionnel.</span>' +
-          '<a href="vault.html?space='+SPACE+'&return=dashboard.html%3Fstep%3D3" style="font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap;">📂 Déposer des pièces →</a>' +
-          '</div>';
+        container.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 0"><span style="font-size:12px;color:var(--muted)">Aucune pi\u00e8ce dans le d\u00e9p\u00f4t.</span><a href="vault.html?space='+SPACE+'&return=dashboard.html%3Fstep%3D3" style="font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap">D\u00e9poser \u2192</a></div>';
         return;
       }
       container.innerHTML = files.map(function(f){
-        return '<div class="po-attach-item"><span class="po-attach-item-ico">📄</span>' +
-          '<span class="po-attach-item-name">'+esc(f.name||f.filename||'Fichier')+'</span>' +
-          '<span class="po-attach-item-size">'+esc(f.size_label||'')+'</span></div>';
+        var rawId=f.id||f.filename||'';
+        var encId=encodeURIComponent(rawId);
+        var nm=esc(f.name||f.filename||'Fichier');
+        var sz=f.size_label||'';
+        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
+        var ai=f.canFeedAI?' \u00b7 IA':'';
+        return '<label style="display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
+          +'<input type="checkbox" data-vault-file value="'+encId+'" '
+          +'onchange="(function(){ var n=document.querySelectorAll(\'[data-vault-file]:checked\').length; var cnt=document.getElementById(\'vaultSelCount\'); if(cnt){cnt.textContent=n+\' pi\u00e8ce\'+(n>1?\'s\':\'\')+\' s\u00e9lectionn\u00e9e\'+(n>1?\'s\':\'\')+\' \u2714\';cnt.style.display=n>0?\'block\':\'none\';} })()" '
+          +'style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0"/>'
+          +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div>'
+          +'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+sz+(exp?' expire '+exp:'')+(ai)+'</div></div>'
+          +'<a href="'+API+'/vault/'+encId+'/download" target="_blank" rel="noopener" onclick="event.stopPropagation()" '
+          +'style="font-size:11px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0;padding:3px 8px;border:1px solid #bae6fd;border-radius:5px">DL</a>'
+          +'</label>';
       }).join('');
+      var sel=$('vaultSelCount'); if(sel)sel.style.display='none';
     }).catch(function(){
-      container.innerHTML = '<div style="font-size:12px;color:var(--muted);">Impossible de charger le coffre. <a href="vault.html?space='+SPACE+'&return=dashboard.html%3Fstep%3D3" style="color:var(--blue);">Ouvrir le coffre →</a></div>';
+      container.innerHTML = '<div style="font-size:12px;color:var(--muted)">Coffre indisponible.</div>';
     });
   }
 
@@ -1470,6 +1465,26 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     // Accès expiré
     if(w.expired){
       var ol=$('trialExpiredOverlay'); if(ol) ol.classList.add('show');
+    }
+    // Quota : bloquer le bouton soumettre si épuisé
+    var expired = w.status==='trial_expired'||w.trial_expired||w.expired;
+    var left = w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
+    var noQuota = expired||(left!=null&&left<=0);
+    var btnS = $('btnSend');
+    if(noQuota && btnS){
+      btnS.disabled = true;
+      btnS.style.opacity = '0.55';
+      btnS.style.cursor = 'not-allowed';
+      var msgQ = $('quotaBlockMsg');
+      if(!msgQ){
+        msgQ = document.createElement('div');
+        msgQ.id = 'quotaBlockMsg';
+        msgQ.style.cssText = 'font-size:12px;text-align:center;margin-top:8px;padding:10px 14px;background:#fff7ed;border:1px solid #fde68a;border-radius:8px;color:#92400e;';
+        msgQ.innerHTML = expired
+          ? '⏰ Essai expiré. <a href="pricing.html" style="color:#d97706;font-weight:700">Choisir un plan →</a>'
+          : '⚠️ Quota épuisé ce mois. <a href="pricing.html" style="color:#d97706;font-weight:700">Passer à un abonnement →</a>';
+        if(btnS.parentNode) btnS.parentNode.insertBefore(msgQ, btnS.nextSibling);
+      }
     }
   }
 

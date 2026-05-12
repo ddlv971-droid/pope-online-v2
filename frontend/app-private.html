@@ -1146,6 +1146,40 @@ function init(){
 
   /* WF */
   setWF(1);
+
+  /* Quota check — charger en arrière-plan et bloquer si nécessaire */
+  checkQuota();
+}
+
+function checkQuota(){
+  apiFetch('/auth/me').then(function(data){
+    var w=data&&data.wallet||{};
+    var expired=w.status==='trial_expired'||w.trial_expired;
+    var left=w.expert_left!=null?w.expert_left:w.tickets;
+    var noQuota=(left!=null&&left<=0)||expired;
+    if(!noQuota) return;
+    
+    // Bloquer le bouton générer
+    var btn=$('btnGenerate');
+    var btnTxt=$('btnGenerateText');
+    if(btn){ btn.disabled=true; }
+    if(btnTxt) btnTxt.textContent = expired ? 'Essai expiré' : 'Quota épuisé';
+    
+    // Afficher bannière upgrade
+    var banner=document.getElementById('quotaBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='quotaBanner';
+      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:16px;';
+      banner.innerHTML='<span style="font-size:24px">'+(expired?'⏰':'⚠️')+'</span>'
+        +'<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#92400e">'
+        +(expired?'Votre période d'essai est terminée':'Votre quota de conseils experts est épuisé')+'</div>'
+        +'<div style="font-size:12px;color:#b45309;margin-top:3px">La génération IA reste disponible pour la préparation de vos documents.</div></div>'
+        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres →</a>';
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol) formCol.insertBefore(banner, formCol.firstChild);
+    }
+  }).catch(function(){});
 }
 
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}

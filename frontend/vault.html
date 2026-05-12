@@ -189,7 +189,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v37-drop-zone" id="dropZone">
         <div class="icon">📎</div>
         <p><strong style="color:#0b2440">Cliquez ou glissez un fichier</strong><br>TXT, DOC, CSV, PDF — max 10 Mo</p>
-        <input type="file" id="vaultInput" accept=".txt,.csv,.doc,.pdf,text/plain,text/csv,application/msword,application/pdf" style="display:none"/>
+        <input type="file" id="vaultInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.odt,.ods,.odp,.rtf,.zip,.jpg,.jpeg,.png,.gif,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,image/jpeg,image/png,image/gif,image/webp,application/zip" style="display:none"/>
       </div>
 
       <div id="selectedFile" hidden style="background:#f0f7fc;border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
@@ -370,22 +370,36 @@ inp.addEventListener('change', function() {
 (function(){
   var sp = new URLSearchParams(location.search);
   var ret = sp.get('return') || sp.get('retour') || '';
+  var space = sp.get('space') || localStorage.getItem('pope_account_space') || 'public';
+  var isPrivate = space === 'private';
+  
+  // Corriger automatiquement les liens retour qui pointent vers le mauvais dashboard
   if(ret){
+    // Si le paramètre return pointe vers dashboard.html mais qu'on est en espace privé,
+    // corriger vers dashboard-private.html
+    if(isPrivate && ret.indexOf('dashboard.html') !== -1 && ret.indexOf('dashboard-private') === -1){
+      ret = ret.replace('dashboard.html', 'dashboard-private.html');
+    }
+    // Si le paramètre return pointe vers app.html mais qu'on est en espace privé,
+    // corriger vers app-private.html
+    if(isPrivate && ret === 'app.html'){
+      ret = 'app-private.html';
+    }
+    
     var bar = document.getElementById('v70ReturnBar');
     var btn = document.getElementById('v70ReturnBtn');
     var info = document.getElementById('v70ReturnInfo');
     if(bar) bar.style.display = 'flex';
     if(btn){
       btn.href = ret;
-      // Label adaptatif selon la destination
       if(ret.indexOf('step=3') !== -1 || ret.indexOf('step%3D3') !== -1){
-        btn.textContent = '← Retour à l\'étape 3 — Documents';
+        btn.textContent = isPrivate ? '← Retour à l\'étape 3 — Espace privé' : '← Retour à l\'étape 3 — Documents';
         if(info) info.textContent = 'Déposez vos pièces, puis revenez à l\'étape Documents de votre parcours.';
       } else if(ret.indexOf('app') !== -1){
         btn.textContent = '← Retour à la génération';
         if(info) info.textContent = 'Vos pièces seront disponibles dans l\'outil de génération.';
       } else if(ret.indexOf('dashboard') !== -1){
-        btn.textContent = '← Retour au tableau de bord';
+        btn.textContent = isPrivate ? '← Retour au tableau de bord privé' : '← Retour au tableau de bord';
         if(info) info.textContent = 'Vos pièces sont disponibles pour votre demande expert.';
       } else {
         btn.textContent = '← Retour';
