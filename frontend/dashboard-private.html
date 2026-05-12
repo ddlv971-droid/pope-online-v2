@@ -710,7 +710,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
             <strong>Pièces du dépôt sécurisé 48h</strong>
             <p>Joignez des documents complémentaires depuis votre espace sécurisé (contrats, rapports, délibérations…).</p>
           </div>
-          <a href="vault.html?space=private&amp;return=dashboard.html" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap">Gérer le dépôt →</a>
+          <a href="vault.html?space=private&amp;return=dashboard.html%3Fstep%3D3" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap">📂 Gérer le dépôt →</a>
         </div>
         <div id="vaultExpertList" style="font-size:12px;margin-top:4px;color:var(--muted)">Chargement…</div>
       </div>
@@ -751,11 +751,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
   </div><!-- /v5-journey -->
 
-  <!-- ══ INDICATEUR SUIVI DEMANDES ══ -->
-  <div id="requestsTracker" style="background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:16px 18px;margin-bottom:16px;display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div style="font-size:14px;font-weight:800;color:#0d1e30;">📋 Mes demandes en cours</div>
-      <a href="expert-private.html" style="font-size:12px;font-weight:600;color:#0079c1;text-decoration:none;">Tout voir →</a>
+  <!-- ══ SUIVI DES DEMANDES EXPERTES ══ -->
+  <div id="requestsTracker" style="background:linear-gradient(135deg,#f0f7fc,#eef7ff);border:1.5px solid #b8dcf0;border-radius:16px;padding:16px 18px;margin-bottom:16px;display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">📋</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#0b2440;">Mes demandes en cours</div>
+          <div style="font-size:11px;color:#50627a;margin-top:1px;">Cliquez pour accéder à la réponse de votre expert</div>
+        </div>
+      </div>
+      <a href="expert-private.html" id="trackerViewAll" style="display:inline-flex;align-items:center;gap:5px;background:#0079c1;color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-decoration:none;">Tableau de bord expert →</a>
     </div>
     <div id="requestsTrackerList"></div>
   </div>
@@ -966,12 +972,22 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     sessionStorage.removeItem(TOKEN_KEY);
   }
   function logout(){
-    /* V69 — nettoyage total localStorage + sessionStorage */
+    /* V70 — nettoyage total, toutes clés pope_ + sessionStorage */
     try{ sessionStorage.clear(); }catch(e){}
-    var keys = Object.keys(localStorage).filter(function(k){
-      return k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k.indexOf('pope')===0;
+    try{
+      var all = Object.keys(localStorage);
+      all.forEach(function(k){
+        if(k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k==='pope_session_active' || k==='pope_session_user'){
+          localStorage.removeItem(k);
+        }
+      });
+    }catch(e){}
+    // Vider visuellement les champs de l'étape 2
+    ['besoInTitle','descContexte','descProbleme','descObjectif','descDecision',
+     'descLivrable','descContraintes','descRisques','descActeurs','descPublic',
+     'needDeadline','descPieces','descNiveau','besoInDesc'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.value='';
     });
-    keys.forEach(function(k){ try{localStorage.removeItem(k);}catch(e){}; });
     location.href = 'private.html';
   }
   function requireAuth(){
@@ -1259,7 +1275,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     apiFetch('/expert/submit-need', {method:'POST', body:payload}).then(function(data){
       flash('✅ Demande envoyée à votre expert !','ok');
       saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
-      setTimeout(function(){ location.href='expert.html'; }, 1500);
+      setTimeout(function(){ location.href='expert-private.html'; }, 1500);
     }).catch(function(e){
       var msg = (e&&e.data&&e.data.error_label) || (e&&e.data&&e.data.message) || (e&&e.message) || 'Erreur lors de l\'envoi.';
       flash(msg,'err');
@@ -1278,17 +1294,40 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         list.innerHTML='<div class="po-empty-state"><div class="po-empty-ico">👤</div><strong>Aucun échange expert.</strong><p>Soumettez votre premier besoin.</p></div>';
         return;
       }
-      list.innerHTML = reqs.map(function(r){
-        var status = r.status==='done'?'done':'pending';
-        var label = r.status==='done'?'Répondu':'En attente';
-        return '<div class="po-request-card" onclick="location.href=\'expert.html?id='+esc(r.id)+'\'">' +
-          '<div class="po-request-head">' +
-          '<span class="po-request-domain">'+esc(r.domain||'Général')+'</span>' +
-          '<span class="po-request-status '+status+'">'+label+'</span></div>' +
-          '<div class="po-request-title">'+esc(r.title||r.need&&r.need.title||'Demande')+'</div>' +
-          '<div class="po-request-meta">'+esc(r.createdAt?new Date(r.createdAt).toLocaleDateString('fr-FR'):'')+'</div>' +
-          '</div>';
+      // Lien vers dashboard expert complet
+      list.innerHTML = '<div style="margin-bottom:14px;padding:12px 14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">'
+        + '<div><div style="font-size:13px;font-weight:700;color:#0b2440;">Tableau de bord expert</div>'
+        + '<div style="font-size:12px;color:#50627a;margin-top:2px;">Gérez vos dossiers et consultez toutes les réponses expertes</div></div>'
+        + '<a href="expert-private.html" style="background:#0079c1;color:#fff;border-radius:9px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;">🎯 Accéder →</a>'
+        + '</div>'
+        + reqs.map(function(r){
+        var isDone = r.status==='done'||r.status==='replied';
+        var statusBg    = isDone ? '#f0fdf4' : '#fffbeb';
+        var statusColor = isDone ? '#16a34a' : '#d97706';
+        var statusLabel = isDone ? '✅ Répondu' : '⏳ En attente';
+        var date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('fr-FR') : '';
+        var rid = esc(String(r.id||''));
+        return '<div class="tracker-row" data-rid="' + rid + '" '
+          + 'style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:.15s;">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">'
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
+          + '<span style="background:#dbeafe;color:#1e40af;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;">'+esc(r.domain||'Expert')+'</span>'
+          + '<span style="background:'+statusBg+';color:'+statusColor+';border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;">'+statusLabel+'</span>'
+          + '</div>'
+          + '<div style="font-size:13px;font-weight:600;color:#0b2440;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
+          + esc(r.title||r.need&&r.need.title||'Demande expert') + '</div>'
+          + '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + date + '</div>'
+          + '</div>'
+          + (isDone ? '<a href="expert-private.html?id='+rid+'" style="background:#16a34a;color:#fff;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Lire la réponse →</a>' : '')
+          + '</div>'
+          + '</div>';
       }).join('');
+      // Event delegation pour navigation
+      list.addEventListener('click', function(e){
+        var row=e.target.closest('.tracker-row');
+        if(row&&!e.target.closest('a')) location.href='expert-private.html?id='+row.getAttribute('data-rid');
+      });
     }).catch(function(e){
       list.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px;">Impossible de charger les échanges. <button class="po-btn-ghost po-btn-sm" onclick="loadRequests()">Réessayer</button></div>';
     });

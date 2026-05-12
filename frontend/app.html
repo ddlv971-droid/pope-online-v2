@@ -568,9 +568,20 @@ function apiFetch(path,opts){
 /* ─── Auth ─── */
 function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app.html';return false;}
 function logout(){
+  // V70: effacement complet sessionStorage + toutes clés pope_ en localStorage
   try{sessionStorage.clear();}catch(e){}
-  var keys=Object.keys(localStorage).filter(function(k){return k.indexOf('pope_')===0||k.indexOf('v5_')===0;});
-  keys.forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+  try{
+    var all=Object.keys(localStorage);
+    all.forEach(function(k){
+      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0||k==='pope_session_active'||k==='pope_session_user'){
+        localStorage.removeItem(k);
+      }
+    });
+  }catch(e){}
+  // Vider les champs visuellement
+  ['usecase','context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
   location.href='public.html';
 }
 
@@ -732,7 +743,10 @@ function restoreForm(){
 /* ─── Pré-alimentation intelligente depuis dashboard ─── */
 function prefillFromDashboard(){
   try{
-    var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY);
+    // Lire le state depuis sessionStorage, localStorage, et clés legacy
+    var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY)
+           ||sessionStorage.getItem('pope_v58_state_public')||localStorage.getItem('pope_v58_state_public')
+           ||sessionStorage.getItem('pope_v57_state_public')||localStorage.getItem('pope_v57_state_public');
     if(!raw)return;
     var s=JSON.parse(raw);var n=s.need||{};
 
@@ -837,8 +851,18 @@ function saveGen(g){
   try{window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g}));}catch(e){}
 }
 function deleteGen(id){
-  var gens=loadGens().filter(function(g){return String(g.id)!==String(id);});
-  try{localStorage.setItem(GENS_KEY,JSON.stringify(gens));}catch(e){}
+  // Filter from all storage keys where this gen might live
+  var keysToClean=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+    'pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keysToClean.forEach(function(k){
+    try{
+      var arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)){
+        var filtered=arr.filter(function(g){return g&&String(g.id)!==String(id);});
+        localStorage.setItem(k,JSON.stringify(filtered));
+      }
+    }catch(e){}
+  });
   renderArchive();
 }
 function renderArchive(){
@@ -856,7 +880,7 @@ function renderArchive(){
       +'<div class="v69-archive-item-title">'+esc(g.title||g.usecaseLabel||'Draft')+'</div>'
       +'<div class="v69-archive-item-meta">'+esc((g.usecaseLabel||'')+(d?' — '+d:''))+'</div>'
       +'</div>'
-      +'<button class="v69-archive-del" data-del-id="'+gid+'" title="Supprimer" onclick="event.stopPropagation()">🗑</button>'
+      +'<button class="v69-archive-del" data-del-id="'+gid+'" title="Supprimer">🗑</button>'
       +'</div>';
   }).join('');
 }
@@ -1017,7 +1041,11 @@ function init(){
   var clr=$('btnClearArchive');
   if(clr)clr.addEventListener('click',function(){
     if(confirm('Vider tous les drafts archivés ?')){
-      try{localStorage.removeItem(GENS_KEY);}catch(e){}
+      ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+       'pope_v54_generations','pope_v53_generations','pope_ai_generations',
+       'pope_v61_last_gen','pope_v54_last_generation_id',GENS_KEY].forEach(function(k){
+        try{localStorage.removeItem(k);}catch(e){}
+      });
       renderArchive();toast('Archive vidée.','ok');
     }
   });
