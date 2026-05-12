@@ -1,491 +1,786 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>
+(function(){
+  var h=location.hostname;
+  if(h.indexOf('staging')!==-1||h==='localhost'||h==='127.0.0.1'){
+    window.__POPE_API_BASE__=(h==='localhost'||h==='127.0.0.1')?'http://localhost:3000':'https://popeonline-staging.onrender.com';
+  }
+})();
+</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Conseil Expert</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<style id="v40-topbar-fix">
-/* ── Anti-conflits topbar V40 ── */
-html body header.v40-topbar{
-  position:sticky!important;top:0!important;z-index:200!important;
-  height:58px!important;min-height:58px!important;max-height:58px!important;
-  display:flex!important;align-items:center!important;
-  flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
-  backdrop-filter:blur(16px)!important;
-  border-bottom:1px solid rgba(255,255,255,.07)!important;
-  overflow:visible!important;
-}
-html body header.v40-topbar .v40-topbar-inner{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;height:58px!important;
-  width:100%!important;padding:0 20px!important;gap:10px!important;
-}
-html body header.v40-topbar .v40-topbar-brand{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;gap:9px!important;
-  text-decoration:none!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand img{
-  height:28px!important;width:auto!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:baseline!important;gap:5px!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong,
-html body header.v40-topbar .v40-topbar-brand-text small{
-  white-space:nowrap!important;display:inline!important;width:auto!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong{
-  font-size:14px!important;font-weight:800!important;color:#fff!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text small{
-  font-size:11px!important;color:rgba(255,255,255,.4)!important;
-}
-html body header.v40-topbar .v40-topbar-nav{
-  display:flex!important;align-items:center!important;gap:6px!important;
-  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
-}
-html body header.v40-topbar #v40Burger{
-  display:none;flex-direction:column!important;gap:5px!important;
-  margin-left:auto!important;flex-shrink:0!important;
-  background:none!important;border:none!important;
-  cursor:pointer!important;padding:6px!important;width:auto!important;
-}
-html body header.v40-topbar #v40Burger span{
-  display:block!important;width:22px!important;height:2px!important;
-  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
-  transition:transform .25s ease,opacity .25s ease!important;
-}
-#v40MobileMenu{
-  display:none;position:fixed!important;
-  top:58px!important;left:0!important;right:0!important;bottom:0!important;
-  z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
-  backdrop-filter:blur(20px)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  padding:20px!important;overflow-y:auto!important;
-  flex-direction:column!important;gap:4px!important;
-}
+<style>
+/* ═══ TOPBAR V40 (identique aux autres pages) ═══ */
+html body header.v40-topbar{position:sticky!important;top:0!important;z-index:200!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;}
+html body header.v40-topbar .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;height:58px!important;width:100%!important;padding:0 20px!important;gap:10px!important;}
+html body header.v40-topbar .v40-topbar-brand{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:9px!important;text-decoration:none!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand img{height:28px!important;width:auto!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong,html body header.v40-topbar .v40-topbar-brand-text small{white-space:nowrap!important;display:inline!important;width:auto!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+html body header.v40-topbar .v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+html body header.v40-topbar .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+html body header.v40-topbar #v40Burger{display:none;flex-direction:column!important;gap:5px!important;margin-left:auto!important;flex-shrink:0!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;width:auto!important;}
+html body header.v40-topbar #v40Burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;}
+#v40MobileMenu{display:none;position:fixed!important;top:58px!important;left:0!important;right:0!important;bottom:0!important;z-index:201!important;background:rgba(7,22,42,.98)!important;backdrop-filter:blur(20px)!important;padding:20px!important;overflow-y:auto!important;flex-direction:column!important;gap:4px!important;}
 #v40MobileMenu.open{display:flex!important;}
-#v40MobileMenu a,#v40MobileMenu button{
-  display:flex!important;align-items:center!important;gap:10px!important;
-  padding:14px 18px!important;border-radius:12px!important;
-  font-size:15px!important;font-weight:600!important;
-  color:rgba(255,255,255,.85)!important;
-  text-decoration:none!important;background:none!important;
-  border:none!important;cursor:pointer!important;
-  width:100%!important;
-}
-#v40MobileMenu a:hover,#v40MobileMenu button:hover{
-  background:rgba(255,255,255,.07)!important;color:#fff!important;
-}
-.v40-mobile-menu-sep{
-  height:1px!important;background:rgba(255,255,255,.08)!important;
-  margin:8px 0!important;
-}
-@media(max-width:860px){
-  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
-  html body header.v40-topbar #v40Burger{display:flex!important;}
-}
-</style>
-<style id="v40-override">
+#v40MobileMenu a,#v40MobileMenu button{display:flex!important;align-items:center!important;gap:10px!important;padding:14px 18px!important;border-radius:12px!important;font-size:15px!important;font-weight:600!important;color:rgba(255,255,255,.85)!important;text-decoration:none!important;background:none!important;border:none!important;cursor:pointer!important;width:100%!important;}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;}
 header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
 .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
-.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;}
 .v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
 .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
-.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
-.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+.v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
 .v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
 .v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
 .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
 .v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
 .v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
-.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s,opacity .25s!important;}
 .v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
 .v40-mobile-menu.open{display:flex!important;}
-.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;width:100%;text-align:left;}
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
-.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
 @media(max-width:860px){
-  .v40-topbar-nav{display:none!important;}
-  .v40-topbar-sub{display:none!important;}
-  .v40-topbar-sep{display:none!important;}
-  .v40-burger{display:flex!important;}
+  .v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+
+/* ═══ EXPERT V71 ═══ */
+:root{
+  --blue:#0079c1;--blue-d:#0b3060;--blue-l:#eef7ff;
+  --green:#16a34a;--green-l:#f0fdf4;--green-m:#bbf7d0;
+  --amber:#d97706;--amber-l:#fffbeb;--red:#dc2626;
+  --ink:#0b2440;--muted:#50627a;--line:#e2e8f0;
+  --bg:#f5f7fa;--white:#fff;
+  --sh:0 2px 16px rgba(11,36,64,.08);--sh-md:0 4px 28px rgba(11,36,64,.12);
+}
+body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-serif;}
+
+/* Layout */
+.ex-layout{max-width:1200px;margin:0 auto;padding:28px 20px 80px;display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start;}
+.ex-sidebar{display:flex;flex-direction:column;gap:14px;position:sticky;top:76px;}
+.ex-main{display:flex;flex-direction:column;gap:18px;}
+
+/* Quota card */
+.ex-quota{background:linear-gradient(135deg,#0b3060,#0079c1);border-radius:20px;padding:22px;color:#fff;text-align:center;}
+.ex-quota-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);margin-bottom:16px;}
+.ex-quota-ring{position:relative;width:100px;height:100px;margin:0 auto 14px;}
+.ex-quota-ring svg{transform:rotate(-90deg);}
+.ex-quota-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ex-quota-n{font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.ex-quota-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;}
+.ex-quota-detail{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;}
+
+/* Sidebar cards */
+.ex-sidebar-card{background:#fff;border-radius:16px;padding:18px;box-shadow:var(--sh);border:1px solid var(--line);}
+.ex-sidebar-card h3{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 12px;}
+.ex-guarantee-item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f8fafc;}
+.ex-guarantee-item:last-child{border-bottom:none;}
+.ex-guarantee-item strong{display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.ex-guarantee-item p{margin:0;font-size:11px;color:var(--muted);line-height:1.5;}
+.ex-guarantee-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+
+/* Status indicator */
+.ex-status-bar{display:flex;align-items:center;gap:10px;background:var(--blue-l);border:1.5px solid #93c5fd;border-radius:12px;padding:10px 14px;}
+.ex-status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 0 3px rgba(22,163,74,.2);}
+.ex-status-dot.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,.2);}
+.ex-status-text{font-size:12px;color:#1e40af;font-weight:600;}
+
+/* Main cards */
+.ex-card{background:#fff;border-radius:20px;box-shadow:var(--sh);border:1px solid var(--line);overflow:hidden;}
+.ex-card-head{padding:20px 22px 0;display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.ex-card-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ex-card-ico.green{background:linear-gradient(135deg,#059669,#10b981);}
+.ex-card-ico.blue{background:linear-gradient(135deg,#0079c1,#03a0d7);}
+.ex-card-ico.amber{background:linear-gradient(135deg,#d97706,#f59e0b);}
+.ex-card-head h2{margin:0 0 3px;font-size:17px;font-weight:800;color:var(--ink);}
+.ex-card-head p{margin:0;font-size:13px;color:var(--muted);line-height:1.5;}
+.ex-card-body{padding:0 22px 22px;}
+
+/* Form */
+.ex-field{margin-bottom:16px;}
+.ex-field:last-child{margin-bottom:0;}
+.ex-label{display:block;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.ex-req{color:var(--red);}
+.ex-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.ex-input{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;color:var(--ink);background:#fff;transition:.15s;box-sizing:border-box;font-family:inherit;resize:vertical;}
+.ex-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+.ex-prefilled{display:inline-flex;align-items:center;gap:4px;background:var(--green-l);border:1px solid var(--green-m);border-radius:5px;padding:2px 7px;font-size:10px;color:var(--green);font-weight:700;margin-left:6px;}
+
+/* Domain badge */
+.ex-domain-badge{display:none;align-items:center;gap:9px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:12px;padding:10px 14px;margin-bottom:18px;}
+.ex-domain-badge.show{display:flex;}
+.ex-domain-ico{font-size:20px;flex-shrink:0;}
+.ex-domain-info strong{display:block;font-size:14px;font-weight:800;color:#1e3a8a;}
+.ex-domain-info span{font-size:11px;color:#3b82f6;font-weight:600;}
+
+/* Archive attach */
+.ex-attach-box{background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:16px;margin-bottom:18px;}
+.ex-attach-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.ex-attach-badge{background:var(--green);color:#fff;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;}
+.ex-attach-badge.none{background:#e2e8f0;color:var(--muted);}
+
+/* Vault list */
+.ex-vault-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:13px;}
+.ex-vault-item:last-child{border-bottom:none;}
+.ex-vault-item label{flex:1;cursor:pointer;color:var(--ink);}
+.ex-vault-sz{font-size:11px;color:var(--muted);}
+
+/* Send button */
+.ex-send-btn{width:100%;background:linear-gradient(135deg,var(--blue-d),var(--blue));color:#fff;border:none;border-radius:14px;padding:16px 24px;font-size:16px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 5px 20px rgba(0,121,193,.3);font-family:inherit;margin-top:8px;}
+.ex-send-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,121,193,.4);}
+.ex-send-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+
+/* Messages */
+.ex-msg{font-size:13px;padding:12px 16px;border-radius:10px;display:none;margin-top:12px;font-weight:500;}
+.ex-msg.ok{background:var(--green-l);color:#065f46;border:1px solid var(--green-m);display:block;}
+.ex-msg.err{background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;display:block;}
+.ex-msg.warn{background:var(--amber-l);color:#92400e;border:1px solid #fde68a;display:block;}
+
+/* Requests list */
+.ex-request-item{padding:16px 22px;border-bottom:1px solid #f8fafc;transition:.15s;}
+.ex-request-item:last-child{border-bottom:none;}
+.ex-request-item:hover{background:#fafbfc;}
+.ex-request-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.ex-request-subject{font-size:14px;font-weight:700;color:var(--ink);flex:1;}
+.ex-request-domain{background:#dbeafe;color:#1e40af;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap;}
+.ex-request-meta{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.ex-status{border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;}
+.ex-status.new{background:#fff7ed;color:var(--amber);}
+.ex-status.progress{background:#eff6ff;color:var(--blue);}
+.ex-status.replied{background:var(--green-l);color:var(--green);}
+.ex-status.closed{background:#f1f5f9;color:var(--muted);}
+.ex-reply-box{background:linear-gradient(135deg,#f0fdf4,#fff);border:1.5px solid #bbf7d0;border-radius:12px;padding:14px 16px;margin-top:10px;}
+.ex-reply-who{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ex-reply-text{font-size:13px;color:var(--ink);line-height:1.7;white-space:pre-wrap;}
+.ex-reply-date{font-size:10px;color:var(--muted);margin-top:6px;}
+.ex-empty{text-align:center;padding:50px 24px;color:var(--muted);}
+.ex-empty-ico{font-size:44px;margin-bottom:12px;opacity:.4;}
+
+/* Toast */
+.ex-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+.ex-toast.show{opacity:1;}
+.ex-toast.ok{background:var(--green);}
+.ex-toast.err{background:var(--red);}
+
+/* Responsive */
+@media(max-width:960px){
+  .ex-layout{grid-template-columns:1fr;padding:16px 14px 60px;}
+  .ex-sidebar{position:static;}
 }
 </style>
 </head>
-<body data-logout-target="public.html" class="bg v36-page po-v5-harmony po-public-v24" data-forced-space="public">
+<body data-logout-target="public.html" class="bg" data-forced-space="public">
 
+<!-- ═══ TOPBAR ═══ -->
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
-    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+    <a class="v40-topbar-brand" href="dashboard.html">
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div class="v40-topbar-brand-text">
-        <strong>POPE Online</strong>
-        <small>Conseil &amp; Expertise</small>
-      </div>
+      <div class="v40-topbar-brand-text"><strong>POPE Online</strong><small>Conseil &amp; Expertise</small></div>
     </a>
     <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub">Conseil Expert</span>
+    <span class="v40-topbar-sub" id="expertSubTitle">Conseil Expert</span>
     <nav class="v40-topbar-nav">
-      
-      <a class="v40-topbar-btn" href="mission.html">🎯 Sur mesure</a>
-      <a class="v40-topbar-btn" href="vault.html?space=public&return=expert.html">📂 Dépôt</a>
       <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
+      <a class="v40-topbar-btn" href="mission.html">🎯 Sur Mesure</a>
+      <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=expert.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
-    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
   <a href="dashboard.html">🏠 Dashboard</a>
-  
-  <a href="mission.html">🎯 Sur mesure</a>
-  <div class="v40-mobile-menu-sep"></div>
+  <a href="app.html">⚡ Générer</a>
+  <a href="mission.html">🎯 Sur Mesure</a>
+  <div style="height:1px;background:rgba(255,255,255,.07);margin:8px 0;"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
-    <button data-logout>🚪 Déconnexion</button>
-</div>
 
-<main class="v36-expert-layout">
+<!-- Toast -->
+<div class="ex-toast" id="exToast"></div>
 
-  <!-- ═══ SIDEBAR GAUCHE ═══ -->
-  <aside class="v36-expert-sidebar">
+<main class="ex-layout">
 
-    <!-- Quota visuel -->
-    <div class="v36-quota-card" id="quotaCard">
-      <div class="v36-quota-label">Vos Conseils Expert disponibles</div>
-      <div class="v36-quota-ring">
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="ex-sidebar">
+
+    <!-- Quota -->
+    <div class="ex-quota" id="quotaCard">
+      <div class="ex-quota-label">Vos Conseils Expert disponibles</div>
+      <div class="ex-quota-ring">
         <svg width="100" height="100" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
           <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="8"
-            stroke-dasharray="264" id="quotaArc" stroke-dashoffset="264" stroke-linecap="round"/>
+            stroke-dasharray="264" id="quotaArc" stroke-dashoffset="264" stroke-linecap="round"
+            style="transition:stroke-dashoffset .6s ease,stroke .4s"/>
         </svg>
-        <div class="v36-quota-ring-text">
-          <div class="v36-quota-n" id="quotaN">—</div>
-          <div class="v36-quota-sub">restantes</div>
+        <div class="ex-quota-ring-center">
+          <div class="ex-quota-n" id="quotaN">—</div>
+          <div class="ex-quota-sub">restantes</div>
         </div>
       </div>
-      <div class="v36-quota-detail" id="quotaDetail">Chargement…</div>
+      <div class="ex-quota-detail" id="quotaDetail">Chargement…</div>
+    </div>
+
+    <!-- Statut expert -->
+    <div class="ex-status-bar" id="expertStatusBar" style="display:none">
+      <div class="ex-status-dot" id="expertStatusDot"></div>
+      <div class="ex-status-text" id="expertStatusText"></div>
     </div>
 
     <!-- Garanties -->
-    <div class="v36-expert-guarantee">
-      <div style="font-size:13px;font-weight:700;color:#0b2440;margin-bottom:12px">Votre Conseil Expert inclut</div>
-      <div class="v36-guarantee-item">
-        <span style="font-size:16px">✍️</span>
-        <div><strong>Avis d'expert personnalisé</strong>Un conseiller qualifié analyse votre situation et vous apporte un avis structuré et opérationnel.</div>
+    <div class="ex-sidebar-card">
+      <h3>Votre Conseil Expert inclut</h3>
+      <div class="ex-guarantee-item">
+        <span class="ex-guarantee-ico">✍️</span>
+        <div><strong>Avis d'expert personnalisé</strong><p>Un conseiller qualifié analyse votre situation et vous apporte un avis structuré et opérationnel.</p></div>
       </div>
-      <div class="v36-guarantee-item">
-        <span style="font-size:16px">⏱️</span>
-        <div><strong>Réponse sous 48h ouvrées</strong>Votre dossier est traité par un expert humain dédié — pas par un algorithme.</div>
+      <div class="ex-guarantee-item">
+        <span class="ex-guarantee-ico">⏱️</span>
+        <div><strong>Réponse sous 48h ouvrées</strong><p>Votre dossier est traité par un expert humain dédié — pas par un algorithme.</p></div>
       </div>
-      <div class="v36-guarantee-item">
-        <span style="font-size:16px">📩</span>
-        <div><strong>Réponse dans votre espace</strong>Notification email + accès direct ici.</div>
+      <div class="ex-guarantee-item">
+        <span class="ex-guarantee-ico">📩</span>
+        <div><strong>Réponse dans votre espace</strong><p>Notification email + accès direct depuis ce tableau de bord.</p></div>
       </div>
-      <div class="v36-guarantee-item">
-        <span style="font-size:16px">🔒</span>
-        <div><strong>Confidentialité garantie</strong>Vos documents ne sont jamais partagés.</div>
+      <div class="ex-guarantee-item">
+        <span class="ex-guarantee-ico">🔒</span>
+        <div><strong>Confidentialité garantie</strong><p>Vos documents ne sont jamais partagés.</p></div>
       </div>
     </div>
 
-    <!-- Différence avec sur mesure -->
-    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:16px;font-size:13px">
-      <div style="font-weight:700;color:#0b2440;margin-bottom:6px">📌 Dossier complexe ?</div>
-      <div style="color:#50627a;line-height:1.6;margin-bottom:10px">Le Conseil Expert répond à un besoin ponctuel. Pour un accompagnement dans la durée ou un dossier multi-étapes, accédez à l'offre Sur Mesure.</div>
-      <a href="mission.html" style="color:#d97706;font-weight:700;font-size:13px">→ Accéder au Sur Mesure</a>
+    <!-- Sur Mesure -->
+    <div class="ex-sidebar-card" style="background:var(--amber-l);border-color:#fde68a;">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:8px;">📌 Dossier complexe ?</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Le Conseil Expert répond à un besoin ponctuel. Pour un accompagnement dans la durée ou un dossier multi-étapes, accédez à l'offre Sur Mesure.</div>
+      <a href="mission.html" style="color:var(--amber);font-weight:700;font-size:12px;text-decoration:none;">→ Accéder au Sur Mesure</a>
     </div>
 
   </aside>
 
   <!-- ═══ CONTENU PRINCIPAL ═══ -->
-  <div class="v36-expert-main">
+  <div class="ex-main">
 
-    <!-- Formulaire de demande -->
-    <div class="v36-expert-card">
-      <div class="v36-expert-card-head">
-        <div style="width:38px;height:38px;background:linear-gradient(135deg,#059669,#10b981);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✍️</div>
+    <!-- ── Formulaire de soumission ── -->
+    <div class="ex-card">
+      <div class="ex-card-head">
+        <div class="ex-card-ico green">✍️</div>
         <div>
           <h2 id="expertTitle">Soumettre mon besoin à un expert</h2>
-          <p id="expertLead">Décrivez votre situation, choisissez le domaine d'expertise concerné et un conseiller POPE Online prend en charge votre dossier personnellement sous 48h ouvrées.</p>
+          <p id="expertLead">Décrivez votre situation — un conseiller POPE Online prend en charge votre dossier sous 48h ouvrées.</p>
         </div>
       </div>
-      <div class="v36-expert-card-body">
-        <div style="margin-bottom:16px">
-          <label class="label">Mon besoin en quelques mots <span style="color:#b91c1c">*</span></label>
-          <input class="input" id="subject" placeholder="Ex : Relecture d'une réponse à un marché public MAPA"/>
-          <div style="font-size:12px;color:#50627a;margin-top:6px">Soyez précis — cela aide votre conseiller à prioriser.</div>
-        </div>
+      <div class="ex-card-body">
 
-        <div style="margin-bottom:16px">
-          <label class="label">Contexte de votre situation</label>
-          <textarea class="input" id="context" rows="4"
-            placeholder="Décrivez votre organisation, le contexte de votre demande, les enjeux et délais éventuels."></textarea>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <label class="label" id="expertContentLabel">Description de votre besoin <span style="color:#b91c1c">*</span></label>
-          <textarea class="input" id="content" rows="10"
-            placeholder="Décrivez votre besoin avec précision. Si vous avez un document ou un draft à soumettre, collez-le ici&#10;&#10;Pour les documents longs, utilisez le dépôt sécurisé ci-dessous."></textarea>
-        </div>
-
-        <!-- Pièce jointe depuis archives -->
-        <div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-bottom:16px;display:none;border-radius:14px;padding:16px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
-            <div>
-              <h3 style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0b2440">Joindre un draft généré avec l'outil IA (optionnel)</h3>
-              <p class="muted" style="margin:0;font-size:12px" id="attachmentLead">Si vous avez utilisé l'outil de rédaction pour formaliser votre besoin, joignez le draft à votre demande expert.</p>
-            </div>
-            <span class="badge" id="attachmentStatus">Aucune sélection</span>
+        <!-- Badge domaine hérité -->
+        <div class="ex-domain-badge" id="expertDomainBadge">
+          <span class="ex-domain-ico" id="expertDomainIco">🎯</span>
+          <div class="ex-domain-info">
+            <strong id="expertDomainName"></strong>
+            <span>Domaine hérité de votre parcours · <a href="dashboard.html" style="color:#3b82f6;font-weight:600">Modifier</a></span>
           </div>
-          <select class="input" id="archiveAttachmentSelect" style="font-size:13px">
-            <option value="">Ne pas joindre de génération archivée</option>
+        </div>
+
+        <!-- Objet -->
+        <div class="ex-field">
+          <label class="ex-label" for="subject">Mon besoin en quelques mots <span class="ex-req">*</span></label>
+          <input class="ex-input" id="subject" placeholder="Ex : Analyse d'une procédure de marché public MAPA"/>
+          <div class="ex-hint">Soyez précis — cela aide votre conseiller à prioriser.</div>
+        </div>
+
+        <!-- Contexte -->
+        <div class="ex-field">
+          <label class="ex-label" for="context">Contexte de votre situation <span id="ctxTag" class="ex-prefilled" style="display:none">✓ Pré-rempli</span></label>
+          <textarea class="ex-input" id="context" rows="4" placeholder="Organisation, cadre institutionnel, délais, enjeux…"></textarea>
+        </div>
+
+        <!-- Description -->
+        <div class="ex-field">
+          <label class="ex-label" for="content">Description détaillée de votre besoin <span class="ex-req">*</span> <span id="contentTag" class="ex-prefilled" style="display:none">✓ Pré-rempli</span></label>
+          <textarea class="ex-input" id="content" rows="10" placeholder="Décrivez votre besoin avec précision. Collez ici votre document ou draft si vous en avez un.&#10;&#10;Pour les documents longs, utilisez le dépôt sécurisé ci-dessous."></textarea>
+        </div>
+
+        <!-- Draft IA à joindre -->
+        <div class="ex-attach-box" id="draftAttachBox">
+          <div class="ex-attach-box-head">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#14532d">🛠️ Joindre un draft généré avec l'outil IA</div>
+              <div style="font-size:11px;color:#50627a;margin-top:2px">Optionnel — le prompt et le résultat seront transmis à l'expert</div>
+            </div>
+            <span class="ex-attach-badge none" id="draftBadge">Aucune sélection</span>
+          </div>
+          <select class="ex-input" id="archiveAttachSelect" style="font-size:13px">
+            <option value="">Ne pas joindre de draft préparé</option>
           </select>
-          <div id="attachmentPreview" class="fineprint" style="margin-top:10px;font-size:12px;color:#50627a"></div>
+          <div id="draftPreview" style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5"></div>
         </div>
 
         <!-- Pièces vault -->
-        <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
             <div>
-              <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces du dépôt sécurisé 48h</div>
-              <div style="font-size:12px;color:#50627a;margin-top:2px" id="expertVaultLead">Joignez des pièces complémentaires à votre demande.</div>
+              <div style="font-size:13px;font-weight:700;color:var(--ink)">📎 Pièces du dépôt sécurisé 48h</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Joignez des pièces complémentaires à votre demande</div>
             </div>
-            <a class="btn ghost" href="vault.html?space=public&amp;return=expert.html" style="font-size:13px">Gérer mes pièces</a>
+            <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=expert.html" style="background:#e0f2fe;color:#0369a1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-decoration:none;">Gérer mes pièces</a>
           </div>
-          <div id="vaultExpertList" class="vault-inline-list"></div>
+          <div id="vaultExpertList"><div style="font-size:12px;color:var(--muted)">Chargement…</div></div>
         </div>
 
-        <button class="v36-send-btn" id="btnSend" type="button">
-          ✍️ Soumettre à un expert
-        </button>
-        <div class="fineprint" id="msg" style="margin-top:10px;text-align:center"></div>
+        <button class="ex-send-btn" id="btnSend" type="button">✍️ Soumettre à un expert</button>
+        <div class="ex-msg" id="msgSend"></div>
+
       </div>
     </div>
 
-    <!-- Mes échanges experts -->
-    <div class="v36-requests-card" id="myRequestsPanel">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #f0f7fc;flex-wrap:wrap;gap:10px">
-        <div>
-          <h2 style="margin:0 0 3px;font-size:17px;font-weight:700;color:#0b2440">Mes échanges experts</h2>
-          <p style="margin:0;font-size:12px;color:#50627a">Historique de vos dossiers soumis et réponses de vos conseillers</p>
+    <!-- ── Mes échanges experts (suivi) ── -->
+    <div class="ex-card" id="myRequestsPanel">
+      <div class="ex-card-head" style="border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:0;">
+        <div class="ex-card-ico blue">📋</div>
+        <div style="flex:1">
+          <h2 style="margin:0 0 3px">Mes échanges experts</h2>
+          <p style="margin:0">Historique de vos dossiers soumis et réponses de vos conseillers</p>
         </div>
-        <button class="btn ghost" id="btnRefreshRequests" type="button" style="font-size:13px">🔄 Actualiser</button>
+        <button style="background:none;border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;" id="btnRefreshRequests" type="button">🔄 Actualiser</button>
       </div>
       <div id="requestsList">
-        <div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Chargement…</div>
+        <div style="text-align:center;padding:40px;color:var(--muted);font-size:14px">Chargement…</div>
       </div>
     </div>
 
   </div>
 </main>
 
+<!-- Auth check -->
 <script>
 (function(){
-  function hasSession(){
-    return localStorage.getItem('pope_session_active')==='1'||
-           !!sessionStorage.getItem('pope_session_token')||
-           !!localStorage.getItem('pope_session_token');
+  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
+  function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
+  function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
+  function redirectToLogin(){window.location.replace('login.html?next=expert.html');}
+  if(hasSession()){
+    window.__popeAuthValidated=true;
+    var _n=localStorage.getItem('pope_session_nonce');
+    if(_n&&!sessionStorage.getItem('pope_session_nonce'))sessionStorage.setItem('pope_session_nonce',_n);
+    return;
   }
-  function getToken(){
-    return sessionStorage.getItem('pope_session_token')||
-           localStorage.getItem('pope_session_token')||'';
-  }
-  function getApiBase(){
-    var e=window.__POPE_API_BASE__||'';
-    if(e) return String(e).replace(/\/$/,'');
-    var h=window.location.hostname;
-    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
-    return 'https://pope-online-v2.onrender.com';
-  }
-  function redirectToLogin(){
-    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
-    window.location.replace('login.html?next='+path);
-  }
-  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
-    'mission.html','private-onboarding.html','account.html','profile.html',
-    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
-    'mission-private.html','referral.html','tutoriel.html'];
-  var path=(window.location.pathname||'').toLowerCase();
-  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
-  if(!isProtected) return;
-  if(hasSession()){window.__popeAuthValidated=true;return;}
-  window.__popeAuthPending=true;
-  var headers={'Content-Type':'application/json'};
-  var token=getToken();
-  if(token) headers['Authorization']='Bearer '+token;
+  var tk=getToken(),headers={'Content-Type':'application/json'};
+  if(tk)headers['Authorization']='Bearer '+tk;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      return res.json().catch(function(){return {};});
-    })
-    .then(function(data){
-      if(data&&data.user){
+    .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return{};});})
+    .then(function(d){
+      if(d&&d.user){
         localStorage.setItem('pope_session_active','1');
-        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
-        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        localStorage.setItem('pope_session_user',JSON.stringify(d.user));
+        if(d.user.accountSpace)localStorage.setItem('pope_account_space',d.user.accountSpace);
+        var nonce=localStorage.getItem('pope_session_nonce');
+        if(!nonce){nonce=Date.now().toString(36);localStorage.setItem('pope_session_nonce',nonce);}
+        sessionStorage.setItem('pope_session_nonce',nonce);
         window.__popeAuthValidated=true;
-      } else throw new Error('missing_user');
+      }else throw 0;
+    })
+    .catch(function(){redirectToLogin();});
+})();
+</script>
+
+<!-- Burger -->
+<script>
+(function(){
+  var b=document.getElementById('v40Burger'),m=document.getElementById('v40MobileMenu');
+  if(!b||!m)return;
+  var sp=b.querySelectorAll('span');
+  function o(open){if(open){m.classList.add('open');sp[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';sp[1].style.cssText='opacity:0;transform:scaleX(0)';sp[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{m.classList.remove('open');[0,1,2].forEach(function(i){sp[i].style.cssText='';});}}
+  b.addEventListener('click',function(){o(!m.classList.contains('open'));});
+  m.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){o(false);});});
+  document.addEventListener('click',function(e){if(!b.contains(e.target)&&!m.contains(e.target))o(false);});
+})();
+</script>
+
+<!-- ══ CONTRÔLEUR V71 EXPERT — IIFE ══ -->
+<script>
+(function(){
+'use strict';
+
+var API=(function(){var h=location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com';return'https://pope-online-v2.onrender.com';})();
+var TOKEN_KEY='pope_session_token';
+var DASH_KEY='pope_v67_pub';
+var GENS_KEY='pope_v67_gens_pub';
+
+function $(id){return document.getElementById(id);}
+function token(){return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||'';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+
+/* Toast */
+var _tt;
+function toast(msg,type){var el=$('exToast');if(!el)return;el.textContent=msg;el.className='ex-toast '+(type||'');el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},3500);}
+
+/* API */
+function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h['Authorization']='Bearer '+t;return h;}
+function apiFetch(path,opts){
+  opts=opts||{};
+  return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'})
+    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});
+}
+
+/* Logout — capture phase pour passer avant wireLogout app.js */
+function logout(){
+  try{sessionStorage.clear();}catch(e){}
+  try{var all=Object.keys(localStorage);all.forEach(function(k){if(k.indexOf('pope_')===0||k.indexOf('v5_')===0)localStorage.removeItem(k);});}catch(e){}
+  // Vider champs visuellement
+  ['subject','context','content'].forEach(function(id){var el=$(id);if(el)el.value='';});
+  location.href='public.html';
+}
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-logout]');
+  if(!btn)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  logout();
+},true);
+
+/* Vérification nonce — reset si nouvelle session */
+(function(){
+  var lsN=localStorage.getItem('pope_session_nonce');
+  var ssN=sessionStorage.getItem('pope_session_nonce');
+  if(lsN&&ssN&&lsN!==ssN){
+    // Nouvelle session → vider les champs (pas de restoreDraft)
+    ['subject','context','content'].forEach(function(id){var el=$(id);if(el)el.value='';});
+    sessionStorage.setItem('pope_session_nonce',lsN);
+  }
+})();
+
+/* Pré-alimentation depuis dashboard */
+function prefillFromDashboard(){
+  try{
+    var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY)
+           ||sessionStorage.getItem('pope_v58_state_public')||localStorage.getItem('pope_v58_state_public');
+    if(!raw)return;
+    var s=JSON.parse(raw); var n=s.need||{};
+
+    // Badge domaine
+    if(s.domain){
+      var badge=$('expertDomainBadge'),ico=$('expertDomainIco'),nm=$('expertDomainName');
+      if(badge)badge.classList.add('show');
+      if(ico)ico.textContent=s.domainIcon||'🎯';
+      if(nm)nm.textContent=s.domain;
+    }
+
+    // Pré-remplir objet
+    var subEl=$('subject');
+    if(subEl&&!subEl.value&&n.title)subEl.value=n.title;
+
+    // Pré-remplir contexte
+    var ctxEl=$('context');
+    if(ctxEl&&!ctxEl.value){
+      var parts=[];
+      if(s.domain)    parts.push('Domaine : '+s.domain);
+      if(n.context)   parts.push(n.context);
+      if(n.problem)   parts.push('Problème : '+n.problem);
+      if(n.constraints)parts.push('Contraintes : '+n.constraints);
+      if(n.risks)     parts.push('Points sensibles : '+n.risks);
+      if(n.actors)    parts.push('Acteurs : '+n.actors);
+      if(n.deadline)  parts.push('Échéance : '+n.deadline);
+      if(parts.length){ctxEl.value=parts.join('\n');var ct=$('ctxTag');if(ct)ct.style.display='inline-flex';}
+    }
+
+    // Pré-remplir description
+    var cntEl=$('content');
+    if(cntEl&&!cntEl.value){
+      var dp=[];
+      if(n.objective)   dp.push('Objectif : '+n.objective);
+      if(n.deliverable) dp.push('Livrable attendu : '+n.deliverable);
+      if(n.decision)    dp.push('Décision attendue : '+n.decision);
+      if(n.description) dp.push(n.description);
+      if(n.pieces)      dp.push('Pièces disponibles : '+n.pieces);
+      if(n.detailLevel) dp.push('Niveau de détail : '+n.detailLevel);
+      if(dp.length){cntEl.value=dp.join('\n');var ctt=$('contentTag');if(ctt)ctt.style.display='inline-flex';}
+    }
+  }catch(e){}
+}
+
+/* Charger les générations archivées */
+function loadArchiveOptions(){
+  var sel=$('archiveAttachSelect');if(!sel)return;
+  var gens=[];
+  ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'].forEach(function(k){
+    try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))gens=gens.concat(a);}catch(e){}
+  });
+  var seen={};gens=gens.filter(function(g){if(!g||seen[g.id])return false;seen[g.id]=1;return true;});
+  
+  var html='<option value="">Ne pas joindre de draft préparé</option>';
+  gens.slice(0,20).forEach(function(g){
+    var id=esc(String(g.id||''));
+    var d=g.createdAt?new Date(g.createdAt).toLocaleString('fr-FR'):'';
+    var lbl=esc((g.title||g.usecaseLabel||'Draft')+( d?' — '+d:''));
+    html+='<option value="'+id+'">'+lbl+'</option>';
+  });
+  sel.innerHTML=html;
+  
+  // Auto-sélectionner le dernier draft si retour depuis app
+  var sp=new URLSearchParams(location.search);
+  if(sp.get('attach')==='last'||sp.get('from')==='app'){
+    var lastId=localStorage.getItem('pope_v61_last_gen')||localStorage.getItem('pope_v54_last_generation_id');
+    if(lastId&&gens.find(function(g){return String(g.id)===String(lastId);})){
+      sel.value=lastId;updateDraftPreview();
+    }
+  }
+  
+  sel.addEventListener('change',updateDraftPreview);
+  updateDraftPreview();
+}
+
+/* Aperçu du draft sélectionné */
+var _gens=null;
+function getGens(){
+  if(_gens)return _gens;
+  var g=[];
+  ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations'].forEach(function(k){
+    try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}
+  });
+  _gens=g;return g;
+}
+function updateDraftPreview(){
+  var sel=$('archiveAttachSelect'),badge=$('draftBadge'),preview=$('draftPreview');
+  if(!sel)return;
+  var val=sel.value;
+  if(!val){
+    if(badge){badge.textContent='Aucune sélection';badge.className='ex-attach-badge none';}
+    if(preview)preview.textContent='';
+    return;
+  }
+  var g=getGens().find(function(x){return String(x.id)===String(val);});
+  if(g){
+    if(badge){badge.textContent='Archive jointe ✓';badge.className='ex-attach-badge';}
+    if(preview){
+      var snippet=String(g.result||'').replace(/\s+/g,' ').slice(0,200);
+      preview.innerHTML='<strong>Aperçu :</strong> '+esc(snippet)+(snippet.length>=200?'…':'');
+    }
+    // Auto-remplir objet si vide
+    var subEl=$('subject');
+    if(subEl&&!subEl.value.trim()){subEl.value='Relecture experte — '+(g.title||g.usecaseLabel||'livrable généré').slice(0,80);}
+  }
+}
+
+/* Vault */
+function loadVault(){
+  var list=$('vaultExpertList');if(!list)return;
+  apiFetch('/vault?space=public')
+    .then(function(data){
+      var files=(data&&data.files)||[];
+      if(!files.length){
+        list.innerHTML='<div style="font-size:12px;color:var(--muted)">Aucune pièce dans le dépôt. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
+        return;
+      }
+      list.innerHTML=files.map(function(f){
+        var id=esc(f.id||f.filename),nm=esc(f.filename||'Fichier'),sz=esc(f.size_label||'');
+        return '<div class="ex-vault-item"><input type="checkbox" data-vault-select value="'+id+'" id="evf'+id+'"/>'
+          +'<label for="evf'+id+'" class="ex-vault-item label">'+nm+'</label>'
+          +'<span class="ex-vault-sz">'+sz+'</span></div>';
+      }).join('');
     })
     .catch(function(){
-      window.__popeAuthValidated=false;
-      redirectToLogin();
-    })
-    .finally(function(){window.__popeAuthPending=false;});
-})();
-</script>
-<script type="module" src="./protected-topbar.js"></script>
-<script type="module" src="./expert-page.js"></script>
-<script type="module">
-import { apiFetch } from './api.js';
-
-// Mise à jour visuelle du quota
-async function updateQuota() {
-  try {
-    const me = await apiFetch('/auth/me');
-    const w  = me.wallet || {};
-    // Blocage si essai expiré (indépendamment du quota)
-    if (w.status === 'trial_expired' || w.trial_expired) {
-      const btnSend = document.getElementById('btnSend');
-      const msgEl   = document.getElementById('msg');
-      if (btnSend) { btnSend.disabled = true; btnSend.style.opacity = '0.5'; btnSend.style.cursor = 'not-allowed'; }
-      if (msgEl) {
-        msgEl.innerHTML = '⏰ Votre période d\'essai est terminée. '
-          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Choisissez un plan</a> '
-          + 'pour reprendre les relectures expertes.';
-        msgEl.style.display = 'block';
-      }
-      return;
-    }
-    const left  = w.expert_left  ?? 0;
-    const limit = w.expert_limit ?? 2;
-    document.getElementById('quotaN').textContent = left;
-    document.getElementById('quotaDetail').textContent =
-      left > 0
-        ? left + ' relecture' + (left > 1 ? 's' : '') + ' disponible' + (left > 1 ? 's' : '') + ' sur ' + limit + ' ce mois'
-        : 'Quota épuisé — passez à un abonnement';
-    // Arc SVG
-    const pct = limit > 0 ? left / limit : 0;
-    const arc = document.getElementById('quotaArc');
-    if (arc) arc.style.strokeDashoffset = String(264 * (1 - pct));
-    if (arc) arc.style.stroke = left === 0 ? '#ef4444' : left <= 2 ? '#f59e0b' : '#fff';
-    // Bloquer le bouton si quota épuisé
-    const btnSend = document.getElementById('btnSend');
-    const msgEl   = document.getElementById('msg');
-    if (left <= 0) {
-      if (btnSend) {
-        btnSend.disabled = true;
-        btnSend.style.opacity = '0.5';
-        btnSend.style.cursor  = 'not-allowed';
-      }
-      if (msgEl) {
-        msgEl.innerHTML = '⚠️ Vous avez utilisé toutes vos relectures expertes gratuites. '
-          + '<a href="pricing.html" style="color:#0079c1;font-weight:700">Passez à un abonnement</a> '
-          + 'pour continuer à bénéficier de l’expertise de nos conseillers.';
-        msgEl.style.display = 'block';
-      }
-    } else {
-      if (btnSend) { btnSend.disabled = false; btnSend.style.opacity = ''; btnSend.style.cursor = ''; }
-      if (msgEl && msgEl.innerHTML.includes('relectures expertes gratuites')) { msgEl.innerHTML = ''; }
-    }
-  } catch(e) {}
+      list.innerHTML='<div style="font-size:12px;color:var(--muted)">Coffre indisponible.</div>';
+    });
 }
 
-updateQuota();
+/* Quota */
+function loadQuota(){
+  apiFetch('/auth/me').then(function(data){
+    var w=data&&data.wallet||{};
+    var left=w.expert_left!=null?w.expert_left:0;
+    var limit=w.expert_limit!=null?w.expert_limit:2;
+    
+    // Nombre
+    var quotaN=$('quotaN'); if(quotaN)quotaN.textContent=left;
+    var quotaD=$('quotaDetail');
+    if(quotaD)quotaD.textContent=left>0?left+' conseil'+(left>1?'s':'')+' disponible'+(left>1?'s':'')+' sur '+limit+' ce mois':'Quota épuisé — passez à un abonnement';
+    
+    // Arc
+    var arc=$('quotaArc');
+    if(arc){
+      var pct=limit>0?Math.min(left/limit,1):0;
+      arc.style.strokeDashoffset=String(264*(1-pct));
+      arc.style.stroke=left===0?'#ef4444':left<=2?'#f59e0b':'#fff';
+    }
+    
+    // Statut
+    var hasRequests=false;
+    apiFetch('/expert/my-requests').then(function(rd){
+      var reqs=(rd&&rd.requests)||[];
+      var pending=reqs.filter(function(r){return r.status==='new'||r.status==='in_progress';});
+      var bar=$('expertStatusBar'),dot=$('expertStatusDot'),txt=$('expertStatusText');
+      if(pending.length){
+        if(bar)bar.style.display='flex';
+        if(dot)dot.className='ex-status-dot amber';
+        if(txt)txt.textContent=pending.length+' demande'+(pending.length>1?'s':'')+' en cours de traitement';
+      } else {
+        var replied=reqs.filter(function(r){return r.status==='replied';});
+        if(replied.length){
+          if(bar)bar.style.display='flex';
+          if(dot)dot.className='ex-status-dot';
+          if(txt)txt.textContent=replied.length+' réponse'+(replied.length>1?'s':'')+' disponible'+(replied.length>1?'s':'');
+        }
+      }
+    }).catch(function(){});
+    
+    // Bloquer si quota 0 ou expiré
+    var expired=w.status==='trial_expired'||w.trial_expired;
+    var btn=$('btnSend'),msg=$('msgSend');
+    if(expired){
+      if(btn){btn.disabled=true;}
+      if(msg){msg.className='ex-msg warn';msg.innerHTML='⏰ Votre période d\'essai est terminée. <a href="pricing.html" style="color:var(--blue);font-weight:700">Choisissez un plan</a> pour reprendre les relectures expertes.';}
+    } else if(left<=0){
+      if(btn){btn.disabled=true;}
+      if(msg){msg.className='ex-msg warn';msg.innerHTML='⚠️ Quota épuisé ce mois. <a href="pricing.html" style="color:var(--blue);font-weight:700">Passer à un abonnement</a> pour continuer.';}
+    }
+  }).catch(function(){
+    var qn=$('quotaN');if(qn)qn.textContent='—';
+    var qd=$('quotaDetail');if(qd)qd.textContent='Données non disponibles.';
+  });
+}
 
-// Chargement des relectures avec style V36
-async function loadMyRequests() {
-  const list = document.getElementById('requestsList');
-  if (!list) return;
-  try {
-    const data = await apiFetch('/expert/my-requests');
-    const reqs = data.requests || [];
-    if (!reqs.length) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:#50627a;font-size:14px">Aucun échange expert pour le moment.<br><a href="#" onclick="document.getElementById(\'subject\').focus();return false" style="color:#0079c1;font-weight:600">Soumettre votre premier besoin →</a></div>';
+/* Liste des échanges */
+function loadRequests(){
+  var list=$('requestsList');if(!list)return;
+  list.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:14px">Chargement…</div>';
+  apiFetch('/expert/my-requests').then(function(data){
+    var reqs=(data&&data.requests)||[];
+    if(!reqs.length){
+      list.innerHTML='<div class="ex-empty"><div class="ex-empty-ico">💬</div><div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px">Aucun échange expert pour le moment.</div><div style="font-size:13px;color:var(--muted)">Soumettez votre premier besoin ci-dessus.</div></div>';
       return;
     }
-    const statusMap = {
-      new:         { label: 'En attente', cls: 'v36-status-new',      dot: '🟡' },
-      in_progress: { label: 'En cours',   cls: 'v36-status-progress', dot: '🔵' },
-      replied:     { label: 'Répondu',    cls: 'v36-status-replied',  dot: '🟢' },
-      closed:      { label: 'Clôturé',    cls: 'v36-status-closed',   dot: '⚪' }
+    var statusMap={
+      new:{label:'En attente',cls:'new',dot:'🟡'},
+      in_progress:{label:'En cours',cls:'progress',dot:'🔵'},
+      replied:{label:'Répondu',cls:'replied',dot:'🟢'},
+      done:{label:'Répondu',cls:'replied',dot:'🟢'},
+      closed:{label:'Clôturé',cls:'closed',dot:'⚪'}
     };
-
-    function esc(v) { return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-    list.innerHTML = reqs.map(function(r) {
-      var s = statusMap[r.status] || statusMap.new;
-      var date = new Date(r.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
-      return '<div class="v36-request-item">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
-          '<div style="font-weight:700;font-size:14px;color:#0b2440;flex:1">' + esc(r.objective) + '</div>' +
-          '<span class="v36-request-status ' + s.cls + '">' + s.dot + ' ' + s.label + '</span>' +
-        '</div>' +
-        '<div style="font-size:12px;color:#7a8fa8">Demande du ' + date + '</div>' +
-        (r.reply_text ? '<div class="v36-reply-box"><div class="v36-reply-meta">✓ Réponse de votre conseiller — ' +
-          new Date(r.replied_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) +
-          '</div>' + esc(r.reply_text) + '</div>' : '') +
-      '</div>';
+    list.innerHTML=reqs.map(function(r){
+      var st=statusMap[r.status]||statusMap.new;
+      var dt=r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
+      var replyHtml='';
+      if(r.reply_text||r.response){
+        var rtext=esc(r.reply_text||r.response||'');
+        var rdt=r.replied_at?new Date(r.replied_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
+        replyHtml='<div class="ex-reply-box">'
+          +'<div class="ex-reply-who">✅ Réponse de votre conseiller expert</div>'
+          +'<div class="ex-reply-text">'+rtext+'</div>'
+          +(rdt?'<div class="ex-reply-date">Répondu le '+rdt+'</div>':'')
+          +'</div>';
+      }
+      return '<div class="ex-request-item">'
+        +'<div class="ex-request-head">'
+        +'<div class="ex-request-subject">'+esc(r.subject||r.objective||r.title||'Demande expert')+'</div>'
+        +(r.domain?'<span class="ex-request-domain">'+esc(r.domain)+'</span>':'')
+        +'<span class="ex-status '+st.cls+'">'+st.dot+' '+st.label+'</span>'
+        +'</div>'
+        +'<div class="ex-request-meta">Soumis le '+dt+'</div>'
+        +replyHtml
+        +'</div>';
     }).join('');
-  } catch(e) {
-    list.innerHTML = '<div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Impossible de charger vos relectures.</div>';
-  }
+  }).catch(function(){
+    list.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted)">Impossible de charger les échanges.</div>';
+  });
 }
 
-loadMyRequests();
-var btnRef = document.getElementById('btnRefreshRequests');
-if (btnRef) btnRef.addEventListener('click', loadMyRequests);
-</script>
-<script>
-// Topbar mobile universelle V40 — burger + menu + croix
-(function() {
-  var burger  = document.getElementById('v40Burger');
-  var menu    = document.getElementById('v40MobileMenu');
-  if (!burger || !menu) return;
+/* Soumettre */
+function submit(){
+  var subject=($('subject')||{}).value.trim();
+  var context=($('context')||{}).value.trim();
+  var content=($('content')||{}).value.trim();
+  var msg=$('msgSend');
 
-  var spans = burger.querySelectorAll('span');
+  if(!subject){toast('Objet de la demande requis.','err');$('subject').focus();return;}
+  if(!content){toast('Description de votre besoin requise.','err');$('content').focus();return;}
 
-  function setOpen(open) {
-    if (open) {
-      menu.classList.add('open');
-      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
-      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
-      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
-    } else {
-      menu.classList.remove('open');
-      spans[0].style.cssText = '';
-      spans[1].style.cssText = '';
-      spans[2].style.cssText = '';
-    }
+  var btn=$('btnSend');
+  if(btn){btn.disabled=true;btn.textContent='Envoi en cours…';}
+  if(msg){msg.className='ex-msg';msg.textContent='';}
+
+  var sel=$('archiveAttachSelect');
+  var genId=sel?sel.value:'';
+  var genObj=null;
+  if(genId){
+    var g=getGens().find(function(x){return String(x.id)===String(genId);});
+    if(g)genObj={createdAt:g.createdAt||new Date().toISOString(),usecaseLabel:g.usecaseLabel||'Génération IA',prompt:g.prompt||{},result:g.result||''};
   }
 
-  burger.addEventListener('click', function() {
-    setOpen(!menu.classList.contains('open'));
-  });
+  var vaultIds=Array.from(document.querySelectorAll('[data-vault-select]:checked')).map(function(n){return n.value;});
 
-  // Fermer en cliquant un lien
-  menu.querySelectorAll('a, button').forEach(function(el) {
-    el.addEventListener('click', function() { setOpen(false); });
-  });
+  var payload={
+    subject:subject,
+    context:context,
+    content:content,
+    vault_file_ids:vaultIds,
+    generation_attachment:genObj
+  };
 
-  // Fermer en cliquant hors du menu
-  document.addEventListener('click', function(e) {
-    if (!burger.contains(e.target) && !menu.contains(e.target)) {
-      setOpen(false);
-    }
-  });
+  apiFetch('/expert/request',{method:'POST',body:payload})
+    .then(function(data){
+      toast('Demande transmise à votre expert !','ok');
+      if(msg){msg.className='ex-msg ok';msg.textContent='✅ Votre demande a été transmise. Votre conseiller vous répond sous 48h ouvrées.';}
+      // Vider les champs après soumission
+      ['subject','context','content'].forEach(function(id){var el=$(id);if(el)el.value='';});
+      if(sel)sel.value='';
+      updateDraftPreview();
+      setTimeout(function(){loadRequests();},1200);
+    })
+    .catch(function(e){
+      var errData=e&&e.data||{};
+      var errCode=errData.error||'';
+      if(e&&e.status===402){
+        if(errCode==='no_tickets'||errCode==='expert_limit_reached'||errCode==='public_dossier_limit_reached'){
+          if(msg){msg.className='ex-msg warn';msg.innerHTML='⚠️ Quota de conseils experts atteint. <a href="pricing.html" style="color:var(--blue);font-weight:700">Passez à un abonnement</a> pour continuer.';}
+        } else if(errCode==='trial_expired'){
+          if(msg){msg.className='ex-msg warn';msg.innerHTML='⏰ Votre essai est terminé. <a href="pricing.html" style="color:var(--blue);font-weight:700">Choisissez un plan</a>.';}
+        } else {
+          if(msg){msg.className='ex-msg warn';msg.textContent='Accès temporairement limité. Contactez-nous pour définir l\'offre adaptée.';}
+        }
+        toast('Accès limité','err');
+      } else {
+        var errMsg=(e&&e.message)||'Erreur lors de l\'envoi.';
+        if(msg){msg.className='ex-msg err';msg.textContent='Erreur : '+errMsg;}
+        toast('Envoi impossible','err');
+      }
+    })
+    .finally(function(){
+      if(btn){btn.disabled=false;btn.textContent='✍️ Soumettre à un expert';}
+    });
+}
+
+/* Init */
+function init(){
+  // Logout déjà wiré en capture phase
+  // Préalimentation
+  prefillFromDashboard();
+  // Archives
+  loadArchiveOptions();
+  // Vault
+  loadVault();
+  // Quota
+  loadQuota();
+  // Demandes
+  loadRequests();
+  // Boutons
+  var sendBtn=$('btnSend');if(sendBtn)sendBtn.addEventListener('click',submit);
+  var ref=$('btnRefreshRequests');if(ref)ref.addEventListener('click',loadRequests);
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+
 })();
-
 </script>
+
+<script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 </body>
 </html>
