@@ -503,12 +503,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
   function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
   function redirectToLogin(){window.location.replace('login.html?next=app.html');}
-  if(hasSession()){window.__popeAuthValidated=true;return;}
+  if(hasSession()){
+    window.__popeAuthValidated=true;
+    var _n=localStorage.getItem('pope_session_nonce');
+    if(_n&&!sessionStorage.getItem('pope_session_nonce')) sessionStorage.setItem('pope_session_nonce',_n);
+    return;
+  }
   var tk=getToken(),headers={'Content-Type':'application/json'};
   if(tk)headers['Authorization']='Bearer '+tk;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
     .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return{};});})
-    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));window.__popeAuthValidated=true;}else throw 0;})
+    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));var _n2=localStorage.getItem('pope_session_nonce');if(!_n2){_n2=Date.now().toString(36);localStorage.setItem('pope_session_nonce',_n2);}sessionStorage.setItem('pope_session_nonce',_n2);window.__popeAuthValidated=true;}else throw 0;})
     .catch(function(){redirectToLogin();});
 })();
 </script>
@@ -582,6 +587,7 @@ function logout(){
   ['usecase','context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
+  try{localStorage.removeItem('pope_session_nonce');sessionStorage.removeItem('pope_session_nonce');}catch(e){}
   location.href='public.html';
 }
 
@@ -1100,6 +1106,18 @@ function init(){
     setWF(1);_lastRawText='';
     window.scrollTo({top:0,behavior:'smooth'});
   });
+
+  /* Vérification nonce — si nouvelle session, vider les champs */
+  (function(){
+    var lsNonce=localStorage.getItem('pope_session_nonce');
+    var ssNonce=sessionStorage.getItem('pope_session_nonce');
+    if(lsNonce && ssNonce && lsNonce !== ssNonce){
+      // Nouvelle connexion → effacer form + state dash
+      try{localStorage.removeItem(FORM_KEY);}catch(e){}
+      try{sessionStorage.removeItem(DASH_KEY);localStorage.removeItem(DASH_KEY);}catch(e){}
+      sessionStorage.setItem('pope_session_nonce', lsNonce);
+    }
+  })();
 
   /* Restore */
   restoreForm();

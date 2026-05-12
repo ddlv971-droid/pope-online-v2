@@ -869,7 +869,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
     window.location.replace('login.html?next='+path);
   }
-  if(hasSession()){window.__popeAuthValidated=true;return;}
+  if(hasSession()){
+    window.__popeAuthValidated=true;
+    // Sync nonce to sessionStorage si absent
+    var _n=localStorage.getItem('pope_session_nonce');
+    if(_n&&!sessionStorage.getItem('pope_session_nonce')) sessionStorage.setItem('pope_session_nonce',_n);
+    return;
+  }
   window.__popeAuthPending=true;
   var headers={'Content-Type':'application/json'};
   var token=getToken();
@@ -884,6 +890,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         localStorage.setItem('pope_session_active','1');
         localStorage.setItem('pope_session_user',JSON.stringify(data.user));
         if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        // Nonce de session pour détecter les nouvelles connexions
+        var nonce = localStorage.getItem('pope_session_nonce');
+        if(!nonce){ nonce = Date.now().toString(36); localStorage.setItem('pope_session_nonce',nonce); }
+        sessionStorage.setItem('pope_session_nonce', nonce);
         window.__popeAuthValidated=true;
       } else throw new Error('missing_user');
     })
@@ -988,6 +998,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
      'needDeadline','descPieces','descNiveau','besoInDesc'].forEach(function(id){
       var el=document.getElementById(id);if(el)el.value='';
     });
+    try{ localStorage.removeItem('pope_session_nonce'); sessionStorage.removeItem('pope_session_nonce'); }catch(e){}
     location.href = 'public.html';
   }
   function requireAuth(){
@@ -1144,7 +1155,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var sel = $('archiveAttachSelect');
     if(!sel) return;
     var gens = [];
-    var keys = ['pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+    var keys = ['pope_v67_gens_pub','pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
     keys.forEach(function(k){
       try{
         var arr = JSON.parse(localStorage.getItem(k)||'[]');
@@ -1583,6 +1594,18 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       }
     });
 
+    // Vérification nonce de session — si changement de session, reset state
+    (function(){
+      var lsNonce = localStorage.getItem('pope_session_nonce');
+      var ssNonce = sessionStorage.getItem('pope_session_nonce');
+      // ssNonce est absent si c'est une nouvelle session navigateur (onglet fermé/rouvert)
+      // Dans ce cas on garde l'état. Mais si nonces différents → nouveau login → reset.
+      if(lsNonce && ssNonce && lsNonce !== ssNonce){
+        // Nouvelle connexion détectée → vider l'état du parcours
+        try{ sessionStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY); }catch(e){}
+        sessionStorage.setItem('pope_session_nonce', lsNonce);
+      }
+    })();
     // Hydrater need depuis state
     var s = loadState();
     hydrateNeed(s.need);
