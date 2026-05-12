@@ -434,8 +434,9 @@ function apiFetch(path,opts){
 
 /* Logout — capture phase pour passer avant wireLogout app.js */
 function logout(){
+  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
   try{sessionStorage.clear();}catch(e){}
-  try{var all=Object.keys(localStorage);all.forEach(function(k){if(k.indexOf('pope_')===0||k.indexOf('v5_')===0)localStorage.removeItem(k);});}catch(e){}
+  try{var all=Object.keys(localStorage);all.forEach(function(k){if(PRESERVE.indexOf(k)!==-1)return;if(k.indexOf('pope_')===0||k.indexOf('v5_')===0)localStorage.removeItem(k);});}catch(e){}
   // Vider champs visuellement
   ['subject','context','content'].forEach(function(id){var el=$(id);if(el)el.value='';});
   location.href='private.html';
@@ -712,17 +713,18 @@ function submit(){
   var genObj=null;
   if(genId){
     var g=getGens().find(function(x){return String(x.id)===String(genId);});
-    if(g)genObj={createdAt:g.createdAt||new Date().toISOString(),usecaseLabel:g.usecaseLabel||'Génération IA',prompt:g.prompt||{},result:g.result||''};
+    if(g)genObj={createdAt:g.createdAt||new Date().toISOString(),usecaseLabel:g.usecaseLabel||'Génération IA',title:g.title||g.usecaseLabel||'',domain:g.domain||'',prompt:g.prompt||{},result:g.result||''};
   }
 
-  var vaultIds=Array.from(document.querySelectorAll('[data-vault-select]:checked')).map(function(n){return n.value;});
+  var vaultIds=Array.from(document.querySelectorAll('[data-vault-file]:checked')).map(function(n){return n.value;});
 
   var payload={
     subject:subject,
     context:context,
     content:content,
     vault_file_ids:vaultIds,
-    generation_attachment:genObj
+    generation_attachment:genObj,
+    domain:genObj?genObj.domain:''
   };
 
   apiFetch('/expert/request',{method:'POST',body:payload})

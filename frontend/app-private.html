@@ -574,11 +574,13 @@ function apiFetch(path,opts){
 /* ─── Auth ─── */
 function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app-private.html';return false;}
 function logout(){
-  // V70: effacement complet sessionStorage + toutes clés pope_ en localStorage
+  // V72: ciblé, préserve générations
+  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
   try{sessionStorage.clear();}catch(e){}
   try{
     var all=Object.keys(localStorage);
     all.forEach(function(k){
+      if(PRESERVE.indexOf(k)!==-1)return;
       if(k.indexOf('pope_')===0||k.indexOf('v5_')===0||k==='pope_session_active'||k==='pope_session_user'){
         localStorage.removeItem(k);
       }
@@ -821,18 +823,20 @@ function initFromUrl(){
 function loadVault(){
   var list=$('vaultInlineList');if(!list)return;
   list.innerHTML='<div style="font-size:13px;color:var(--muted)">Chargement…</div>';
-  apiFetch('/vault?space='+SPACE)
+  apiFetch('/vault')
     .then(function(data){
-      var files=(data&&data.files)||[];
-      if(!files.length){
+      var items=(data&&data.items)||(data&&data.files)||[];
+      if(!items.length){
         list.innerHTML='<div style="font-size:13px;color:var(--muted)">Aucune pièce. '
           +'<a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
         return;
       }
-      list.innerHTML=files.map(function(f){
-        var id=esc(f.id||f.filename),nm=esc(f.filename||'Fichier'),sz=esc(f.size_label||'');
-        return '<div class="v69-vault-item"><input type="checkbox" data-vault-select value="'+id+'" id="vf'+id+'"/>'
-          +'<label for="vf'+id+'" style="flex:1;font-size:13px;color:var(--ink);cursor:pointer;">'+nm+'</label>'
+      list.innerHTML=items.map(function(f){
+        var rawId=f.id||f.filename||'';
+        var encId=encodeURIComponent(rawId);
+        var nm=esc(f.name||f.filename||'Fichier'),sz=esc(f.size_label||'');
+        return '<div class="v69-vault-item"><input type="checkbox" data-vault-file value="'+encId+'" id="vf'+encId+'"/>'
+          +'<label for="vf'+encId+'" style="flex:1;font-size:13px;color:var(--ink);cursor:pointer;">'+nm+'</label>'
           +'<span class="v69-vault-sz">'+sz+'</span></div>';
       }).join('');
     })
@@ -936,7 +940,7 @@ function buildPayload(){
   if(deadline)extras.push('Échéance : '+deadline);
   if(extras.length) fullCtx = fullCtx + (fullCtx?'\n\n':'') + extras.join('\n');
 
-  var vids=qsa('[data-vault-select]:checked').map(function(n){return n.value;});
+  var vids=qsa('[data-vault-file]:checked').map(function(n){return n.value;});
 
   return {
     mode:'generate',

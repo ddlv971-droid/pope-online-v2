@@ -982,11 +982,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     sessionStorage.removeItem(TOKEN_KEY);
   }
   function logout(){
-    /* V70 — nettoyage total, toutes clés pope_ + sessionStorage */
+    /* V72 — ciblé, préserve générations */
+    var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
     try{ sessionStorage.clear(); }catch(e){}
     try{
       var all = Object.keys(localStorage);
       all.forEach(function(k){
+        if(PRESERVE.indexOf(k)!==-1)return;
         if(k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k==='pope_session_active' || k==='pope_session_user'){
           localStorage.removeItem(k);
         }
@@ -1183,8 +1185,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var container = $('vaultExpertList');
     if(!container) return;
     container.innerHTML = '<div style="font-size:12px;color:var(--muted);">Chargement…</div>';
-    apiFetch('/vault/list?space='+SPACE).then(function(data){
-      var files = (data&&data.files)||[];
+    apiFetch('/vault').then(function(data){
+      var files = (data&&data.items)||(data&&data.files)||[];
       if(!files.length){
         container.innerHTML =
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
@@ -1195,7 +1197,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       }
       container.innerHTML = files.map(function(f){
         return '<div class="po-attach-item"><span class="po-attach-item-ico">📄</span>' +
-          '<span class="po-attach-item-name">'+esc(f.filename||f.name||'Fichier')+'</span>' +
+          '<span class="po-attach-item-name">'+esc(f.name||f.filename||'Fichier')+'</span>' +
           '<span class="po-attach-item-size">'+esc(f.size_label||'')+'</span></div>';
       }).join('');
     }).catch(function(){
@@ -1297,7 +1299,27 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         n.detailLevel ? 'Niveau de détail : ' + n.detailLevel : '',
         n.description ? n.description : ''
       ].filter(Boolean).join('\n'),
-      generation_attachment: genId || null,
+      vault_file_ids: (function(){
+        return Array.from(document.querySelectorAll('[data-vault-file]:checked')).map(function(n){return n.value;});
+      })(),
+      generation_attachment: (function(){
+        if(!genId) return null;
+        // Résoudre l'ID en objet complet depuis toutes les clés d'archive
+        var _gens=[];
+        ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'].forEach(function(k){
+          try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))_gens=_gens.concat(a);}catch(e){}
+        });
+        var _g=_gens.find(function(x){return x&&String(x.id)===String(genId);});
+        if(!_g) return null;
+        return {
+          createdAt: _g.createdAt||new Date().toISOString(),
+          usecaseLabel: _g.usecaseLabel||'Génération IA',
+          title: _g.title||_g.usecaseLabel||'',
+          domain: s.domain||'',
+          prompt: _g.prompt||{},
+          result: _g.result||''
+        };
+      })(),
       space: SPACE
     };
 
