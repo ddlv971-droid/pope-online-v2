@@ -246,8 +246,59 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 }
 </style>
 <link rel="stylesheet" href="v58-styles.css">
+<style>
+/* ═══ RESPONSIVE GLOBAL V76 ═══ */
+@media(max-width:768px){
+  /* App pages */
+  .v69-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;gap:14px!important;}
+  .v69-form-col{position:static!important;}
+  .v69-next-grid{grid-template-columns:1fr!important;}
+  .v69-row2{grid-template-columns:1fr!important;}
+  .v69-gen-btn{font-size:14px!important;padding:14px 18px!important;}
+  .v69-result-body{padding:16px!important;}
+  .v69-retour-bar{height:auto!important;padding:10px 14px!important;flex-wrap:wrap!important;gap:8px!important;}
+  .v69-retour-info{display:none!important;}
+  .v69-wf-bar{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+  .v69-export-bar{padding:10px 14px!important;gap:6px!important;}
+  .v69-export-btn{font-size:11px!important;padding:6px 10px!important;}
+  /* Dashboard tabs */
+  .v5-tabs-bar{padding:0 6px!important;}
+  .v5-tab{padding:10px 8px!important;font-size:11px!important;gap:4px!important;}
+  .v5-tab-ico{font-size:13px!important;}
+  .v5-tab-content{padding:14px 12px!important;}
+  .v5-hero-bar{flex-direction:column!important;gap:14px!important;padding:16px!important;border-radius:14px!important;}
+  .v5-kpi-row{width:100%!important;}
+  .v5-kpi{flex:1!important;min-width:0!important;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .v5-domain-pill{font-size:12px!important;padding:10px 11px!important;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr!important;}
+  .v5-step-panel{padding:16px 12px!important;}
+  .v5-steps{padding:12px 12px!important;gap:0!important;}
+  .v5-step-label{font-size:9px!important;}
+  .v5-step-n{width:26px!important;height:26px!important;font-size:11px!important;}
+  .v5-step-footer{flex-wrap:wrap!important;gap:8px!important;}
+  .v5-step-footer > button{flex:1!important;justify-content:center!important;}
+  .v58-trt-grid{grid-template-columns:1fr!important;}
+  /* Expert page */
+  .ex-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  .ex-sidebar{position:static!important;}
+  .ex-quota-ring{width:80px!important;height:80px!important;}
+  .ex-quota-n{font-size:26px!important;}
+  /* Vault */
+  .v37-vault-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  /* Trial alert */
+  .v5-trial-alert{flex-wrap:wrap!important;padding:12px 14px!important;}
+  .v5-trial-cta{margin-left:0!important;width:100%!important;text-align:center!important;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr!important;}
+  .v5-espace-grid{grid-template-columns:1fr!important;}
+  .v69-export-bar{gap:4px!important;}
+  .v69-export-btn{font-size:10px!important;padding:5px 8px!important;}
+}
+</style>
 </head>
-<body data-logout-target="private.html" class="v69-page" data-forced-space="public">
+<body data-logout-target="private.html" class="v69-page" data-forced-space="private">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
@@ -1152,32 +1203,44 @@ function init(){
 }
 
 function checkQuota(){
+  // La génération IA est ILLIMITÉE — le quota concerne les demandes expertes uniquement
+  // Afficher un badge informatif sur les demandes expertes restantes
   apiFetch('/auth/me').then(function(data){
     var w=data&&data.wallet||{};
     var expired=w.status==='trial_expired'||w.trial_expired;
-    var left=w.expert_left!=null?w.expert_left:w.tickets;
-    var noQuota=(left!=null&&left<=0)||expired;
-    if(!noQuota) return;
+    var left=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
     
-    // Bloquer le bouton générer
-    var btn=$('btnGenerate');
-    var btnTxt=$('btnGenerateText');
-    if(btn){ btn.disabled=true; }
-    if(btnTxt) btnTxt.textContent = expired ? 'Essai expiré' : 'Quota épuisé';
-    
-    // Afficher bannière upgrade
+    // Afficher bannière info (ne bloque PAS la génération)
     var banner=document.getElementById('quotaBanner');
     if(!banner){
       banner=document.createElement('div');
       banner.id='quotaBanner';
-      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:16px;';
-      banner.innerHTML='<span style="font-size:24px">'+(expired?'⏰':'⚠️')+'</span>'
-        +'<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#92400e">'
-        +(expired?'Votre période d'essai est terminée':'Votre quota de conseils experts est épuisé')+'</div>'
-        +'<div style="font-size:12px;color:#b45309;margin-top:3px">La génération IA reste disponible pour la préparation de vos documents.</div></div>'
-        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres →</a>';
+    }
+    if(expired){
+      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+      banner.innerHTML='<span style="font-size:20px">⏰</span>'
+        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — La génération IA reste disponible. Les demandes expertes nécessitent un plan actif.</div>'
+        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres</a>';
       var formCol=document.querySelector('.v69-form-col');
-      if(formCol) formCol.insertBefore(banner, formCol.firstChild);
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
+    } else if(left!=null&&left<=0){
+      banner.style.cssText='background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+      banner.innerHTML='<span style="font-size:20px">⚡</span>'
+        +'<div style="flex:1;font-size:13px;color:#065f46"><strong>Génération IA illimitée</strong> — Quota de demandes expertes épuisé ce mois. Vos documents générés peuvent être archivés et partagés.</div>'
+        +'<a href="pricing.html" style="background:#16a34a;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Plus de conseils</a>';
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
+    } else if(left!=null&&left>0){
+      // Afficher les crédits restants discrètement
+      var badge=document.getElementById('expertLeftBadge');
+      if(!badge){
+        badge=document.createElement('div');
+        badge.id='expertLeftBadge';
+        badge.style.cssText='font-size:11px;color:var(--muted);text-align:center;padding:4px;';
+        badge.textContent=left+' demande'+(left>1?'s':'')+' experte'+(left>1?'s':'')+' disponible'+(left>1?'s':'');
+        var btn=document.getElementById('btnGenerate');
+        if(btn&&btn.parentNode) btn.parentNode.insertBefore(badge, btn.nextSibling);
+      }
     }
   }).catch(function(){});
 }
