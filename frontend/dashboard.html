@@ -1264,15 +1264,34 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
 
     var sel=$('archiveAttachSelect');
+    var genId = sel ? sel.value : '';
+    // Construire le payload compatible /expert/request
     var payload = {
-      space: SPACE,
+      subject: n.title || ('Demande ' + (s.domain||'expert')),
       domain: s.domain,
-      need: n,
-      selectedDraft: sel?sel.value:'',
-      localFilesCount: localFiles.length
+      type: n.treatment || 'conseil',
+      context: [
+        s.domain ? 'Domaine : ' + s.domain : '',
+        n.context ? 'Contexte : ' + n.context : '',
+        n.problem ? 'Problème : ' + n.problem : '',
+        n.constraints ? 'Contraintes : ' + n.constraints : '',
+        n.risks ? 'Points sensibles : ' + n.risks : '',
+        n.actors ? 'Acteurs : ' + n.actors : '',
+        n.deadline ? 'Échéance : ' + n.deadline : ''
+      ].filter(Boolean).join('\n'),
+      objective: n.objective || n.title || '',
+      expectations: [
+        n.objective || '',
+        n.deliverable ? 'Livrable attendu : ' + n.deliverable : '',
+        n.decision ? 'Décision : ' + n.decision : '',
+        n.detailLevel ? 'Niveau de détail : ' + n.detailLevel : '',
+        n.description ? n.description : ''
+      ].filter(Boolean).join('\n'),
+      generation_attachment: genId || null,
+      space: SPACE
     };
 
-    apiFetch('/expert/submit-need', {method:'POST', body:payload}).then(function(data){
+    apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
       flash('✅ Demande envoyée à votre expert !','ok');
       saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
       setTimeout(function(){ location.href='expert.html'; }, 1500);
@@ -1469,8 +1488,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function init(){
     if(!requireAuth()) return;
 
-    // Topbar — wire tous les boutons logout
-    document.querySelectorAll('[data-logout]').forEach(function(b){ b.addEventListener('click', logout); });
+    // Topbar — wire logout en capture phase (prioritaire sur wireLogout de app.js)
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-logout]');
+      if(!btn) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      logout();
+    }, true); // true = capture phase, s'exécute avant app.js wireLogout
     var _expBtn = document.querySelector('#trialExpiredOverlay button');
     if(_expBtn) _expBtn.addEventListener('click', logout);
 
@@ -1609,9 +1633,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 <!-- API user loader (factorized from V66) -->
 <script type="module">
 import { apiFetch } from './api.js';
-import { requireLogin, wireLogout, setTicketsBadge } from './app.js';
+import { requireLogin, setTicketsBadge } from './app.js';
+// wireLogout() intentionally NOT called — notre IIFE gère le logout complet
 if (!requireLogin('dashboard.html')) {}
-wireLogout();
 (async () => {
   try {
     const me = await apiFetch('/auth/me');

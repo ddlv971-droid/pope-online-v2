@@ -120,6 +120,23 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   .v40-burger{display:flex!important;}
 }
 </style>
+
+<style id="v70-vault-return">
+.v70-return-bar{
+  background:linear-gradient(90deg,#0b3060,#0d4a8a);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  padding:0 20px;display:flex;align-items:center;gap:14px;height:44px;
+}
+.v70-return-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  color:#fff;border-radius:8px;padding:6px 16px;
+  font-weight:700;font-size:13px;text-decoration:none;cursor:pointer;
+  transition:.15s;white-space:nowrap;
+}
+.v70-return-btn:hover{background:rgba(255,255,255,.25);}
+.v70-return-info{font-size:12px;color:rgba(255,255,255,.6);flex:1;}
+</style>
 </head>
 <body class="bg po-vault-page">
 <header class="v40-topbar">
@@ -151,6 +168,12 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <button data-logout>🚪 Déconnexion</button>
 </div>
     <button data-logout>🚪 Déconnexion</button>
+</div>
+
+
+<div class="v70-return-bar" id="v70ReturnBar" style="display:none">
+  <a id="v70ReturnBtn" href="dashboard.html" class="v70-return-btn">← Retour</a>
+  <span class="v70-return-info" id="v70ReturnInfo">Déposez vos pièces puis revenez à votre parcours</span>
 </div>
 
 <main class="v37-vault-layout">
@@ -342,5 +365,46 @@ inp.addEventListener('change', function() {
 })();
 
 </script>
+
+<script>
+(function(){
+  var sp = new URLSearchParams(location.search);
+  var ret = sp.get('return') || sp.get('retour') || '';
+  if(ret){
+    var bar = document.getElementById('v70ReturnBar');
+    var btn = document.getElementById('v70ReturnBtn');
+    var info = document.getElementById('v70ReturnInfo');
+    if(bar) bar.style.display = 'flex';
+    if(btn){
+      btn.href = ret;
+      // Label adaptatif selon la destination
+      if(ret.indexOf('step=3') !== -1 || ret.indexOf('step%3D3') !== -1){
+        btn.textContent = '← Retour à l\'étape 3 — Documents';
+        if(info) info.textContent = 'Déposez vos pièces, puis revenez à l\'étape Documents de votre parcours.';
+      } else if(ret.indexOf('app') !== -1){
+        btn.textContent = '← Retour à la génération';
+        if(info) info.textContent = 'Vos pièces seront disponibles dans l\'outil de génération.';
+      } else if(ret.indexOf('dashboard') !== -1){
+        btn.textContent = '← Retour au tableau de bord';
+        if(info) info.textContent = 'Vos pièces sont disponibles pour votre demande expert.';
+      } else {
+        btn.textContent = '← Retour';
+      }
+    }
+  }
+  // Wire upload success → propose return
+  var form = document.querySelector('[data-upload-form]') || document.getElementById('vaultUploadForm');
+  // After any successful upload (via MutationObserver on success message)
+  var observer = new MutationObserver(function(){
+    var success = document.querySelector('.v37-success, [data-upload-success], .upload-success');
+    if(success && ret){
+      var retBtn = document.getElementById('v70ReturnBtn');
+      if(retBtn) retBtn.style.background = 'rgba(34,197,94,.25)';
+    }
+  });
+  observer.observe(document.body, {childList:true, subtree:true});
+})();
+</script>
+
 </body>
 </html>

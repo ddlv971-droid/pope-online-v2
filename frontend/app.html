@@ -1010,8 +1010,13 @@ function generate(){
 function init(){
   if(!requireAuth())return;
 
-  /* Logout */
-  document.querySelectorAll('[data-logout]').forEach(function(b){b.addEventListener('click',logout);});
+  /* Logout — capture phase pour surpasser wireLogout de app.js */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-logout]');
+    if(!btn) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    logout();
+  }, true);
 
   /* Form events */
   var uc=$('usecase');if(uc)uc.addEventListener('change',function(){updateHelp();saveForm();});
