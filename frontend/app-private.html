@@ -755,8 +755,8 @@ function prefillFromDashboard(){
   try{
     // Lire le state depuis sessionStorage, localStorage, et clés legacy
     var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY)
-           ||sessionStorage.getItem('pope_v58_state_public')||localStorage.getItem('pope_v58_state_public')
-           ||sessionStorage.getItem('pope_v57_state_public')||localStorage.getItem('pope_v57_state_public');
+           ||sessionStorage.getItem('pope_v58_state_private')||localStorage.getItem('pope_v58_state_private')
+           ||sessionStorage.getItem('pope_v57_state_private')||localStorage.getItem('pope_v57_state_private');
     if(!raw)return;
     var s=JSON.parse(raw);var n=s.need||{};
 
@@ -1113,14 +1113,15 @@ function init(){
     window.scrollTo({top:0,behavior:'smooth'});
   });
 
-  /* Vérification nonce — si nouvelle session, vider les champs */
+  /* Vérification nonce — si nouvelle session, vider le form APP uniquement */
+  /* NE PAS effacer DASH_KEY : il contient le contexte du parcours (domaine, besoin) */
   (function(){
     var lsNonce=localStorage.getItem('pope_session_nonce');
     var ssNonce=sessionStorage.getItem('pope_session_nonce');
     if(lsNonce && ssNonce && lsNonce !== ssNonce){
-      // Nouvelle connexion → effacer form + state dash
+      // Nouvelle connexion → effacer uniquement le form app (FORM_KEY)
       try{localStorage.removeItem(FORM_KEY);}catch(e){}
-      try{sessionStorage.removeItem(DASH_KEY);localStorage.removeItem(DASH_KEY);}catch(e){}
+      // PAS de removeItem(DASH_KEY) — le contexte du parcours doit rester accessible
       sessionStorage.setItem('pope_session_nonce', lsNonce);
     }
   })();

@@ -1100,7 +1100,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var s = loadState();
 
     // Guard : besoin domaine pour avancer
-    if(n > 1 && !s.domain){
+    // Exception : si on revient depuis l'outil (from=app ou from=dashboard), ne pas bloquer
+    var _fromApp = (function(){ try{ var sp=new URLSearchParams(location.search); return sp.get('from')==='app'||sp.get('from')==='dashboard'; }catch(e){ return false; } })();
+    if(n > 1 && !s.domain && !_fromApp){
       flash('Veuillez d\'abord sélectionner un domaine.', 'info');
       n = 1;
     }
@@ -1232,7 +1234,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   /* ─── Step 3 : draft link ─── */
   function updateDraftLink(){
     var s = loadState();
-    var appUrl = 'app.html?from=dashboard&step=2';
+    var appUrl = 'app-private.html?from=dashboard&step=2';
     if(s.domain) appUrl += '&domain='+encodeURIComponent(s.domain);
     var l1=$('lnkDraftTool'), l2=$('lnkDraftStep3');
     if(l1) l1.href=appUrl;
@@ -1488,8 +1490,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var sp = new URLSearchParams(location.search);
     var s = loadState();
 
-    // Retour depuis app
-    if(sp.get('from')==='app'){
+    // Retour depuis app ou dashboard-tool
+    if(sp.get('from')==='app'||sp.get('from')==='dashboard'){
       // Attacher la dernière génération si ?attach=last
       if(sp.get('attach')==='last'){
         var lastId = localStorage.getItem('pope_v61_last_gen') ||
