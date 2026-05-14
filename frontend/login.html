@@ -45,13 +45,13 @@
 
     <div class="v40-field">
       <label for="identifier">Email</label>
-      <input class="v40-input" id="identifier" type="email" placeholder="votre@email.fr" autocomplete="username"/>
+      <input class="v40-input" id="identifier" type="email" placeholder="votre@email.fr" autocomplete="off"/>
     </div>
 
     <div class="v40-field">
       <label for="password">Mot de passe</label>
       <div class="v40-pw-wrap">
-        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"/>
+        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password"/>
         <button class="v40-pw-eye" id="togglePw" type="button">&#128065;</button>
       </div>
     </div>
@@ -122,6 +122,28 @@ $('btnLogin').addEventListener('click', async function() {
     msg.textContent = MSGS[code] || ('Erreur : ' + code);
     btn.disabled = false; btn.textContent = 'Se connecter \u2192';
   }
+});
+</script>
+
+<!-- Décoy anti-autofill — absorbe le remplissage automatique du navigateur -->
+<div style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+  <form><input type="email" name="email"/><input type="password" name="password"/></form>
+</div>
+
+<script>
+// Empêcher le remplissage automatique du navigateur sur les vrais champs
+document.addEventListener('DOMContentLoaded', function() {
+  // Vider immédiatement les champs (avant que Chrome ait eu le temps de les remplir)
+  var id = document.getElementById('identifier');
+  var pw = document.getElementById('password');
+  if(id) { id.value = ''; id.setAttribute('readonly', ''); setTimeout(function(){ id.removeAttribute('readonly'); }, 100); }
+  if(pw) { pw.value = ''; pw.setAttribute('readonly', ''); setTimeout(function(){ pw.removeAttribute('readonly'); }, 100); }
+  
+  // Protection supplémentaire : vider à nouveau après 500ms (Chrome remplit parfois en différé)
+  setTimeout(function() {
+    if(id && !id.matches(':focus')) id.value = '';
+    if(pw && !pw.matches(':focus')) pw.value = '';
+  }, 500);
 });
 </script>
 </body>

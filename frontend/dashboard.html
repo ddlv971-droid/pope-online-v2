@@ -1777,20 +1777,123 @@ if (!requireLogin('dashboard.html')) {}
     setTicketsBadge(me.wallet);
     const u = me.user || {};
     const w = me.wallet || {};
-    const name = u.full_name ? u.full_name.split(' ')[0] : '';
+
+    // Prénom
+    const name = u.full_name ? u.full_name.split(' ')[0] : (u.email ? u.email.split('@')[0] : '');
     if (name) { const el=document.getElementById('dashWelcome'); if(el) el.textContent='Bonjour '+name+' 👋'; }
-    const leftN=document.getElementById('expertLeftN'); if(leftN) leftN.textContent=w.expert_left??'—';
-    const planN=document.getElementById('planN'); if(planN) planN.textContent=w.plan_label||'Free';
-    if (w.status === 'trial_active' && w.trial_days_left !== null) {
-      const alert=document.getElementById('trialAlert'); if(alert) alert.removeAttribute('hidden');
-      const trialEnd=w.trial_expires_at?new Date(w.trial_expires_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
-      const t=document.getElementById('trialAlertTitle'); if(t) t.textContent='Essai gratuit — '+w.trial_days_left+' jour'+(w.trial_days_left>1?'s':'')+' restant'+(w.trial_days_left>1?'s':'');
-      const b=document.getElementById('trialAlertBody'); if(b) b.textContent=(trialEnd?'Expire le '+trialEnd+'. ':'')+'Souscrivez un plan pour continuer après votre essai.';
+
+    // ── KPI : Conseils disponibles ──
+    const leftN = document.getElementById('expertLeftN');
+    if (leftN) {
+      const left = w.expert_left != null ? w.expert_left : (w.tickets != null ? w.tickets : '—');
+      leftN.textContent = left;
+      if (left === 0) { leftN.style.color = '#ef4444'; }
+      else if (left <= 1) { leftN.style.color = '#f59e0b'; }
     }
-    if (w.status === 'trial_expired') {
-      const ov=document.getElementById('trialExpiredOverlay'); if(ov) ov.removeAttribute('hidden');
+
+    // ── KPI : Plan actif ──
+    const planN = document.getElementById('planN');
+    if (planN) {
+      const plan = (w.plan || w.plan_type || '').toLowerCase();
+      const status = w.status || '';
+      let planLabel = 'Free';
+      if (w.plan_label) {
+        planLabel = w.plan_label;
+      } else if (plan === 'starter') {
+        planLabel = 'Starter';
+      } else if (plan === 'pro') {
+        planLabel = 'Pro';
+      } else if (plan === 'premium') {
+        planLabel = 'Premium';
+      }
+      planN.textContent = planLabel;
     }
-  } catch {}
+
+    // ── Calcul des dates ──
+    const plan = (w.plan || w.plan_type || '').toLowerCase();
+    const isPaid = plan === 'starter' || plan === 'pro' || plan === 'premium';
+    const status = w.status || '';
+    const isTrialActive = status === 'trial_active' || (w.is_trial && !w.expired && !w.trial_expired);
+    const isTrialExpired = status === 'trial_expired' || w.trial_expired || w.expired;
+    const isActiveSubscription = isPaid && (status === 'active' || status === 'subscription_active' || (!isTrialExpired && !isTrialActive));
+
+    // Date fin d'essai
+    const trialEndRaw = w.trial_expires_at || w.trial_ends_at || w.period_end_at || null;
+    const trialEndDate = trialEndRaw ? new Date(trialEndRaw) : null;
+    const trialEndStr = trialEndDate ? trialEndDate.toLocaleDateString('fr-FR', {day:'2-digit', month:'long', year:'numeric'}) : '';
+    const trialDaysLeft = w.trial_days_left != null ? w.trial_days_left
+      : (trialEndDate ? Math.max(0, Math.ceil((trialEndDate - Date.now()) / (86400000))) : null);
+
+    // Date renouvellement abonnement
+    const renewRaw = w.renews_at || w.next_billing_at || w.current_period_end || w.period_end || null;
+    const renewDate = renewRaw ? new Date(renewRaw) : null;
+    const renewStr = renewDate ? renewDate.toLocaleDateString('fr-FR', {day:'2-digit', month:'long', year:'numeric'}) : '';
+
+    // ── Bannière essai actif ──
+    if (isTrialActive) {
+      const alertEl = document.getElementById('trialAlert');
+      if (alertEl) alertEl.removeAttribute('hidden');
+      const t = document.getElementById('trialAlertTitle');
+      if (t) {
+        if (trialDaysLeft != null) {
+          t.textContent = 'Essai gratuit — ' + trialDaysLeft + ' jour' + (trialDaysLeft > 1 ? 's' : '') + ' restant' + (trialDaysLeft > 1 ? 's' : '');
+        } else {
+          t.textContent = 'Essai gratuit en cours';
+        }
+      }
+      const b = document.getElementById('trialAlertBody');
+      if (b) {
+        const endTxt = trialEndStr ? 'Expire le ' + trialEndStr + '. ' : '';
+        b.textContent = endTxt + 'Souscrivez un plan pour continuer après votre essai.';
+      }
+    }
+
+    // ── Nouveau compte sans date de fin définie ──
+    // Si le compte est actif (non expiré) mais qu'il n'y a pas de date d'essai ni de plan payant
+    if (!isTrialActive && !isTrialExpired && !isPaid && !renewDate && !trialEndDate) {
+      const alertEl = document.getElementById('trialAlert');
+      if (alertEl) alertEl.removeAttribute('hidden');
+      const t = document.getElementById('trialAlertTitle');
+      if (t) t.textContent = 'Espace gratuit — Essai en cours';
+      const b = document.getElementById('trialAlertBody');
+      if (b) b.textContent = 'Profitez de 2 conseils experts et de la génération IA illimitée. Souscrivez un plan pour un accès continu.';
+    }
+
+    // ── Abonnement payant actif — afficher date de renouvellement ──
+    if (isPaid && renewStr) {
+      const alertEl = document.getElementById('trialAlert');
+      if (alertEl) {
+        alertEl.removeAttribute('hidden');
+        alertEl.style.background = 'linear-gradient(135deg,#f0fdf4,#dcfce7)';
+        alertEl.style.borderColor = '#bbf7d0';
+      }
+      const t = document.getElementById('trialAlertTitle');
+      if (t) { t.textContent = 'Abonnement ' + (planN ? planN.textContent : plan) + ' actif'; t.style.color = '#16a34a'; }
+      const b = document.getElementById('trialAlertBody');
+      if (b) { b.textContent = 'Renouvellement le ' + renewStr + '. Les crédits non utilisés ne sont pas reportés au mois suivant.'; }
+      const cta = document.querySelector('#trialAlert .v5-trial-cta');
+      if (cta) { cta.textContent = 'Gérer mon abonnement →'; cta.href = 'pricing.html'; }
+    } else if (isPaid && !renewStr) {
+      // Abonnement actif mais pas de date
+      const alertEl = document.getElementById('trialAlert');
+      if (alertEl) {
+        alertEl.removeAttribute('hidden');
+        alertEl.style.background = 'linear-gradient(135deg,#f0fdf4,#dcfce7)';
+        alertEl.style.borderColor = '#bbf7d0';
+      }
+      const t = document.getElementById('trialAlertTitle');
+      if (t) { t.textContent = 'Abonnement ' + (planN ? planN.textContent : plan) + ' actif'; t.style.color = '#16a34a'; }
+      const b = document.getElementById('trialAlertBody');
+      if (b) b.textContent = 'Les crédits non utilisés ne sont pas reportés au renouvellement mensuel.';
+    }
+
+    // ── Essai expiré ──
+    if (isTrialExpired) {
+      const ov = document.getElementById('trialExpiredOverlay');
+      if (ov) ov.removeAttribute('hidden');
+    }
+
+  } catch(e) { console.error('Dashboard KPI error:', e); }
 })();
 </script>
 
