@@ -443,7 +443,7 @@ function renderRequests(statusFilter) {
     var expectHtml = req.expectations
       ? ('<div style="margin-bottom:10px">'
           + '<div class="exp-req-section-label">Demande du client</div>'
-          + '<div class="exp-req-text" style="color:var(--muted)">' + esc(req.expectations) + '</div>'
+          + '<div class="exp-req-text" style="color:rgba(255,255,255,.85)">' + esc(req.expectations) + '</div>'
           + '</div>')
       : '';
 
@@ -451,7 +451,7 @@ function renderRequests(statusFilter) {
       ? ('<div class="exp-req-separator"></div>'
           + '<div style="margin-bottom:10px">'
           + '<div class="exp-req-section-label">Contexte &amp; enjeux</div>'
-          + '<div class="exp-req-text" style="color:var(--muted);font-size:12px">' + esc(req.context) + '</div>'
+          + '<div class="exp-req-text" style="color:rgba(255,255,255,.85);font-size:12px">' + esc(req.context) + '</div>'
           + '</div>')
       : '';
 
@@ -471,7 +471,10 @@ function renderRequests(statusFilter) {
 
     // Pièces déposées par le client
     var vaultHtml = '';
-    var vids = (req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids : [];
+    var vids = (req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids 
+              : (req.files && req.files.length) ? req.files
+              : (req.attachments && req.attachments.length) ? req.attachments
+              : [];
     if (vids.length) {
       var _APIBASE = (function(){ var h=location.hostname; if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000'; if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com'; return'https://pope-online-v2.onrender.com'; })();
       vaultHtml = '<div class="exp-req-separator"></div>'

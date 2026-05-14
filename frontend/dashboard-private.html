@@ -1349,6 +1349,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       return;
     }
 
+    var quotaMsg=document.getElementById('quotaBlockMsg');
+    if(quotaMsg){ flash('Quota de conseils experts épuisé.','warn'); return; }
     var btn=$('btnSend');
     if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
 
@@ -1508,17 +1510,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
   /* ─── User info ─── */
   function loadUser(){
-    // Toujours appeler /auth/me pour avoir les données de quota à jour
-    // (les données en cache localStorage peuvent être périmées)
     apiFetch('/auth/me').then(function(data){
       hydrateUser(data);
-      // Mettre à jour le cache avec les données fraîches
       try{if(data&&data.user)localStorage.setItem('pope_session_user',JSON.stringify(data.user));}catch(e){}
-    }).catch(function(){
-      // En cas d'erreur réseau, utiliser le cache comme fallback
-      var u = getUser();
-      if(u) hydrateUser(u);
-    });
+    }).catch(function(){var u=getUser();if(u)hydrateUser(u);});
   }
   function hydrateUser(u){
     if(!u) return;
@@ -1551,16 +1546,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     // Quota : bloquer le bouton soumettre si épuisé
     var expired = w.status==='trial_expired'||w.trial_expired||w.expired;
     var left = w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
-    var noQuota = expired||(left!=null&&left<=0);
+    var plan=(w.plan||w.plan_type||'free').toLowerCase();
+    var isPaid=plan==='starter'||plan==='pro'||plan==='premium';
+    var renewDate=w.renews_at||w.next_billing_at||w.period_end||null;
+    var renewStr=renewDate?new Date(renewDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'long'}):'';
+    var noQuota=expired||(left!=null&&left<=0);
     var btnS = $('btnSend');
-    // Activer le bouton si quota disponible, désactiver sinon
-    if(btnS){
-      if(!noQuota){
-        btnS.disabled = false;
-        btnS.style.opacity = '';
-        btnS.style.cursor = '';
-      }
-    }
+    if(btnS && !noQuota){ btnS.disabled=false; btnS.style.opacity=''; btnS.style.cursor=''; }
     if(noQuota && btnS){
       btnS.disabled = true;
       btnS.style.opacity = '0.55';
@@ -1573,8 +1565,12 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         msgQ.id = 'quotaBlockMsg';
         msgQ.style.cssText = 'font-size:12px;text-align:center;margin-top:8px;padding:10px 14px;background:#fff7ed;border:1px solid #fde68a;border-radius:8px;color:#92400e;';
         msgQ.innerHTML = expired
-          ? '⏰ Essai expiré. <a href="pricing.html" style="color:#d97706;font-weight:700">Choisir un plan →</a>'
-          : '⚠️ Quota épuisé ce mois. <a href="pricing.html" style="color:#d97706;font-weight:700">Passer à un abonnement →</a>';
+          ? '⏰ Essai gratuit terminé. <a href="pricing.html" style="color:#d97706;font-weight:700">Choisir un plan →</a>'
+          : (isPaid
+            ? ' Quota mensuel épuisé'+(renewStr?' — renouvellement le '+renewStr:'')+'.' 
+              +' <a href="pricing.html#extra" style="color:#1d4ed8;font-weight:700">+1 conseil à l’unité</a>'
+              +(plan!=='premium'?' ou <a href="pricing.html" style="color:#d97706;font-weight:700">passer en '+(plan==='starter'?'Pro':'Premium')+'</a>':'')+'.' 
+            : 'Quota de l’espace gratuit épuisé (non renouvelable). <a href="pricing.html" style="color:#d97706;font-weight:700">Souscrire Starter ou Pro →</a>');
         if(btnS.parentNode) btnS.parentNode.insertBefore(msgQ, btnS.nextSibling);
       }
     }
