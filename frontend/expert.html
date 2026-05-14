@@ -250,7 +250,6 @@ body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-seri
     <span class="v40-topbar-sub" id="expertSubTitle">Conseil Expert</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
-      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
       <a class="v40-topbar-btn" href="mission.html">🎯 Sur Mesure</a>
       <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=expert.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
@@ -260,7 +259,6 @@ body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-seri
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
   <a href="dashboard.html">🏠 Dashboard</a>
-  <a href="app.html">⚡ Générer</a>
   <a href="mission.html">🎯 Sur Mesure</a>
   <div style="height:1px;background:rgba(255,255,255,.07);margin:8px 0;"></div>
   <button data-logout>🚪 Déconnexion</button>
@@ -634,7 +632,7 @@ function updateDraftPreview(){
     }
     // Auto-remplir objet si vide
     var subEl=$('subject');
-    if(subEl&&!subEl.value.trim()){subEl.value='Relecture experte — '+(g.title||g.usecaseLabel||'livrable généré').slice(0,80);}
+    if(subEl&&!subEl.value.trim()){subEl.value='Conseil expert — '+(g.title||g.usecaseLabel||'livrable généré').slice(0,80);}
   }
 }
 
@@ -778,7 +776,7 @@ function loadRequests(){
         genHtml='<div class="ex-req-section ex-req-gen">'
           +'<div class="ex-req-section-label">&#x1F6E0;&#xFE0F; Draft IA joint'+(ga.usecaseLabel?' &#8212; '+esc(ga.usecaseLabel):'')+(ga.domain?' ('+esc(ga.domain)+')':'')+'</div>'
           +(ga.prompt&&ga.prompt.objective?'<div style="font-size:11px;color:#065f46;padding:4px 12px;font-weight:600">Objectif : '+esc(ga.prompt.objective)+'</div>':'')
-          +(ga.result?'<div class="ex-req-section-body" style="max-height:320px;overflow-y:auto;background:#f0fdf4;">'+esc(ga.result)+'</div>':'')
+          +(ga.result?'<div class="ex-req-section-body" style="overflow-y:auto;background:#f0fdf4;max-height:none;">'+esc(ga.result)+'</div>':'')
           +'</div>';
       }
 
@@ -827,7 +825,18 @@ function loadRequests(){
       if(hidden){target.removeAttribute('hidden');btn.textContent='Masquer &#9650;';}
       else{target.setAttribute('hidden','');btn.textContent='Voir le d\u00e9tail \u25bc';}
     });
-    });
+  }).catch(function(e){
+    var status=e&&e.status;
+    if(status===401||status===403){
+      list.innerHTML='<div class="ex-empty"><div class="ex-empty-ico">🔒</div>'
+        +'<div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px">Session expirée</div>'
+        +'<div style="font-size:13px;color:var(--muted)">Rechargez la page pour vous reconnecter.</div></div>';
+    } else {
+      list.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:14px">'
+        +'Impossible de charger les échanges. '
+        +'<button onclick="loadRequests()" style="color:var(--blue);background:none;border:none;cursor:pointer;font-weight:600;font-family:inherit">Réessayer</button></div>';
+    }
+  });
   });
 }
 
@@ -857,12 +866,20 @@ function submit(){
 
   var vaultIds=Array.from(document.querySelectorAll('[data-vault-file]:checked')).map(function(n){return n.value;});
 
+  // Enrichir le payload avec le texte complet pour le mail
+  var mailBody = '';
+  if(context) mailBody += '=== CONTEXTE ===\n' + context + '\n\n';
+  if(content) mailBody += '=== DESCRIPTION DU BESOIN ===\n' + content + '\n\n';
+  if(genObj&&genObj.result) mailBody += '=== DRAFT IA JOINT (' + (genObj.usecaseLabel||'Génération') + ') ===\n' + genObj.result + '\n';
+
   var payload={
     subject:subject,
     context:context,
     content:content,
+    body:mailBody,                   // texte complet pour le corps du mail
     vault_file_ids:vaultIds,
     generation_attachment:genObj,
+    generation_text:genObj?genObj.result:'',  // texte brut de la génération
     domain:genObj?genObj.domain:''
   };
 

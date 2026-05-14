@@ -21,13 +21,13 @@ const RETURN_MAP = {
   public: {
     'dashboard.html': { href: 'dashboard.html', label: 'Tableau de bord public' },
     'app.html': { href: 'app.html', label: 'Revenir à la génération' },
-    'expert.html': { href: 'expert.html', label: 'Revenir à la relecture experte' },
+    'expert.html': { href: 'expert.html', label: 'Revenir aux échanges experts' },
     'mission.html': { href: 'mission.html', label: 'Revenir à l’accompagnement' }
   },
   private: {
     'dashboard-private.html': { href: 'dashboard-private.html', label: 'Tableau de bord privé' },
     'app-private.html': { href: 'app-private.html', label: 'Revenir à la génération privée' },
-    'expert-private.html': { href: 'expert-private.html', label: 'Revenir à la relecture experte' },
+    'expert-private.html': { href: 'expert-private.html', label: 'Revenir aux échanges experts' },
     'mission-private.html': { href: 'mission-private.html', label: 'Revenir à l’accompagnement' }
   }
 };
@@ -82,7 +82,7 @@ function applySpaceLabels(){
   const purpose = el('vaultPurpose');
   if (purpose) {
     purpose.replaceChildren();
-    [['generation','Génération IA privée'],['expert','Relecture experte'],['mission','Accompagnement sur mesure'],['general','Usage général']].forEach(([value, label]) => {
+    [['generation','Génération IA privée'],['expert','Conseil Expert'],['mission','Accompagnement sur mesure'],['general','Usage général']].forEach(([value, label]) => {
       const option = document.createElement('option');
       option.value = value;
       option.textContent = label;
@@ -113,7 +113,7 @@ el('vaultUploadBtn').addEventListener('click', async ()=>{
   if (!file) { el('vaultMsg').textContent = 'Choisissez un fichier à déposer.'; return; }
   try {
     const contentBase64 = await toBase64(file);
-    await apiFetch('/vault/upload', { method:'POST', body:{ name:file.name, type:file.type || 'application/octet-stream', purpose:el('vaultPurpose').value, contentBase64 } });
+    await apiFetch('/vault/upload', { method:'POST', body:{ name:file.name, type:file.type || 'application/octet-stream', purpose:(el('vaultPurpose')&&el('vaultPurpose').value)||'expert', contentBase64 } });
     el('vaultMsg').textContent = 'Pièce déposée. Elle restera disponible 48 heures.';
     el('vaultInput').value = '';
     showToast('Pièce déposée', 'ok');

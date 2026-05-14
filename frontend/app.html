@@ -456,15 +456,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <span id="btnGenerateText">Produire un livrable sécurisé</span>
     </button>
 
-    <!-- Loader -->
-    <div class="v69-loader" id="generationLoader">
-      <div class="v69-spinner"></div>
-      <div class="v69-progress">
-        <strong style="font-size:14px;color:var(--ink)">Génération en cours…</strong>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px">Analyse du contexte, structuration, rédaction professionnelle.</div>
-        <div class="v69-progress-bar-wrap"><div class="v69-progress-bar" id="progressBar"></div></div>
-      </div>
-    </div>
 
   </div>
 
@@ -955,7 +946,7 @@ function renderArchive(){
 function showResult(text,title,meta){
   _lastRawText=text;
   if($('resultEmpty'))$('resultEmpty').style.display='none';
-  if($('generationLoader'))$('generationLoader').classList.remove('show');
+  if($('generationLoader'))$('generationLoader').style.display='none';
   var card=$('resultCard');if(card)card.classList.add('show');
   if($('resultTitle'))$('resultTitle').textContent=title||'Document généré';
   if($('resultMeta'))$('resultMeta').textContent=meta||'';
@@ -1023,7 +1014,7 @@ function generate(){
   if($('resultEmpty'))$('resultEmpty').style.display='none';
   var card=$('resultCard');if(card)card.classList.remove('show');
   var next=$('nextActions');if(next)next.classList.remove('show');
-  var loader=$('generationLoader');if(loader)loader.classList.add('show');
+  var loader=$('generationLoader');if(loader){loader.style.display='flex';}
 
   startProgress();
 
@@ -1032,7 +1023,7 @@ function generate(){
     if(btn){btn.disabled=false;btn.classList.remove('loading');}
     if(btnTxt)btnTxt.textContent='Produire un livrable sécurisé';
     if(!ok){
-      if(loader)loader.classList.remove('show');
+      if(loader)loader.style.display='none';
       if($('resultEmpty'))$('resultEmpty').style.display='flex';
       setWF(1);
     }
