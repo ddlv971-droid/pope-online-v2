@@ -3,108 +3,193 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>POPE Online — Bienvenue !</title>
+<title>POPE Online &mdash; Bienvenue !</title>
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style>
-.verify-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#f0f7fc 0%,#e3f0fa 50%,#d4e8f6 100%)}
-.verify-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:36px;text-decoration:none}
-.verify-logo img{height:40px}
-.verify-logo-text{font-weight:800;font-size:16px;color:#0b2440}
-.verify-card{background:#fff;border-radius:28px;box-shadow:0 24px 64px rgba(0,0,0,.10);padding:52px 44px;max-width:560px;width:100%;text-align:center;animation:card-in .5s ease forwards}
-@keyframes card-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.verify-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0079c1,#03a0d7);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 12px 32px rgba(0,121,193,.3);font-size:36px;animation:icon-pop .6s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes icon-pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.verify-card h1{font-size:28px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin:0 0 12px}
-.verify-subtitle{font-size:16px;color:#50627a;line-height:1.65;margin:0 0 28px}
-.verify-subtitle strong{color:#0b2440}
-.verify-loading{display:flex;flex-direction:column;align-items:center;gap:16px;color:#50627a;font-size:15px}
-.verify-spinner{width:44px;height:44px;border:3px solid #dce9f4;border-top-color:#0079c1;border-radius:50%;animation:spin .8s linear infinite}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#0b3060 0%,#0b5394 40%,#0079c1 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.vw{max-width:540px;width:100%;}
+/* Logo bar */
+.vw-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px;text-decoration:none;}
+.vw-logo img{height:38px;}
+.vw-logo-text{font-weight:800;font-size:16px;color:#fff;letter-spacing:-.01em;}
+/* Card */
+.vw-card{background:#fff;border-radius:28px;box-shadow:0 40px 80px rgba(0,0,0,.25);overflow:hidden;animation:card-up .5s ease forwards;}
+@keyframes card-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+/* Hero strip */
+.vw-hero{background:linear-gradient(135deg,#0b3060,#0079c1);padding:32px 36px;text-align:center;}
+.vw-hero-icon{width:72px;height:72px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;animation:pop .6s cubic-bezier(.34,1.56,.64,1) .2s both;}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.vw-hero h1{font-size:26px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;}
+.vw-hero p{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;}
+/* Body */
+.vw-body{padding:32px 36px;}
+/* Expertise badge */
+.vw-expertise{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#f0f7fc,#e8f4fd);border:1.5px solid #b8dcf0;border-radius:16px;padding:16px 20px;margin-bottom:24px;}
+.vw-expertise-ico{width:44px;height:44px;background:linear-gradient(135deg,#0079c1,#03a0d7);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.vw-expertise-text strong{display:block;font-size:14px;font-weight:800;color:#0b2440;margin-bottom:3px;}
+.vw-expertise-text span{font-size:12px;color:#50627a;line-height:1.5;}
+/* Features grid */
+.vw-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.vw-feat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px 12px;}
+.vw-feat-icon{font-size:22px;margin-bottom:8px;display:block;}
+.vw-feat strong{display:block;font-size:13px;font-weight:700;color:#0b2440;margin-bottom:3px;}
+.vw-feat span{font-size:11px;color:#50627a;line-height:1.5;}
+/* CTAs */
+.vw-cta{display:flex;flex-direction:column;gap:10px;}
+.vw-btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0b3060,#0079c1);color:#fff;border-radius:14px;padding:15px 28px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.3);transition:transform .2s,box-shadow .2s;}
+.vw-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,121,193,.4);}
+.vw-btn-ghost{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1.5px solid #dce9f4;color:#50627a;border-radius:12px;padding:12px 24px;font-size:13px;font-weight:600;text-decoration:none;transition:border-color .2s,color .2s;}
+.vw-btn-ghost:hover{border-color:#0079c1;color:#0079c1;}
+/* Footer */
+.vw-footer{margin-top:20px;text-align:center;font-size:12px;color:rgba(255,255,255,.5);}
+.vw-footer a{color:rgba(255,255,255,.7);text-decoration:none;}
+/* Loading state */
+.vw-loading{padding:60px 36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.vw-spinner{width:44px;height:44px;border:3px solid #dce9f4;border-top-color:#0079c1;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.verify-success,.verify-error{display:none}
-.verify-success.active,.verify-error.active{display:block}
-.verify-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:16px;color:#b91c1c;font-size:14px;margin-bottom:24px;line-height:1.5}
-.verify-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 32px;text-align:left}
-.verify-feature{background:#f0f7fc;border:1px solid #dce9f4;border-radius:14px;padding:14px 12px;font-size:13px;color:#0b2440;line-height:1.45}
-.verify-feature .feat-icon{font-size:20px;display:block;margin-bottom:6px}
-.verify-feature strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
-.verify-cta{display:flex;flex-direction:column;gap:12px}
-.verify-btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:16px;padding:16px 28px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.35);transition:transform .2s,box-shadow .2s}
-.verify-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,121,193,.45)}
-.verify-btn-ghost{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1.5px solid #dce9f4;color:#50627a;border-radius:14px;padding:13px 24px;font-size:14px;font-weight:600;text-decoration:none;transition:border-color .2s,color .2s}
-.verify-btn-ghost:hover{border-color:#0079c1;color:#0079c1}
-.verify-footer{margin-top:24px;font-size:12px;color:#7a8fa8}
-@media(max-width:560px){.verify-card{padding:32px 20px}.verify-features{grid-template-columns:1fr}.verify-card h1{font-size:22px}}
+.vw-loading p{font-size:15px;color:#50627a;}
+/* Error state */
+.vw-error{padding:40px 36px;text-align:center;}
+.vw-error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:16px;color:#b91c1c;font-size:14px;margin-bottom:24px;line-height:1.5;}
+/* Human expertise highlight */
+.vw-human{display:flex;align-items:center;gap:10px;background:#fff7ed;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:20px;}
+.vw-human span:first-child{font-size:20px;}
+.vw-human p{font-size:12px;color:#92400e;line-height:1.5;margin:0;}
+.vw-human strong{color:#78350f;}
+@media(max-width:480px){.vw-features{grid-template-columns:1fr;}.vw-body{padding:24px 20px;}.vw-hero{padding:28px 24px;}}
 </style>
 </head>
-<body style="margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif">
-<div class="verify-wrap">
-  <a class="verify-logo" href="index.html">
+<body>
+<div class="vw">
+  <a class="vw-logo" href="index.html">
     <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-    <span class="verify-logo-text">POPE Online</span>
+    <span class="vw-logo-text">POPE Online</span>
   </a>
-  <div class="verify-card">
-    <div class="verify-loading" id="stateLoading">
-      <div class="verify-spinner"></div>
-      <span>Vérification de votre compte en cours…</span>
+
+  <!-- Loading -->
+  <div class="vw-card" id="stateLoading">
+    <div class="vw-loading">
+      <div class="vw-spinner"></div>
+      <p>V&#233;rification de votre compte en cours&#x2026;</p>
     </div>
-    <div class="verify-success" id="stateSuccess">
-      <div class="verify-icon">✓</div>
-      <h1 id="welcomeTitle">Bienvenue sur POPE Online !</h1>
-      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et votre accès est <strong>actif</strong>. Génération IA illimitée et conseils experts vous attendent.</p>
-      <div class="verify-features" id="featureGrid"></div>
-      <div class="verify-cta">
-        <a href="#" id="ctaDashboard" class="verify-btn-primary">Commencer mon expérience POPE Online →</a>
-        <a href="#" id="ctaSpace" class="verify-btn-ghost">Découvrir mon espace</a>
-      </div>
-    </div>
-    <div class="verify-error" id="stateError">
-      <div style="font-size:48px;margin-bottom:16px">⚠️</div>
-      <h1>Lien invalide</h1>
-      <div class="verify-error-box" id="errorMsg">Ce lien de vérification est invalide ou a expiré.</div>
-      <div class="verify-cta">
-        <a href="login.html" class="verify-btn-primary">Retour à la connexion</a>
-        <a href="index.html" class="verify-btn-ghost">Retour à l'accueil</a>
-      </div>
-    </div>
-    <div class="verify-footer">En cas de problème : <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a></div>
   </div>
+
+  <!-- Success -->
+  <div class="vw-card" id="stateSuccess" style="display:none">
+    <div class="vw-hero">
+      <div class="vw-hero-icon">&#x2713;</div>
+      <h1 id="welcomeTitle">Bienvenue sur POPE Online&#x202F;!</h1>
+      <p id="welcomeSubtitle">Votre adresse email est confirm&#233;e. Votre acc&#232;s est actif.</p>
+    </div>
+    <div class="vw-body">
+      <!-- Expertise humaine mise en avant -->
+      <div class="vw-expertise">
+        <div class="vw-expertise-ico">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="vw-expertise-text">
+          <strong>Expertise humaine POPE Online</strong>
+          <span>Chaque demande est trait&#233;e par un conseiller qualifi&#233; &#x2014; pas un algorithme. R&#233;ponse personnalis&#233;e sous 48h ouvrées.</span>
+        </div>
+      </div>
+      <!-- Badge "non IA" -->
+      <div class="vw-human">
+        <span>&#x1F91D;</span>
+        <p><strong>Un expert POPE d&#233;di&#233; vous accompagne.</strong> G&#233;n&#233;ration IA illimit&#233;e + avis humain qualifi&#233; sur vos dossiers complexes. Confidentialit&#233; garantie.</p>
+      </div>
+      <!-- Features -->
+      <div class="vw-features" id="featureGrid"></div>
+      <!-- CTAs -->
+      <div class="vw-cta">
+        <a href="#" id="ctaDashboard" class="vw-btn-primary">Acc&#233;der &#224; mon espace &#x2192;</a>
+        <a href="#" id="ctaSpace" class="vw-btn-ghost">D&#233;couvrir mon espace</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="vw-card" id="stateError" style="display:none">
+    <div class="vw-error">
+      <div style="font-size:48px;margin-bottom:16px">&#x26A0;&#xFE0F;</div>
+      <h1 style="font-size:22px;font-weight:800;color:#0b2440;margin-bottom:12px">Lien invalide</h1>
+      <div class="vw-error-box" id="errorMsg">Ce lien de v&#233;rification est invalide ou a expir&#233;.</div>
+      <div class="vw-cta">
+        <a href="login.html" class="vw-btn-primary">Retour &#224; la connexion</a>
+        <a href="index.html" class="vw-btn-ghost">Retour &#224; l&#x2019;accueil</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="vw-footer">En cas de probl&#232;me&#x202F;: <a href="mailto:contact@pope-online.com">contact@pope-online.com</a></div>
 </div>
+
 <script type="module">
 import { apiFetch, setSession, getApiMessage } from './api.js';
 import { getFingerprint } from './app.js';
-const L=document.getElementById('stateLoading'),S=document.getElementById('stateSuccess'),E=document.getElementById('stateError');
-function show(s){L.style.display=s==='loading'?'flex':'none';S.classList.toggle('active',s==='success');E.classList.toggle('active',s==='error');}
-function origin(){const{origin:o,hostname:h}=window.location;if(/localhost|127\.0\.0\.1/i.test(h))return o;if(h==='pope-online.com'||h==='www.pope-online.com')return'https://pope-online.com';return o;}
-function features(sp){return sp==='private'?[{i:'✨',t:'Génération IA illimitée',d:'Rédigez courriers, réponses et formalités en quelques secondes grâce à l\'IA'},{i:'🎯',t:'Conseil Expert humain',d:'Un conseiller qualifié analyse votre situation et vous répond sous 48h ouvrées'},{i:'🔒',t:'Coffre sécurisé 48h',d:'Déposez vos pièces jointes pour enrichir vos demandes expertes'},{i:'📋',t:'Suivi de vos dossiers',d:'Consultez l\'historique de vos échanges experts depuis votre espace'}]:[{i:'✨',t:'Génération IA illimitée',d:"Produisez livrables, notes et délibérations guidés par l'IA"},{i:'🎯',t:'Conseil Expert humain',d:'Soumettez votre besoin — un expert POPE vous répond sous 48h ouvrées'},{i:'📁',t:'Bibliothèque documentaire',d:'Déposez vos pièces et joignez-les à vos demandes expertes'},{i:'📋',t:'Suivi de vos dossiers',d:'Historique de vos échanges et réponses experts dans votre espace'}];}
+
+const stLoading = document.getElementById('stateLoading');
+const stSuccess = document.getElementById('stateSuccess');
+const stError   = document.getElementById('stateError');
+
+function show(s){
+  stLoading.style.display = s==='loading' ? 'block' : 'none';
+  stSuccess.style.display = s==='success' ? 'block' : 'none';
+  stError.style.display   = s==='error'   ? 'block' : 'none';
+}
+
+function origin(){
+  const {origin:o, hostname:h} = window.location;
+  if(/localhost|127\.0\.0\.1/i.test(h)) return o;
+  if(h==='pope-online.com'||h==='www.pope-online.com') return 'https://pope-online.com';
+  return o;
+}
+
+function features(sp){
+  return sp==='private' ? [
+    {i:'&#x26A1;',t:'G&#233;n&#233;ration IA illimit&#233;e',d:'R&#233;digez courriers, r&#233;ponses et formalit&#233;s en quelques secondes'},
+    {i:'&#x1F3AF;',t:'Conseil Expert humain',d:'Un conseiller qualifi&#233; analyse votre dossier et vous r&#233;pond sous 48h'},
+    {i:'&#x1F512;',t:'Coffre s&#233;curis&#233; 48h',d:'D&#233;posez vos pi&#232;ces jointes pour enrichir vos demandes'},
+    {i:'&#x1F4CB;',t:'Suivi de vos dossiers',d:'Consultez l&#x2019;historique de vos &#233;changes experts'}
+  ] : [
+    {i:'&#x26A1;',t:'G&#233;n&#233;ration IA illimit&#233;e',d:'Produisez livrables, notes et d&#233;lib&#233;rations guid&#233;s par l&#x2019;IA'},
+    {i:'&#x1F3AF;',t:'Conseil Expert humain',d:'Soumettez votre besoin &#x2014; un expert POPE vous r&#233;pond sous 48h'},
+    {i:'&#x1F4DA;',t:'Biblioth&#232;que documentaire',d:'D&#233;posez vos pi&#232;ces et joignez-les &#224; vos demandes expertes'},
+    {i:'&#x1F4CB;',t:'Suivi de vos dossiers',d:'Historique de vos &#233;changes et r&#233;ponses experts dans votre espace'}
+  ];
+}
+
+show('loading');
+
 async function run(){
-  show('loading');
-  const token=new URL(window.location.href).searchParams.get('token')||'';
-  if(!token){document.getElementById('errorMsg').textContent='Lien de vérification manquant.';show('error');return;}
+  const token = new URL(window.location.href).searchParams.get('token') || '';
+  if(!token){
+    document.getElementById('errorMsg').textContent = 'Lien de v\u00e9rification manquant.';
+    show('error');
+    return;
+  }
   try{
-    const fp=await getFingerprint();
-    const data=await apiFetch('/auth/verify-email',{method:'POST',body:{token,fp}});
-    // SECURITE : effacer toute session pour forcer reconnexion propre
+    const fp = await getFingerprint();
+    const data = await apiFetch('/auth/verify-email', {method:'POST', body:{token, fp}});
+    // Clear any stale session
     try{['pope_session_token','pope_session_active','pope_session_user','pope_token'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});}catch(_){}
-    const sp=data?.user?.accountSpace==='private'?'private':'public';
-    const base=origin();
-    const loginUrl=`${base}/login.html?next=${encodeURIComponent(sp==='private'?'dashboard-private.html':'dashboard.html')}`;
-    const spaceUrl=`${base}/${sp==='private'?'private.html':'public.html'}`;
-    document.getElementById('welcomeTitle').textContent=sp==='private'?'Bienvenue dans votre espace privé !':'Bienvenue dans votre espace public !';
-    document.getElementById('welcomeSubtitle').innerHTML=`Votre email est confirmé — connectez-vous pour accéder à votre espace.`;
-    document.getElementById('ctaDashboard').href=loginUrl;
-    document.getElementById('ctaDashboard').textContent='Se connecter à mon espace →';
-    document.getElementById('ctaSpace').href=spaceUrl;
-    document.getElementById('ctaSpace').textContent=sp==='private'?"Découvrir l'espace privé":"Découvrir l'espace public";
-    document.getElementById('featureGrid').innerHTML=features(sp).map(f=>`<div class="verify-feature"><span class="feat-icon">${f.i}</span><strong>${f.t}</strong>${f.d}</div>`).join('');
-    try{localStorage.setItem('pope_account_space',sp);localStorage.removeItem('pope_post_signup_next');}catch{}
+    const sp = data?.user?.accountSpace==='private' ? 'private' : 'public';
+    const base = origin();
+    const loginUrl = `${base}/login.html?next=${encodeURIComponent(sp==='private'?'dashboard-private.html':'dashboard.html')}`;
+    const spaceUrl = `${base}/${sp==='private'?'private.html':'public.html'}`;
+    document.getElementById('welcomeTitle').textContent = sp==='private' ? 'Bienvenue dans votre espace priv\u00e9\u202f!' : 'Bienvenue dans votre espace public\u202f!';
+    document.getElementById('welcomeSubtitle').textContent = 'Votre email est confirm\u00e9 \u2014 connectez-vous pour acc\u00e9der \u00e0 votre espace.';
+    document.getElementById('ctaDashboard').href = loginUrl;
+    document.getElementById('ctaSpace').href = spaceUrl;
+    document.getElementById('ctaSpace').textContent = sp==='private' ? "D\u00e9couvrir l\u2019espace priv\u00e9" : "D\u00e9couvrir l\u2019espace public";
+    document.getElementById('featureGrid').innerHTML = features(sp).map(f=>`<div class="vw-feat"><span class="vw-feat-icon">${f.i}</span><strong>${f.t}</strong><span>${f.d}</span></div>`).join('');
+    try{localStorage.setItem('pope_account_space', sp); localStorage.removeItem('pope_post_signup_next');}catch{}
     show('success');
-  }catch(e){
+  } catch(e){
     console.error(e);
-    const code=e?.data?.error;
-    document.getElementById('errorMsg').textContent=
-      code==='token_used'?'Ce lien a déjà été utilisé. Votre compte est peut-être déjà actif — connectez-vous directement.':
-      code==='token_expired'?'Ce lien a expiré (validité 24h). Créez un nouveau compte ou contactez le support.':
+    const code = e?.data?.error;
+    document.getElementById('errorMsg').textContent =
+      code==='token_used'    ? 'Ce lien a d\u00e9j\u00e0 \u00e9t\u00e9 utilis\u00e9. Votre compte est peut-\u00eatre d\u00e9j\u00e0 actif \u2014 connectez-vous directement.' :
+      code==='token_expired' ? 'Ce lien a expir\u00e9 (validit\u00e9 24h). Contactez le support.' :
       getApiMessage(e);
     show('error');
   }

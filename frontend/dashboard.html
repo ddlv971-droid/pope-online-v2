@@ -782,7 +782,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="v5-msg" id="msgBesoin"></div>
       <div class="v5-step-footer">
         <button class="v5-btn-ghost" id="btnStep4Back">← Retour</button>
-        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend">🎯 Soumettre à un expert</button>
+        <button class="v5-btn-primary v5-btn-primary-send" id="btnSend" disabled style="opacity:.5;cursor:not-allowed">🎯 Soumettre à un expert</button>
       </div>
     </div>
 
@@ -1488,14 +1488,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 
   /* ─── User info ─── */
   function loadUser(){
-    var u = getUser();
-    if(!u){
-      apiFetch('/auth/me').then(function(data){
-        hydrateUser(data);
-      }).catch(function(){});
-    } else {
-      hydrateUser(u);
-    }
+    // Toujours appeler /auth/me pour avoir les données de quota à jour
+    // (les données en cache localStorage peuvent être périmées)
+    apiFetch('/auth/me').then(function(data){
+      hydrateUser(data);
+      // Mettre à jour le cache avec les données fraîches
+      try{if(data&&data.user)localStorage.setItem('pope_session_user',JSON.stringify(data.user));}catch(e){}
+    }).catch(function(){
+      // En cas d'erreur réseau, utiliser le cache comme fallback
+      var u = getUser();
+      if(u) hydrateUser(u);
+    });
   }
   function hydrateUser(u){
     if(!u) return;
@@ -1529,6 +1532,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var left = w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
     var noQuota = expired||(left!=null&&left<=0);
     var btnS = $('btnSend');
+    // Activer le bouton si quota disponible, désactiver sinon
+    if(btnS){
+      if(!noQuota){
+        btnS.disabled = false;
+        btnS.style.opacity = '';
+        btnS.style.cursor = '';
+      }
+    }
     if(noQuota && btnS){
       btnS.disabled = true;
       btnS.style.opacity = '0.55';
