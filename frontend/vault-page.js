@@ -74,7 +74,7 @@ function applySpaceLabels(){
   if (!privateMode) return;
   document.querySelector('.brand-sub').textContent = 'Dépôt sécurisé 48h — espace privé';
   const hero = document.querySelector('.vault-hero .muted');
-  if (hero) hero.textContent = 'Déposez vos pièces utiles à la génération privée, à la relecture experte ou à l’accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.';
+  if (hero) hero.textContent = 'Déposez vos pièces utiles à la génération privée, à la Conseil Expert ou à l’accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.';
   const note = document.querySelector('.vault-hero-note span');
   if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
   const intro = document.querySelector('.vault-upload-card .muted');
@@ -113,7 +113,7 @@ el('vaultUploadBtn').addEventListener('click', async ()=>{
   if (!file) { el('vaultMsg').textContent = 'Choisissez un fichier à déposer.'; return; }
   try {
     const contentBase64 = await toBase64(file);
-    await apiFetch('/vault/upload', { method:'POST', body:{ name:file.name, type:file.type || 'application/octet-stream', purpose:(el('vaultPurpose')&&el('vaultPurpose').value)||'expert', contentBase64 } });
+    await apiFetch('/vault/upload', { method:'POST', body:{ name:file.name, type:file.type || 'application/octet-stream', purpose:(el('vaultPurpose') ? el('vaultPurpose').value : 'expert'), contentBase64 } });
     el('vaultMsg').textContent = 'Pièce déposée. Elle restera disponible 48 heures.';
     el('vaultInput').value = '';
     showToast('Pièce déposée', 'ok');

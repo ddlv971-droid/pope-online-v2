@@ -1327,8 +1327,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     apiFetch('/auth/me').then(function(data){
       var rq=$('recapQuota');
       if(rq && data){
-        var tickets = data.wallet&&data.wallet.expert_left!=null ? data.wallet.expert_left : (data.wallet&&data.wallet.tickets!=null?data.wallet.tickets:data.tickets!=null?data.tickets:'—');
-        rq.textContent = tickets + ' demande'+(tickets>1?'s':'')+' experte'+(tickets>1?'s':'')+' disponible'+(tickets>1?'s':'');
+        var tickets = data.wallet&&data.wallet.tickets!=null ? data.wallet.tickets : (data.tickets!=null?data.tickets:'—');
+        rq.textContent = tickets + ' demande(s) disponible(s)';
       }
     }).catch(function(){
       var rq=$('recapQuota'); if(rq) rq.textContent='—';
@@ -1781,14 +1781,7 @@ if (!requireLogin('dashboard-private.html')) {}
     const w = me.wallet || {};
     const name = u.full_name ? u.full_name.split(' ')[0] : '';
     if (name) { const el=document.getElementById('dashWelcome'); if(el) el.textContent='Bonjour '+name+' 👋'; }
-    const leftN=document.getElementById('expertLeftN'); 
-    if(leftN){ 
-      var lv=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:'—');
-      leftN.textContent=lv;
-      if(lv===0) leftN.style.color='#ef4444';
-      else if(lv<=1) leftN.style.color='#f59e0b';
-      else leftN.style.color='';
-    }
+    const leftN=document.getElementById('expertLeftN'); if(leftN) leftN.textContent=w.expert_left??'—';
     const planN=document.getElementById('planN'); if(planN) planN.textContent=w.plan_label||'Free';
     if (w.status === 'trial_active' && w.trial_days_left !== null) {
       const alert=document.getElementById('trialAlert'); if(alert) alert.removeAttribute('hidden');

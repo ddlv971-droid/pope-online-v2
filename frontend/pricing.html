@@ -203,6 +203,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
   </div>
 </div>
 
+
+<!-- ══ ACHAT DE CRÉDITS À L'UNITÉ ══ -->
+<div id="extra" style="max-width:900px;margin:60px auto 0;padding:0 20px;">
+  <div style="background:linear-gradient(135deg,#0b3060,#0079c1);border-radius:24px;padding:36px 40px;color:#fff;display:flex;align-items:center;gap:32px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:240px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:10px;">Besoin exceptionnel ?</div>
+      <h2 style="font-size:26px;font-weight:800;margin:0 0 10px;letter-spacing:-.02em;">Achetez des conseils experts à l'unité</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;margin:0 0 16px;">Disponible pour les abonnés Starter et Pro dont le quota mensuel est épuisé, ainsi que pour les utilisateurs Free. Sans engagement, sans renouvellement automatique.</p>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+        <li style="font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px;"><span style="background:rgba(255,255,255,.15);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">✓</span>Traitement par un expert humain sous 48h ouvrées</li>
+        <li style="font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px;"><span style="background:rgba(255,255,255,.15);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">✓</span>Même qualité que votre abonnement, sans limite de format</li>
+        <li style="font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px;"><span style="background:rgba(255,255,255,.15);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">✓</span>Crédit ajouté instantanément après paiement</li>
+      </ul>
+    </div>
+    <div style="background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:28px 32px;text-align:center;flex-shrink:0;min-width:220px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:12px;">Par conseil expert</div>
+      <div style="font-size:48px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;">25<span style="font-size:20px;font-weight:400">€</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:20px;">HT · paiement unique</div>
+      <button onclick="openCreditCheckout()" style="width:100%;background:#fff;color:#0b3060;border:none;border-radius:12px;padding:13px 20px;font-size:15px;font-weight:800;cursor:pointer;transition:.15s;font-family:inherit;">Acheter 1 conseil →</button>
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:10px;">TVA applicable selon votre pays</div>
+    </div>
+  </div>
+</div>
+
 <!-- FAQ -->
 <div class="pfaq">
   <h2>Questions fréquentes</h2>
@@ -286,6 +310,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 // ── Configuration Stripe Payment Links ──────────────────────────────────────
 // Remplacez ces URLs par vos vrais liens Stripe Payment Links
 // ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
+/* 
+  ═══════════════════════════════════════════════════════
+  CONFIGURATION STRIPE — CRÉDIT EXPERT À L'UNITÉ (25€ HT)
+  ═══════════════════════════════════════════════════════
+  
+  1. CRÉER LE PAYMENT LINK sur https://dashboard.stripe.com/payment-links
+     - Produit : "Conseil Expert - 1 crédit"
+     - Prix : 25.00€ HT (hors taxe)
+     - Quantité : 1 (fixe)
+     - URL de succès : https://[votre-domaine]/profile.html?credit=1
+     
+  2. MODE TEST (Staging) :
+     - Aller sur https://dashboard.stripe.com/test/payment-links
+     - Copier l'URL test : buy.stripe.com/test_XXXX
+     - Mettre à jour : STRIPE_LINKS.test.credit_1
+     
+  3. MODE PRODUCTION :
+     - Aller sur https://dashboard.stripe.com/payment-links  
+     - Copier l'URL prod : buy.stripe.com/XXXX
+     - Mettre à jour : STRIPE_LINKS.prod.credit_1
+     
+  4. WEBHOOK BACKEND (à configurer côté serveur) :
+     - Événement : checkout.session.completed
+     - Payload metadata : { type: 'expert_credit', quantity: 1, user_email: ... }
+     - Action : incrémenter expert_left de 1 dans la DB
+  ═══════════════════════════════════════════════════════
+*/
 // Créez-les sur : https://dashboard.stripe.com/payment-links
 // ── Détection automatique STAGING vs PROD ────────────────────────────────────
 // En staging, remplacez les URLs _TEST par vos vrais Payment Links de test Stripe
@@ -296,14 +347,16 @@ var STRIPE_LIVE = {
   starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01',
   starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00',
   pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'
+  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03',
+  credit_1:  'https://buy.stripe.com/CREDIT_1_PROD_LINK_TODO'
 };
 
 var STRIPE_TEST = {
   starter_m: 'https://buy.stripe.com/test_eVq5kxei0eIIcZceeTb7y00', 
   starter_a: 'https://buy.stripe.com/test_fZu5kx8XGcAA2ky2wbb7y01',
   pro_m:     'https://buy.stripe.com/test_7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03'
+  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03',
+  credit_1:  'https://buy.stripe.com/test_CREDIT_1_TEST_LINK_TODO'
 };
 
 var STRIPE = IS_STAGING ? STRIPE_TEST : STRIPE_LIVE;

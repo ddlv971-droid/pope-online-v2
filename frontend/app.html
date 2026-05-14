@@ -462,6 +462,16 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <!-- ═══ COLONNE DROITE ═══ -->
   <div class="v69-result-col">
 
+    <!-- Loader génération — en haut de la zone résultat -->
+    <div id="generationLoader" style="display:none;align-items:center;gap:14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+      <div class="v69-spinner"></div>
+      <div style="flex:1">
+        <strong style="font-size:14px;color:var(--ink)">Génération en cours&#x2026;</strong>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Analyse du contexte, structuration, rédaction professionnelle.</div>
+        <div style="height:4px;background:#dbeafe;border-radius:99px;margin-top:8px;overflow:hidden;"><div id="progressBar" style="height:100%;background:linear-gradient(90deg,#0079c1,#03a0d7);border-radius:99px;width:0%;transition:width .3s;"></div></div>
+      </div>
+    </div>
+
     <!-- État vide -->
     <div class="v69-empty" id="resultEmpty">
       <div class="v69-empty-ico">📄</div>
@@ -894,7 +904,9 @@ function loadVault(){
 /* ─── Générations ─── */
 function loadGens(){
   var g=[];
-  ['pope_v67_gens_pub','pope_v61_generations','pope_v54_generations','pope_v53_generations'].forEach(function(k){
+  // GENS_KEY first (this session's space), then all legacy keys
+  var keys=[GENS_KEY,'pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keys.forEach(function(k){
     try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}
   });
   var seen={};return g.filter(function(x){if(!x||seen[x.id])return false;seen[x.id]=1;return true;});
@@ -1014,7 +1026,7 @@ function generate(){
   if($('resultEmpty'))$('resultEmpty').style.display='none';
   var card=$('resultCard');if(card)card.classList.remove('show');
   var next=$('nextActions');if(next)next.classList.remove('show');
-  var loader=$('generationLoader');if(loader){loader.style.display='flex';}
+  var loader=$('generationLoader');if(loader)loader.style.display='flex';
 
   startProgress();
 
@@ -1197,35 +1209,65 @@ function init(){
 }
 
 function checkQuota(){
-  // La génération IA est ILLIMITÉE — le quota concerne les demandes expertes uniquement
-  // Afficher un badge informatif sur les demandes expertes restantes
   apiFetch('/auth/me').then(function(data){
     var w=data&&data.wallet||{};
+    var plan=w.plan||w.plan_type||'free';
     var expired=w.status==='trial_expired'||w.trial_expired;
     var left=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
+    var renewDate=w.renews_at||w.next_billing_at||w.period_end||null;
+    var renewStr=renewDate?new Date(renewDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
+    var isPaid=(plan==='starter'||plan==='pro'||plan==='premium'||plan==='Starter'||plan==='Pro'||plan==='Premium');
     
-    // Afficher bannière info (ne bloque PAS la génération)
-    var banner=document.getElementById('quotaBanner');
-    if(!banner){
-      banner=document.createElement('div');
-      banner.id='quotaBanner';
-    }
+    // Badge crédits restants (visible pour tous)
+    var existing=document.getElementById('quotaBanner');
+    
     if(expired){
-      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
-      banner.innerHTML='<span style="font-size:20px">⏰</span>'
-        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — La génération IA reste disponible. Les demandes expertes nécessitent un plan actif.</div>'
-        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres</a>';
-      var formCol=document.querySelector('.v69-form-col');
-      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
-    } else if(left!=null&&left<=0){
-      banner.style.cssText='background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
-      banner.innerHTML='<span style="font-size:20px">⚡</span>'
-        +'<div style="flex:1;font-size:13px;color:#065f46"><strong>Génération IA illimitée</strong> — Quota de demandes expertes épuisé ce mois. Vos documents générés peuvent être archivés et partagés.</div>'
-        +'<a href="pricing.html" style="background:#16a34a;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Plus de conseils</a>';
-      var formCol=document.querySelector('.v69-form-col');
-      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
-    } else if(left!=null&&left>0){
-      // Afficher les crédits restants discrètement
+      // Essai expiré
+      if(!existing){
+        var b=document.createElement('div');
+        b.id='quotaBanner';
+        b.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+        b.innerHTML='<span style="font-size:20px">⏰</span>'
+          +'<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#92400e">Essai gratuit terminé</div>'
+          +'<div style="font-size:12px;color:#b45309;margin-top:2px">La génération IA reste disponible. Les demandes expertes nécessitent un plan actif.</div></div>'
+          +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Choisir un plan</a>';
+        var fc=document.querySelector('.v69-form-col');
+        if(fc&&!fc.contains(b)) fc.insertBefore(b,fc.firstChild);
+      }
+    } else if(left!==null&&left<=0&&isPaid){
+      // Plan payant, quota épuisé ce mois
+      if(!existing){
+        var b=document.createElement('div');
+        b.id='quotaBanner';
+        b.style.cssText='background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+        b.innerHTML='<span style="font-size:20px">📅</span>'
+          +'<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#1e40af">Quota mensuel épuisé</div>'
+          +'<div style="font-size:12px;color:#3b82f6;margin-top:2px">'+(renewStr?'Renouvellement le '+renewStr+' — ':'')+'Vous pouvez acheter des conseils experts supplémentaires à l'unité.</div></div>'
+          +'<div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">'
+          +'<a href="pricing.html#extra" style="background:#1d4ed8;color:#fff;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">+1 conseil (25€)</a>'
+          +(plan!=='premium'?'<a href="pricing.html" style="background:none;border:1px solid #93c5fd;color:#1e40af;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">Passer en '+((plan==='starter'||plan==='Starter')?'Pro':'Premium')+'</a>':'')
+          +'</div>';
+        var fc=document.querySelector('.v69-form-col');
+        if(fc&&!fc.contains(b)) fc.insertBefore(b,fc.firstChild);
+      }
+    } else if(left!==null&&left<=0&&!isPaid){
+      // Plan Free, quota épuisé
+      if(!existing){
+        var b=document.createElement('div');
+        b.id='quotaBanner';
+        b.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+        b.innerHTML='<span style="font-size:20px">⚡</span>'
+          +'<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#92400e">Conseils experts épuisés — espace libre</div>'
+          +'<div style="font-size:12px;color:#b45309;margin-top:2px">La génération IA est illimitée. Pour accéder aux conseils experts, souscrivez un plan.</div></div>'
+          +'<div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">'
+          +'<a href="pricing.html#extra" style="background:#d97706;color:#fff;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">+1 conseil (25€)</a>'
+          +'<a href="pricing.html" style="background:none;border:1px solid #fde68a;color:#d97706;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">Voir les plans</a>'
+          +'</div>';
+        var fc=document.querySelector('.v69-form-col');
+        if(fc&&!fc.contains(b)) fc.insertBefore(b,fc.firstChild);
+      }
+    } else if(left!==null&&left>0){
+      // Crédits restants — afficher discrètement
       var badge=document.getElementById('expertLeftBadge');
       if(!badge){
         badge=document.createElement('div');

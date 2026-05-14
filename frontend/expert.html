@@ -632,36 +632,40 @@ function updateDraftPreview(){
     }
     // Auto-remplir objet si vide
     var subEl=$('subject');
-    if(subEl&&!subEl.value.trim()){subEl.value='Conseil expert — '+(g.title||g.usecaseLabel||'livrable généré').slice(0,80);}
+    if(subEl&&!subEl.value.trim()){subEl.value='Relecture experte — '+(g.title||g.usecaseLabel||'livrable généré').slice(0,80);}
   }
 }
 
 /* Vault */
 function loadVault(){
   var list=$('vaultExpertList');if(!list)return;
-  // /vault sans paramètre espace — le backend utilise le token pour déterminer l'espace
   apiFetch('/vault')
     .then(function(data){
-      // Le backend retourne data.items avec item.id, item.name, item.expiresAt, item.canFeedAI
       var items=(data&&data.items)||(data&&data.files)||[];
       if(!items.length){
-        list.innerHTML='<div style="font-size:12px;color:var(--muted)">Aucune pièce dans le dépôt. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
+        list.innerHTML='<div style="font-size:12px;color:var(--muted)">Aucune pièce. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
         return;
       }
       list.innerHTML=items.map(function(f){
-        // Utiliser encodeURIComponent sur l'ID comme dans expert-page.js V66
         var rawId=f.id||f.filename||'';
         var encId=encodeURIComponent(rawId);
         var nm=esc(f.name||f.filename||'Fichier');
-        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
-        var aiTip=f.canFeedAI?'📄 Analysable par l'IA':'📎 Pièce transmise';
-        return '<div class="ex-vault-item"><input type="checkbox" data-vault-file value="'+encId+'" id="evf'+encId+'"/>'
-          +'<label for="evf'+encId+'" style="flex:1;cursor:pointer"><strong style="color:var(--ink)">'+nm+'</strong>'
-          +(exp?'<span style="font-size:10px;color:var(--muted);display:block;margin-top:1px">'+aiTip+' · expire le '+exp+'</span>':'')
-          +'</label></div>';
+        var sz=f.size_label||(f.size?(f.size<1024?f.size+' o':f.size<1048576?(f.size/1024).toFixed(1)+' Ko':(f.size/1048576).toFixed(1)+' Mo'):'');
+        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
+        return '<label style="display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
+          +'<input type="checkbox" data-vault-file value="'+encId+'" id="exvf'+encId+'" style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0"/>'
+          +'<div style="flex:1;min-width:0;">'
+          +'<div style="font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nm+'</div>'
+          +'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+sz+(exp?' · expire '+exp:'')+'</div>'
+          +'</div>'
+          +'<a href="'+API+'/vault/'+encId+'/download" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0;padding:3px 7px;border:1px solid #bae6fd;border-radius:5px">DL</a>'
+          +'</label>';
       }).join('');
+    })
+    .catch(function(){
+      list.innerHTML='<div style="font-size:12px;color:var(--muted)">Coffre indisponible. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue)">Ouvrir →</a></div>';
     });
-  });
+});
 }
 
 /* Quota */
@@ -776,7 +780,7 @@ function loadRequests(){
         genHtml='<div class="ex-req-section ex-req-gen">'
           +'<div class="ex-req-section-label">&#x1F6E0;&#xFE0F; Draft IA joint'+(ga.usecaseLabel?' &#8212; '+esc(ga.usecaseLabel):'')+(ga.domain?' ('+esc(ga.domain)+')':'')+'</div>'
           +(ga.prompt&&ga.prompt.objective?'<div style="font-size:11px;color:#065f46;padding:4px 12px;font-weight:600">Objectif : '+esc(ga.prompt.objective)+'</div>':'')
-          +(ga.result?'<div class="ex-req-section-body" style="overflow-y:auto;background:#f0fdf4;max-height:none;">'+esc(ga.result)+'</div>':'')
+          +(ga.result?'<div class="ex-req-section-body" style="background:#f0fdf4;">'+esc(ga.result)+'</div>':'')
           +'</div>';
       }
 
@@ -824,18 +828,17 @@ function loadRequests(){
       var hidden=target.hasAttribute('hidden');
       if(hidden){target.removeAttribute('hidden');btn.textContent='Masquer &#9650;';}
       else{target.setAttribute('hidden','');btn.textContent='Voir le d\u00e9tail \u25bc';}
-    });
+    }).catch(function(e){
+    var s=e&&e.status;
+    list.innerHTML='<div style="text-align:center;padding:32px;color:#50627a">'
+      +(s===401||s===403?'Session expir\u00e9e. Rechargez la page.':'Chargement impossible. <button onclick="loadRequests()" style="color:#0079c1;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600">R\u00e9essayer</button>')
+      +'</div>';
+  });
   }).catch(function(e){
-    var status=e&&e.status;
-    if(status===401||status===403){
-      list.innerHTML='<div class="ex-empty"><div class="ex-empty-ico">🔒</div>'
-        +'<div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px">Session expirée</div>'
-        +'<div style="font-size:13px;color:var(--muted)">Rechargez la page pour vous reconnecter.</div></div>';
-    } else {
-      list.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:14px">'
-        +'Impossible de charger les échanges. '
-        +'<button onclick="loadRequests()" style="color:var(--blue);background:none;border:none;cursor:pointer;font-weight:600;font-family:inherit">Réessayer</button></div>';
-    }
+    var s=e&&e.status;
+    list.innerHTML='<div style="text-align:center;padding:32px;color:#50627a">'
+      +(s===401||s===403?'Session expirée. Rechargez la page.':'Chargement impossible. <button onclick="loadRequests()" style="color:#0079c1;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600">Réessayer</button>')
+      +'</div>';
   });
   });
 }
@@ -866,20 +869,12 @@ function submit(){
 
   var vaultIds=Array.from(document.querySelectorAll('[data-vault-file]:checked')).map(function(n){return n.value;});
 
-  // Enrichir le payload avec le texte complet pour le mail
-  var mailBody = '';
-  if(context) mailBody += '=== CONTEXTE ===\n' + context + '\n\n';
-  if(content) mailBody += '=== DESCRIPTION DU BESOIN ===\n' + content + '\n\n';
-  if(genObj&&genObj.result) mailBody += '=== DRAFT IA JOINT (' + (genObj.usecaseLabel||'Génération') + ') ===\n' + genObj.result + '\n';
-
   var payload={
     subject:subject,
     context:context,
     content:content,
-    body:mailBody,                   // texte complet pour le corps du mail
     vault_file_ids:vaultIds,
     generation_attachment:genObj,
-    generation_text:genObj?genObj.result:'',  // texte brut de la génération
     domain:genObj?genObj.domain:''
   };
 

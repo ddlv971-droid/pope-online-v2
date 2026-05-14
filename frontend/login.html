@@ -45,13 +45,16 @@
 
     <div class="v40-field">
       <label for="identifier">Email</label>
-      <input class="v40-input" id="identifier" type="email" placeholder="votre@email.fr" autocomplete="email"/>
+        <!-- Trap autocomplete -->
+  <input type="text" style="display:none" aria-hidden="true" tabindex="-1" name="trap-user"/>
+  <input type="password" style="display:none" aria-hidden="true" tabindex="-1" name="trap-pass"/>
+<input class="v40-input" id="identifier" type="email" placeholder="votre@email.fr" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"/>
     </div>
 
     <div class="v40-field">
       <label for="password">Mot de passe</label>
       <div class="v40-pw-wrap">
-        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off"/>
+        <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')"/>
         <button class="v40-pw-eye" id="togglePw" type="button">&#128065;</button>
       </div>
     </div>
