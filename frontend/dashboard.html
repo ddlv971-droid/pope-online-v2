@@ -1322,6 +1322,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     if(!s.domain){ flash('Domaine manquant.','err'); goStep(1); return; }
     if(!n.title){ flash('Objet de la demande manquant.','err'); return; }
 
+    // Vérification quota côté client (double sécurité)
+    var quotaMsg = document.getElementById('quotaBlockMsg');
+    if(quotaMsg){
+      flash('Quota de conseils experts épuisé. ' + (quotaMsg.textContent||''), 'warn');
+      return;
+    }
+
     var btn=$('btnSend');
     if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
 
@@ -1373,13 +1380,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       space: SPACE
     };
 
-    // Vérification quota avant envoi (le backend le vérifie aussi)
-  if(document.getElementById('quotaBlockMsg')){
-    flash('Quota de conseils experts épuisé. Consultez les offres.', 'warn');
-    return;
-  }
-
-  apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
+    apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
       flash('✅ Demande envoyée à votre expert !','ok');
       saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
       setTimeout(function(){ location.href='expert.html'; }, 1500);

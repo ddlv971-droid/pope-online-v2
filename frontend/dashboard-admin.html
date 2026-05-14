@@ -510,8 +510,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
         <span class="adm-nav-icon">👥</span> Clients
         <span class="adm-nav-badge" id="sideRiskCount">0</span>
       </button>
-      <button class="adm-nav-item" data-tab="relectures">
-        <span class="adm-nav-icon">✍️</span> Relectures
+      <button class="adm-nav-item" data-tab="demandes-expertes">
+        <span class="adm-nav-icon">✍️</span> Demandes expertes
       </button>
       <button class="adm-nav-item" data-tab="creer">
         <span class="adm-nav-icon">➕</span> Créer un compte
@@ -612,19 +612,19 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </div>
 
       <!-- ════ ONGLET RELECTURES ════ -->
-      <div id="tabRelectures" hidden>
+      <div id="tabDemandesExpertes" hidden>
         <div class="adm-card">
           <div class="adm-card-head">
             <div class="adm-card-title">🎯 Conseil Experts expertes en attente</div>
             <button class="adm-btn adm-btn-ghost adm-btn-sm" id="refreshExpertBtn">🔄 Actualiser</button>
           </div>
           <div class="adm-card-body" id="expertList">
-            <p style="color:var(--muted)">Chargement des relectures…</p>
+            <p style="color:var(--muted)">Chargement des demandes expertes…</p>
           </div>
         </div>
         <div class="adm-card" id="expertReplyBox" hidden>
           <div class="adm-card-head">
-            <div class="adm-card-title">Répondre à la relecture</div>
+            <div class="adm-card-title">Répondre à la demande</div>
           </div>
           <div class="adm-card-body">
             <div class="adm-form-group" style="margin-bottom:12px">
@@ -767,10 +767,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
             </div>
           </div>
         </div>
-        <!-- Relectures expert -->
+        <!-- Demandes expertes expert -->
         <div class="adm-card" id="expertRequestsCard" hidden>
           <div class="adm-card-head">
-            <div class="adm-card-title" id="expertRequestsTitle">&#9997;&#65039; Relectures en cours</div>
+            <div class="adm-card-title" id="expertRequestsTitle">&#9997;&#65039; Demandes en cours</div>
           </div>
           <div class="adm-table-wrap">
             <table class="adm-table">
@@ -1538,13 +1538,13 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    ['Clients','Relectures','Creer','Experts','Satisfaction'].forEach(t => {
+    ['Clients','Demandes expertes','Creer','Experts','Satisfaction'].forEach(t => {
       const el2 = el('tab'+t);
       if (el2) el2.hidden = true;
     });
     const target = btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1);
     if (el('tab'+target)) el('tab'+target).hidden = false;
-    if (btn.dataset.tab === 'relectures') loadExpert();
+    if (btn.dataset.tab === 'demandes expertes') loadExpert();
     if (btn.dataset.tab === 'experts') loadExperts();
     if (btn.dataset.tab === 'satisfaction') renderSatTable();
   };
@@ -1774,13 +1774,13 @@ el('createUserBtn').onclick = async () => {
   }
 };
 
-// Expert relectures
+// Expert demandes expertes
 async function loadExpert() {
   try {
     const data = await apiFetch('/expert/all');
     const missions = Array.isArray(data) ? data : (data.requests || data.missions || []);
     if (!missions.length) {
-      el('expertList').innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px">Aucune demande de relecture.</p>';
+      el('expertList').innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px">Aucune demande experte.</p>';
       return;
     }
     const statusCfg = {
@@ -1827,6 +1827,26 @@ async function loadExpert() {
           '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55">' + esc((m.objective || '\u2014').substring(0, 200)) + (m.objective && m.objective.length > 200 ? '&hellip;' : '') + '</p>' +
         '</div>' +
         expectHtml +
+        // Génération IA jointe
+        (m.generation_attachment && m.generation_attachment.result ?
+          '<div style="margin:12px 0;padding:14px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:12px">' +
+            '<div style="font-size:10px;font-weight:700;color:rgba(124,58,237,.7);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">&#x1F6E0;&#xFE0F; G&eacute;n&eacute;ration IA jointe &mdash; ' + esc(m.generation_attachment.usecaseLabel || 'G&eacute;n&eacute;ration') + '</div>' +
+            '<div style="font-size:12px;color:rgba(255,255,255,.7);white-space:pre-wrap;line-height:1.6">' + esc(m.generation_attachment.result || '') + '</div>' +
+          '</div>'
+        : '') +
+        // Pièces déposées
+        (m.vault_file_ids && m.vault_file_ids.length ?
+          '<div style="margin:12px 0">' +
+            '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">&#x1F4CE; Pi&egrave;ces d&eacute;pos&eacute;es (' + m.vault_file_ids.length + ')</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+              m.vault_file_ids.map(function(fid){
+                var nm = decodeURIComponent(String(fid)).split('/').pop();
+                var base = (location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3000':(location.hostname.indexOf('staging')!==-1?'https://popeonline-staging.onrender.com':'https://pope-online-v2.onrender.com');
+                return '<a href="'+base+'/vault/'+encodeURIComponent(fid)+'/download" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;background:rgba(0,121,193,.1);border:1px solid rgba(0,121,193,.25);border-radius:6px;padding:4px 9px;font-size:11px;font-weight:600;color:#60a5fa;text-decoration:none;">&#x1F4C4; '+esc(nm)+'</a>';
+              }).join('') +
+            '</div>' +
+          '</div>'
+        : '') +
         replyHtml +
         '<div style="margin-top:12px">' +
           '<button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply(\'' + esc(m.id) + '\')">' + btnLabel + '</button>' +
@@ -1977,7 +1997,7 @@ async function loadExpertRequests(expertId) {
     const data = await apiFetch('/expert/all');
     const reqs = data.requests || [];
     if (!reqs.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Aucune relecture</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Aucune demande</td></tr>';
       return;
     }
     tbody.innerHTML = reqs.slice(0,30).map(r => {

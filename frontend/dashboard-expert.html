@@ -258,7 +258,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
   <div class="exp-login">
     <div class="exp-login-icon">🎓</div>
     <h1>Espace Expert</h1>
-    <p>Accès réservé aux conseillers experts POPE Online. Connectez-vous pour accéder à vos relectures.</p>
+    <p>Accès réservé aux conseillers experts POPE Online. Connectez-vous pour accéder à vos demandes expertes.</p>
     <div class="exp-form-group">
       <label class="exp-label">Email</label>
       <input class="exp-input" id="expertEmail" type="email" autocomplete="email" placeholder="votre@email.fr"/>
@@ -280,7 +280,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
   <div class="exp-main">
     <!-- Sidebar -->
     <nav class="exp-sidebar">
-      <div class="exp-nav-label">Relectures</div>
+      <div class="exp-nav-label">Demandes expertes</div>
       <button class="exp-nav-item active" data-etab="pending">
         <span class="exp-nav-icon">📬</span> En attente
         <span class="exp-badge" id="sideBarPendingCount">0</span>
@@ -304,7 +304,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
       <div id="etabPending">
         <div class="exp-hero">
           <div class="exp-hero-title">Tableau de bord Expert</div>
-          <div class="exp-hero-sub">Bienvenue <span id="expertWelcomeName">—</span> — voici vos relectures à traiter</div>
+          <div class="exp-hero-sub">Bienvenue <span id="expertWelcomeName">—</span> — voici vos demandes expertes à traiter</div>
           <div class="exp-kpis">
             <div class="exp-kpi"><div class="exp-kpi-label">En attente</div><div class="exp-kpi-val" id="kpiPending">—</div></div>
             <div class="exp-kpi"><div class="exp-kpi-label">Traitées ce mois</div><div class="exp-kpi-val" id="kpiDone">—</div></div>
@@ -314,7 +314,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
         </div>
         <div class="exp-card">
           <div class="exp-card-head">
-            <div class="exp-card-title">📬 Relectures en attente de réponse</div>
+            <div class="exp-card-title">📬 Demandes expertes en attente de réponse</div>
             <button class="exp-action-btn exp-btn-secondary exp-btn-sm" id="refreshPendingBtn">🔄 Actualiser</button>
           </div>
           <div class="exp-card-body" id="pendingList">
@@ -327,7 +327,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
       <div id="etabDone" hidden>
         <div class="exp-card">
           <div class="exp-card-head">
-            <div class="exp-card-title">✅ Relectures traitées</div>
+            <div class="exp-card-title">✅ Demandes expertes traitées</div>
             <button class="exp-action-btn exp-btn-secondary exp-btn-sm" id="refreshDoneBtn">🔄 Actualiser</button>
           </div>
           <div class="exp-card-body" id="doneList">
@@ -354,7 +354,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
           <div class="exp-card-head"><div class="exp-card-title">📊 Mon activité</div></div>
           <div class="exp-card-body">
             <div class="exp-kpis" style="margin-bottom:20px">
-              <div class="exp-kpi"><div class="exp-kpi-label">Total relectures</div><div class="exp-kpi-val" id="statTotal">—</div></div>
+              <div class="exp-kpi"><div class="exp-kpi-label">Total demandes</div><div class="exp-kpi-val" id="statTotal">—</div></div>
               <div class="exp-kpi"><div class="exp-kpi-label">Ce mois</div><div class="exp-kpi-val" id="statMonth">—</div></div>
               <div class="exp-kpi"><div class="exp-kpi-label">Taux réponse</div><div class="exp-kpi-val" id="statRate">—</div></div>
             </div>
@@ -428,7 +428,7 @@ function renderRequests(statusFilter) {
   var container = statusFilter === 'replied' ? el('doneList') : el('pendingList');
   if (!filtered.length) {
     container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px">'
-      + (statusFilter === 'replied' ? '\u2705 Aucune relecture trait\u00e9e.' : '\U0001f389 Aucune relecture en attente !')
+      + (statusFilter === 'replied' ? '\u2705 Aucune demande experte trait\u00e9e.' : '\U0001f389 Aucune demande en attente !')
       + '</div>';
     return;
   }
@@ -458,15 +458,32 @@ function renderRequests(statusFilter) {
     var genHtml = '';
     if (req.generation_attachment && req.generation_attachment.result) {
       var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration IA');
-      var genText  = esc((req.generation_attachment.result || '').substring(0, 1500));
-      var genMore  = (req.generation_attachment.result || '').length > 1500 ? '\u2026' : '';
+      var genText  = esc(req.generation_attachment.result || '');
+      var genDomain = req.generation_attachment.domain ? ' (' + esc(req.generation_attachment.domain) + ')' : '';
       genHtml = '<div class="exp-req-separator"></div>'
         + '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">\U0001f4ce G\u00e9n\u00e9ration IA jointe</div>'
-        + '<div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;margin-top:6px">'
-        + '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:6px">' + genLabel + '</div>'
-        + '<div class="exp-req-text" style="font-size:12px;color:var(--muted);max-height:280px;overflow-y:auto;white-space:pre-wrap">'
-        + genText + genMore + '</div></div></div>';
+        + '<div class="exp-req-section-label">&#x1F6E0;&#xFE0F; G&eacute;n&eacute;ration IA jointe &mdash; ' + genLabel + genDomain + '</div>'
+        + '<div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;margin-top:6px;overflow:hidden">'
+        + (req.generation_attachment.prompt&&req.generation_attachment.prompt.objective?'<div style="font-size:11px;color:rgba(124,58,237,.7);font-weight:600;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(124,58,237,.15)">Objectif : ' + esc(req.generation_attachment.prompt.objective) + '</div>':'')
+        + '<div class="exp-req-text" style="font-size:12px;color:var(--muted);white-space:pre-wrap">'
+        + genText + '</div></div></div>';
+    }
+
+    // Pièces déposées par le client
+    var vaultHtml = '';
+    var vids = (req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids : [];
+    if (vids.length) {
+      var _APIBASE = (function(){ var h=location.hostname; if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000'; if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com'; return'https://pope-online-v2.onrender.com'; })();
+      vaultHtml = '<div class="exp-req-separator"></div>'
+        + '<div style="margin-bottom:10px">'
+        + '<div class="exp-req-section-label">&#x1F4CE; Pi&egrave;ces d&eacute;pos&eacute;es (' + vids.length + ')</div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">'
+        + vids.map(function(fid){
+            var nm = decodeURIComponent(String(fid)).split('/').pop();
+            return '<a href="' + _APIBASE + '/vault/' + encodeURIComponent(fid) + '/download" target="_blank" rel="noopener" '
+              + 'style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,121,193,.1);border:1px solid rgba(0,121,193,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#60a5fa;text-decoration:none;">&#x1F4C4; ' + esc(nm) + '</a>';
+          }).join('')
+        + '</div></div>';
     }
 
     var replyOrForm = '';
@@ -504,7 +521,7 @@ function renderRequests(statusFilter) {
       + '<div class="exp-req-section-label">Objectif</div>'
       + '<div class="exp-req-text">' + esc(req.objective || '\u2014') + '</div>'
       + '</div>'
-      + expectHtml + contextHtml + genHtml + replyOrForm
+      + expectHtml + contextHtml + genHtml + vaultHtml + replyOrForm
       + '</div>';
   }).join('');
 }

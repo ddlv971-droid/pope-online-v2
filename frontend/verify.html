@@ -51,7 +51,7 @@
     <div class="verify-success" id="stateSuccess">
       <div class="verify-icon">✓</div>
       <h1 id="welcomeTitle">Bienvenue sur POPE Online !</h1>
-      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et votre accès est <strong>actif</strong>. Production illimitée et 2 relectures expertes vous attendent.</p>
+      <p class="verify-subtitle" id="welcomeSubtitle">Votre email est confirmé. Votre compte est actif et votre accès est <strong>actif</strong>. Génération IA illimitée et conseils experts vous attendent.</p>
       <div class="verify-features" id="featureGrid"></div>
       <div class="verify-cta">
         <a href="#" id="ctaDashboard" class="verify-btn-primary">Commencer mon expérience POPE Online →</a>
@@ -76,7 +76,7 @@ import { getFingerprint } from './app.js';
 const L=document.getElementById('stateLoading'),S=document.getElementById('stateSuccess'),E=document.getElementById('stateError');
 function show(s){L.style.display=s==='loading'?'flex':'none';S.classList.toggle('active',s==='success');E.classList.toggle('active',s==='error');}
 function origin(){const{origin:o,hostname:h}=window.location;if(/localhost|127\.0\.0\.1/i.test(h))return o;if(h==='pope-online.com'||h==='www.pope-online.com')return'https://pope-online.com';return o;}
-function features(sp){return sp==='private'?[{i:'✨',t:'Génération IA',d:'Rédigez courriers, réponses et formalités en quelques secondes'},{i:'🔍',t:'Relecture experte',d:'Un conseiller POPE relit et améliore vos documents'},{i:'🔒',t:'Coffre sécurisé 48h',d:'Déposez vos pièces pour enrichir vos générations'},{i:'📋',t:'Accompagnement',d:'Soumettez votre besoin à un expert POPE'}]:[{i:'✨',t:'Génération IA',d:"Produisez livrables, notes et délibérations guidés par l'IA"},{i:'🔍',t:'Relecture experte',d:'Un conseiller POPE sécurise vos documents officiels'},{i:'📁',t:'Archivage local',d:'Capitalisez vos drafts utiles dans votre navigateur'},{i:'📋',t:'Accompagnement',d:'Soumettez votre besoin stratégique à un expert POPE'}];}
+function features(sp){return sp==='private'?[{i:'✨',t:'Génération IA illimitée',d:'Rédigez courriers, réponses et formalités en quelques secondes grâce à l\'IA'},{i:'🎯',t:'Conseil Expert humain',d:'Un conseiller qualifié analyse votre situation et vous répond sous 48h ouvrées'},{i:'🔒',t:'Coffre sécurisé 48h',d:'Déposez vos pièces jointes pour enrichir vos demandes expertes'},{i:'📋',t:'Suivi de vos dossiers',d:'Consultez l\'historique de vos échanges experts depuis votre espace'}]:[{i:'✨',t:'Génération IA illimitée',d:"Produisez livrables, notes et délibérations guidés par l'IA"},{i:'🎯',t:'Conseil Expert humain',d:'Soumettez votre besoin — un expert POPE vous répond sous 48h ouvrées'},{i:'📁',t:'Bibliothèque documentaire',d:'Déposez vos pièces et joignez-les à vos demandes expertes'},{i:'📋',t:'Suivi de vos dossiers',d:'Historique de vos échanges et réponses experts dans votre espace'}];}
 async function run(){
   show('loading');
   const token=new URL(window.location.href).searchParams.get('token')||'';
