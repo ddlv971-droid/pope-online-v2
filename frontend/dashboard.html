@@ -1019,39 +1019,28 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     sessionStorage.removeItem(TOKEN_KEY);
   }
   function logout(){
-  // Préserver les générations archivées (données locales utilisateur)
-  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
-    'pope_v54_generations','pope_v53_generations','pope_ai_generations',
-    'pope_v61_last_gen','pope_v54_last_generation_id'];
-  try{
-    // 1. Lire les générations avant de tout effacer
-    var savedGens={};
-    PRESERVE.forEach(function(k){
-      try{var v=localStorage.getItem(k);if(v)savedGens[k]=v;}catch(e){}
+    /* V72 — nettoyage ciblé, préserve les générations archivées */
+    var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+      'pope_v54_generations','pope_v53_generations','pope_ai_generations',
+      'pope_v61_last_gen','pope_v54_last_generation_id'];
+    try{ sessionStorage.clear(); }catch(e){}
+    try{
+      var all = Object.keys(localStorage);
+      all.forEach(function(k){
+        if(PRESERVE.indexOf(k)!==-1) return;
+        if(k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k==='pope_session_active' || k==='pope_session_user'){
+          localStorage.removeItem(k);
+        }
+      });
+    }catch(e){}
+    ['besoInTitle','descContexte','descProbleme','descObjectif','descDecision',
+     'descLivrable','descContraintes','descRisques','descActeurs','descPublic',
+     'needDeadline','descPieces','descNiveau','besoInDesc'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.value='';
     });
-    // 2. Clear sessionStorage
-    sessionStorage.clear();
-    // 3. Effacer toutes les clés pope_ SAUF les générations
-    var all=Object.keys(localStorage);
-    all.forEach(function(k){
-      if(PRESERVE.indexOf(k)!==-1)return; // ne pas toucher
-      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0){
-        localStorage.removeItem(k);
-      }
-    });
-    // 4. Réinscrire les générations préservées
-    Object.keys(savedGens).forEach(function(k){
-      try{localStorage.setItem(k,savedGens[k]);}catch(e){}
-    });
-  }catch(e){}
-  // Vider champs visuels
-  ['usecase','context','objective','constraints','risks','actors','deadline','facts',
-   'subject','content','besoInTitle','descContexte'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.value='';
-  });
-  try{localStorage.removeItem('pope_session_nonce');sessionStorage.removeItem('pope_session_nonce');}catch(e){}
-  location.href='public.html';
-}
+    try{ localStorage.removeItem('pope_session_nonce'); sessionStorage.removeItem('pope_session_nonce'); }catch(e){}
+    location.href = 'public.html';
+  }
   function requireAuth(){
     if(token()) return true;
     if(localStorage.getItem('pope_session_active') === '1') return true;
@@ -1384,7 +1373,13 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       space: SPACE
     };
 
-    apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
+    // Vérification quota avant envoi (le backend le vérifie aussi)
+  if(document.getElementById('quotaBlockMsg')){
+    flash('Quota de conseils experts épuisé. Consultez les offres.', 'warn');
+    return;
+  }
+
+  apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
       flash('✅ Demande envoyée à votre expert !','ok');
       saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
       setTimeout(function(){ location.href='expert.html'; }, 1500);

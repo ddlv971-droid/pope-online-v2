@@ -192,6 +192,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
   </div>
 </div>
 
+<!-- Crédit expert à l'unité — pour abonnés Starter & Pro -->
+<div id="extra" style="max-width:860px;margin:0 auto 32px;padding:0 20px;">
+  <div style="background:#f0f7fc;border:1px solid #b8dcf0;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#50627a;margin-bottom:5px;">Abonnés Starter &amp; Pro — quota mensuel épuisé</div>
+      <div style="font-size:15px;font-weight:800;color:#0b2440;margin-bottom:3px;">Conseil expert supplémentaire à l'unité</div>
+      <div style="font-size:12px;color:#50627a;line-height:1.5;">Même qualité, réponse sous 48h. Crédit ajouté instantanément. Aucun abonnement.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
+      <div style="text-align:right;">
+        <span style="font-size:26px;font-weight:800;color:#0b2440;">25€</span>
+        <div style="font-size:11px;color:#64748b;">HT · unique</div>
+      </div>
+      <button onclick="openCreditCheckout()" style="background:#0079c1;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Acheter →</button>
+    </div>
+  </div>
+</div>
+
 <!-- CLOSIER -->
 <div class="pclausier">
   <div class="pclausier-card">
@@ -199,26 +217,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
     <div>
       <h3 style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px">Clausier documentaire</h3>
       <p style="font-size:14px;color:var(--muted);line-height:1.6">Le clausier POPE Online est disponible dès l'offre gratuite. Accédez à une bibliothèque de modèles officiels : marchés publics (DC1, DC2, DC4, MAPA), courriers administratifs, délibérations, formalités et RH. Sources gouvernementales vérifiées (economie.gouv.fr, service-public.fr, AMF, Légifrance).</p>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Crédit supplémentaire — pour abonnés Starter & Pro uniquement -->
-<div id="extra" style="max-width:860px;margin:28px auto 0;padding:0 20px;">
-  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-    <div style="flex:1;min-width:200px;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:6px;">Pour abonnés Starter &amp; Pro — quota mensuel &#233;puis&#233;</div>
-      <div style="font-size:16px;font-weight:800;color:#0b2440;margin-bottom:4px;">Conseil expert suppl&#233;mentaire &#224; l'unit&#233;</div>
-      <div style="font-size:13px;color:#50627a;line-height:1.5;">M&#234;me qualit&#233;, m&#234;me engagement 48h ouvrées. Crédit ajouté instantanément. Aucun renouvellement automatique.</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:16px;flex-shrink:0;">
-      <div style="text-align:center;">
-        <div style="font-size:28px;font-weight:800;color:#0b2440;line-height:1;">25<span style="font-size:14px;font-weight:400">&#8364;</span></div>
-        <div style="font-size:11px;color:#64748b;">HT &#183; paiement unique</div>
-      </div>
-      <button onclick="openCreditCheckout()" style="background:linear-gradient(135deg,#0b3060,#0079c1);color:#fff;border:none;border-radius:11px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Acheter 1 conseil &#x2192;</button>
     </div>
   </div>
 </div>
@@ -306,33 +304,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155d
 // ── Configuration Stripe Payment Links ──────────────────────────────────────
 // Remplacez ces URLs par vos vrais liens Stripe Payment Links
 // ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
-/* 
-  ═══════════════════════════════════════════════════════
-  CONFIGURATION STRIPE — CRÉDIT EXPERT À L'UNITÉ (25€ HT)
-  ═══════════════════════════════════════════════════════
-  
-  1. CRÉER LE PAYMENT LINK sur https://dashboard.stripe.com/payment-links
-     - Produit : "Conseil Expert - 1 crédit"
-     - Prix : 25.00€ HT (hors taxe)
-     - Quantité : 1 (fixe)
-     - URL de succès : https://[votre-domaine]/profile.html?credit=1
-     
-  2. MODE TEST (Staging) :
-     - Aller sur https://dashboard.stripe.com/test/payment-links
-     - Copier l'URL test : buy.stripe.com/test_XXXX
-     - Mettre à jour : STRIPE_LINKS.test.credit_1
-     
-  3. MODE PRODUCTION :
-     - Aller sur https://dashboard.stripe.com/payment-links  
-     - Copier l'URL prod : buy.stripe.com/XXXX
-     - Mettre à jour : STRIPE_LINKS.prod.credit_1
-     
-  4. WEBHOOK BACKEND (à configurer côté serveur) :
-     - Événement : checkout.session.completed
-     - Payload metadata : { type: 'expert_credit', quantity: 1, user_email: ... }
-     - Action : incrémenter expert_left de 1 dans la DB
-  ═══════════════════════════════════════════════════════
-*/
 // Créez-les sur : https://dashboard.stripe.com/payment-links
 // ── Détection automatique STAGING vs PROD ────────────────────────────────────
 // En staging, remplacez les URLs _TEST par vos vrais Payment Links de test Stripe
@@ -343,16 +314,14 @@ var STRIPE_LIVE = {
   starter_m: 'https://buy.stripe.com/fZu5kx8XGcAA2ky2wbb7y01',
   starter_a: 'https://buy.stripe.com/eVq5kxei0eIIcZceeTb7y00',
   pro_m:     'https://buy.stripe.com/7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03',
-  credit_1:  'https://buy.stripe.com/CREDIT_1_PROD_LINK_TODO'
+  pro_a:     'https://buy.stripe.com/dRm5kxfm48kk9N0gn1b7y03'
 };
 
 var STRIPE_TEST = {
   starter_m: 'https://buy.stripe.com/test_eVq5kxei0eIIcZceeTb7y00', 
   starter_a: 'https://buy.stripe.com/test_fZu5kx8XGcAA2ky2wbb7y01',
   pro_m:     'https://buy.stripe.com/test_7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03',
-  credit_1:  'https://buy.stripe.com/test_CREDIT_1_TEST_LINK_TODO'
+  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03'
 };
 
 var STRIPE = IS_STAGING ? STRIPE_TEST : STRIPE_LIVE;
@@ -368,33 +337,6 @@ var PLANS = {
 };
 
 // ── Toggle mensuel / annuel ────────────────────────────────────────────────
-
-// ═══════════════════════════════════════════════════════════════════
-// CONFIGURATION STRIPE — Crédit Expert à l'unité (25€ HT)
-// ═══════════════════════════════════════════════════════════════════
-// 1. Créez un Payment Link sur https://dashboard.stripe.com/payment-links
-//    Produit: "Conseil Expert - 1 crédit" | Prix: 25€ HT | Quantité fixe: 1
-// 2. Mode TEST (staging): https://dashboard.stripe.com/test/payment-links
-// 3. Remplacez TODO ci-dessous par vos vrais liens
-// ═══════════════════════════════════════════════════════════════════
-var CREDIT_LINKS = {
-  prod: 'https://buy.stripe.com/CREDIT_1_PROD_LINK_TODO',
-  test: 'https://buy.stripe.com/test_CREDIT_1_TEST_LINK_TODO'
-};
-
-function openCreditCheckout(){
-  var isTest = window.location.hostname.indexOf('staging') !== -1 
-    || window.location.hostname === 'localhost' 
-    || window.location.hostname === '127.0.0.1';
-  var url = isTest ? CREDIT_LINKS.test : CREDIT_LINKS.prod;
-  if(url.indexOf('TODO') !== -1){
-    // Afficher message de configuration si lien non configuré
-    alert('Lien de paiement non configuré.\n\nPour activer cette fonctionnalité :\n1. Créez un Payment Link Stripe "Conseil Expert - 1 crédit" à 25€ HT\n2. Mettez à jour CREDIT_LINKS.prod et CREDIT_LINKS.test dans pricing.html');
-    return;
-  }
-  window.open(url, '_blank', 'noopener,noreferrer');
-}
-
 var isAnnual = false;
 var toggle = document.getElementById('billing-toggle');
 
@@ -492,6 +434,22 @@ document.getElementById('stripe-overlay').addEventListener('click', function(e) 
 // ── Wording selon l'espace ─────────────────────────────────────────────────
 // Espace commun - même tarifs public et privé
 // Pas de différenciation visuelle nécessaire
+</script>
+
+<script>
+var CREDIT_LINKS = {
+  prod: 'https://buy.stripe.com/CREDIT_1_PROD_LINK_TODO',
+  test: 'https://buy.stripe.com/test_CREDIT_1_TEST_LINK_TODO'
+};
+function openCreditCheckout(){
+  var isTest=window.location.hostname.indexOf('staging')!==-1||window.location.hostname==='localhost';
+  var url=isTest?CREDIT_LINKS.test:CREDIT_LINKS.prod;
+  if(url.indexOf('TODO')!==-1){
+    alert('Lien de paiement non configuré.\nCréez un Payment Link Stripe "Conseil Expert 1 crédit" à 25€ HT et mettez à jour CREDIT_LINKS dans pricing.html.');
+    return;
+  }
+  window.open(url,'_blank','noopener,noreferrer');
+}
 </script>
 </body>
 </html>

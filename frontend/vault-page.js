@@ -74,7 +74,7 @@ function applySpaceLabels(){
   if (!privateMode) return;
   document.querySelector('.brand-sub').textContent = 'Dépôt sécurisé 48h — espace privé';
   const hero = document.querySelector('.vault-hero .muted');
-  if (hero) hero.textContent = 'Déposez vos pièces utiles à la génération privée, à la Conseil Expert ou à l’accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.';
+  if (hero) hero.textContent = 'Déposez vos pièces utiles à la génération privée, à la relecture experte ou à l’accompagnement. Les fichiers restent accessibles pendant 48 heures puis sont automatiquement supprimés.';
   const note = document.querySelector('.vault-hero-note span');
   if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
   const intro = document.querySelector('.vault-upload-card .muted');

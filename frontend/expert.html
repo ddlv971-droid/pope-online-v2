@@ -250,6 +250,7 @@ body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-seri
     <span class="v40-topbar-sub" id="expertSubTitle">Conseil Expert</span>
     <nav class="v40-topbar-nav">
       <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
       <a class="v40-topbar-btn" href="mission.html">🎯 Sur Mesure</a>
       <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=expert.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
@@ -259,6 +260,7 @@ body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-seri
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
   <a href="dashboard.html">🏠 Dashboard</a>
+  <a href="app.html">⚡ Générer</a>
   <a href="mission.html">🎯 Sur Mesure</a>
   <div style="height:1px;background:rgba(255,255,255,.07);margin:8px 0;"></div>
   <button data-logout>🚪 Déconnexion</button>
@@ -492,37 +494,18 @@ function apiFetch(path,opts){
 
 /* Logout — capture phase pour passer avant wireLogout app.js */
 function logout(){
-  // Préserver les générations archivées (données locales utilisateur)
   var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
     'pope_v54_generations','pope_v53_generations','pope_ai_generations',
     'pope_v61_last_gen','pope_v54_last_generation_id'];
+  try{sessionStorage.clear();}catch(e){}
   try{
-    // 1. Lire les générations avant de tout effacer
-    var savedGens={};
-    PRESERVE.forEach(function(k){
-      try{var v=localStorage.getItem(k);if(v)savedGens[k]=v;}catch(e){}
-    });
-    // 2. Clear sessionStorage
-    sessionStorage.clear();
-    // 3. Effacer toutes les clés pope_ SAUF les générations
     var all=Object.keys(localStorage);
     all.forEach(function(k){
-      if(PRESERVE.indexOf(k)!==-1)return; // ne pas toucher
-      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0){
-        localStorage.removeItem(k);
-      }
-    });
-    // 4. Réinscrire les générations préservées
-    Object.keys(savedGens).forEach(function(k){
-      try{localStorage.setItem(k,savedGens[k]);}catch(e){}
+      if(PRESERVE.indexOf(k)!==-1)return;
+      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0)localStorage.removeItem(k);
     });
   }catch(e){}
-  // Vider champs visuels
-  ['usecase','context','objective','constraints','risks','actors','deadline','facts',
-   'subject','content','besoInTitle','descContexte'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.value='';
-  });
-  try{localStorage.removeItem('pope_session_nonce');sessionStorage.removeItem('pope_session_nonce');}catch(e){}
+  ['subject','context','content'].forEach(function(id){var el=$(id);if(el)el.value='';});
   location.href='public.html';
 }
 document.addEventListener('click',function(e){
@@ -658,33 +641,29 @@ function updateDraftPreview(){
 /* Vault */
 function loadVault(){
   var list=$('vaultExpertList');if(!list)return;
+  // /vault sans paramètre espace — le backend utilise le token pour déterminer l'espace
   apiFetch('/vault')
     .then(function(data){
+      // Le backend retourne data.items avec item.id, item.name, item.expiresAt, item.canFeedAI
       var items=(data&&data.items)||(data&&data.files)||[];
       if(!items.length){
-        list.innerHTML='<div style="font-size:12px;color:var(--muted)">Aucune pièce. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
+        list.innerHTML='<div style="font-size:12px;color:var(--muted)">Aucune pièce dans le dépôt. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
         return;
       }
       list.innerHTML=items.map(function(f){
+        // Utiliser encodeURIComponent sur l'ID comme dans expert-page.js V66
         var rawId=f.id||f.filename||'';
         var encId=encodeURIComponent(rawId);
         var nm=esc(f.name||f.filename||'Fichier');
-        var sz=f.size_label||(f.size?(f.size<1024?f.size+' o':f.size<1048576?(f.size/1024).toFixed(1)+' Ko':(f.size/1048576).toFixed(1)+' Mo'):'');
-        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
-        return '<label style="display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
-          +'<input type="checkbox" data-vault-file value="'+encId+'" id="exvf'+encId+'" style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0"/>'
-          +'<div style="flex:1;min-width:0;">'
-          +'<div style="font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nm+'</div>'
-          +'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+sz+(exp?' · expire '+exp:'')+'</div>'
-          +'</div>'
-          +'<a href="'+API+'/vault/'+encId+'/download" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0;padding:3px 7px;border:1px solid #bae6fd;border-radius:5px">DL</a>'
-          +'</label>';
+        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+        var aiTip=f.canFeedAI?'📄 Analysable par l'IA':'📎 Pièce transmise';
+        return '<div class="ex-vault-item"><input type="checkbox" data-vault-file value="'+encId+'" id="evf'+encId+'"/>'
+          +'<label for="evf'+encId+'" style="flex:1;cursor:pointer"><strong style="color:var(--ink)">'+nm+'</strong>'
+          +(exp?'<span style="font-size:10px;color:var(--muted);display:block;margin-top:1px">'+aiTip+' · expire le '+exp+'</span>':'')
+          +'</label></div>';
       }).join('');
-    })
-    .catch(function(){
-      list.innerHTML='<div style="font-size:12px;color:var(--muted)">Coffre indisponible. <a href="vault.html?space=public&return=expert.html" style="color:var(--blue)">Ouvrir →</a></div>';
     });
-});
+  });
 }
 
 /* Quota */
@@ -799,7 +778,7 @@ function loadRequests(){
         genHtml='<div class="ex-req-section ex-req-gen">'
           +'<div class="ex-req-section-label">&#x1F6E0;&#xFE0F; Draft IA joint'+(ga.usecaseLabel?' &#8212; '+esc(ga.usecaseLabel):'')+(ga.domain?' ('+esc(ga.domain)+')':'')+'</div>'
           +(ga.prompt&&ga.prompt.objective?'<div style="font-size:11px;color:#065f46;padding:4px 12px;font-weight:600">Objectif : '+esc(ga.prompt.objective)+'</div>':'')
-          +(ga.result?'<div class="ex-req-section-body" style="background:#f0fdf4;">'+esc(ga.result)+'</div>':'')
+          +(ga.result?'<div class="ex-req-section-body" style="background:#f0fdf4;overflow-y:auto;">'+esc(ga.result)+'</div>':'')
           +'</div>';
       }
 
@@ -847,17 +826,10 @@ function loadRequests(){
       var hidden=target.hasAttribute('hidden');
       if(hidden){target.removeAttribute('hidden');btn.textContent='Masquer &#9650;';}
       else{target.setAttribute('hidden','');btn.textContent='Voir le d\u00e9tail \u25bc';}
+    });
     }).catch(function(e){
-    var s=e&&e.status;
-    list.innerHTML='<div style="text-align:center;padding:32px;color:#50627a">'
-      +(s===401||s===403?'Session expir\u00e9e. Rechargez la page.':'Chargement impossible. <button onclick="loadRequests()" style="color:#0079c1;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600">R\u00e9essayer</button>')
-      +'</div>';
-  });
-  }).catch(function(e){
-    var s=e&&e.status;
-    list.innerHTML='<div style="text-align:center;padding:32px;color:#50627a">'
-      +(s===401||s===403?'Session expirée. Rechargez la page.':'Chargement impossible. <button onclick="loadRequests()" style="color:#0079c1;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600">Réessayer</button>')
-      +'</div>';
+    var st=e&&e.status;
+    list.innerHTML='<div style="text-align:center;padding:40px;color:#50627a">'      +(st===401||st===403?'Session expir\u00e9e. Rechargez la page.':'Chargement impossible. <button onclick="loadRequests()" style="color:#0079c1;background:none;border:none;cursor:pointer;font-weight:700;font-family:inherit">R\u00e9essayer</button>')      +'</div>';
   });
   });
 }
