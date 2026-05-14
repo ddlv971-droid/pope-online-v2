@@ -159,7 +159,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 }
 .pf-plan-name  { font-size:24px; font-weight:900; letter-spacing:-.04em; }
 .pf-plan-detail{ font-size:13px; color:var(--pf-muted); margin-top:4px; }
-.pf-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.pf-stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-bottom:20px; }
 .pf-stat {
   background:#f8fafc; border:1.5px solid rgba(0,121,193,.08);
   border-radius:14px; padding:14px 16px; text-align:center;
@@ -399,7 +399,11 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
               <div class="pf-stat-label">Statut du compte</div>
             </div>
             <div class="pf-stat">
-              <div class="pf-stat-val" id="statTrialEnd" style="font-size:14px;margin-top:4px">—</div>
+              <div class="pf-stat-val" id="statPlanStart" style="font-size:12px;margin-top:4px">—</div>
+              <div class="pf-stat-label" id="statPlanStartLabel">Membre depuis</div>
+            </div>
+            <div class="pf-stat">
+              <div class="pf-stat-val" id="statTrialEnd" style="font-size:13px;margin-top:4px">—</div>
               <div class="pf-stat-label" id="statTrialEndLabel">Date clé</div>
             </div>
           </div>
@@ -657,6 +661,18 @@ async function load() {
     el('statTickets').textContent = w.ai_unlimited ? '∞' : (w.tickets_ai ?? '—');
     el('statExpert').textContent  = w.expert_left   ?? (w.expert_limit ?? '—');
     el('statStatus').textContent  = statusLabel;
+
+    // Date de début du plan
+    const _planStartRaw = w.plan_start || w.subscription_start || w.current_period_start || w.period_start || null;
+    const _planStartStr = _planStartRaw
+      ? new Date(_planStartRaw).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'})
+      : (u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '—');
+    if (el('statPlanStart')) el('statPlanStart').textContent = _planStartStr;
+    if (el('statPlanStartLabel')) {
+      const _isPaidCheck = (w.plan_label||w.plan||'').toLowerCase();
+      const _paidCheck = _isPaidCheck==='starter'||_isPaidCheck==='pro'||_isPaidCheck==='premium';
+      el('statPlanStartLabel').textContent = _paidCheck ? 'Abonnement depuis' : 'Membre depuis';
+    }
 
     // Détection plan payant — vérifier plan ET plan_label
     const _planRaw = (w.plan || w.plan_type || w.plan_label || '').toLowerCase().trim();

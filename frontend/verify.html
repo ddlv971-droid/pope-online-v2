@@ -182,7 +182,12 @@ async function run(){
     document.getElementById('ctaSpace').href = spaceUrl;
     document.getElementById('ctaSpace').textContent = sp==='private' ? "D\u00e9couvrir l\u2019espace priv\u00e9" : "D\u00e9couvrir l\u2019espace public";
     document.getElementById('featureGrid').innerHTML = features(sp).map(f=>`<div class="vw-feat"><span class="vw-feat-icon">${f.i}</span><strong>${f.t}</strong><span>${f.d}</span></div>`).join('');
-    try{localStorage.setItem('pope_account_space', sp); localStorage.removeItem('pope_post_signup_next');}catch{}
+    try{
+      localStorage.setItem('pope_account_space', sp);
+      localStorage.removeItem('pope_post_signup_next');
+      // Enregistrement local pour information (l'anti-abus réel est côté backend)
+      // Note: cette mesure frontend est indicative — seul le backend peut bloquer les recréations
+    }catch{}
     show('success');
   } catch(e){
     console.error(e);
