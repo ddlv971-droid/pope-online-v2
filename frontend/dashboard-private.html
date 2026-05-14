@@ -1825,13 +1825,15 @@ if (!requireLogin('dashboard-private.html')) {}
       planN.textContent = planLabel;
     }
 
-    // ── Calcul des dates ──
-    const plan = (w.plan || w.plan_type || '').toLowerCase();
-    const isPaid = plan === 'starter' || plan === 'pro' || plan === 'premium';
+    // ── Calcul isPaid — vérifier plan ET plan_label (le backend peut retourner l'un ou l'autre) ──
+    const planRaw = (w.plan || w.plan_type || w.plan_label || '').toLowerCase().trim();
+    const isPaid = planRaw === 'starter' || planRaw === 'pro' || planRaw === 'premium'
+                || planRaw === 'pro monthly' || planRaw === 'starter monthly'
+                || planRaw === 'pro annual' || planRaw === 'starter annual';
     const status = w.status || '';
     const isTrialActive = status === 'trial_active' || (w.is_trial && !w.expired && !w.trial_expired);
     const isTrialExpired = status === 'trial_expired' || w.trial_expired || w.expired;
-    const isActiveSubscription = isPaid && (status === 'active' || status === 'subscription_active' || (!isTrialExpired && !isTrialActive));
+    const isActiveSubscription = isPaid && (status === 'active' || status === 'subscription_active' || status === 'trialing' || status === 'subscription_active' || (!isTrialExpired && !isTrialActive));
 
     // Date fin d'essai
     const trialEndRaw = w.trial_expires_at || w.trial_ends_at || w.period_end_at || null;
@@ -1866,7 +1868,9 @@ if (!requireLogin('dashboard-private.html')) {}
 
     // ── Nouveau compte sans date de fin définie ──
     // Si le compte est actif (non expiré) mais qu'il n'y a pas de date d'essai ni de plan payant
-    if (!isTrialActive && !isTrialExpired && !isPaid && !renewDate && !trialEndDate) {
+    // Espace gratuit seulement si plan vraiment Free (pas de plan payant détecté dans plan_label)
+    const isDefinitelyFree = !isPaid && !(w.plan_label && w.plan_label.toLowerCase() !== 'free');
+    if (!isTrialActive && !isTrialExpired && isDefinitelyFree && !renewDate && !trialEndDate) {
       const alertEl = document.getElementById('trialAlert');
       if (alertEl) alertEl.removeAttribute('hidden');
       const t = document.getElementById('trialAlertTitle');

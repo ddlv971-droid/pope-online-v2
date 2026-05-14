@@ -392,7 +392,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
             </div>
             <div class="pf-stat">
               <div class="pf-stat-val" id="statExpert">—</div>
-              <div class="pf-stat-label">Relectures expertes</div>
+              <div class="pf-stat-label">Conseils Experts</div>
             </div>
             <div class="pf-stat">
               <div class="pf-stat-val" id="statStatus" style="font-size:15px;margin-top:4px">—</div>
@@ -400,7 +400,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
             </div>
             <div class="pf-stat">
               <div class="pf-stat-val" id="statTrialEnd" style="font-size:14px;margin-top:4px">—</div>
-              <div class="pf-stat-label">Fin période gratuite</div>
+              <div class="pf-stat-label" id="statTrialEndLabel">Date clé</div>
             </div>
           </div>
           <div class="pf-info-box">
@@ -658,25 +658,49 @@ async function load() {
     el('statExpert').textContent  = w.expert_left   ?? (w.expert_limit ?? '—');
     el('statStatus').textContent  = statusLabel;
 
-    if (w.trial_expires_at) {
+    // Détection plan payant — vérifier plan ET plan_label
+    const _planRaw = (w.plan || w.plan_type || w.plan_label || '').toLowerCase().trim();
+    const _isPaid = _planRaw === 'starter' || _planRaw === 'pro' || _planRaw === 'premium'
+                 || _planRaw === 'pro monthly' || _planRaw === 'starter monthly'
+                 || _planRaw === 'pro annual' || _planRaw === 'starter annual';
+    const _renewRaw = w.renews_at || w.next_billing_at || w.current_period_end || w.period_end || null;
+    const _renewDate = _renewRaw ? new Date(_renewRaw) : null;
+    const _renewStr = _renewDate ? _renewDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
+    const _lbl = el('statTrialEndLabel');
+
+    if (_isPaid && _renewStr) {
+      // Plan payant avec date de renouvellement connue
+      if (_lbl) _lbl.textContent = 'Renouvellement';
+      el('statTrialEnd').textContent = _renewStr;
+      el('statTrialEnd').style.color = '#16a34a';
+      el('statTrialEnd').title = 'Les crédits non utilisés ne sont pas reportés.';
+    } else if (_isPaid) {
+      // Plan payant sans date (Stripe webhook pas encore reçu)
+      if (_lbl) _lbl.textContent = 'Statut abonnement';
+      el('statTrialEnd').textContent = 'Actif';
+      el('statTrialEnd').style.color = '#16a34a';
+    } else if (w.trial_expires_at) {
+      // Essai avec date de fin
       const _tExp = new Date(w.trial_expires_at);
       const _tFmt = _tExp.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
       const _tExpired = _tExp < new Date();
+      const _tDays = Math.ceil((_tExp - Date.now()) / 86400000);
+      if (_lbl) _lbl.textContent = _tExpired ? 'Essai expiré le' : 'Fin d\'essai';
       el('statTrialEnd').textContent = _tFmt;
-      el('statTrialEnd').style.color = _tExpired ? '#dc2626' : (_tExp - new Date() < 3*86400000 ? '#d97706' : '');
-      el('statTrialEnd').title = _tExpired ? 'Période d\'essai expirée' : '';
-    } else if (w.status === 'active') {
-      el('statTrialEnd').textContent = 'Abonnement actif';
+      el('statTrialEnd').style.color = _tExpired ? '#dc2626' : (_tDays <= 3 ? '#d97706' : '#0079c1');
     } else if (w.status === 'pending_verification') {
-      el('statTrialEnd').textContent = 'En attente de vérification email';
+      if (_lbl) _lbl.textContent = 'Statut';
+      el('statTrialEnd').textContent = 'Email à vérifier';
       el('statTrialEnd').style.color = '#d97706';
-    } else if (w.status === 'verified_no_trial') {
-      el('statTrialEnd').textContent = 'Sans période d\'essai';
     } else if (w.status === 'trial_expired') {
-      el('statTrialEnd').textContent = 'Période expirée';
+      if (_lbl) _lbl.textContent = 'Essai expiré';
+      el('statTrialEnd').textContent = 'Expiré';
       el('statTrialEnd').style.color = '#dc2626';
     } else {
-      el('statTrialEnd').textContent = '—';
+      // Espace gratuit sans date d'essai configurée
+      if (_lbl) _lbl.textContent = 'Offre';
+      el('statTrialEnd').textContent = 'Gratuit';
+      el('statTrialEnd').style.color = '#50627a';
     }
 
     // Infos session sécurité
