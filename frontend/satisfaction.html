@@ -4,13 +4,14 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Votre avis</title>
-
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar">
   <div class="container row between">
     <a class="brand link" href="index.html">
-      <img class="brand-logo-auth" src="./assets/favicon.png" alt="POPE Online"/>
+      <img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div><div class="brand-title">POPE Online</div><div class="brand-sub">Enquête satisfaction</div></div>
     </a>
   </div>
@@ -42,6 +43,93 @@
 
 </main>
 
+<script type="module">
+import { apiFetch, getApiMessage } from './api.js';
 
+const CRITERIA = [
+  { key: 'first_contact',  label: 'Premier contact avec un conseiller POPE Online' },
+  { key: 'ergonomics',     label: 'Ergonomie et facilité d\'utilisation de la plateforme' },
+  { key: 'clarity',        label: 'Clarté des parcours et des services proposés' },
+  { key: 'fluidity',       label: 'Rapidité et fluidité globale' },
+  { key: 'relevance',      label: 'Pertinence de l\'accompagnement et compréhension de votre besoin' }
+];
+
+const LABELS = ['Mauvais','Insuffisant','Moyen','Correct','Excellent'];
+const EMOJIS = ['😞','😕','😐','🙂','😄'];
+const ratings = {};
+
+const wrap = document.getElementById('criteriaWrap');
+wrap.innerHTML = CRITERIA.map(function(c, ci) {
+  return '<div class="v37-criterion">' +
+    '<div class="v37-criterion-label">' + c.label + '</div>' +
+    '<div class="v37-stars">' +
+    [1,2,3,4,5].map(function(n) {
+      return '<button class="v37-star-btn" type="button" data-criterion="' + c.key + '" data-value="' + n + '" title="' + LABELS[n-1] + '">' +
+        EMOJIS[n-1] + '</button>';
+    }).join('') +
+    '<span class="v37-star-label" id="lbl_' + c.key + '" style="font-size:13px;color:#50627a;margin-left:8px;align-self:center"></span>' +
+    '</div></div>';
+}).join('');
+
+document.querySelectorAll('.v37-star-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var key = this.dataset.criterion;
+    var val = parseInt(this.dataset.value);
+    ratings[key] = val;
+    document.querySelectorAll('[data-criterion="' + key + '"]').forEach(function(b) {
+      b.classList.toggle('selected', parseInt(b.dataset.value) <= val);
+    });
+    document.getElementById('lbl_' + key).textContent = LABELS[val-1];
+  });
+});
+
+const params = new URLSearchParams(location.search);
+const token  = params.get('token') || '';
+
+document.getElementById('btnSubmit').addEventListener('click', async function() {
+  var btn = this;
+  var msg = document.getElementById('satisfactionMsg');
+  var criteria = CRITERIA.filter(function(c) { return ratings[c.key]; })
+                         .map(function(c) { var s = ratings[c.key]; return { key: c.key, label: c.label, value: LABELS[s-1], score: s }; });
+  if (!criteria.length) {
+    msg.textContent = 'Veuillez noter au moins un critère.';
+    msg.style.color = '#b91c1c';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+  try {
+    await apiFetch('/client/satisfaction-submit', {
+      method: 'POST',
+      body: { token, criteria, comment: document.getElementById('comment').value.trim() }
+    });
+    document.querySelector('.v37-criteria-card').innerHTML =
+      '<div style="text-align:center;padding:40px">' +
+      '<div style="font-size:56px;margin-bottom:16px">🎉</div>' +
+      '<h2 style="color:#0b2440;margin-bottom:10px">Merci pour votre retour !</h2>' +
+      '<p style="color:#50627a;font-size:14px">Votre avis est précieux et contribue directement à améliorer POPE Online.</p>' +
+      (function(){
+        var dashUrl = 'dashboard.html';
+        try {
+          var parts = token.split('.');
+          if (parts.length >= 2) {
+            var payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+            if (payload.accountSpace === 'private') dashUrl = 'dashboard-private.html';
+          }
+        } catch(e) {}
+        // Effacer toute session admin pour que l'utilisateur se reconnecte avec son propre compte
+        try { ['pope_session_token','pope_token','pope_user','pope_session'].forEach(function(k){ localStorage.removeItem(k); sessionStorage.removeItem(k); }); } catch(e2) {}
+        var loginUrl = 'login.html?next=' + encodeURIComponent(dashUrl);
+        return '<a href="' + loginUrl + '" style="display:inline-block;margin-top:20px;background:#0079c1;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Se connecter à mon espace →</a>';
+      }()) +
+      '</div>';
+  } catch(e) {
+    msg.textContent = 'Erreur : ' + getApiMessage(e);
+    msg.style.color = '#b91c1c';
+    btn.disabled = false;
+    btn.textContent = '⭐ Envoyer mon avis';
+  }
+});
+</script>
 </body>
 </html>

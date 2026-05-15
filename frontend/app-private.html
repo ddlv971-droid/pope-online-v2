@@ -1,96 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>
+(function(){
+  var h = location.hostname;
+  if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
+    window.__POPE_API_BASE__ = (h.indexOf('localhost') !== -1 || h === '127.0.0.1')
+      ? 'http://localhost:3000'
+      : 'https://popeonline-staging.onrender.com';
+  }
+})();
+</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Génération guidée</title>
+<title>POPE Online — Génération guidée (Privé)</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style id="v40-topbar-fix">
-/* ── Anti-conflits topbar V40 ── */
-html body header.v40-topbar{
-  position:sticky!important;top:0!important;z-index:200!important;
-  height:58px!important;min-height:58px!important;max-height:58px!important;
-  display:flex!important;align-items:center!important;
-  flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
-  backdrop-filter:blur(16px)!important;
-  border-bottom:1px solid rgba(255,255,255,.07)!important;
-  overflow:visible!important;
-}
-html body header.v40-topbar .v40-topbar-inner{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;height:58px!important;
-  width:100%!important;padding:0 20px!important;gap:10px!important;
-}
-html body header.v40-topbar .v40-topbar-brand{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;gap:9px!important;
-  text-decoration:none!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand img{
-  height:28px!important;width:auto!important;flex-shrink:0!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:baseline!important;gap:5px!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong,
-html body header.v40-topbar .v40-topbar-brand-text small{
-  white-space:nowrap!important;display:inline!important;width:auto!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text strong{
-  font-size:14px!important;font-weight:800!important;color:#fff!important;
-}
-html body header.v40-topbar .v40-topbar-brand-text small{
-  font-size:11px!important;color:rgba(255,255,255,.4)!important;
-}
-html body header.v40-topbar .v40-topbar-nav{
-  display:flex!important;align-items:center!important;gap:6px!important;
-  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
-}
-html body header.v40-topbar #v40Burger{
-  display:none;flex-direction:column!important;gap:5px!important;
-  margin-left:auto!important;flex-shrink:0!important;
-  background:none!important;border:none!important;
-  cursor:pointer!important;padding:6px!important;width:auto!important;
-}
-html body header.v40-topbar #v40Burger span{
-  display:block!important;width:22px!important;height:2px!important;
-  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
-  transition:transform .25s ease,opacity .25s ease!important;
-}
-#v40MobileMenu{
-  display:none;position:fixed!important;
-  top:58px!important;left:0!important;right:0!important;bottom:0!important;
-  z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
-  backdrop-filter:blur(20px)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  padding:20px!important;overflow-y:auto!important;
-  flex-direction:column!important;gap:4px!important;
-}
+html body header.v40-topbar{position:sticky!important;top:0!important;z-index:200!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;}
+html body header.v40-topbar .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;height:58px!important;width:100%!important;padding:0 20px!important;gap:10px!important;}
+html body header.v40-topbar .v40-topbar-brand{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:9px!important;text-decoration:none!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand img{height:28px!important;width:auto!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong,html body header.v40-topbar .v40-topbar-brand-text small{white-space:nowrap!important;display:inline!important;width:auto!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+html body header.v40-topbar .v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+html body header.v40-topbar .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+html body header.v40-topbar #v40Burger{display:none;flex-direction:column!important;gap:5px!important;margin-left:auto!important;flex-shrink:0!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;width:auto!important;}
+html body header.v40-topbar #v40Burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;}
+#v40MobileMenu{display:none;position:fixed!important;top:58px!important;left:0!important;right:0!important;bottom:0!important;z-index:201!important;background:rgba(7,22,42,.98)!important;backdrop-filter:blur(20px)!important;padding:20px!important;overflow-y:auto!important;flex-direction:column!important;gap:4px!important;}
 #v40MobileMenu.open{display:flex!important;}
-#v40MobileMenu a,#v40MobileMenu button{
-  display:flex!important;align-items:center!important;gap:10px!important;
-  padding:14px 18px!important;border-radius:12px!important;
-  font-size:15px!important;font-weight:600!important;
-  color:rgba(255,255,255,.85)!important;
-  text-decoration:none!important;background:none!important;
-  border:none!important;cursor:pointer!important;
-  width:100%!important;
-}
-#v40MobileMenu a:hover,#v40MobileMenu button:hover{
-  background:rgba(255,255,255,.07)!important;color:#fff!important;
-}
-.v40-mobile-menu-sep{
-  height:1px!important;background:rgba(255,255,255,.08)!important;
-  margin:8px 0!important;
-}
-@media(max-width:860px){
-  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
-  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
-  html body header.v40-topbar #v40Burger{display:flex!important;}
-}
+#v40MobileMenu a,#v40MobileMenu button{display:flex!important;align-items:center!important;gap:10px!important;padding:14px 18px!important;border-radius:12px!important;font-size:15px!important;font-weight:600!important;color:rgba(255,255,255,.85)!important;text-decoration:none!important;background:none!important;border:none!important;cursor:pointer!important;width:100%!important;}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;}
+@media(max-width:860px){html body header.v40-topbar .v40-topbar-nav{display:none!important;}html body header.v40-topbar .v40-topbar-sub{display:none!important;}html body header.v40-topbar .v40-topbar-sep{display:none!important;}html body header.v40-topbar #v40Burger{display:flex!important;}}
 </style>
 <style id="v40-override">
 header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
@@ -110,343 +51,2480 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v40-mobile-menu.open{display:flex!important;}
 .v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
-.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
-@media(max-width:860px){
-  .v40-topbar-nav{display:none!important;}
-  .v40-topbar-sub{display:none!important;}
-  .v40-topbar-sep{display:none!important;}
-  .v40-burger{display:flex!important;}
+@media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
+</style>
+<style>
+/* ═══ POPE Online V69 — APP Premium ═══ */
+:root{
+  --blue:#0079c1;--blue-d:#0b3060;--blue-l:#eef7ff;--blue-m:#dbeafe;
+  --navy:#07162a;--green:#16a34a;--green-l:#f0fdf4;
+  --amber:#d97706;--red:#dc2626;--purple:#7c3aed;
+  --ink:#0b2440;--muted:#50627a;--line:#e2e8f0;
+  --bg:#f5f7fa;--white:#fff;
+  --sh:0 2px 16px rgba(11,36,64,.08);--sh-md:0 4px 28px rgba(11,36,64,.12);
+  --r:14px;--wf-h:48px;
+}
+
+/* Layout */
+.v69-page{background:var(--bg);min-height:100vh;}
+.v69-layout{max-width:1320px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:440px 1fr;gap:24px;align-items:start;}
+.v69-form-col{position:sticky;top:110px;display:flex;flex-direction:column;gap:14px;}
+
+/* Retour bar premium */
+.v69-retour-bar{background:linear-gradient(90deg,#0b3060,#0d4a8a);border-bottom:1px solid rgba(255,255,255,.1);padding:0 24px;display:flex;align-items:center;gap:16px;height:46px;}
+.v69-retour-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;text-decoration:none;cursor:pointer;transition:.15s;flex-shrink:0;white-space:nowrap;}
+.v69-retour-btn:hover{background:rgba(255,255,255,.2);}
+.v69-retour-info{flex:1;font-size:12px;color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v69-draft-badge{background:#22c55e;color:#fff;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800;display:none;flex-shrink:0;}
+.v69-draft-badge.show{display:inline-block;}
+
+/* Workflow bar */
+.v69-wf-bar{background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;align-items:stretch;gap:0;height:var(--wf-h);}
+.v69-wf-step{display:flex;align-items:center;gap:9px;padding:0 20px;font-size:13px;font-weight:600;color:var(--muted);position:relative;cursor:default;flex-shrink:0;border-bottom:3px solid transparent;transition:.2s;}
+.v69-wf-step.active{color:var(--blue);border-bottom-color:var(--blue);}
+.v69-wf-step.done{color:var(--green);}
+.v69-wf-step::after{content:'›';position:absolute;right:-4px;color:var(--line);font-size:18px;z-index:1;}
+.v69-wf-step:last-child::after{display:none;}
+.v69-wf-num{width:22px;height:22px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;transition:.2s;}
+.v69-wf-step.active .v69-wf-num{background:var(--blue);color:#fff;}
+.v69-wf-step.done .v69-wf-num{background:var(--green);color:#fff;}
+
+/* Domain context badge */
+.v69-domain-ctx{display:none;align-items:center;gap:9px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:12px;padding:10px 14px;}
+.v69-domain-ctx.show{display:flex;}
+.v69-domain-ico{font-size:18px;flex-shrink:0;}
+.v69-domain-info{flex:1;}
+.v69-domain-label{font-size:11px;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;}
+.v69-domain-name{font-size:14px;font-weight:800;color:#1e3a8a;margin-top:1px;}
+.v69-domain-change{font-size:11px;color:#3b82f6;font-weight:600;text-decoration:none;cursor:pointer;background:none;border:1px solid #93c5fd;border-radius:6px;padding:4px 9px;transition:.15s;font-family:inherit;flex-shrink:0;}
+.v69-domain-change:hover{background:#eff6ff;}
+
+/* Usecase selector */
+.v69-usecase{background:linear-gradient(135deg,var(--blue-d),var(--blue));border-radius:18px;padding:20px;color:#fff;}
+.v69-usecase label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:8px;}
+.v69-usecase select{width:100%;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.22);border-radius:11px;color:#fff;padding:11px 36px 11px 14px;font-size:14px;font-weight:700;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;font-family:inherit;}
+.v69-usecase select option{background:#0b3060;color:#fff;}
+.v69-usecase-hint{margin-top:10px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;min-height:18px;padding:8px 12px;background:rgba(255,255,255,.08);border-radius:8px;display:none;}
+.v69-usecase-hint.show{display:block;}
+
+/* Form section */
+.v69-section{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--line);}
+.v69-section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.v69-section-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.v69-section-ico.blue{background:#eef7ff;}
+.v69-section-ico.teal{background:#ecfeff;}
+.v69-section-ico.amber{background:#fffbeb;}
+.v69-section-ico.purple{background:#f5f3ff;}
+.v69-section-ico.green{background:#f0fdf4;}
+.v69-section-head h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);}
+.v69-section-head p{margin:2px 0 0;font-size:12px;color:var(--muted);}
+.v69-label{display:block;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.v69-input{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;color:var(--ink);background:#fff;transition:.15s;box-sizing:border-box;font-family:inherit;resize:vertical;}
+.v69-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+.v69-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v69-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.v69-field:last-child{margin-bottom:0;}
+
+/* Pré-remplissage tag */
+.v69-prefilled-tag{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:11px;color:#15803d;font-weight:600;margin-bottom:6px;}
+
+/* Vault */
+.v69-vault-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #f8fafc;}
+.v69-vault-item:last-child{border-bottom:none;}
+.v69-vault-item label{flex:1;font-size:13px;color:var(--ink);cursor:pointer;}
+.v69-vault-sz{font-size:11px;color:var(--muted);}
+
+/* Generate button */
+.v69-gen-btn{width:100%;background:linear-gradient(135deg,var(--blue),#03a0d7);color:#fff;border:none;border-radius:var(--r);padding:17px 24px;font-size:16px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:11px;box-shadow:0 5px 20px rgba(0,121,193,.35);letter-spacing:-.01em;font-family:inherit;}
+.v69-gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,121,193,.45);}
+.v69-gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* Auto-archive toggle */
+.v69-auto-arch{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid var(--line);font-size:13px;color:var(--muted);}
+.v69-auto-arch input{accent-color:var(--blue);width:16px;height:16px;cursor:pointer;}
+.v69-auto-arch label{flex:1;cursor:pointer;}
+
+/* Loader */
+.v69-loader{display:none;align-items:center;gap:14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:var(--r);padding:18px 20px;}
+.v69-loader.show{display:flex;}
+.v69-spinner{width:22px;height:22px;border:2.5px solid #b8dcf0;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.v69-progress{flex:1;}
+.v69-progress-bar-wrap{height:4px;background:#dbeafe;border-radius:99px;margin-top:8px;overflow:hidden;}
+.v69-progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),#03a0d7);border-radius:99px;width:0%;transition:width .3s;}
+
+/* Result column */
+.v69-result-col{display:flex;flex-direction:column;gap:16px;}
+
+/* Result empty */
+.v69-empty{background:#fff;border-radius:20px;border:2px dashed var(--line);padding:70px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.v69-empty-ico{font-size:54px;opacity:.35;}
+.v69-empty h3{margin:0;font-size:19px;color:var(--ink);font-weight:800;}
+.v69-empty p{margin:0;color:var(--muted);font-size:14px;max-width:340px;line-height:1.6;}
+.v69-empty-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.v69-empty-tag{border-radius:999px;padding:5px 15px;font-size:12px;font-weight:600;}
+
+/* Result card */
+.v69-result-card{background:#fff;border-radius:20px;box-shadow:var(--sh-md);border:1px solid var(--line);overflow:hidden;display:none;}
+.v69-result-card.show{display:block;}
+.v69-result-header{background:linear-gradient(to right,#f8fafc,#fff);border-bottom:1px solid var(--line);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.v69-result-header h2{margin:0;font-size:16px;font-weight:800;color:var(--ink);}
+.v69-result-meta{font-size:11px;color:var(--muted);margin-top:3px;}
+.v69-result-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.v69-result-body{padding:28px;min-height:280px;}
+
+/* Formatted output */
+.v69-output{line-height:1.8;font-size:14px;color:var(--ink);}
+.v69-output h1,.v69-output h2,.v69-output h3{color:var(--blue-d);margin:1.2em 0 .5em;}
+.v69-output h1{font-size:18px;font-weight:800;border-bottom:2px solid var(--line);padding-bottom:8px;}
+.v69-output h2{font-size:16px;font-weight:700;}
+.v69-output h3{font-size:14px;font-weight:700;}
+.v69-output p{margin:.6em 0;}
+.v69-output ul,.v69-output ol{margin:.5em 0;padding-left:1.4em;}
+.v69-output li{margin:.25em 0;}
+.v69-output strong{color:var(--ink);font-weight:700;}
+.v69-output em{font-style:italic;}
+.v69-output hr{border:none;border-top:1.5px solid var(--line);margin:1.5em 0;}
+.v69-output blockquote{border-left:3px solid var(--blue);padding:8px 14px;background:var(--blue-l);border-radius:0 8px 8px 0;margin:.8em 0;font-style:italic;color:var(--muted);}
+.v69-output table{width:100%;border-collapse:collapse;font-size:13px;margin:.8em 0;}
+.v69-output th{background:var(--blue-d);color:#fff;padding:8px 12px;text-align:left;font-size:12px;}
+.v69-output td{padding:8px 12px;border-bottom:1px solid var(--line);}
+.v69-output tr:nth-child(even) td{background:#f8fafc;}
+
+/* Export bar */
+.v69-export-bar{display:flex;gap:8px;align-items:center;padding:12px 22px;border-top:1px solid var(--line);background:#f8fafc;flex-wrap:wrap;}
+.v69-export-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:4px;}
+.v69-export-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;}
+.v69-export-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l);}
+.v69-export-btn.pdf{border-color:#ef4444;color:#dc2626;}
+.v69-export-btn.pdf:hover{background:#fef2f2;}
+
+/* Next actions */
+.v69-next{background:linear-gradient(135deg,#f0f7fc,var(--blue-l));border:1.5px solid #b8dcf0;border-radius:18px;padding:20px;display:none;}
+.v69-next.show{display:block;}
+.v69-next h3{margin:0 0 14px;font-size:12px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;}
+.v69-next-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v69-next-btn{display:flex;align-items:center;gap:11px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;transition:.2s;cursor:pointer;text-align:left;}
+.v69-next-btn:hover{border-color:var(--blue);background:var(--blue-l);transform:translateY(-1px);}
+.v69-next-ico{font-size:22px;flex-shrink:0;}
+.v69-next-text strong{display:block;font-size:13px;font-weight:700;color:var(--ink);}
+.v69-next-text span{font-size:11px;color:var(--muted);}
+
+/* Archive */
+.v69-archive{background:#fff;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);display:none;}
+.v69-archive.show{display:block;}
+.v69-archive-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);}
+.v69-archive-head h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);}
+.v69-archive-body{padding:0 18px 12px;}
+.v69-archive-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8fafc;cursor:pointer;transition:.15s;}
+.v69-archive-item:last-child{border-bottom:none;}
+.v69-archive-item:hover .v69-archive-item-title{color:var(--blue);}
+.v69-archive-item-info{flex:1;min-width:0;}
+.v69-archive-item-title{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v69-archive-item-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.v69-archive-del{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:none;cursor:pointer;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;}
+.v69-archive-del:hover{border-color:#ef4444;color:#dc2626;background:#fef2f2;}
+
+/* Btn */
+.v69-btn{display:inline-flex;align-items:center;gap:6px;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;text-decoration:none;border:1.5px solid var(--line);background:#fff;color:var(--muted);}
+.v69-btn:hover{border-color:var(--ink);color:var(--ink);}
+.v69-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(0,121,193,.25);}
+.v69-btn.primary:hover{background:#0068a8;border-color:#0068a8;}
+
+/* Toast */
+.v69-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.v69-toast.show{opacity:1;}
+.v69-toast.err{background:#dc2626;}
+.v69-toast.ok{background:#16a34a;}
+
+/* Responsive */
+@media(max-width:960px){
+  .v69-layout{grid-template-columns:1fr;padding:16px 16px 60px;}
+  .v69-form-col{position:static;}
+  .v69-next-grid{grid-template-columns:1fr;}
+  .v69-row2{grid-template-columns:1fr;}
+}
+</style>
+<link rel="stylesheet" href="v58-styles.css">
+<style>
+/* ═══ RESPONSIVE GLOBAL V76 ═══ */
+@media(max-width:768px){
+  /* App pages */
+  .v69-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;gap:14px!important;}
+  .v69-form-col{position:static!important;}
+  .v69-next-grid{grid-template-columns:1fr!important;}
+  .v69-row2{grid-template-columns:1fr!important;}
+  .v69-gen-btn{font-size:14px!important;padding:14px 18px!important;}
+  .v69-result-body{padding:16px!important;}
+  .v69-retour-bar{height:auto!important;padding:10px 14px!important;flex-wrap:wrap!important;gap:8px!important;}
+  .v69-retour-info{display:none!important;}
+  .v69-wf-bar{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+  .v69-export-bar{padding:10px 14px!important;gap:6px!important;}
+  .v69-export-btn{font-size:11px!important;padding:6px 10px!important;}
+  /* Dashboard tabs */
+  .v5-tabs-bar{padding:0 6px!important;}
+  .v5-tab{padding:10px 8px!important;font-size:11px!important;gap:4px!important;}
+  .v5-tab-ico{font-size:13px!important;}
+  .v5-tab-content{padding:14px 12px!important;}
+  .v5-hero-bar{flex-direction:column!important;gap:14px!important;padding:16px!important;border-radius:14px!important;}
+  .v5-kpi-row{width:100%!important;}
+  .v5-kpi{flex:1!important;min-width:0!important;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .v5-domain-pill{font-size:12px!important;padding:10px 11px!important;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr!important;}
+  .v5-step-panel{padding:16px 12px!important;}
+  .v5-steps{padding:12px 12px!important;gap:0!important;}
+  .v5-step-label{font-size:9px!important;}
+  .v5-step-n{width:26px!important;height:26px!important;font-size:11px!important;}
+  .v5-step-footer{flex-wrap:wrap!important;gap:8px!important;}
+  .v5-step-footer > button{flex:1!important;justify-content:center!important;}
+  .v58-trt-grid{grid-template-columns:1fr!important;}
+  /* Expert page */
+  .ex-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  .ex-sidebar{position:static!important;}
+  .ex-quota-ring{width:80px!important;height:80px!important;}
+  .ex-quota-n{font-size:26px!important;}
+  /* Vault */
+  .v37-vault-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  /* Trial alert */
+  .v5-trial-alert{flex-wrap:wrap!important;padding:12px 14px!important;}
+  .v5-trial-cta{margin-left:0!important;width:100%!important;text-align:center!important;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr!important;}
+  .v5-espace-grid{grid-template-columns:1fr!important;}
+  .v69-export-bar{gap:4px!important;}
+  .v69-export-btn{font-size:10px!important;padding:5px 8px!important;}
 }
 </style>
 </head>
-<body data-logout-target="private.html" class="bg v36-page po-v8-public" data-forced-space="private">
+<body data-logout-target="private.html" class="v69-page" data-forced-space="private">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
-    <a class="v40-topbar-brand" href="dashboard-private.html" id="topbarHomeLink">
-      <img src="./assets/favicon.png" alt="POPE Online"/>
+    <a class="v40-topbar-brand" href="dashboard-private.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>IA + Expertise</small>
+        <small>Conseil &amp; Expertise</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub" id="appSubTitle">Génération privée</span>
+    <span class="v40-topbar-sub">Génération guidée</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="vault.html?space=private&return=app-private.html">📂 Dépôt</a>
-      <a class="v40-topbar-btn" href="expert-private.html">✍️ Relecture</a>
-      <a class="v40-topbar-btn" href="dashboard-private.html">🏠 Dashboard</a>
+      <a class="v40-topbar-btn" href="vault.html?space=private&amp;return=app-private.html">📂 Dépôt</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
-    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="dashboard-private.html">🏠 Dashboard</a>
-  <a href="expert-private.html">✍️ Relecture</a>
-  <a href="mission-private.html">🎯 Sur mesure</a>
-  <div class="v40-mobile-menu-sep"></div>
+  <a href="vault.html?space=private&amp;return=app-private.html">📂 Dépôt</a>
+  <div style="height:1px;background:rgba(255,255,255,.08);margin:8px 0;"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
-    <button data-logout>🚪 Déconnexion</button>
+
+<!-- Retour parcours -->
+<div class="v69-retour-bar">
+  <a href="dashboard-private.html?from=app&amp;step=2" id="btnRetourDashboard" class="v69-retour-btn">← Retour au parcours</a>
+  <span class="v69-retour-info" id="v69RetourInfo">Votre saisie est conservée. Revenez après génération pour joindre le draft.</span>
+  <span class="v69-draft-badge" id="v69DraftBadge">✅ Draft prêt à joindre</span>
 </div>
 
-<!-- Barre workflow -->
-<div class="v36-workflow-bar">
-  <div class="v36-workflow-inner">
-    <div class="v36-wf-step active" id="wfStep1"><span class="v36-wf-num">1</span> Préparer</div>
-    <div class="v36-wf-step" id="wfStep2"><span class="v36-wf-num">2</span> Générer</div>
-    <div class="v36-wf-step" id="wfStep3"><span class="v36-wf-num">3</span> Exploiter</div>
-  </div>
+<!-- Workflow -->
+<div class="v69-wf-bar">
+  <div class="v69-wf-step active" id="wfStep1"><span class="v69-wf-num">1</span> Préparer</div>
+  <div class="v69-wf-step" id="wfStep2"><span class="v69-wf-num">2</span> Générer</div>
+  <div class="v69-wf-step" id="wfStep3"><span class="v69-wf-num">3</span> Exploiter</div>
 </div>
 
-<!-- IDs fantômes requis par app-page.js (cachés, non affichés) -->
-<span id="spaceBadge" hidden></span>
-<span id="heroTitle" hidden></span>
-<span id="heroCopy" hidden></span>
-<span id="formCopy" hidden></span>
-<span id="status" hidden></span>
-<span id="archiveModeLabel" hidden></span>
-<span id="safeNote" hidden></span>
-<span id="factsLabel" hidden></span>
+<!-- Toast -->
+<div class="v69-toast" id="v69Toast"></div>
 
-<main class="v36-gen-layout">
+<main class="v69-layout">
 
-  <!-- ═══ COLONNE GAUCHE : FORMULAIRE ═══ -->
-  <div class="v36-form-col">
+  <!-- ═══ COLONNE GAUCHE ═══ -->
+  <div class="v69-form-col">
 
-    <!-- Sélecteur type de livrable -->
-    <div class="v36-usecase-selector">
-      <label for="usecase" id="usecaseLabel">Quel type de livrable ?</label>
-      <select id="usecase" aria-label="Type de livrable"></select>
-      <div class="v36-usecase-hint" id="usecaseInsight"></div>
+    <!-- Badge domaine hérité -->
+    <div class="v69-domain-ctx" id="domainCtx">
+      <span class="v69-domain-ico" id="domainCtxIco">🎯</span>
+      <div class="v69-domain-info">
+        <div class="v69-domain-label">Domaine d'expertise</div>
+        <div class="v69-domain-name" id="domainCtxName">—</div>
+      </div>
+      <a href="dashboard-private.html" class="v69-domain-change">Modifier →</a>
     </div>
 
-    <!-- Contexte + Objectif -->
-    <div class="v36-form-card">
-      <div class="v36-form-card-head">
-        <div class="v36-form-icon blue">📋</div>
-        <div>
-          <h3 id="contextLabel">Contexte &amp; Objectif</h3>
-          <p>Cadrez la situation et le résultat attendu</p>
-        </div>
-      </div>
-      <label class="label" id="contextLabelFull">Contexte</label>
-      <textarea class="input" id="context" rows="5" style="margin-bottom:14px"></textarea>
-      <label class="label" id="objectiveLabel">Objectif du livrable</label>
-      <textarea class="input" id="objective" rows="4"></textarea>
+    <!-- Type de livrable -->
+    <div class="v69-usecase">
+      <label for="usecase">Type de livrable à produire</label>
+      <select id="usecase">
+        <option value="">— Sélectionnez —</option>
+        <option value="note_strategique">📋 Note stratégique</option>
+        <option value="courrier_urssaf">✉️ Courrier / Réponse URSSAF</option>
+        <option value="deliberation">🏛️ Marché public / Procédure achat</option>
+        <option value="synthese_reunion">📝 Synthèse de réunion</option>
+        <option value="cadrage_projet">🗂️ Cadrage projet / PMO</option>
+        <option value="rapport_synthese_argumente_public">📊 Rapport argumenté</option>
+        <option value="formalite_juridique">⚖️ Formalité juridique</option>
+        <option value="analyse_marche_public">🏗️ Analyse marchés publics / DCE</option>
+      </select>
+      <div class="v69-usecase-hint" id="usecaseInsight"></div>
     </div>
 
-    <!-- Éléments factuels -->
-    <div class="v36-form-card">
-      <div class="v36-form-card-head">
-        <div class="v36-form-icon teal">🔍</div>
+    <!-- Section contexte enrichie -->
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico blue">📋</div>
         <div>
-          <h3>Éléments factuels</h3>
-          <p>Données, chiffres, acteurs, dates clés</p>
+          <h3>Contexte &amp; Objectif</h3>
+          <p>Cadrez la situation — pré-rempli depuis votre parcours</p>
         </div>
       </div>
-      <textarea class="input" id="facts" rows="5"></textarea>
+
+      <div class="v69-field">
+        <label class="v69-label">Contexte général <span id="ctxPrefillTag" class="v69-prefilled-tag" style="display:none">✓ Pré-rempli</span></label>
+        <textarea class="v69-input" id="context" rows="4" placeholder="Organisation, cadre institutionnel, situation de départ…"></textarea>
+      </div>
+
+      <div class="v69-field">
+        <label class="v69-label">Objectif du livrable <span id="objPrefillTag" class="v69-prefilled-tag" style="display:none">✓ Pré-rempli</span></label>
+        <textarea class="v69-input" id="objective" rows="3" placeholder="Résultat attendu, décision à éclairer, livrable souhaité…"></textarea>
+      </div>
+    </div>
+
+    <!-- Section détails avancés (pré-remplis) -->
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico teal">🔎</div>
+        <div>
+          <h3>Éléments de contexte avancés</h3>
+          <p>Acteurs, contraintes, échéances — enrichissent le livrable</p>
+        </div>
+      </div>
+
+      <div class="v69-row2">
+        <div class="v69-field">
+          <label class="v69-label">Contraintes</label>
+          <textarea class="v69-input" id="constraints" rows="2" placeholder="Légales, budgétaires, politiques…"></textarea>
+        </div>
+        <div class="v69-field">
+          <label class="v69-label">Points sensibles</label>
+          <textarea class="v69-input" id="risks" rows="2" placeholder="Risques, tensions, points bloquants…"></textarea>
+        </div>
+      </div>
+
+      <div class="v69-row2">
+        <div class="v69-field">
+          <label class="v69-label">Acteurs concernés</label>
+          <input class="v69-input" id="actors" type="text" placeholder="Élus, DG, prestataires…"/>
+        </div>
+        <div class="v69-field">
+          <label class="v69-label">Échéance</label>
+          <input class="v69-input" id="deadline" type="text" placeholder="Avant vendredi, sous 10 jours…"/>
+        </div>
+      </div>
+
+      <div class="v69-field">
+        <label class="v69-label">Éléments factuels</label>
+        <textarea class="v69-input" id="facts" rows="3" placeholder="Chiffres, dates, références réglementaires, noms…"></textarea>
+      </div>
     </div>
 
     <!-- Pièces vault -->
-    <div class="v36-form-card">
-      <div class="v36-form-card-head">
-        <div class="v36-form-icon amber">📎</div>
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico amber">📎</div>
         <div>
-          <h3 id="vaultInlineTitle">Pièces temporaires 48h</h3>
-          <p id="vaultInlineCopy">Les fichiers texte alimentent directement l'IA</p>
+          <h3>Pièces temporaires 48h</h3>
+          <p>Alimentent directement l'IA</p>
         </div>
       </div>
-      <div id="vaultInlineList" class="vault-inline-list">
-        <div class="muted" style="font-size:13px">Aucune pièce disponible.</div>
-      </div>
-      <a class="btn ghost" href="vault.html?space=private&return=app-private.html" style="margin-top:12px;font-size:13px">+ Déposer des pièces</a>
+      <div id="vaultInlineList"><div style="font-size:13px;color:var(--muted)">Aucune pièce disponible.</div></div>
+      <a class="v69-btn" href="vault.html?space=private&amp;return=app-private.html" style="margin-top:12px;font-size:12px">+ Déposer des pièces</a>
+    </div>
+
+    <!-- Auto-archivage -->
+    <div class="v69-auto-arch">
+      <input type="checkbox" id="autoArchive" checked/>
+      <label for="autoArchive">Archiver automatiquement les livrables générés</label>
     </div>
 
     <!-- Bouton générer -->
-    <button class="v36-generate-btn" id="btnGenerate" type="button">
-      <span>⚡</span> <span id="btnGenerateLabel">Produire un livrable sécurisé</span>
+    <button class="v69-gen-btn" id="btnGenerate" type="button">
+      <span>⚡</span>
+      <span id="btnGenerateText">Produire un livrable sécurisé</span>
     </button>
 
-    <!-- Indicateur chargement -->
-    <div class="v36-loading" id="generationIndicator" hidden>
-      <div class="v36-spinner"></div>
-      <div>
-        <strong style="font-size:14px;color:#0b2440">Génération en cours…</strong>
-        <div style="font-size:12px;color:#50627a;margin-top:3px">Analyse du contexte, structuration, rédaction.</div>
-      </div>
-    </div>
 
   </div>
 
-  <!-- ═══ COLONNE DROITE : RÉSULTAT ═══ -->
-  <div class="v36-result-col">
+  <!-- ═══ COLONNE DROITE ═══ -->
+  <div class="v69-result-col">
+
+    <!-- Animation génération — visible en haut de la zone résultat -->
+    <div class="v69-loader" id="generationLoader" style="margin-bottom:4px;">
+      <div class="v69-spinner"></div>
+      <div class="v69-progress">
+        <strong style="font-size:14px;color:var(--ink)">Génération en cours&#x2026;</strong>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Analyse du contexte, structuration, rédaction professionnelle.</div>
+        <div class="v69-progress-bar-wrap"><div class="v69-progress-bar" id="progressBar"></div></div>
+      </div>
+    </div>
+
 
     <!-- État vide -->
-    <div class="v36-result-empty" id="resultEmpty">
-      <div class="v36-result-empty-icon">📄</div>
+    <div class="v69-empty" id="resultEmpty">
+      <div class="v69-empty-ico">📄</div>
       <h3>Votre livrable apparaît ici</h3>
       <p>Sélectionnez un type de document, complétez le contexte et cliquez sur Produire.</p>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;justify-content:center">
-        <span style="background:#eef7ff;color:#0079c1;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Structuré</span>
-        <span style="background:#f0fdf4;color:#059669;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Professionnel</span>
-        <span style="background:#fffbeb;color:#d97706;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600">Exploitable</span>
+      <div class="v69-empty-tags">
+        <span class="v69-empty-tag" style="background:#eef7ff;color:#0079c1">Structuré</span>
+        <span class="v69-empty-tag" style="background:#f0fdf4;color:#059669">Professionnel</span>
+        <span class="v69-empty-tag" style="background:#fffbeb;color:#d97706">Exploitable</span>
+        <span class="v69-empty-tag" style="background:#f5f3ff;color:#7c3aed">Exportable</span>
       </div>
     </div>
 
     <!-- Résultat généré -->
-    <div class="v36-result-card" id="resultCard" hidden>
-      <div class="v36-result-header">
+    <div class="v69-result-card" id="resultCard">
+      <div class="v69-result-header">
         <div>
-          <h2>Résultat généré</h2>
-          <div style="font-size:12px;color:#50627a;margin-top:2px" id="resultMeta"></div>
+          <h2 id="resultTitle">Résultat généré</h2>
+          <div class="v69-result-meta" id="resultMeta"></div>
         </div>
-        <div class="v36-result-actions">
-          <button class="btn ghost icon-only" id="btnCopy" title="Copier" aria-label="Copier le résultat">📋</button>
-          <select class="input" id="exportFormat" style="font-size:13px;padding:7px 10px;width:auto" aria-label="Format d'export">
-            <option value="">Exporter…</option>
-            <option value="txt">TXT</option>
-            <option value="csv">CSV</option>
-            <option value="doc">DOC</option>
-            <option value="pdf">PDF</option>
-          </select>
-          <button class="btn ghost" id="btnExport" type="button">Exporter</button>
-          <button class="btn ghost" id="btnArchiveCurrent" type="button">🗄 Archiver</button>
+        <div class="v69-result-actions">
+          <button class="v69-btn" id="btnCopyResult">📋 Copier</button>
+          <button class="v69-btn" id="btnArchiveResult">🗄 Archiver</button>
         </div>
       </div>
-      <div class="v36-result-body">
-        <section class="dossier-intel-panel" id="dossierIntel" hidden></section>
-        <div class="v36-output output output-rich-v11" id="output" data-raw=""></div>
+      <div class="v69-result-body">
+        <div class="v69-output" id="output"></div>
+      </div>
+      <!-- Barre d'export -->
+      <div class="v69-export-bar">
+        <span class="v69-export-label">Exporter :</span>
+        <button class="v69-export-btn pdf" id="btnExportPdf" type="button">📄 PDF</button>
+        <button class="v69-export-btn" id="btnExportTxt" type="button">📝 TXT</button>
+        <button class="v69-export-btn" id="btnExportDoc" type="button">📃 DOC</button>
+        <button class="v69-export-btn" id="btnExportCsv" type="button">📊 CSV</button>
       </div>
     </div>
 
     <!-- Actions suivantes -->
-    <div class="v36-next-actions" id="nextActions" hidden>
-      <h3>Et maintenant ?</h3>
-      <div class="v36-next-btns">
-        <a class="v36-next-btn" href="expert-private.html" id="resultExpertLink">
-          <span class="v36-next-btn-icon">✍️</span>
-          <div class="v36-next-btn-text"><strong>Relecture experte</strong><span>Faire valider par un conseiller</span></div>
+    <div class="v69-next" id="nextActions">
+      <h3>🚀 Et maintenant ?</h3>
+      <div class="v69-next-grid">
+        <a class="v69-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=2" id="resultExpertLink">
+          <span class="v69-next-ico">✍️</span>
+          <div class="v69-next-text"><strong>Soumettre à un expert</strong><span>Joindre ce draft à ma demande</span></div>
         </a>
-        <a class="v36-next-btn" href="mission-private.html" id="resultMissionLink">
-          <span class="v36-next-btn-icon">🎯</span>
-          <div class="v36-next-btn-text"><strong>Sur mesure</strong><span>Accompagnement approfondi</span></div>
+        <a class="v69-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=3">
+          <span class="v69-next-ico">📎</span>
+          <div class="v69-next-text"><strong>Retour étape Documents</strong><span>Attacher ce draft au dossier</span></div>
         </a>
-        <button class="v36-next-btn" id="btnRefine" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
-          <span class="v36-next-btn-icon">✨</span>
-          <div class="v36-next-btn-text"><strong>Affiner</strong><span>Améliorer la qualité</span></div>
+        <button class="v69-next-btn" id="btnRefine" type="button">
+          <span class="v69-next-ico">✨</span>
+          <div class="v69-next-text"><strong>Affiner le livrable</strong><span>Améliorer la qualité</span></div>
         </button>
-        <button class="v36-next-btn" id="btnRiskCheck" type="button" style="background:#fff;border:1.5px solid var(--v36-line);cursor:pointer;text-align:left">
-          <span class="v36-next-btn-icon">⚠️</span>
-          <div class="v36-next-btn-text"><strong>Vérifier les risques</strong><span>Analyse des points sensibles</span></div>
+        <button class="v69-next-btn" id="btnNewDoc" type="button">
+          <span class="v69-next-ico">🔄</span>
+          <div class="v69-next-text"><strong>Nouveau livrable</strong><span>Générer un autre document</span></div>
         </button>
       </div>
     </div>
 
-    <!-- Archivage local -->
-    <div class="v36-archive-card" id="archivePanel">
-      <div class="v36-archive-head">
-        <div>
-          <h3>Archivage local</h3>
-          <p style="margin:2px 0 0;font-size:12px;color:#50627a">Conservez vos générations sur cet appareil</p>
-        </div>
-        <label class="archive-auto-v10" style="font-size:13px">
-          <input type="checkbox" id="archiveAutoSave"/>
-          <span>Auto-archiver</span>
-        </label>
-      </div>
-      <div class="v36-archive-toolbar">
-        <button class="btn ghost" id="btnExportArchive" type="button" style="font-size:13px">Exporter</button>
-        <label class="btn ghost archive-import-v10" for="archiveImportInput" style="font-size:13px">Importer</label>
-        <input id="archiveImportInput" type="file" accept=".txt,.csv,.doc,text/plain,text/csv,application/msword" hidden/>
-        <button class="btn ghost archive-clear-v10" id="btnClearArchive" type="button" style="font-size:13px">Vider</button>
-        <input class="input archive-search-input-v10" id="archiveSearch" type="search" placeholder="Rechercher…" style="font-size:13px"/>
-      </div>
-      <div class="v36-archive-body">
-        <div class="archive-v10-summary" id="archiveSummary"></div>
-        <div class="archive-v10-list" id="archiveList">
-          <div class="muted" style="font-size:13px">Aucune génération archivée.</div>
+    <!-- Archive locale -->
+    <div class="v69-archive" id="archivePanel">
+      <div class="v69-archive-head">
+        <h3>📁 Mes drafts archivés</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="archiveCount" style="font-size:12px;color:var(--muted)"></span>
+          <button class="v69-btn" id="btnClearArchive" style="font-size:12px;padding:5px 10px">Tout vider</button>
         </div>
       </div>
+      <div class="v69-archive-body" id="archiveList"></div>
     </div>
 
   </div>
 </main>
 
-<script>
-function setWorkflowStep(n) {
-  ['wfStep1','wfStep2','wfStep3'].forEach(function(id,i) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('active','done');
-    if (i+1 === n) el.classList.add('active');
-    else if (i+1 < n) el.classList.add('done');
-  });
-}
-window.setWorkflowStep = setWorkflowStep;
-// Step 2 au clic sur générer
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('btnGenerate');
-  if (btn) btn.addEventListener('click', function() { setWorkflowStep(2); }, true);
-});
-</script>
+<!-- Auth check -->
 <script>
 (function(){
-  function hasSession(){
-    return localStorage.getItem('pope_session_active')==='1'||
-           !!sessionStorage.getItem('pope_session_token')||
-           !!localStorage.getItem('pope_session_token');
+  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
+  function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
+  function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
+  function redirectToLogin(){window.location.replace('login.html?next=app.html');}
+  if(hasSession()){
+    window.__popeAuthValidated=true;
+    var _n=localStorage.getItem('pope_session_nonce');
+    if(_n&&!sessionStorage.getItem('pope_session_nonce')) sessionStorage.setItem('pope_session_nonce',_n);
+    return;
   }
-  function getToken(){
-    return sessionStorage.getItem('pope_session_token')||
-           localStorage.getItem('pope_session_token')||'';
-  }
-  function getApiBase(){
-    var e=window.__POPE_API_BASE__||'';
-    if(e) return String(e).replace(/\/$/,'');
-    var h=window.location.hostname;
-    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
-    return 'https://pope-online-v2.onrender.com';
-  }
-  function redirectToLogin(){
-    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
-    window.location.replace('login.html?next='+path);
-  }
-  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
-    'mission.html','private-onboarding.html','account.html','profile.html',
-    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
-    'mission-private.html','referral.html','tutoriel.html'];
-  var path=(window.location.pathname||'').toLowerCase();
-  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
-  if(!isProtected) return;
-  if(hasSession()){window.__popeAuthValidated=true;return;}
-  window.__popeAuthPending=true;
-  var headers={'Content-Type':'application/json'};
-  var token=getToken();
-  if(token) headers['Authorization']='Bearer '+token;
+  var tk=getToken(),headers={'Content-Type':'application/json'};
+  if(tk)headers['Authorization']='Bearer '+tk;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      return res.json().catch(function(){return {};});
-    })
+    .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return{};});})
+    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));var _n2=localStorage.getItem('pope_session_nonce');if(!_n2){_n2=Date.now().toString(36);localStorage.setItem('pope_session_nonce',_n2);}sessionStorage.setItem('pope_session_nonce',_n2);window.__popeAuthValidated=true;}else throw 0;})
+    .catch(function(){redirectToLogin();});
+})();
+</script>
+
+<!-- Burger -->
+<script>
+(function(){
+  var b=document.getElementById('v40Burger'),m=document.getElementById('v40MobileMenu');
+  if(!b||!m)return;
+  var sp=b.querySelectorAll('span');
+  function o(open){if(open){m.classList.add('open');sp[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';sp[1].style.cssText='opacity:0;transform:scaleX(0)';sp[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{m.classList.remove('open');[0,1,2].forEach(function(i){sp[i].style.cssText='';});}}
+  b.addEventListener('click',function(){o(!m.classList.contains('open'));});
+  m.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){o(false);});});
+  document.addEventListener('click',function(e){if(!b.contains(e.target)&&!m.contains(e.target))o(false);});
+})();
+</script>
+
+<!-- ══ CONTRÔLEUR V69 APP ══ -->
+<script>
+(function(){
+'use strict';
+
+var API = (function(){
+  var h=location.hostname;
+  if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+  if(h.indexOf('staging')!==-1) return 'https://popeonline-staging.onrender.com';
+  return 'https://pope-online-v2.onrender.com';
+})();
+
+var SPACE    = 'private';
+var DASH_KEY = 'pope_v67_priv';
+var GENS_KEY = 'pope_v67_gens_priv';
+var FORM_KEY = 'pope_v67_form_priv';
+var TOKEN_KEY= 'pope_session_token';
+
+/* ─── Helpers ─── */
+function $(id){ return document.getElementById(id); }
+function qsa(s,r){ return Array.from((r||document).querySelectorAll(s)); }
+function token(){ return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||''; }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+var _toastT;
+function toast(msg,type){
+  var el=$('v69Toast');if(!el)return;
+  el.textContent=msg;el.className='v69-toast '+(type||'');
+  el.classList.add('show');clearTimeout(_toastT);
+  _toastT=setTimeout(function(){el.classList.remove('show');},3500);
+}
+
+function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h['Authorization']='Bearer '+t;return h;}
+function apiFetch(path,opts){
+  opts=opts||{};
+  return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'})
+    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});
+}
+
+/* ─── Auth ─── */
+function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app-private.html';return false;}
+function logout(){
+  // V72: ciblé, préserve générations
+  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
+  try{sessionStorage.clear();}catch(e){}
+  try{
+    var all=Object.keys(localStorage);
+    all.forEach(function(k){
+      if(PRESERVE.indexOf(k)!==-1)return;
+      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0||k==='pope_session_active'||k==='pope_session_user'){
+        localStorage.removeItem(k);
+      }
+    });
+  }catch(e){}
+  // Vider les champs visuellement
+  ['usecase','context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  location.href='private.html';
+}
+
+/* ─── Workflow ─── */
+function setWF(n){
+  for(var i=1;i<=3;i++){
+    var el=$('wfStep'+i);if(!el)continue;
+    el.classList.remove('active','done');
+    if(i===n)el.classList.add('active');else if(i<n)el.classList.add('done');
+  }
+}
+
+/* ─── Progress bar animation ─── */
+var _progT,_progV=0;
+function startProgress(){
+  _progV=0;var bar=$('progressBar');if(!bar)return;
+  bar.style.width='0%';
+  _progT=setInterval(function(){
+    _progV=Math.min(_progV+Math.random()*8,88);
+    bar.style.width=_progV+'%';
+  },400);
+}
+function stopProgress(){
+  clearInterval(_progT);
+  var bar=$('progressBar');if(!bar)return;
+  bar.style.width='100%';
+  setTimeout(function(){bar.style.width='0%';},600);
+}
+
+/* ─── Usecase hints ─── */
+var UH={
+  note_strategique:{b:'Note de cadrage pour éclairer une décision politique ou administrative. Précisez les options, contraintes et décision attendue.'},
+  courrier:{b:'Courrier structuré pour une correspondance officielle. Indiquez destinataire, objet et contexte.'},
+  deliberation:{b:'Structure conforme aux usages institutionnels. Précisez sujet, textes de référence et enjeux.'},
+  synthese_reunion:{b:'Compte rendu exploitable. Décrivez participants, points abordés et décisions prises.'},
+  cadrage_projet:{b:'Note de cadrage projet. Précisez objectifs, jalons, risques et parties prenantes.'},
+  rapport_synthese_argumente_public:{b:'Analyse factuelle avec recommandation. Joignez vos documents depuis le coffre.'},
+  courrier_urssaf:{b:'Réponse structurée à un courrier URSSAF ou organisme social. Joignez les pièces depuis votre dépôt.'},
+  formalite_juridique:{b:'Document pour une formalité juridique ou administrative. Précisez la nature, les parties et le cadre légal.'},
+  analyse_marche_public:{b:'Analyse DCE, grilles d\'offres, sécurisation procédure achat. Précisez type de marché et pièces disponibles.'}
+};
+function updateHelp(){
+  var v=($('usecase')||{}).value||'';var h=UH[v];var el=$('usecaseInsight');if(!el)return;
+  if(h){el.textContent=h.b;el.classList.add('show');}else{el.textContent='';el.classList.remove('show');}
+}
+
+/* ─── Rendu Markdown → HTML ─── */
+function renderMarkdown(text){
+  if(!text) return '';
+  var lines=text.split('\n');
+  var html='';var inList=false;var inOl=false;
+  function closeList(){if(inList){html+='</ul>';inList=false;}if(inOl){html+='</ol>';inOl=false;}}
+  function fmtInline(s){
+    s=s.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+    s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');
+    s=s.replace(/`(.+?)`/g,'<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px">$1</code>');
+    return s;
+  }
+  lines.forEach(function(line){
+    var trimmed=line.trim();
+    if(!trimmed){closeList();html+='<p></p>';return;}
+    if(/^---+$/.test(trimmed)){closeList();html+='<hr>';return;}
+    if(/^#{1}\s/.test(trimmed)){closeList();html+='<h1>'+fmtInline(trimmed.slice(2))+'</h1>';return;}
+    if(/^#{2}\s/.test(trimmed)){closeList();html+='<h2>'+fmtInline(trimmed.slice(3))+'</h2>';return;}
+    if(/^#{3}\s/.test(trimmed)){closeList();html+='<h3>'+fmtInline(trimmed.slice(4))+'</h3>';return;}
+    if(/^#{4}\s/.test(trimmed)){closeList();html+='<h3>'+fmtInline(trimmed.slice(5))+'</h3>';return;}
+    if(/^>\s/.test(trimmed)){closeList();html+='<blockquote>'+fmtInline(trimmed.slice(2))+'</blockquote>';return;}
+    if(/^[-*]\s/.test(trimmed)){
+      if(inOl){html+='</ol>';inOl=false;}
+      if(!inList){html+='<ul>';inList=true;}
+      html+='<li>'+fmtInline(trimmed.slice(2))+'</li>';return;
+    }
+    if(/^\d+\.\s/.test(trimmed)){
+      if(inList){html+='</ul>';inList=false;}
+      if(!inOl){html+='<ol>';inOl=true;}
+      html+='<li>'+fmtInline(trimmed.replace(/^\d+\.\s/,''))+'</li>';return;
+    }
+    closeList();
+    html+='<p>'+fmtInline(trimmed)+'</p>';
+  });
+  closeList();
+  return html;
+}
+
+/* ─── Export ─── */
+var _lastRawText='';
+function exportTxt(){
+  if(!_lastRawText)return;
+  var blob=new Blob([_lastRawText],{type:'text/plain;charset=utf-8'});
+  download(blob,'livrable-pope.txt');
+}
+function exportCsv(){
+  if(!_lastRawText)return;
+  var rows=[['Livrable POPE Online'],['Généré le',new Date().toLocaleString('fr-FR')],[''],['Contenu'],['',_lastRawText.replace(/\n/g,' ')]];
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(';');}).join('\r\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  download(blob,'livrable-pope.csv');
+}
+function exportDoc(){
+  if(!_lastRawText)return;
+  var header='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Livrable POPE</title></head><body style="font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;margin:3cm 2.5cm">';
+  var content=_lastRawText.replace(/\n/g,'<br>');
+  var footer='</body></html>';
+  var blob=new Blob([header+content+footer],{type:'application/msword'});
+  download(blob,'livrable-pope.doc');
+}
+function exportPdf(){
+  if(!_lastRawText){toast('Aucun livrable à exporter.','err');return;}
+  var w=window.open('','_blank');
+  if(!w){toast('Veuillez autoriser les pop-ups.','err');return;}
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Livrable POPE Online</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.7;margin:2.5cm 2cm;color:#1a1a2e}'
+    +'h1,h2,h3{color:#0b3060}h1{font-size:18pt;border-bottom:2px solid #e2e8f0;padding-bottom:8px}'
+    +'h2{font-size:15pt}h3{font-size:13pt}ul,ol{margin:.5em 0;padding-left:1.5em}'
+    +'blockquote{border-left:3px solid #0079c1;padding:8px 14px;background:#eef7ff;margin:.8em 0}'
+    +'hr{border:none;border-top:1px solid #e2e8f0;margin:1.5em 0}'
+    +'.header{border-bottom:3px solid #0b3060;margin-bottom:2em;padding-bottom:1em}'
+    +'.footer{border-top:1px solid #e2e8f0;margin-top:2em;padding-top:.8em;font-size:9pt;color:#888}'
+    +'@page{margin:2cm}@media print{body{margin:0}}'
+    +'</style></head><body>';
+  html+='<div class="header"><h1>POPE Online — Livrable généré</h1>'
+    +'<p style="color:#50627a;font-size:10pt">Généré le '+new Date().toLocaleString('fr-FR')+'</p></div>';
+  html+=renderMarkdown(_lastRawText);
+  html+='<div class="footer">Document généré par POPE Online · Conseil &amp; Expertise pour les collectivités</div>';
+  html+='</body></html>';
+  w.document.write(html);w.document.close();
+  setTimeout(function(){w.focus();w.print();},600);
+}
+function download(blob,name){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
+}
+
+/* ─── Form persistence ─── */
+function saveForm(){
+  try{localStorage.setItem(FORM_KEY,JSON.stringify({
+    usecase:($('usecase')||{}).value||'',
+    context:($('context')||{}).value||'',
+    objective:($('objective')||{}).value||'',
+    constraints:($('constraints')||{}).value||'',
+    risks:($('risks')||{}).value||'',
+    actors:($('actors')||{}).value||'',
+    deadline:($('deadline')||{}).value||'',
+    facts:($('facts')||{}).value||''
+  }));}catch(e){}
+}
+function restoreForm(){
+  try{
+    var raw=localStorage.getItem(FORM_KEY);if(!raw)return;
+    var f=JSON.parse(raw);
+    function set(id,v){var el=$(id);if(el&&!el.value&&v)el.value=v;}
+    set('usecase',f.usecase);set('context',f.context);set('objective',f.objective);
+    set('constraints',f.constraints);set('risks',f.risks);
+    set('actors',f.actors);set('deadline',f.deadline);set('facts',f.facts);
+  }catch(e){}
+}
+
+/* ─── Pré-alimentation intelligente depuis dashboard ─── */
+function prefillFromDashboard(){
+  try{
+    // Lire le state depuis sessionStorage, localStorage, et clés legacy
+    var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY)
+           ||sessionStorage.getItem('pope_v58_state_private')||localStorage.getItem('pope_v58_state_private')
+           ||sessionStorage.getItem('pope_v57_state_private')||localStorage.getItem('pope_v57_state_private');
+    if(!raw)return;
+    var s=JSON.parse(raw);var n=s.need||{};
+
+    /* Badge domaine */
+    if(s.domain){
+      var ctx=$('domainCtx'),ico=$('domainCtxIco'),nm=$('domainCtxName');
+      if(ctx)ctx.classList.add('show');
+      if(ico)ico.textContent=s.domainIcon||'🎯';
+      if(nm)nm.textContent=s.domain;
+      var info=$('v69RetourInfo');
+      if(info)info.textContent='Domaine : '+s.domain+' — contexte pré-rempli depuis votre parcours.';
+    }
+
+    /* Champs context */
+    var ctxEl=$('context');
+    if(ctxEl&&!ctxEl.value){
+      var parts=[];
+      if(s.domain)    parts.push('Domaine : '+s.domain);
+      if(n.title)     parts.push('Objet : '+n.title);
+      if(n.context)   parts.push('Contexte : '+n.context);
+      if(n.problem)   parts.push('Problème : '+n.problem);
+      if(parts.length){ctxEl.value=parts.join('\n');var t=$('ctxPrefillTag');if(t)t.style.display='inline-flex';}
+    }
+    /* Champs objective */
+    var objEl=$('objective');
+    if(objEl&&!objEl.value){
+      var op=[];
+      if(n.objective)   op.push(n.objective);
+      if(n.deliverable) op.push('Livrable : '+n.deliverable);
+      if(n.decision)    op.push('Décision : '+n.decision);
+      if(n.detailLevel) op.push('Niveau : '+n.detailLevel);
+      if(op.length){objEl.value=op.join('\n');var t2=$('objPrefillTag');if(t2)t2.style.display='inline-flex';}
+      else if(n.title){objEl.value=n.title;}
+    }
+    /* Champs avancés */
+    function fillIfEmpty(id,val){var el=$(id);if(el&&!el.value&&val)el.value=val;}
+    fillIfEmpty('constraints',n.constraints);
+    fillIfEmpty('risks',n.risks);
+    fillIfEmpty('actors',[n.actors,n.audience].filter(Boolean).join(', '));
+    fillIfEmpty('deadline',n.deadline);
+    fillIfEmpty('facts',n.pieces);
+
+    /* Badge draft ready */
+    var lastId=localStorage.getItem('pope_v61_last_gen')||localStorage.getItem('pope_v54_last_generation_id');
+    if(lastId){
+      var badge=$('v69DraftBadge');if(badge)badge.classList.add('show');
+      var retour=$('btnRetourDashboard');if(retour)retour.href='dashboard-private.html?from=app&attach=last&step=2';
+    }
+  }catch(e){}
+}
+
+/* ─── URL params ─── */
+function initFromUrl(){
+  var sp=new URLSearchParams(location.search);
+  var domain=sp.get('domain');
+  if(domain){
+    var ctx=$('domainCtx'),nm=$('domainCtxName');
+    if(ctx)ctx.classList.add('show');
+    if(nm)nm.textContent=decodeURIComponent(domain);
+  }
+}
+
+/* ─── Vault ─── */
+function loadVault(){
+  var list=$('vaultInlineList');if(!list)return;
+  list.innerHTML='<div style="font-size:13px;color:var(--muted)">Chargement…</div>';
+  apiFetch('/vault')
     .then(function(data){
-      if(data&&data.user){
-        localStorage.setItem('pope_session_active','1');
-        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
-        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
-        window.__popeAuthValidated=true;
-      } else throw new Error('missing_user');
+      var items=(data&&data.items)||(data&&data.files)||[];
+      if(!items.length){
+        list.innerHTML='<div style="font-size:13px;color:var(--muted)">Aucune pièce. '
+          +'<a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
+        return;
+      }
+      list.innerHTML=items.map(function(f){
+        var rawId=f.id||f.filename||'';
+        var encId=encodeURIComponent(rawId);
+        var nm=esc(f.name||f.filename||'Fichier'),sz=esc(f.size_label||'');
+        return '<div class="v69-vault-item"><input type="checkbox" data-vault-file value="'+encId+'" id="vf'+encId+'"/>'
+          +'<label for="vf'+encId+'" style="flex:1;font-size:13px;color:var(--ink);cursor:pointer;">'+nm+'</label>'
+          +'<span class="v69-vault-sz">'+sz+'</span></div>';
+      }).join('');
     })
     .catch(function(){
-      window.__popeAuthValidated=false;
-      redirectToLogin();
-    })
-    .finally(function(){window.__popeAuthPending=false;});
-})();
-</script>
-<script>
-// Topbar mobile universelle V40 — burger + menu + croix
-(function() {
-  var burger  = document.getElementById('v40Burger');
-  var menu    = document.getElementById('v40MobileMenu');
-  if (!burger || !menu) return;
+      list.innerHTML='<div style="font-size:13px;color:var(--muted)">Coffre indisponible. '
+        +'<a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue)">Ouvrir →</a></div>';
+    });
+}
 
-  var spans = burger.querySelectorAll('span');
+/* ─── Générations ─── */
+function loadGens(){
+  var g=[];
+  // Lire depuis TOUTES les clés (pub + priv + legacy) pour cross-space visibility
+  var keys=[GENS_KEY,'pope_v67_gens_pub','pope_v67_gens_priv',
+    'pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keys.forEach(function(k){
+    try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}
+  });
+  var seen={};return g.filter(function(x){if(!x||seen[x.id])return false;seen[x.id]=1;return true;});
+}
+function saveGen(g){
+  var gens=[];try{gens=JSON.parse(localStorage.getItem(GENS_KEY)||'[]');}catch(e){}
+  gens.unshift(g);if(gens.length>30)gens=gens.slice(0,30);
+  try{localStorage.setItem(GENS_KEY,JSON.stringify(gens));}catch(e){}
+  try{localStorage.setItem('pope_v61_last_gen',String(g.id));}catch(e){}
+  try{localStorage.setItem('pope_v54_last_generation_id',String(g.id));}catch(e){}
+  try{window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g}));}catch(e){}
+}
+function deleteGen(id){
+  // Filter from all storage keys where this gen might live
+  var keysToClean=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+    'pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keysToClean.forEach(function(k){
+    try{
+      var arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)){
+        var filtered=arr.filter(function(g){return g&&String(g.id)!==String(id);});
+        localStorage.setItem(k,JSON.stringify(filtered));
+      }
+    }catch(e){}
+  });
+  renderArchive();
+}
+function renderArchive(){
+  var gens=loadGens();
+  var panel=$('archivePanel');var list=$('archiveList');var cnt=$('archiveCount');
+  if(!gens.length){if(panel)panel.classList.remove('show');return;}
+  if(panel)panel.classList.add('show');
+  if(cnt)cnt.textContent=gens.length+' draft'+(gens.length>1?'s':'');
+  if(!list)return;
+  list.innerHTML=gens.slice(0,15).map(function(g){
+    var d=g.createdAt?new Date(g.createdAt).toLocaleString('fr-FR'):'';
+    var gid=esc(String(g.id));
+    return '<div class="v69-archive-item" data-gen-id="'+gid+'">'
+      +'<div class="v69-archive-item-info">'
+      +'<div class="v69-archive-item-title">'+esc(g.title||g.usecaseLabel||'Draft')+'</div>'
+      +'<div class="v69-archive-item-meta">'+esc((g.usecaseLabel||'')+(d?' — '+d:''))+'</div>'
+      +'</div>'
+      +'<button class="v69-archive-del" data-del-id="'+gid+'" title="Supprimer">🗑</button>'
+      +'</div>';
+  }).join('');
+}
 
-  function setOpen(open) {
-    if (open) {
-      menu.classList.add('open');
-      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
-      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
-      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
-    } else {
-      menu.classList.remove('open');
-      spans[0].style.cssText = '';
-      spans[1].style.cssText = '';
-      spans[2].style.cssText = '';
+/* ─── Afficher résultat ─── */
+function showResult(text,title,meta){
+  _lastRawText=text;
+  if($('resultEmpty'))$('resultEmpty').style.display='none';
+  if($('generationLoader'))$('generationLoader').classList.remove('show');
+  var card=$('resultCard');if(card)card.classList.add('show');
+  if($('resultTitle'))$('resultTitle').textContent=title||'Document généré';
+  if($('resultMeta'))$('resultMeta').textContent=meta||'';
+  var out=$('output');
+  if(out){out.innerHTML=renderMarkdown(text);}
+  var next=$('nextActions');if(next)next.classList.add('show');
+  var badge=$('v69DraftBadge');if(badge)badge.classList.add('show');
+  setWF(3);renderArchive();
+}
+
+/* ─── Copier ─── */
+function copyResult(){
+  if(!_lastRawText){toast('Aucun contenu.','err');return;}
+  navigator.clipboard.writeText(_lastRawText)
+    .then(function(){toast('Copié dans le presse-papiers !','ok');})
+    .catch(function(){toast('Impossible de copier.','err');});
+}
+
+/* ─── Construire payload enrichi ─── */
+function buildPayload(){
+  var uc=($('usecase')||{}).value||'';
+  var ctx=($('context')||{}).value||'';
+  var obj=($('objective')||{}).value||'';
+  var cons=($('constraints')||{}).value||'';
+  var risks=($('risks')||{}).value||'';
+  var actors=($('actors')||{}).value||'';
+  var deadline=($('deadline')||{}).value||'';
+  var facts=($('facts')||{}).value||'';
+
+  /* Enrichir le contexte avec les champs avancés */
+  var fullCtx=ctx;
+  var extras=[];
+  if(cons)    extras.push('Contraintes : '+cons);
+  if(risks)   extras.push('Points sensibles : '+risks);
+  if(actors)  extras.push('Acteurs : '+actors);
+  if(deadline)extras.push('Échéance : '+deadline);
+  if(extras.length) fullCtx = fullCtx + (fullCtx?'\n\n':'') + extras.join('\n');
+
+  var vids=qsa('[data-vault-file]:checked').map(function(n){return n.value;});
+
+  return {
+    mode:'generate',
+    usecase:uc,
+    context:fullCtx,
+    objective:obj,
+    facts:facts,
+    locale:'fr-FR',
+    accountSpace:SPACE,
+    uploaded_file_ids:vids
+  };
+}
+
+/* ─── Générer ─── */
+function generate(){
+  var payload=buildPayload();
+  if(!payload.usecase){toast('Sélectionnez un type de document.','err');return;}
+  if(!($('context')||{}).value.trim()){toast('Le contexte est obligatoire.','err');$('context').focus();return;}
+  if(!($('objective')||{}).value.trim()){toast("L'objectif est obligatoire.",'err');$('objective').focus();return;}
+
+  saveForm();setWF(2);
+  var btn=$('btnGenerate'),btnTxt=$('btnGenerateText');
+  if(btn){btn.disabled=true;btn.classList.add('loading');}
+  if(btnTxt)btnTxt.textContent='Génération en cours…';
+
+  if($('resultEmpty'))$('resultEmpty').style.display='none';
+  var card=$('resultCard');if(card)card.classList.remove('show');
+  var next=$('nextActions');if(next)next.classList.remove('show');
+  var loader=$('generationLoader');if(loader)loader.classList.add('show');
+
+  startProgress();
+
+  function done(ok){
+    stopProgress();
+    if(btn){btn.disabled=false;btn.classList.remove('loading');}
+    if(btnTxt)btnTxt.textContent='Produire un livrable sécurisé';
+    if(!ok){
+      if(loader)loader.classList.remove('show');
+      if($('resultEmpty'))$('resultEmpty').style.display='flex';
+      setWF(1);
     }
   }
 
-  burger.addEventListener('click', function() {
-    setOpen(!menu.classList.contains('open'));
+  apiFetch('/ai/generate',{method:'POST',body:payload})
+    .then(function(data){
+      var text=data&&(data.result||data.output||data.text)||'';
+      if(!text)throw new Error('Réponse vide du serveur.');
+
+      var ucEl=$('usecase');
+      var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||payload.usecase;
+      var now=new Date();
+      var title=($('objective')||{}).value.trim().slice(0,70)||label.trim();
+      var meta=label.trim()+' — '+now.toLocaleString('fr-FR');
+
+      var domainEl=$('domainCtxName');
+      var gr={id:'g_'+Date.now(),title:title,usecaseLabel:label.trim(),usecase:payload.usecase,
+        createdAt:now.toISOString(),result:text,domain:(domainEl&&domainEl.textContent)||'',
+        prompt:{context:payload.context,objective:payload.objective,facts:payload.facts},source:'app-v70-private'};
+
+      /* Auto-archive */
+      var autoArch=$('autoArchive');
+      if(!autoArch||autoArch.checked) saveGen(gr);
+
+      /* Liens */
+      var el=$('resultExpertLink');if(el)el.href='dashboard-private.html?from=app&attach=last&step=2';
+      var rb=$('btnRetourDashboard');if(rb)rb.href='dashboard-private.html?from=app&attach=last&step=2';
+
+      showResult(text,title,meta);
+      toast('Document généré avec succès !','ok');
+      done(true);
+    })
+    .catch(function(e){
+      var msg=(e&&e.data&&(e.data.error_label||e.data.error))||(e&&e.message)||'Erreur lors de la génération.';
+      toast(msg,'err');done(false);
+    });
+}
+
+/* ─── Init ─── */
+function init(){
+  if(!requireAuth())return;
+
+  /* Logout — capture phase pour surpasser wireLogout de app.js */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-logout]');
+    if(!btn) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    logout();
+  }, true);
+
+  /* Form events */
+  var uc=$('usecase');if(uc)uc.addEventListener('change',function(){updateHelp();saveForm();});
+  ['context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
+    var el=$(id);if(el)el.addEventListener('input',saveForm);
   });
 
-  // Fermer en cliquant un lien
-  menu.querySelectorAll('a, button').forEach(function(el) {
-    el.addEventListener('click', function() { setOpen(false); });
-  });
+  /* Generate */
+  var gen=$('btnGenerate');if(gen)gen.addEventListener('click',generate);
 
-  // Fermer en cliquant hors du menu
-  document.addEventListener('click', function(e) {
-    if (!burger.contains(e.target) && !menu.contains(e.target)) {
-      setOpen(false);
+  /* Copy */
+  var cp=$('btnCopyResult');if(cp)cp.addEventListener('click',copyResult);
+
+  /* Archive manuel */
+  var arch=$('btnArchiveResult');
+  if(arch)arch.addEventListener('click',function(){
+    if(_lastRawText){
+      var ucEl=$('usecase');
+      var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||'Draft';
+      var g={id:'g_'+Date.now(),title:($('resultTitle')||{}).textContent||'Draft',
+        usecaseLabel:label.trim(),createdAt:new Date().toISOString(),result:_lastRawText,source:'app-v70-priv-manual'};
+      saveGen(g);renderArchive();toast('Draft archivé.','ok');
     }
   });
+
+  /* Vider archive */
+  var clr=$('btnClearArchive');
+  if(clr)clr.addEventListener('click',function(){
+    if(confirm('Vider tous les drafts archivés ?')){
+      ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+       'pope_v54_generations','pope_v53_generations','pope_ai_generations',
+       'pope_v61_last_gen','pope_v54_last_generation_id',GENS_KEY].forEach(function(k){
+        try{localStorage.removeItem(k);}catch(e){}
+      });
+      renderArchive();toast('Archive vidée.','ok');
+    }
+  });
+
+  /* Export buttons */
+  var ep=$('btnExportPdf');if(ep)ep.addEventListener('click',exportPdf);
+  var et=$('btnExportTxt');if(et)et.addEventListener('click',exportTxt);
+  var ed=$('btnExportDoc');if(ed)ed.addEventListener('click',exportDoc);
+  var ec=$('btnExportCsv');if(ec)ec.addEventListener('click',exportCsv);
+
+  /* Archive list click/delete */
+  var archList=$('archiveList');
+  if(archList){
+    archList.addEventListener('click',function(e){
+      /* Suppression individuelle */
+      var delBtn=e.target.closest('[data-del-id]');
+      if(delBtn){
+        var id=delBtn.getAttribute('data-del-id');
+        if(confirm('Supprimer ce draft ?')){deleteGen(id);toast('Draft supprimé.','ok');}
+        return;
+      }
+      /* Ouvrir */
+      var item=e.target.closest('[data-gen-id]');
+      if(!item)return;
+      var gid=item.getAttribute('data-gen-id');
+      var g=loadGens().find(function(x){return String(x.id)===String(gid);});
+      if(g)showResult(g.result||'',g.title||'Draft',g.usecaseLabel||'');
+    });
+  }
+
+  /* Affiner */
+  var refine=$('btnRefine');
+  if(refine)refine.addEventListener('click',function(){
+    if(!_lastRawText){toast('Générez d\'abord un document.','err');return;}
+    var ctx=$('context');
+    if(ctx){ctx.value=ctx.value+'\n\nAméliorer : rendre ce document plus précis, plus structuré et plus professionnel.';saveForm();}
+    generate();
+  });
+
+  /* Nouveau doc */
+  var newdoc=$('btnNewDoc');
+  if(newdoc)newdoc.addEventListener('click',function(){
+    var card=$('resultCard'),empty=$('resultEmpty'),next=$('nextActions');
+    if(card)card.classList.remove('show');
+    if(empty)empty.style.display='flex';
+    if(next)next.classList.remove('show');
+    setWF(1);_lastRawText='';
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  /* Vérification nonce — si nouvelle session, vider le form APP uniquement */
+  /* NE PAS effacer DASH_KEY : il contient le contexte du parcours (domaine, besoin) */
+  (function(){
+    var lsNonce=localStorage.getItem('pope_session_nonce');
+    var ssNonce=sessionStorage.getItem('pope_session_nonce');
+    if(lsNonce && ssNonce && lsNonce !== ssNonce){
+      // Nouvelle connexion → effacer uniquement le form app (FORM_KEY)
+      try{localStorage.removeItem(FORM_KEY);}catch(e){}
+      // PAS de removeItem(DASH_KEY) — le contexte du parcours doit rester accessible
+      sessionStorage.setItem('pope_session_nonce', lsNonce);
+    }
+  })();
+
+  /* Si état dashboard disponible, effacer le form sauvegardé pour laisser le dashboard remplir */
+  (function(){
+    try{
+      var hasDash=!!(sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY));
+      var fromDash=(new URLSearchParams(location.search).get('from')==='dashboard');
+      if(hasDash||fromDash) localStorage.removeItem(FORM_KEY);
+    }catch(e){}
+  })();
+
+  /* Restore form sauvegardé (uniquement si pas de contexte dashboard) */
+  restoreForm();
+
+  /* Pré-alimentation depuis le dashboard (prioritaire) */
+  prefillFromDashboard();
+
+  /* URL params */
+  initFromUrl();
+
+  /* Aide */
+  updateHelp();
+
+  /* Vault */
+  loadVault();
+
+  /* Archive */
+  renderArchive();
+
+  /* WF */
+  setWF(1);
+
+  /* Quota check — charger en arrière-plan et bloquer si nécessaire */
+  checkQuota();
+}
+
+function checkQuota(){
+  // La génération IA est ILLIMITÉE — le quota concerne les demandes expertes uniquement
+  // Afficher un badge informatif sur les demandes expertes restantes
+  apiFetch('/auth/me').then(function(data){
+    var w=data&&data.wallet||{};
+    var expired=w.status==='trial_expired'||w.trial_expired;
+    var left=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
+    
+    // Afficher bannière info (ne bloque PAS la génération)
+    var banner=document.getElementById('quotaBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='quotaBanner';
+    }
+    if(expired){
+      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+      banner.innerHTML='<span style="font-size:20px">⏰</span>'
+        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — La génération IA reste disponible. Les demandes expertes nécessitent un plan actif.</div>'
+        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres</a>';
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
+    } else if(left!=null&&left<=0){
+      var plan=(w.plan||w.plan_type||'free').toLowerCase();
+      var isPaidPlan=plan==='starter'||plan==='pro'||plan==='premium';
+      var renewDate=w.renews_at||w.next_billing_at||w.period_end||null;
+      var renewStr=renewDate?new Date(renewDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'long'}):'';
+      if(isPaidPlan){
+        banner.style.cssText='background:#eff6ff;border:1.5px solid #93c5fd;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+        banner.innerHTML='<span style="font-size:20px"></span>'
+          +'<div style="flex:1;font-size:13px;color:#1e40af"><strong>Génération IA illimitée</strong>'
+          +(renewStr?' — Quota mensuel épuisé, renouvellement le '+renewStr+'.':' — Quota mensuel épuisé.')
+          +' Achetez un conseil supplémentaire ou changez de plan.</div>'
+          +'<div style="display:flex;gap:8px;flex-shrink:0">'
+          +'<a href="pricing.html#extra" style="background:#1d4ed8;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">+1 conseil (25€)</a>'
+          +(plan!=='premium'?'<a href="pricing.html" style="background:none;border:1px solid #93c5fd;color:#1e40af;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">Passer en '+(plan==='starter'?'Pro':'Premium')+'</a>':'')+'</div>';
+      } else {
+        banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+        banner.innerHTML='<span style="font-size:20px">⚡</span>'
+          +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Génération IA illimitée</strong>'
+          +' — Quota de demandes expertes épuisé. Vos documents générés ne pourront pas être exploités sans upgrade.</div>'
+          +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les plans →</a>';
+      }
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);TYPE html>
+<html lang="fr">
+<head><script>
+(function(){
+  var h = location.hostname;
+  if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
+    window.__POPE_API_BASE__ = (h.indexOf('localhost') !== -1 || h === '127.0.0.1')
+      ? 'http://localhost:3000'
+      : 'https://popeonline-staging.onrender.com';
+  }
+})();
+</script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>POPE Online — Génération guidée (Privé)</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<style id="v40-topbar-fix">
+html body header.v40-topbar{position:sticky!important;top:0!important;z-index:200!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;}
+html body header.v40-topbar .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;height:58px!important;width:100%!important;padding:0 20px!important;gap:10px!important;}
+html body header.v40-topbar .v40-topbar-brand{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:9px!important;text-decoration:none!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand img{height:28px!important;width:auto!important;flex-shrink:0!important;}
+html body header.v40-topbar .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong,html body header.v40-topbar .v40-topbar-brand-text small{white-space:nowrap!important;display:inline!important;width:auto!important;}
+html body header.v40-topbar .v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
+html body header.v40-topbar .v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
+html body header.v40-topbar .v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+html body header.v40-topbar #v40Burger{display:none;flex-direction:column!important;gap:5px!important;margin-left:auto!important;flex-shrink:0!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;width:auto!important;}
+html body header.v40-topbar #v40Burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;}
+#v40MobileMenu{display:none;position:fixed!important;top:58px!important;left:0!important;right:0!important;bottom:0!important;z-index:201!important;background:rgba(7,22,42,.98)!important;backdrop-filter:blur(20px)!important;padding:20px!important;overflow-y:auto!important;flex-direction:column!important;gap:4px!important;}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{display:flex!important;align-items:center!important;gap:10px!important;padding:14px 18px!important;border-radius:12px!important;font-size:15px!important;font-weight:600!important;color:rgba(255,255,255,.85)!important;text-decoration:none!important;background:none!important;border:none!important;cursor:pointer!important;width:100%!important;}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;}
+@media(max-width:860px){html body header.v40-topbar .v40-topbar-nav{display:none!important;}html body header.v40-topbar .v40-topbar-sub{display:none!important;}html body header.v40-topbar .v40-topbar-sep{display:none!important;}html body header.v40-topbar #v40Burger{display:flex!important;}}
+</style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
+.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu.open{display:flex!important;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+@media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
+</style>
+<style>
+/* ═══ POPE Online V69 — APP Premium ═══ */
+:root{
+  --blue:#0079c1;--blue-d:#0b3060;--blue-l:#eef7ff;--blue-m:#dbeafe;
+  --navy:#07162a;--green:#16a34a;--green-l:#f0fdf4;
+  --amber:#d97706;--red:#dc2626;--purple:#7c3aed;
+  --ink:#0b2440;--muted:#50627a;--line:#e2e8f0;
+  --bg:#f5f7fa;--white:#fff;
+  --sh:0 2px 16px rgba(11,36,64,.08);--sh-md:0 4px 28px rgba(11,36,64,.12);
+  --r:14px;--wf-h:48px;
+}
+
+/* Layout */
+.v69-page{background:var(--bg);min-height:100vh;}
+.v69-layout{max-width:1320px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:440px 1fr;gap:24px;align-items:start;}
+.v69-form-col{position:sticky;top:110px;display:flex;flex-direction:column;gap:14px;}
+
+/* Retour bar premium */
+.v69-retour-bar{background:linear-gradient(90deg,#0b3060,#0d4a8a);border-bottom:1px solid rgba(255,255,255,.1);padding:0 24px;display:flex;align-items:center;gap:16px;height:46px;}
+.v69-retour-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;text-decoration:none;cursor:pointer;transition:.15s;flex-shrink:0;white-space:nowrap;}
+.v69-retour-btn:hover{background:rgba(255,255,255,.2);}
+.v69-retour-info{flex:1;font-size:12px;color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v69-draft-badge{background:#22c55e;color:#fff;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800;display:none;flex-shrink:0;}
+.v69-draft-badge.show{display:inline-block;}
+
+/* Workflow bar */
+.v69-wf-bar{background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;align-items:stretch;gap:0;height:var(--wf-h);}
+.v69-wf-step{display:flex;align-items:center;gap:9px;padding:0 20px;font-size:13px;font-weight:600;color:var(--muted);position:relative;cursor:default;flex-shrink:0;border-bottom:3px solid transparent;transition:.2s;}
+.v69-wf-step.active{color:var(--blue);border-bottom-color:var(--blue);}
+.v69-wf-step.done{color:var(--green);}
+.v69-wf-step::after{content:'›';position:absolute;right:-4px;color:var(--line);font-size:18px;z-index:1;}
+.v69-wf-step:last-child::after{display:none;}
+.v69-wf-num{width:22px;height:22px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;transition:.2s;}
+.v69-wf-step.active .v69-wf-num{background:var(--blue);color:#fff;}
+.v69-wf-step.done .v69-wf-num{background:var(--green);color:#fff;}
+
+/* Domain context badge */
+.v69-domain-ctx{display:none;align-items:center;gap:9px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:12px;padding:10px 14px;}
+.v69-domain-ctx.show{display:flex;}
+.v69-domain-ico{font-size:18px;flex-shrink:0;}
+.v69-domain-info{flex:1;}
+.v69-domain-label{font-size:11px;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;}
+.v69-domain-name{font-size:14px;font-weight:800;color:#1e3a8a;margin-top:1px;}
+.v69-domain-change{font-size:11px;color:#3b82f6;font-weight:600;text-decoration:none;cursor:pointer;background:none;border:1px solid #93c5fd;border-radius:6px;padding:4px 9px;transition:.15s;font-family:inherit;flex-shrink:0;}
+.v69-domain-change:hover{background:#eff6ff;}
+
+/* Usecase selector */
+.v69-usecase{background:linear-gradient(135deg,var(--blue-d),var(--blue));border-radius:18px;padding:20px;color:#fff;}
+.v69-usecase label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:8px;}
+.v69-usecase select{width:100%;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.22);border-radius:11px;color:#fff;padding:11px 36px 11px 14px;font-size:14px;font-weight:700;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;font-family:inherit;}
+.v69-usecase select option{background:#0b3060;color:#fff;}
+.v69-usecase-hint{margin-top:10px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;min-height:18px;padding:8px 12px;background:rgba(255,255,255,.08);border-radius:8px;display:none;}
+.v69-usecase-hint.show{display:block;}
+
+/* Form section */
+.v69-section{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--line);}
+.v69-section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.v69-section-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.v69-section-ico.blue{background:#eef7ff;}
+.v69-section-ico.teal{background:#ecfeff;}
+.v69-section-ico.amber{background:#fffbeb;}
+.v69-section-ico.purple{background:#f5f3ff;}
+.v69-section-ico.green{background:#f0fdf4;}
+.v69-section-head h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);}
+.v69-section-head p{margin:2px 0 0;font-size:12px;color:var(--muted);}
+.v69-label{display:block;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.v69-input{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;color:var(--ink);background:#fff;transition:.15s;box-sizing:border-box;font-family:inherit;resize:vertical;}
+.v69-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,121,193,.1);}
+.v69-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v69-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.v69-field:last-child{margin-bottom:0;}
+
+/* Pré-remplissage tag */
+.v69-prefilled-tag{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:11px;color:#15803d;font-weight:600;margin-bottom:6px;}
+
+/* Vault */
+.v69-vault-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #f8fafc;}
+.v69-vault-item:last-child{border-bottom:none;}
+.v69-vault-item label{flex:1;font-size:13px;color:var(--ink);cursor:pointer;}
+.v69-vault-sz{font-size:11px;color:var(--muted);}
+
+/* Generate button */
+.v69-gen-btn{width:100%;background:linear-gradient(135deg,var(--blue),#03a0d7);color:#fff;border:none;border-radius:var(--r);padding:17px 24px;font-size:16px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:11px;box-shadow:0 5px 20px rgba(0,121,193,.35);letter-spacing:-.01em;font-family:inherit;}
+.v69-gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,121,193,.45);}
+.v69-gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* Auto-archive toggle */
+.v69-auto-arch{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid var(--line);font-size:13px;color:var(--muted);}
+.v69-auto-arch input{accent-color:var(--blue);width:16px;height:16px;cursor:pointer;}
+.v69-auto-arch label{flex:1;cursor:pointer;}
+
+/* Loader */
+.v69-loader{display:none;align-items:center;gap:14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:var(--r);padding:18px 20px;}
+.v69-loader.show{display:flex;}
+.v69-spinner{width:22px;height:22px;border:2.5px solid #b8dcf0;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.v69-progress{flex:1;}
+.v69-progress-bar-wrap{height:4px;background:#dbeafe;border-radius:99px;margin-top:8px;overflow:hidden;}
+.v69-progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),#03a0d7);border-radius:99px;width:0%;transition:width .3s;}
+
+/* Result column */
+.v69-result-col{display:flex;flex-direction:column;gap:16px;}
+
+/* Result empty */
+.v69-empty{background:#fff;border-radius:20px;border:2px dashed var(--line);padding:70px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.v69-empty-ico{font-size:54px;opacity:.35;}
+.v69-empty h3{margin:0;font-size:19px;color:var(--ink);font-weight:800;}
+.v69-empty p{margin:0;color:var(--muted);font-size:14px;max-width:340px;line-height:1.6;}
+.v69-empty-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.v69-empty-tag{border-radius:999px;padding:5px 15px;font-size:12px;font-weight:600;}
+
+/* Result card */
+.v69-result-card{background:#fff;border-radius:20px;box-shadow:var(--sh-md);border:1px solid var(--line);overflow:hidden;display:none;}
+.v69-result-card.show{display:block;}
+.v69-result-header{background:linear-gradient(to right,#f8fafc,#fff);border-bottom:1px solid var(--line);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.v69-result-header h2{margin:0;font-size:16px;font-weight:800;color:var(--ink);}
+.v69-result-meta{font-size:11px;color:var(--muted);margin-top:3px;}
+.v69-result-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.v69-result-body{padding:28px;min-height:280px;}
+
+/* Formatted output */
+.v69-output{line-height:1.8;font-size:14px;color:var(--ink);}
+.v69-output h1,.v69-output h2,.v69-output h3{color:var(--blue-d);margin:1.2em 0 .5em;}
+.v69-output h1{font-size:18px;font-weight:800;border-bottom:2px solid var(--line);padding-bottom:8px;}
+.v69-output h2{font-size:16px;font-weight:700;}
+.v69-output h3{font-size:14px;font-weight:700;}
+.v69-output p{margin:.6em 0;}
+.v69-output ul,.v69-output ol{margin:.5em 0;padding-left:1.4em;}
+.v69-output li{margin:.25em 0;}
+.v69-output strong{color:var(--ink);font-weight:700;}
+.v69-output em{font-style:italic;}
+.v69-output hr{border:none;border-top:1.5px solid var(--line);margin:1.5em 0;}
+.v69-output blockquote{border-left:3px solid var(--blue);padding:8px 14px;background:var(--blue-l);border-radius:0 8px 8px 0;margin:.8em 0;font-style:italic;color:var(--muted);}
+.v69-output table{width:100%;border-collapse:collapse;font-size:13px;margin:.8em 0;}
+.v69-output th{background:var(--blue-d);color:#fff;padding:8px 12px;text-align:left;font-size:12px;}
+.v69-output td{padding:8px 12px;border-bottom:1px solid var(--line);}
+.v69-output tr:nth-child(even) td{background:#f8fafc;}
+
+/* Export bar */
+.v69-export-bar{display:flex;gap:8px;align-items:center;padding:12px 22px;border-top:1px solid var(--line);background:#f8fafc;flex-wrap:wrap;}
+.v69-export-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:4px;}
+.v69-export-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;}
+.v69-export-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l);}
+.v69-export-btn.pdf{border-color:#ef4444;color:#dc2626;}
+.v69-export-btn.pdf:hover{background:#fef2f2;}
+
+/* Next actions */
+.v69-next{background:linear-gradient(135deg,#f0f7fc,var(--blue-l));border:1.5px solid #b8dcf0;border-radius:18px;padding:20px;display:none;}
+.v69-next.show{display:block;}
+.v69-next h3{margin:0 0 14px;font-size:12px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;}
+.v69-next-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.v69-next-btn{display:flex;align-items:center;gap:11px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;transition:.2s;cursor:pointer;text-align:left;}
+.v69-next-btn:hover{border-color:var(--blue);background:var(--blue-l);transform:translateY(-1px);}
+.v69-next-ico{font-size:22px;flex-shrink:0;}
+.v69-next-text strong{display:block;font-size:13px;font-weight:700;color:var(--ink);}
+.v69-next-text span{font-size:11px;color:var(--muted);}
+
+/* Archive */
+.v69-archive{background:#fff;border-radius:var(--r);border:1px solid var(--line);box-shadow:var(--sh);display:none;}
+.v69-archive.show{display:block;}
+.v69-archive-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);}
+.v69-archive-head h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);}
+.v69-archive-body{padding:0 18px 12px;}
+.v69-archive-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8fafc;cursor:pointer;transition:.15s;}
+.v69-archive-item:last-child{border-bottom:none;}
+.v69-archive-item:hover .v69-archive-item-title{color:var(--blue);}
+.v69-archive-item-info{flex:1;min-width:0;}
+.v69-archive-item-title{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v69-archive-item-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.v69-archive-del{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:none;cursor:pointer;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;}
+.v69-archive-del:hover{border-color:#ef4444;color:#dc2626;background:#fef2f2;}
+
+/* Btn */
+.v69-btn{display:inline-flex;align-items:center;gap:6px;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;text-decoration:none;border:1.5px solid var(--line);background:#fff;color:var(--muted);}
+.v69-btn:hover{border-color:var(--ink);color:var(--ink);}
+.v69-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(0,121,193,.25);}
+.v69-btn.primary:hover{background:#0068a8;border-color:#0068a8;}
+
+/* Toast */
+.v69-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.v69-toast.show{opacity:1;}
+.v69-toast.err{background:#dc2626;}
+.v69-toast.ok{background:#16a34a;}
+
+/* Responsive */
+@media(max-width:960px){
+  .v69-layout{grid-template-columns:1fr;padding:16px 16px 60px;}
+  .v69-form-col{position:static;}
+  .v69-next-grid{grid-template-columns:1fr;}
+  .v69-row2{grid-template-columns:1fr;}
+}
+</style>
+<link rel="stylesheet" href="v58-styles.css">
+<style>
+/* ═══ RESPONSIVE GLOBAL V76 ═══ */
+@media(max-width:768px){
+  /* App pages */
+  .v69-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;gap:14px!important;}
+  .v69-form-col{position:static!important;}
+  .v69-next-grid{grid-template-columns:1fr!important;}
+  .v69-row2{grid-template-columns:1fr!important;}
+  .v69-gen-btn{font-size:14px!important;padding:14px 18px!important;}
+  .v69-result-body{padding:16px!important;}
+  .v69-retour-bar{height:auto!important;padding:10px 14px!important;flex-wrap:wrap!important;gap:8px!important;}
+  .v69-retour-info{display:none!important;}
+  .v69-wf-bar{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+  .v69-export-bar{padding:10px 14px!important;gap:6px!important;}
+  .v69-export-btn{font-size:11px!important;padding:6px 10px!important;}
+  /* Dashboard tabs */
+  .v5-tabs-bar{padding:0 6px!important;}
+  .v5-tab{padding:10px 8px!important;font-size:11px!important;gap:4px!important;}
+  .v5-tab-ico{font-size:13px!important;}
+  .v5-tab-content{padding:14px 12px!important;}
+  .v5-hero-bar{flex-direction:column!important;gap:14px!important;padding:16px!important;border-radius:14px!important;}
+  .v5-kpi-row{width:100%!important;}
+  .v5-kpi{flex:1!important;min-width:0!important;}
+  .v5-domain-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .v5-domain-pill{font-size:12px!important;padding:10px 11px!important;}
+  .v5-espace-grid{grid-template-columns:1fr 1fr!important;}
+  .v5-step-panel{padding:16px 12px!important;}
+  .v5-steps{padding:12px 12px!important;gap:0!important;}
+  .v5-step-label{font-size:9px!important;}
+  .v5-step-n{width:26px!important;height:26px!important;font-size:11px!important;}
+  .v5-step-footer{flex-wrap:wrap!important;gap:8px!important;}
+  .v5-step-footer > button{flex:1!important;justify-content:center!important;}
+  .v58-trt-grid{grid-template-columns:1fr!important;}
+  /* Expert page */
+  .ex-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  .ex-sidebar{position:static!important;}
+  .ex-quota-ring{width:80px!important;height:80px!important;}
+  .ex-quota-n{font-size:26px!important;}
+  /* Vault */
+  .v37-vault-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}
+  /* Trial alert */
+  .v5-trial-alert{flex-wrap:wrap!important;padding:12px 14px!important;}
+  .v5-trial-cta{margin-left:0!important;width:100%!important;text-align:center!important;}
+}
+@media(max-width:420px){
+  .v5-domain-grid{grid-template-columns:1fr!important;}
+  .v5-espace-grid{grid-template-columns:1fr!important;}
+  .v69-export-bar{gap:4px!important;}
+  .v69-export-btn{font-size:10px!important;padding:5px 8px!important;}
+}
+</style>
+</head>
+<body data-logout-target="private.html" class="v69-page" data-forced-space="private">
+
+<header class="v40-topbar">
+  <div class="v40-topbar-inner">
+    <a class="v40-topbar-brand" href="dashboard-private.html">
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>Conseil &amp; Expertise</small>
+      </div>
+    </a>
+    <div class="v40-topbar-sep"></div>
+    <span class="v40-topbar-sub">Génération guidée</span>
+    <nav class="v40-topbar-nav">
+      <a class="v40-topbar-btn" href="vault.html?space=private&amp;return=app-private.html">📂 Dépôt</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
+    </nav>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="v40-mobile-menu" id="v40MobileMenu">
+  <a href="vault.html?space=private&amp;return=app-private.html">📂 Dépôt</a>
+  <div style="height:1px;background:rgba(255,255,255,.08);margin:8px 0;"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+
+<!-- Retour parcours -->
+<div class="v69-retour-bar">
+  <a href="dashboard-private.html?from=app&amp;step=2" id="btnRetourDashboard" class="v69-retour-btn">← Retour au parcours</a>
+  <span class="v69-retour-info" id="v69RetourInfo">Votre saisie est conservée. Revenez après génération pour joindre le draft.</span>
+  <span class="v69-draft-badge" id="v69DraftBadge">✅ Draft prêt à joindre</span>
+</div>
+
+<!-- Workflow -->
+<div class="v69-wf-bar">
+  <div class="v69-wf-step active" id="wfStep1"><span class="v69-wf-num">1</span> Préparer</div>
+  <div class="v69-wf-step" id="wfStep2"><span class="v69-wf-num">2</span> Générer</div>
+  <div class="v69-wf-step" id="wfStep3"><span class="v69-wf-num">3</span> Exploiter</div>
+</div>
+
+<!-- Toast -->
+<div class="v69-toast" id="v69Toast"></div>
+
+<main class="v69-layout">
+
+  <!-- ═══ COLONNE GAUCHE ═══ -->
+  <div class="v69-form-col">
+
+    <!-- Badge domaine hérité -->
+    <div class="v69-domain-ctx" id="domainCtx">
+      <span class="v69-domain-ico" id="domainCtxIco">🎯</span>
+      <div class="v69-domain-info">
+        <div class="v69-domain-label">Domaine d'expertise</div>
+        <div class="v69-domain-name" id="domainCtxName">—</div>
+      </div>
+      <a href="dashboard-private.html" class="v69-domain-change">Modifier →</a>
+    </div>
+
+    <!-- Type de livrable -->
+    <div class="v69-usecase">
+      <label for="usecase">Type de livrable à produire</label>
+      <select id="usecase">
+        <option value="">— Sélectionnez —</option>
+        <option value="note_strategique">📋 Note stratégique</option>
+        <option value="courrier_urssaf">✉️ Courrier / Réponse URSSAF</option>
+        <option value="deliberation">🏛️ Marché public / Procédure achat</option>
+        <option value="synthese_reunion">📝 Synthèse de réunion</option>
+        <option value="cadrage_projet">🗂️ Cadrage projet / PMO</option>
+        <option value="rapport_synthese_argumente_public">📊 Rapport argumenté</option>
+        <option value="formalite_juridique">⚖️ Formalité juridique</option>
+        <option value="analyse_marche_public">🏗️ Analyse marchés publics / DCE</option>
+      </select>
+      <div class="v69-usecase-hint" id="usecaseInsight"></div>
+    </div>
+
+    <!-- Section contexte enrichie -->
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico blue">📋</div>
+        <div>
+          <h3>Contexte &amp; Objectif</h3>
+          <p>Cadrez la situation — pré-rempli depuis votre parcours</p>
+        </div>
+      </div>
+
+      <div class="v69-field">
+        <label class="v69-label">Contexte général <span id="ctxPrefillTag" class="v69-prefilled-tag" style="display:none">✓ Pré-rempli</span></label>
+        <textarea class="v69-input" id="context" rows="4" placeholder="Organisation, cadre institutionnel, situation de départ…"></textarea>
+      </div>
+
+      <div class="v69-field">
+        <label class="v69-label">Objectif du livrable <span id="objPrefillTag" class="v69-prefilled-tag" style="display:none">✓ Pré-rempli</span></label>
+        <textarea class="v69-input" id="objective" rows="3" placeholder="Résultat attendu, décision à éclairer, livrable souhaité…"></textarea>
+      </div>
+    </div>
+
+    <!-- Section détails avancés (pré-remplis) -->
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico teal">🔎</div>
+        <div>
+          <h3>Éléments de contexte avancés</h3>
+          <p>Acteurs, contraintes, échéances — enrichissent le livrable</p>
+        </div>
+      </div>
+
+      <div class="v69-row2">
+        <div class="v69-field">
+          <label class="v69-label">Contraintes</label>
+          <textarea class="v69-input" id="constraints" rows="2" placeholder="Légales, budgétaires, politiques…"></textarea>
+        </div>
+        <div class="v69-field">
+          <label class="v69-label">Points sensibles</label>
+          <textarea class="v69-input" id="risks" rows="2" placeholder="Risques, tensions, points bloquants…"></textarea>
+        </div>
+      </div>
+
+      <div class="v69-row2">
+        <div class="v69-field">
+          <label class="v69-label">Acteurs concernés</label>
+          <input class="v69-input" id="actors" type="text" placeholder="Élus, DG, prestataires…"/>
+        </div>
+        <div class="v69-field">
+          <label class="v69-label">Échéance</label>
+          <input class="v69-input" id="deadline" type="text" placeholder="Avant vendredi, sous 10 jours…"/>
+        </div>
+      </div>
+
+      <div class="v69-field">
+        <label class="v69-label">Éléments factuels</label>
+        <textarea class="v69-input" id="facts" rows="3" placeholder="Chiffres, dates, références réglementaires, noms…"></textarea>
+      </div>
+    </div>
+
+    <!-- Pièces vault -->
+    <div class="v69-section">
+      <div class="v69-section-head">
+        <div class="v69-section-ico amber">📎</div>
+        <div>
+          <h3>Pièces temporaires 48h</h3>
+          <p>Alimentent directement l'IA</p>
+        </div>
+      </div>
+      <div id="vaultInlineList"><div style="font-size:13px;color:var(--muted)">Aucune pièce disponible.</div></div>
+      <a class="v69-btn" href="vault.html?space=private&amp;return=app-private.html" style="margin-top:12px;font-size:12px">+ Déposer des pièces</a>
+    </div>
+
+    <!-- Auto-archivage -->
+    <div class="v69-auto-arch">
+      <input type="checkbox" id="autoArchive" checked/>
+      <label for="autoArchive">Archiver automatiquement les livrables générés</label>
+    </div>
+
+    <!-- Bouton générer -->
+    <button class="v69-gen-btn" id="btnGenerate" type="button">
+      <span>⚡</span>
+      <span id="btnGenerateText">Produire un livrable sécurisé</span>
+    </button>
+
+
+  </div>
+
+  <!-- ═══ COLONNE DROITE ═══ -->
+  <div class="v69-result-col">
+
+    <!-- Animation génération — visible en haut de la zone résultat -->
+    <div class="v69-loader" id="generationLoader" style="margin-bottom:4px;">
+      <div class="v69-spinner"></div>
+      <div class="v69-progress">
+        <strong style="font-size:14px;color:var(--ink)">Génération en cours&#x2026;</strong>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Analyse du contexte, structuration, rédaction professionnelle.</div>
+        <div class="v69-progress-bar-wrap"><div class="v69-progress-bar" id="progressBar"></div></div>
+      </div>
+    </div>
+
+
+    <!-- État vide -->
+    <div class="v69-empty" id="resultEmpty">
+      <div class="v69-empty-ico">📄</div>
+      <h3>Votre livrable apparaît ici</h3>
+      <p>Sélectionnez un type de document, complétez le contexte et cliquez sur Produire.</p>
+      <div class="v69-empty-tags">
+        <span class="v69-empty-tag" style="background:#eef7ff;color:#0079c1">Structuré</span>
+        <span class="v69-empty-tag" style="background:#f0fdf4;color:#059669">Professionnel</span>
+        <span class="v69-empty-tag" style="background:#fffbeb;color:#d97706">Exploitable</span>
+        <span class="v69-empty-tag" style="background:#f5f3ff;color:#7c3aed">Exportable</span>
+      </div>
+    </div>
+
+    <!-- Résultat généré -->
+    <div class="v69-result-card" id="resultCard">
+      <div class="v69-result-header">
+        <div>
+          <h2 id="resultTitle">Résultat généré</h2>
+          <div class="v69-result-meta" id="resultMeta"></div>
+        </div>
+        <div class="v69-result-actions">
+          <button class="v69-btn" id="btnCopyResult">📋 Copier</button>
+          <button class="v69-btn" id="btnArchiveResult">🗄 Archiver</button>
+        </div>
+      </div>
+      <div class="v69-result-body">
+        <div class="v69-output" id="output"></div>
+      </div>
+      <!-- Barre d'export -->
+      <div class="v69-export-bar">
+        <span class="v69-export-label">Exporter :</span>
+        <button class="v69-export-btn pdf" id="btnExportPdf" type="button">📄 PDF</button>
+        <button class="v69-export-btn" id="btnExportTxt" type="button">📝 TXT</button>
+        <button class="v69-export-btn" id="btnExportDoc" type="button">📃 DOC</button>
+        <button class="v69-export-btn" id="btnExportCsv" type="button">📊 CSV</button>
+      </div>
+    </div>
+
+    <!-- Actions suivantes -->
+    <div class="v69-next" id="nextActions">
+      <h3>🚀 Et maintenant ?</h3>
+      <div class="v69-next-grid">
+        <a class="v69-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=2" id="resultExpertLink">
+          <span class="v69-next-ico">✍️</span>
+          <div class="v69-next-text"><strong>Soumettre à un expert</strong><span>Joindre ce draft à ma demande</span></div>
+        </a>
+        <a class="v69-next-btn" href="dashboard-private.html?from=app&amp;attach=last&amp;step=3">
+          <span class="v69-next-ico">📎</span>
+          <div class="v69-next-text"><strong>Retour étape Documents</strong><span>Attacher ce draft au dossier</span></div>
+        </a>
+        <button class="v69-next-btn" id="btnRefine" type="button">
+          <span class="v69-next-ico">✨</span>
+          <div class="v69-next-text"><strong>Affiner le livrable</strong><span>Améliorer la qualité</span></div>
+        </button>
+        <button class="v69-next-btn" id="btnNewDoc" type="button">
+          <span class="v69-next-ico">🔄</span>
+          <div class="v69-next-text"><strong>Nouveau livrable</strong><span>Générer un autre document</span></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Archive locale -->
+    <div class="v69-archive" id="archivePanel">
+      <div class="v69-archive-head">
+        <h3>📁 Mes drafts archivés</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="archiveCount" style="font-size:12px;color:var(--muted)"></span>
+          <button class="v69-btn" id="btnClearArchive" style="font-size:12px;padding:5px 10px">Tout vider</button>
+        </div>
+      </div>
+      <div class="v69-archive-body" id="archiveList"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Auth check -->
+<script>
+(function(){
+  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
+  function getToken(){return sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';}
+  function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
+  function redirectToLogin(){window.location.replace('login.html?next=app.html');}
+  if(hasSession()){
+    window.__popeAuthValidated=true;
+    var _n=localStorage.getItem('pope_session_nonce');
+    if(_n&&!sessionStorage.getItem('pope_session_nonce')) sessionStorage.setItem('pope_session_nonce',_n);
+    return;
+  }
+  var tk=getToken(),headers={'Content-Type':'application/json'};
+  if(tk)headers['Authorization']='Bearer '+tk;
+  fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
+    .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return{};});})
+    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');localStorage.setItem('pope_session_user',JSON.stringify(d.user));var _n2=localStorage.getItem('pope_session_nonce');if(!_n2){_n2=Date.now().toString(36);localStorage.setItem('pope_session_nonce',_n2);}sessionStorage.setItem('pope_session_nonce',_n2);window.__popeAuthValidated=true;}else throw 0;})
+    .catch(function(){redirectToLogin();});
+})();
+</script>
+
+<!-- Burger -->
+<script>
+(function(){
+  var b=document.getElementById('v40Burger'),m=document.getElementById('v40MobileMenu');
+  if(!b||!m)return;
+  var sp=b.querySelectorAll('span');
+  function o(open){if(open){m.classList.add('open');sp[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';sp[1].style.cssText='opacity:0;transform:scaleX(0)';sp[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{m.classList.remove('open');[0,1,2].forEach(function(i){sp[i].style.cssText='';});}}
+  b.addEventListener('click',function(){o(!m.classList.contains('open'));});
+  m.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){o(false);});});
+  document.addEventListener('click',function(e){if(!b.contains(e.target)&&!m.contains(e.target))o(false);});
+})();
+</script>
+
+<!-- ══ CONTRÔLEUR V69 APP ══ -->
+<script>
+(function(){
+'use strict';
+
+var API = (function(){
+  var h=location.hostname;
+  if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+  if(h.indexOf('staging')!==-1) return 'https://popeonline-staging.onrender.com';
+  return 'https://pope-online-v2.onrender.com';
 })();
 
+var SPACE    = 'private';
+var DASH_KEY = 'pope_v67_priv';
+var GENS_KEY = 'pope_v67_gens_priv';
+var FORM_KEY = 'pope_v67_form_priv';
+var TOKEN_KEY= 'pope_session_token';
+
+/* ─── Helpers ─── */
+function $(id){ return document.getElementById(id); }
+function qsa(s,r){ return Array.from((r||document).querySelectorAll(s)); }
+function token(){ return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||''; }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+var _toastT;
+function toast(msg,type){
+  var el=$('v69Toast');if(!el)return;
+  el.textContent=msg;el.className='v69-toast '+(type||'');
+  el.classList.add('show');clearTimeout(_toastT);
+  _toastT=setTimeout(function(){el.classList.remove('show');},3500);
+}
+
+function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h['Authorization']='Bearer '+t;return h;}
+function apiFetch(path,opts){
+  opts=opts||{};
+  return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'})
+    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});
+}
+
+/* ─── Auth ─── */
+function requireAuth(){if(token())return true;if(localStorage.getItem('pope_session_active')==='1')return true;location.href='login.html?next=app-private.html';return false;}
+function logout(){
+  // V72: ciblé, préserve générations
+  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
+  try{sessionStorage.clear();}catch(e){}
+  try{
+    var all=Object.keys(localStorage);
+    all.forEach(function(k){
+      if(PRESERVE.indexOf(k)!==-1)return;
+      if(k.indexOf('pope_')===0||k.indexOf('v5_')===0||k==='pope_session_active'||k==='pope_session_user'){
+        localStorage.removeItem(k);
+      }
+    });
+  }catch(e){}
+  // Vider les champs visuellement
+  ['usecase','context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  location.href='private.html';
+}
+
+/* ─── Workflow ─── */
+function setWF(n){
+  for(var i=1;i<=3;i++){
+    var el=$('wfStep'+i);if(!el)continue;
+    el.classList.remove('active','done');
+    if(i===n)el.classList.add('active');else if(i<n)el.classList.add('done');
+  }
+}
+
+/* ─── Progress bar animation ─── */
+var _progT,_progV=0;
+function startProgress(){
+  _progV=0;var bar=$('progressBar');if(!bar)return;
+  bar.style.width='0%';
+  _progT=setInterval(function(){
+    _progV=Math.min(_progV+Math.random()*8,88);
+    bar.style.width=_progV+'%';
+  },400);
+}
+function stopProgress(){
+  clearInterval(_progT);
+  var bar=$('progressBar');if(!bar)return;
+  bar.style.width='100%';
+  setTimeout(function(){bar.style.width='0%';},600);
+}
+
+/* ─── Usecase hints ─── */
+var UH={
+  note_strategique:{b:'Note de cadrage pour éclairer une décision politique ou administrative. Précisez les options, contraintes et décision attendue.'},
+  courrier:{b:'Courrier structuré pour une correspondance officielle. Indiquez destinataire, objet et contexte.'},
+  deliberation:{b:'Structure conforme aux usages institutionnels. Précisez sujet, textes de référence et enjeux.'},
+  synthese_reunion:{b:'Compte rendu exploitable. Décrivez participants, points abordés et décisions prises.'},
+  cadrage_projet:{b:'Note de cadrage projet. Précisez objectifs, jalons, risques et parties prenantes.'},
+  rapport_synthese_argumente_public:{b:'Analyse factuelle avec recommandation. Joignez vos documents depuis le coffre.'},
+  courrier_urssaf:{b:'Réponse structurée à un courrier URSSAF ou organisme social. Joignez les pièces depuis votre dépôt.'},
+  formalite_juridique:{b:'Document pour une formalité juridique ou administrative. Précisez la nature, les parties et le cadre légal.'},
+  analyse_marche_public:{b:'Analyse DCE, grilles d\'offres, sécurisation procédure achat. Précisez type de marché et pièces disponibles.'}
+};
+function updateHelp(){
+  var v=($('usecase')||{}).value||'';var h=UH[v];var el=$('usecaseInsight');if(!el)return;
+  if(h){el.textContent=h.b;el.classList.add('show');}else{el.textContent='';el.classList.remove('show');}
+}
+
+/* ─── Rendu Markdown → HTML ─── */
+function renderMarkdown(text){
+  if(!text) return '';
+  var lines=text.split('\n');
+  var html='';var inList=false;var inOl=false;
+  function closeList(){if(inList){html+='</ul>';inList=false;}if(inOl){html+='</ol>';inOl=false;}}
+  function fmtInline(s){
+    s=s.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+    s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');
+    s=s.replace(/`(.+?)`/g,'<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px">$1</code>');
+    return s;
+  }
+  lines.forEach(function(line){
+    var trimmed=line.trim();
+    if(!trimmed){closeList();html+='<p></p>';return;}
+    if(/^---+$/.test(trimmed)){closeList();html+='<hr>';return;}
+    if(/^#{1}\s/.test(trimmed)){closeList();html+='<h1>'+fmtInline(trimmed.slice(2))+'</h1>';return;}
+    if(/^#{2}\s/.test(trimmed)){closeList();html+='<h2>'+fmtInline(trimmed.slice(3))+'</h2>';return;}
+    if(/^#{3}\s/.test(trimmed)){closeList();html+='<h3>'+fmtInline(trimmed.slice(4))+'</h3>';return;}
+    if(/^#{4}\s/.test(trimmed)){closeList();html+='<h3>'+fmtInline(trimmed.slice(5))+'</h3>';return;}
+    if(/^>\s/.test(trimmed)){closeList();html+='<blockquote>'+fmtInline(trimmed.slice(2))+'</blockquote>';return;}
+    if(/^[-*]\s/.test(trimmed)){
+      if(inOl){html+='</ol>';inOl=false;}
+      if(!inList){html+='<ul>';inList=true;}
+      html+='<li>'+fmtInline(trimmed.slice(2))+'</li>';return;
+    }
+    if(/^\d+\.\s/.test(trimmed)){
+      if(inList){html+='</ul>';inList=false;}
+      if(!inOl){html+='<ol>';inOl=true;}
+      html+='<li>'+fmtInline(trimmed.replace(/^\d+\.\s/,''))+'</li>';return;
+    }
+    closeList();
+    html+='<p>'+fmtInline(trimmed)+'</p>';
+  });
+  closeList();
+  return html;
+}
+
+/* ─── Export ─── */
+var _lastRawText='';
+function exportTxt(){
+  if(!_lastRawText)return;
+  var blob=new Blob([_lastRawText],{type:'text/plain;charset=utf-8'});
+  download(blob,'livrable-pope.txt');
+}
+function exportCsv(){
+  if(!_lastRawText)return;
+  var rows=[['Livrable POPE Online'],['Généré le',new Date().toLocaleString('fr-FR')],[''],['Contenu'],['',_lastRawText.replace(/\n/g,' ')]];
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(';');}).join('\r\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  download(blob,'livrable-pope.csv');
+}
+function exportDoc(){
+  if(!_lastRawText)return;
+  var header='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Livrable POPE</title></head><body style="font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;margin:3cm 2.5cm">';
+  var content=_lastRawText.replace(/\n/g,'<br>');
+  var footer='</body></html>';
+  var blob=new Blob([header+content+footer],{type:'application/msword'});
+  download(blob,'livrable-pope.doc');
+}
+function exportPdf(){
+  if(!_lastRawText){toast('Aucun livrable à exporter.','err');return;}
+  var w=window.open('','_blank');
+  if(!w){toast('Veuillez autoriser les pop-ups.','err');return;}
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Livrable POPE Online</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.7;margin:2.5cm 2cm;color:#1a1a2e}'
+    +'h1,h2,h3{color:#0b3060}h1{font-size:18pt;border-bottom:2px solid #e2e8f0;padding-bottom:8px}'
+    +'h2{font-size:15pt}h3{font-size:13pt}ul,ol{margin:.5em 0;padding-left:1.5em}'
+    +'blockquote{border-left:3px solid #0079c1;padding:8px 14px;background:#eef7ff;margin:.8em 0}'
+    +'hr{border:none;border-top:1px solid #e2e8f0;margin:1.5em 0}'
+    +'.header{border-bottom:3px solid #0b3060;margin-bottom:2em;padding-bottom:1em}'
+    +'.footer{border-top:1px solid #e2e8f0;margin-top:2em;padding-top:.8em;font-size:9pt;color:#888}'
+    +'@page{margin:2cm}@media print{body{margin:0}}'
+    +'</style></head><body>';
+  html+='<div class="header"><h1>POPE Online — Livrable généré</h1>'
+    +'<p style="color:#50627a;font-size:10pt">Généré le '+new Date().toLocaleString('fr-FR')+'</p></div>';
+  html+=renderMarkdown(_lastRawText);
+  html+='<div class="footer">Document généré par POPE Online · Conseil &amp; Expertise pour les collectivités</div>';
+  html+='</body></html>';
+  w.document.write(html);w.document.close();
+  setTimeout(function(){w.focus();w.print();},600);
+}
+function download(blob,name){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
+}
+
+/* ─── Form persistence ─── */
+function saveForm(){
+  try{localStorage.setItem(FORM_KEY,JSON.stringify({
+    usecase:($('usecase')||{}).value||'',
+    context:($('context')||{}).value||'',
+    objective:($('objective')||{}).value||'',
+    constraints:($('constraints')||{}).value||'',
+    risks:($('risks')||{}).value||'',
+    actors:($('actors')||{}).value||'',
+    deadline:($('deadline')||{}).value||'',
+    facts:($('facts')||{}).value||''
+  }));}catch(e){}
+}
+function restoreForm(){
+  try{
+    var raw=localStorage.getItem(FORM_KEY);if(!raw)return;
+    var f=JSON.parse(raw);
+    function set(id,v){var el=$(id);if(el&&!el.value&&v)el.value=v;}
+    set('usecase',f.usecase);set('context',f.context);set('objective',f.objective);
+    set('constraints',f.constraints);set('risks',f.risks);
+    set('actors',f.actors);set('deadline',f.deadline);set('facts',f.facts);
+  }catch(e){}
+}
+
+/* ─── Pré-alimentation intelligente depuis dashboard ─── */
+function prefillFromDashboard(){
+  try{
+    // Lire le state depuis sessionStorage, localStorage, et clés legacy
+    var raw=sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY)
+           ||sessionStorage.getItem('pope_v58_state_private')||localStorage.getItem('pope_v58_state_private')
+           ||sessionStorage.getItem('pope_v57_state_private')||localStorage.getItem('pope_v57_state_private');
+    if(!raw)return;
+    var s=JSON.parse(raw);var n=s.need||{};
+
+    /* Badge domaine */
+    if(s.domain){
+      var ctx=$('domainCtx'),ico=$('domainCtxIco'),nm=$('domainCtxName');
+      if(ctx)ctx.classList.add('show');
+      if(ico)ico.textContent=s.domainIcon||'🎯';
+      if(nm)nm.textContent=s.domain;
+      var info=$('v69RetourInfo');
+      if(info)info.textContent='Domaine : '+s.domain+' — contexte pré-rempli depuis votre parcours.';
+    }
+
+    /* Champs context */
+    var ctxEl=$('context');
+    if(ctxEl&&!ctxEl.value){
+      var parts=[];
+      if(s.domain)    parts.push('Domaine : '+s.domain);
+      if(n.title)     parts.push('Objet : '+n.title);
+      if(n.context)   parts.push('Contexte : '+n.context);
+      if(n.problem)   parts.push('Problème : '+n.problem);
+      if(parts.length){ctxEl.value=parts.join('\n');var t=$('ctxPrefillTag');if(t)t.style.display='inline-flex';}
+    }
+    /* Champs objective */
+    var objEl=$('objective');
+    if(objEl&&!objEl.value){
+      var op=[];
+      if(n.objective)   op.push(n.objective);
+      if(n.deliverable) op.push('Livrable : '+n.deliverable);
+      if(n.decision)    op.push('Décision : '+n.decision);
+      if(n.detailLevel) op.push('Niveau : '+n.detailLevel);
+      if(op.length){objEl.value=op.join('\n');var t2=$('objPrefillTag');if(t2)t2.style.display='inline-flex';}
+      else if(n.title){objEl.value=n.title;}
+    }
+    /* Champs avancés */
+    function fillIfEmpty(id,val){var el=$(id);if(el&&!el.value&&val)el.value=val;}
+    fillIfEmpty('constraints',n.constraints);
+    fillIfEmpty('risks',n.risks);
+    fillIfEmpty('actors',[n.actors,n.audience].filter(Boolean).join(', '));
+    fillIfEmpty('deadline',n.deadline);
+    fillIfEmpty('facts',n.pieces);
+
+    /* Badge draft ready */
+    var lastId=localStorage.getItem('pope_v61_last_gen')||localStorage.getItem('pope_v54_last_generation_id');
+    if(lastId){
+      var badge=$('v69DraftBadge');if(badge)badge.classList.add('show');
+      var retour=$('btnRetourDashboard');if(retour)retour.href='dashboard-private.html?from=app&attach=last&step=2';
+    }
+  }catch(e){}
+}
+
+/* ─── URL params ─── */
+function initFromUrl(){
+  var sp=new URLSearchParams(location.search);
+  var domain=sp.get('domain');
+  if(domain){
+    var ctx=$('domainCtx'),nm=$('domainCtxName');
+    if(ctx)ctx.classList.add('show');
+    if(nm)nm.textContent=decodeURIComponent(domain);
+  }
+}
+
+/* ─── Vault ─── */
+function loadVault(){
+  var list=$('vaultInlineList');if(!list)return;
+  list.innerHTML='<div style="font-size:13px;color:var(--muted)">Chargement…</div>';
+  apiFetch('/vault')
+    .then(function(data){
+      var items=(data&&data.items)||(data&&data.files)||[];
+      if(!items.length){
+        list.innerHTML='<div style="font-size:13px;color:var(--muted)">Aucune pièce. '
+          +'<a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue);font-weight:600">Déposer →</a></div>';
+        return;
+      }
+      list.innerHTML=items.map(function(f){
+        var rawId=f.id||f.filename||'';
+        var encId=encodeURIComponent(rawId);
+        var nm=esc(f.name||f.filename||'Fichier'),sz=esc(f.size_label||'');
+        return '<div class="v69-vault-item"><input type="checkbox" data-vault-file value="'+encId+'" id="vf'+encId+'"/>'
+          +'<label for="vf'+encId+'" style="flex:1;font-size:13px;color:var(--ink);cursor:pointer;">'+nm+'</label>'
+          +'<span class="v69-vault-sz">'+sz+'</span></div>';
+      }).join('');
+    })
+    .catch(function(){
+      list.innerHTML='<div style="font-size:13px;color:var(--muted)">Coffre indisponible. '
+        +'<a href="vault.html?space='+SPACE+'&return=app.html" style="color:var(--blue)">Ouvrir →</a></div>';
+    });
+}
+
+/* ─── Générations ─── */
+function loadGens(){
+  var g=[];
+  // Lire depuis TOUTES les clés (pub + priv + legacy) pour cross-space visibility
+  var keys=[GENS_KEY,'pope_v67_gens_pub','pope_v67_gens_priv',
+    'pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keys.forEach(function(k){
+    try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))g=g.concat(a);}catch(e){}
+  });
+  var seen={};return g.filter(function(x){if(!x||seen[x.id])return false;seen[x.id]=1;return true;});
+}
+function saveGen(g){
+  var gens=[];try{gens=JSON.parse(localStorage.getItem(GENS_KEY)||'[]');}catch(e){}
+  gens.unshift(g);if(gens.length>30)gens=gens.slice(0,30);
+  try{localStorage.setItem(GENS_KEY,JSON.stringify(gens));}catch(e){}
+  try{localStorage.setItem('pope_v61_last_gen',String(g.id));}catch(e){}
+  try{localStorage.setItem('pope_v54_last_generation_id',String(g.id));}catch(e){}
+  try{window.dispatchEvent(new CustomEvent('pope_generation_done',{detail:g}));}catch(e){}
+}
+function deleteGen(id){
+  // Filter from all storage keys where this gen might live
+  var keysToClean=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+    'pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+  keysToClean.forEach(function(k){
+    try{
+      var arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)){
+        var filtered=arr.filter(function(g){return g&&String(g.id)!==String(id);});
+        localStorage.setItem(k,JSON.stringify(filtered));
+      }
+    }catch(e){}
+  });
+  renderArchive();
+}
+function renderArchive(){
+  var gens=loadGens();
+  var panel=$('archivePanel');var list=$('archiveList');var cnt=$('archiveCount');
+  if(!gens.length){if(panel)panel.classList.remove('show');return;}
+  if(panel)panel.classList.add('show');
+  if(cnt)cnt.textContent=gens.length+' draft'+(gens.length>1?'s':'');
+  if(!list)return;
+  list.innerHTML=gens.slice(0,15).map(function(g){
+    var d=g.createdAt?new Date(g.createdAt).toLocaleString('fr-FR'):'';
+    var gid=esc(String(g.id));
+    return '<div class="v69-archive-item" data-gen-id="'+gid+'">'
+      +'<div class="v69-archive-item-info">'
+      +'<div class="v69-archive-item-title">'+esc(g.title||g.usecaseLabel||'Draft')+'</div>'
+      +'<div class="v69-archive-item-meta">'+esc((g.usecaseLabel||'')+(d?' — '+d:''))+'</div>'
+      +'</div>'
+      +'<button class="v69-archive-del" data-del-id="'+gid+'" title="Supprimer">🗑</button>'
+      +'</div>';
+  }).join('');
+}
+
+/* ─── Afficher résultat ─── */
+function showResult(text,title,meta){
+  _lastRawText=text;
+  if($('resultEmpty'))$('resultEmpty').style.display='none';
+  if($('generationLoader'))$('generationLoader').classList.remove('show');
+  var card=$('resultCard');if(card)card.classList.add('show');
+  if($('resultTitle'))$('resultTitle').textContent=title||'Document généré';
+  if($('resultMeta'))$('resultMeta').textContent=meta||'';
+  var out=$('output');
+  if(out){out.innerHTML=renderMarkdown(text);}
+  var next=$('nextActions');if(next)next.classList.add('show');
+  var badge=$('v69DraftBadge');if(badge)badge.classList.add('show');
+  setWF(3);renderArchive();
+}
+
+/* ─── Copier ─── */
+function copyResult(){
+  if(!_lastRawText){toast('Aucun contenu.','err');return;}
+  navigator.clipboard.writeText(_lastRawText)
+    .then(function(){toast('Copié dans le presse-papiers !','ok');})
+    .catch(function(){toast('Impossible de copier.','err');});
+}
+
+/* ─── Construire payload enrichi ─── */
+function buildPayload(){
+  var uc=($('usecase')||{}).value||'';
+  var ctx=($('context')||{}).value||'';
+  var obj=($('objective')||{}).value||'';
+  var cons=($('constraints')||{}).value||'';
+  var risks=($('risks')||{}).value||'';
+  var actors=($('actors')||{}).value||'';
+  var deadline=($('deadline')||{}).value||'';
+  var facts=($('facts')||{}).value||'';
+
+  /* Enrichir le contexte avec les champs avancés */
+  var fullCtx=ctx;
+  var extras=[];
+  if(cons)    extras.push('Contraintes : '+cons);
+  if(risks)   extras.push('Points sensibles : '+risks);
+  if(actors)  extras.push('Acteurs : '+actors);
+  if(deadline)extras.push('Échéance : '+deadline);
+  if(extras.length) fullCtx = fullCtx + (fullCtx?'\n\n':'') + extras.join('\n');
+
+  var vids=qsa('[data-vault-file]:checked').map(function(n){return n.value;});
+
+  return {
+    mode:'generate',
+    usecase:uc,
+    context:fullCtx,
+    objective:obj,
+    facts:facts,
+    locale:'fr-FR',
+    accountSpace:SPACE,
+    uploaded_file_ids:vids
+  };
+}
+
+/* ─── Générer ─── */
+function generate(){
+  var payload=buildPayload();
+  if(!payload.usecase){toast('Sélectionnez un type de document.','err');return;}
+  if(!($('context')||{}).value.trim()){toast('Le contexte est obligatoire.','err');$('context').focus();return;}
+  if(!($('objective')||{}).value.trim()){toast("L'objectif est obligatoire.",'err');$('objective').focus();return;}
+
+  saveForm();setWF(2);
+  var btn=$('btnGenerate'),btnTxt=$('btnGenerateText');
+  if(btn){btn.disabled=true;btn.classList.add('loading');}
+  if(btnTxt)btnTxt.textContent='Génération en cours…';
+
+  if($('resultEmpty'))$('resultEmpty').style.display='none';
+  var card=$('resultCard');if(card)card.classList.remove('show');
+  var next=$('nextActions');if(next)next.classList.remove('show');
+  var loader=$('generationLoader');if(loader)loader.classList.add('show');
+
+  startProgress();
+
+  function done(ok){
+    stopProgress();
+    if(btn){btn.disabled=false;btn.classList.remove('loading');}
+    if(btnTxt)btnTxt.textContent='Produire un livrable sécurisé';
+    if(!ok){
+      if(loader)loader.classList.remove('show');
+      if($('resultEmpty'))$('resultEmpty').style.display='flex';
+      setWF(1);
+    }
+  }
+
+  apiFetch('/ai/generate',{method:'POST',body:payload})
+    .then(function(data){
+      var text=data&&(data.result||data.output||data.text)||'';
+      if(!text)throw new Error('Réponse vide du serveur.');
+
+      var ucEl=$('usecase');
+      var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||payload.usecase;
+      var now=new Date();
+      var title=($('objective')||{}).value.trim().slice(0,70)||label.trim();
+      var meta=label.trim()+' — '+now.toLocaleString('fr-FR');
+
+      var domainEl=$('domainCtxName');
+      var gr={id:'g_'+Date.now(),title:title,usecaseLabel:label.trim(),usecase:payload.usecase,
+        createdAt:now.toISOString(),result:text,domain:(domainEl&&domainEl.textContent)||'',
+        prompt:{context:payload.context,objective:payload.objective,facts:payload.facts},source:'app-v70-private'};
+
+      /* Auto-archive */
+      var autoArch=$('autoArchive');
+      if(!autoArch||autoArch.checked) saveGen(gr);
+
+      /* Liens */
+      var el=$('resultExpertLink');if(el)el.href='dashboard-private.html?from=app&attach=last&step=2';
+      var rb=$('btnRetourDashboard');if(rb)rb.href='dashboard-private.html?from=app&attach=last&step=2';
+
+      showResult(text,title,meta);
+      toast('Document généré avec succès !','ok');
+      done(true);
+    })
+    .catch(function(e){
+      var msg=(e&&e.data&&(e.data.error_label||e.data.error))||(e&&e.message)||'Erreur lors de la génération.';
+      toast(msg,'err');done(false);
+    });
+}
+
+/* ─── Init ─── */
+function init(){
+  if(!requireAuth())return;
+
+  /* Logout — capture phase pour surpasser wireLogout de app.js */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-logout]');
+    if(!btn) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    logout();
+  }, true);
+
+  /* Form events */
+  var uc=$('usecase');if(uc)uc.addEventListener('change',function(){updateHelp();saveForm();});
+  ['context','objective','constraints','risks','actors','deadline','facts'].forEach(function(id){
+    var el=$(id);if(el)el.addEventListener('input',saveForm);
+  });
+
+  /* Generate */
+  var gen=$('btnGenerate');if(gen)gen.addEventListener('click',generate);
+
+  /* Copy */
+  var cp=$('btnCopyResult');if(cp)cp.addEventListener('click',copyResult);
+
+  /* Archive manuel */
+  var arch=$('btnArchiveResult');
+  if(arch)arch.addEventListener('click',function(){
+    if(_lastRawText){
+      var ucEl=$('usecase');
+      var label=(ucEl&&ucEl.selectedOptions&&ucEl.selectedOptions[0]&&ucEl.selectedOptions[0].textContent)||'Draft';
+      var g={id:'g_'+Date.now(),title:($('resultTitle')||{}).textContent||'Draft',
+        usecaseLabel:label.trim(),createdAt:new Date().toISOString(),result:_lastRawText,source:'app-v70-priv-manual'};
+      saveGen(g);renderArchive();toast('Draft archivé.','ok');
+    }
+  });
+
+  /* Vider archive */
+  var clr=$('btnClearArchive');
+  if(clr)clr.addEventListener('click',function(){
+    if(confirm('Vider tous les drafts archivés ?')){
+      ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations',
+       'pope_v54_generations','pope_v53_generations','pope_ai_generations',
+       'pope_v61_last_gen','pope_v54_last_generation_id',GENS_KEY].forEach(function(k){
+        try{localStorage.removeItem(k);}catch(e){}
+      });
+      renderArchive();toast('Archive vidée.','ok');
+    }
+  });
+
+  /* Export buttons */
+  var ep=$('btnExportPdf');if(ep)ep.addEventListener('click',exportPdf);
+  var et=$('btnExportTxt');if(et)et.addEventListener('click',exportTxt);
+  var ed=$('btnExportDoc');if(ed)ed.addEventListener('click',exportDoc);
+  var ec=$('btnExportCsv');if(ec)ec.addEventListener('click',exportCsv);
+
+  /* Archive list click/delete */
+  var archList=$('archiveList');
+  if(archList){
+    archList.addEventListener('click',function(e){
+      /* Suppression individuelle */
+      var delBtn=e.target.closest('[data-del-id]');
+      if(delBtn){
+        var id=delBtn.getAttribute('data-del-id');
+        if(confirm('Supprimer ce draft ?')){deleteGen(id);toast('Draft supprimé.','ok');}
+        return;
+      }
+      /* Ouvrir */
+      var item=e.target.closest('[data-gen-id]');
+      if(!item)return;
+      var gid=item.getAttribute('data-gen-id');
+      var g=loadGens().find(function(x){return String(x.id)===String(gid);});
+      if(g)showResult(g.result||'',g.title||'Draft',g.usecaseLabel||'');
+    });
+  }
+
+  /* Affiner */
+  var refine=$('btnRefine');
+  if(refine)refine.addEventListener('click',function(){
+    if(!_lastRawText){toast('Générez d\'abord un document.','err');return;}
+    var ctx=$('context');
+    if(ctx){ctx.value=ctx.value+'\n\nAméliorer : rendre ce document plus précis, plus structuré et plus professionnel.';saveForm();}
+    generate();
+  });
+
+  /* Nouveau doc */
+  var newdoc=$('btnNewDoc');
+  if(newdoc)newdoc.addEventListener('click',function(){
+    var card=$('resultCard'),empty=$('resultEmpty'),next=$('nextActions');
+    if(card)card.classList.remove('show');
+    if(empty)empty.style.display='flex';
+    if(next)next.classList.remove('show');
+    setWF(1);_lastRawText='';
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  /* Vérification nonce — si nouvelle session, vider le form APP uniquement */
+  /* NE PAS effacer DASH_KEY : il contient le contexte du parcours (domaine, besoin) */
+  (function(){
+    var lsNonce=localStorage.getItem('pope_session_nonce');
+    var ssNonce=sessionStorage.getItem('pope_session_nonce');
+    if(lsNonce && ssNonce && lsNonce !== ssNonce){
+      // Nouvelle connexion → effacer uniquement le form app (FORM_KEY)
+      try{localStorage.removeItem(FORM_KEY);}catch(e){}
+      // PAS de removeItem(DASH_KEY) — le contexte du parcours doit rester accessible
+      sessionStorage.setItem('pope_session_nonce', lsNonce);
+    }
+  })();
+
+  /* Si état dashboard disponible, effacer le form sauvegardé pour laisser le dashboard remplir */
+  (function(){
+    try{
+      var hasDash=!!(sessionStorage.getItem(DASH_KEY)||localStorage.getItem(DASH_KEY));
+      var fromDash=(new URLSearchParams(location.search).get('from')==='dashboard');
+      if(hasDash||fromDash) localStorage.removeItem(FORM_KEY);
+    }catch(e){}
+  })();
+
+  /* Restore form sauvegardé (uniquement si pas de contexte dashboard) */
+  restoreForm();
+
+  /* Pré-alimentation depuis le dashboard (prioritaire) */
+  prefillFromDashboard();
+
+  /* URL params */
+  initFromUrl();
+
+  /* Aide */
+  updateHelp();
+
+  /* Vault */
+  loadVault();
+
+  /* Archive */
+  renderArchive();
+
+  /* WF */
+  setWF(1);
+
+  /* Quota check — charger en arrière-plan et bloquer si nécessaire */
+  checkQuota();
+}
+
+function checkQuota(){
+  // La génération IA est ILLIMITÉE — le quota concerne les demandes expertes uniquement
+  // Afficher un badge informatif sur les demandes expertes restantes
+  apiFetch('/auth/me').then(function(data){
+    var w=data&&data.wallet||{};
+    var expired=w.status==='trial_expired'||w.trial_expired;
+    var left=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
+    
+    // Afficher bannière info (ne bloque PAS la génération)
+    var banner=document.getElementById('quotaBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='quotaBanner';
+    }
+    if(expired){
+      banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+      banner.innerHTML='<span style="font-size:20px">⏰</span>'
+        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — La génération IA reste disponible. Les demandes expertes nécessitent un plan actif.</div>'
+        +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres</a>';
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
+    } else if(left!=null&&left<=0){
+      banner.style.cssText='background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
+      banner.innerHTML='<span style="font-size:20px">⚡</span>'
+        +'<div style="flex:1;font-size:13px;color:#065f46"><strong>Génération IA illimitée</strong> — Quota de demandes expertes épuisé ce mois. Vos documents générés peuvent être archivés et partagés.</div>'
+        +'<a href="pricing.html" style="background:#16a34a;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Plus de conseils</a>';
+      var formCol=document.querySelector('.v69-form-col');
+      if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);
+    } else if(left!=null&&left>0){
+      // Afficher les crédits restants discrètement
+      var badge=document.getElementById('expertLeftBadge');
+      if(!badge){
+        badge=document.createElement('div');
+        badge.id='expertLeftBadge';
+        badge.style.cssText='font-size:11px;color:var(--muted);text-align:center;padding:4px;';
+        badge.textContent=left+' demande'+(left>1?'s':'')+' experte'+(left>1?'s':'')+' disponible'+(left>1?'s':'');
+        var btn=document.getElementById('btnGenerate');
+        if(btn&&btn.parentNode) btn.parentNode.insertBefore(badge, btn.nextSibling);
+      }
+    }
+  }).catch(function(){});
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+
+})();
 </script>
+
+<script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 </body>
 </html>

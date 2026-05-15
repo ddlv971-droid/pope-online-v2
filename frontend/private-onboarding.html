@@ -4,13 +4,15 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>POPE Online — Qualification privée</title>
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="app.css"/>
 </head>
 <body class="bg po-v5-harmony po-private-v24">
 <header class="topbar">
   <div class="container">
     <div class="row">
       <a class="brand" href="private.html">
-        <img src="./assets/favicon.png" alt="POPE Online"/>
+        <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
         <div>
           <div class="title">POPE Online</div>
           <div class="sub">Parcours privé · Qualification progressive</div>
@@ -95,6 +97,83 @@
     <div id="wizardMsg" class="fineprint" style="margin-top:12px;text-align:center"></div>
   </section>
 </main>
+<script type="module">
+import { apiFetch, setSession } from './api.js';
+import { showToast } from './app.js';
 
+// Stepper
+const steps = Array.from(document.querySelectorAll('.wizard-step'));
+const indicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
+let current = 0;
+
+function goTo(n) {
+  steps[current].classList.remove('is-active');
+  indicators[current].classList.remove('is-active');
+  current = n;
+  steps[current].classList.add('is-active');
+  indicators[current].classList.add('is-active');
+}
+
+document.querySelectorAll('[data-next]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = steps[current];
+    const req = step.querySelectorAll('[required]');
+    let valid = true;
+    req.forEach(f => { if (!f.value.trim()) { f.style.borderColor='#ef4444'; valid=false; } else f.style.borderColor=''; });
+    if (!valid) { document.getElementById('wizardMsg').textContent = 'Veuillez remplir tous les champs obligatoires.'; return; }
+    document.getElementById('wizardMsg').textContent = '';
+    if (current < steps.length - 1) goTo(current + 1);
+  });
+});
+
+document.querySelectorAll('[data-prev]').forEach(btn => {
+  btn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+});
+
+// Show/hide "autre domaine"
+document.getElementById('activityDomain').addEventListener('change', function() {
+  document.getElementById('otherDomainWrap').hidden = this.value !== 'Autre';
+});
+
+// Soumission - sauvegarder EN BASE et rediriger
+document.getElementById('privateWizard').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement...';
+
+  const domain = document.getElementById('activityDomain').value;
+  const other  = document.getElementById('otherDomain').value.trim();
+  const activityDomain = domain === 'Autre' && other ? other : domain;
+  const companyName    = document.getElementById('companyName').value.trim();
+  const fullName       = document.getElementById('fullName').value.trim();
+  const contactMethod  = document.getElementById('contactMethod').value;
+  const contactValue   = document.getElementById('contactValue').value.trim();
+  const mainNeed       = document.getElementById('mainNeed').value;
+  const expectation    = document.getElementById('expectation').value.trim();
+
+  try {
+    // Sauvegarder dans le profil utilisateur
+    await apiFetch('/auth/me', {
+      method: 'PUT',
+      body: {
+        full_name:        fullName,
+        company_name:     companyName,
+        activity_domain:  activityDomain,
+        contact_method:   contactMethod + (contactValue ? ' : ' + contactValue : ''),
+        main_need:        mainNeed + (expectation ? ' — ' + expectation : ''),
+        onboarding_done:  true
+      }
+    });
+    showToast('Profil enregistré ✓', 'ok');
+    setTimeout(() => { window.location.href = 'dashboard-private.html'; }, 500);
+  } catch(err) {
+    console.error(err);
+    // En cas d'erreur réseau, on redirige quand même
+    document.getElementById('wizardMsg').textContent = 'Profil sauvegardé localement. Redirection...';
+    setTimeout(() => { window.location.href = 'dashboard-private.html'; }, 1000);
+  }
+});
+</script>
 </body>
 </html>

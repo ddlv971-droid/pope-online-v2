@@ -4,13 +4,14 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>POPE Online — Sécurité du compte</title>
-
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body class="bg po-v5-harmony">
 <header class="topbar">
 <div class="container row between">
 <a class="brand link" href="dashboard.html" id="accountHomeLink">
-<img class="brand-logo-auth" src="./assets/favicon.png" alt="POPE Online"/>
+<img class="brand-logo-auth" src="./assets/popeonline-logo.png" alt="POPE Online"/>
 <div>
 <div class="brand-title">POPE Online</div>
 <div class="brand-sub" id="accountBrandSub">Mon compte</div>
@@ -71,6 +72,49 @@
 </section>
 </main>
 
-<script src="./auth-guard.js" type="module"></script>
+<script src="./auth-guard.js"></script>
+<script type="module">
+import { requireLogin, wireLogout, showToast } from './app.js';
+import { apiFetch, getApiMessage, clearSession } from './api.js';
+if (!requireLogin('account.html')) {}
+wireLogout();
+
+const homeLink = document.getElementById('accountHomeLink');
+const dashboardLink = document.getElementById('accountDashboardLink');
+const brandSub = document.getElementById('accountBrandSub');
+
+function resolveAccountSpace(payload){
+  const apiSpace = payload?.user?.accountSpace || payload?.user?.account_space;
+  const storedSpace = localStorage.getItem('pope_account_space');
+  return apiSpace === 'private' || storedSpace === 'private' ? 'private' : 'public';
+}
+
+async function initAccountLinks(){
+  try {
+    const me = await apiFetch('/auth/me');
+    const accountSpace = resolveAccountSpace(me);
+    const target = accountSpace === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+    if (homeLink) homeLink.setAttribute('href', target);
+    if (dashboardLink) dashboardLink.setAttribute('href', target);
+    if (brandSub) brandSub.textContent = accountSpace === 'private' ? 'Mon compte privé' : 'Mon compte public';
+  } catch (_) {}
+}
+
+initAccountLinks();
+
+const btn = document.getElementById('deleteAccountBtn');
+btn?.addEventListener('click', async()=>{
+  const confirmed = window.confirm('Confirmez-vous la suppression définitive de votre compte POPE Online ? Cette action est irréversible.');
+  if (!confirmed) return;
+  try {
+    await apiFetch('/auth/me', { method:'DELETE' });
+    clearSession();
+    alert('Votre compte a été supprimé.');
+    window.location.href = 'index.html';
+  } catch (e) {
+    showToast(getApiMessage(e), 'err');
+  }
+});
+</script>
 </body>
 </html>

@@ -4,6 +4,8 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Parrainez vos contacts</title>
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style>
 .ref-hero{background:linear-gradient(135deg,#07162a,#0b3060 50%,#0079c1);border-radius:24px;padding:40px;color:#fff;margin-bottom:28px;text-align:center}
 .ref-hero h1{margin:0 0 10px;font-size:clamp(22px,4vw,30px);font-weight:800;hyphens:none}
@@ -139,10 +141,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
     <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
-      <img src="./assets/favicon.png" alt="POPE Online"/>
+      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>IA + Expertise</small>
+        <small>Conseil &amp; Expertise</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
@@ -243,7 +245,59 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 
 </main>
+<script type="module">
+import { apiFetch } from './api.js';
+import { requireLogin, wireLogout } from './app.js';
 
+if (!requireLogin('referral.html')) {}
+wireLogout();
+
+async function init() {
+  try {
+    let me;
+    try { me = await apiFetch('/auth/me'); } catch(e) { if(e.status===401){window.location.href='login.html?next=referral.html';return;} throw e; }
+    const space = me?.user?.accountSpace || 'public';
+    const dashUrl = space === 'private' ? 'dashboard-private.html' : 'dashboard.html';
+    var _hl=document.getElementById('homeLink')||document.getElementById('topbarHomeLink'); if(_hl) _hl.href=dashUrl;
+    var _dl=document.getElementById('dashLink'); if(_dl) _dl.href=dashUrl;
+
+    const data = await apiFetch('/auth/referral');
+    const url  = data.referral_url;
+
+    if (!url || url.includes('undefined')) {
+      document.getElementById('refUrl').textContent = 'Erreur : lien non disponible. Rechargez la page.';
+      return;
+    }
+
+    document.getElementById('refUrl').textContent         = url;
+    document.getElementById('invitesCount').textContent   = data.invites_count;
+    document.getElementById('convertedCount').textContent = data.converted_count;
+
+    // Bouton copier
+    document.getElementById('btnCopy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        document.getElementById('copyMsg').textContent = '✓ Lien copié dans le presse-papiers';
+        setTimeout(() => { document.getElementById('copyMsg').textContent = ''; }, 3000);
+      } catch { document.getElementById('copyMsg').textContent = 'Copiez manuellement le lien ci-dessus'; }
+    });
+
+    // Email
+    const subject = encodeURIComponent('Essaie POPE Online — 15 jours gratuits');
+    const body = encodeURIComponent(`Bonjour,\n\nJe te recommande POPE Online, une plateforme qui génère des livrables professionnels par IA et les fait relire par un conseiller expert.\n\nEssai gratuit 15 jours, sans carte bancaire :\n${url}\n\nBonne découverte !`);
+    document.getElementById('btnEmail').href = `mailto:?subject=${subject}&body=${body}`;
+
+    // LinkedIn
+    document.getElementById('btnLinkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+
+  } catch(e) {
+    document.getElementById('refUrl').textContent = 'Impossible de charger votre lien. Rechargez la page.';
+    console.error(e);
+  }
+}
+
+init();
+</script>
 <script>
 // Topbar mobile universelle V40 — burger + menu + croix
 (function() {
