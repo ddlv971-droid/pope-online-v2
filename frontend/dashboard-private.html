@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>
+/* Init : API base URL selon l'environnement + anti-flash retour APP */
+(function(){
+  var h = location.hostname;
+  if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
+    window.__POPE_API_BASE__ = h.indexOf('localhost') !== -1 || h === '127.0.0.1'
+      ? 'http://localhost:3000'
+      : 'https://popeonline-staging.onrender.com';
+  }
+  /* Anti-flash : si retour depuis app, masquer step-panel-1 immédiatement */
+  try {
+    if (new URLSearchParams(location.search).get('from') === 'app') {
+      var st = document.createElement('style');
+      st.id = 'v67-antiflash';
+      st.textContent = '.v5-step-panel { display: none !important; }';
+      document.head && document.head.appendChild(st);
+    }
+  } catch(e) {}
+})();
+</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Tableau de bord Privé</title>
@@ -74,6 +93,32 @@ html body header.v40-topbar #v40Burger span{
   html body header.v40-topbar .v40-topbar-sub{display:none!important;}
   html body header.v40-topbar .v40-topbar-sep{display:none!important;}
   html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+</style>
+<style id="v40-override">
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
+.v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu.open{display:flex!important;}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
+@media(max-width:860px){
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
 }
 </style>
 
@@ -311,14 +356,6 @@ html body header.v40-topbar #v40Burger span{
   .v5-domain-grid{grid-template-columns:1fr;}
   .v5-espace-grid{grid-template-columns:1fr 1fr;}
 }
-
-/* V87-voice */
-.v87-vrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
-.v87-vrow label{flex:1;margin-bottom:0!important;}
-.v87-vbtn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid #b8dcf0;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#0079c1;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:.15s;}
-.v87-vbtn:hover{background:#eef7ff;border-color:#0079c1;}
-.v87-vbtn.rec{background:#fef2f2;border-color:#fca5a5;color:#dc2626;animation:vp87 1.2s ease-in-out infinite;}
-@keyframes vp87{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3);}50%{box-shadow:0 0 0 6px rgba(220,38,38,0);}}
 </style>
 <link rel="stylesheet" href="v58-styles.css">
 <style>
@@ -371,6 +408,14 @@ html body header.v40-topbar #v40Burger span{
   .v69-export-bar{gap:4px!important;}
   .v69-export-btn{font-size:10px!important;padding:5px 8px!important;}
 }
+
+/* -- Dictee vocale V87 -- */
+.v87-voice-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.v87-voice-row label{margin-bottom:0!important;flex:1;}
+.v87-voice-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid #b8dcf0;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#0079c1;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:.15s;}
+.v87-voice-btn:hover{background:#eef7ff;border-color:#0079c1;}
+.v87-voice-btn.recording{background:#fef2f2;border-color:#fca5a5;color:#dc2626;animation:vpulse 1.2s ease-in-out infinite;}
+@keyframes vpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3);}50%{box-shadow:0 0 0 6px rgba(220,38,38,0);}}
 </style>
 </head>
 <body data-logout-target="private.html" class="bg po-v14-dashboard">
@@ -544,11 +589,11 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-vrow"><label>Contexte &amp; organisation</label><button type="button" class="v87-vbtn" onclick="startVoice('descContexte',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Contexte &amp; organisation</label><button type="button" class="v87-voice-btn" onclick="startVoice('descContexte',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descContexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel de la demande…"></textarea>
               </div>
               <div class="v58-field">
-                <div class="v87-vrow"><label>Problème à résoudre</label><button type="button" class="v87-vbtn" onclick="startVoice('descProbleme',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Problème à résoudre</label><button type="button" class="v87-voice-btn" onclick="startVoice('descProbleme',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descProbleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea>
               </div>
             </div>
@@ -563,16 +608,16 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-vrow"><label>Objectif recherché</label><button type="button" class="v87-vbtn" onclick="startVoice('descObjectif',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Objectif recherché</label><button type="button" class="v87-voice-btn" onclick="startVoice('descObjectif',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descObjectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, réponse, arbitrage, rédaction…"></textarea>
               </div>
               <div class="v58-row">
                 <div class="v58-field">
-                  <div class="v87-vrow"><label>Décision attendue</label><button type="button" class="v87-vbtn" onclick="startVoice('descDecision',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                  <div class="v87-voice-row"><label>Décision attendue</label><button type="button" class="v87-voice-btn" onclick="startVoice('descDecision',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descDecision" placeholder="Valider, refuser, arbitrer, répondre…"/>
                 </div>
                 <div class="v58-field">
-                  <div class="v87-vrow"><label>Livrable attendu</label><button type="button" class="v87-vbtn" onclick="startVoice('descLivrable',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                  <div class="v87-voice-row"><label>Livrable attendu</label><button type="button" class="v87-voice-btn" onclick="startVoice('descLivrable',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descLivrable" placeholder="Note, courrier, analyse, trame, avis…"/>
                 </div>
               </div>
@@ -588,11 +633,11 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-vrow"><label>Contraintes connues</label><button type="button" class="v87-vbtn" onclick="startVoice('descContraintes',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Contraintes connues</label><button type="button" class="v87-voice-btn" onclick="startVoice('descContraintes',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…"></textarea>
               </div>
               <div class="v58-field">
-                <div class="v87-vrow"><label>Points sensibles ou risques</label><button type="button" class="v87-vbtn" onclick="startVoice('descRisques',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Points sensibles ou risques</label><button type="button" class="v87-voice-btn" onclick="startVoice('descRisques',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea>
               </div>
             </div>
@@ -608,7 +653,7 @@ html body header.v40-topbar #v40Burger span{
             <div class="v58-acc-body">
               <div class="v58-row">
                 <div class="v58-field">
-                  <div class="v87-vrow"><label>Acteurs concernés</label><button type="button" class="v87-vbtn" onclick="startVoice('descActeurs',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                  <div class="v87-voice-row"><label>Acteurs concernés</label><button type="button" class="v87-voice-btn" onclick="startVoice('descActeurs',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
                 </div>
                 <div class="v58-field">
@@ -642,7 +687,7 @@ html body header.v40-topbar #v40Burger span{
                 <input type="text" class="v58-input" id="descNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/>
               </div>
               <div class="v58-field">
-                <div class="v87-vrow"><label>Informations complémentaires libres</label><button type="button" class="v87-vbtn" onclick="startVoice('besoInDesc',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
+                <div class="v87-voice-row"><label>Informations complémentaires libres</label><button type="button" class="v87-voice-btn" onclick="startVoice('besoInDesc',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="besoInDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…"></textarea>
               </div>
             </div>
@@ -945,6 +990,805 @@ html body header.v40-topbar #v40Burger span{
 })();
 </script>
 
+<script>
+(function(){
+  'use strict';
+
+  /* ─── Config ─── */
+  var API = (function(){
+    var h = location.hostname;
+    if(h === 'localhost' || h === '127.0.0.1') return 'http://localhost:3000';
+    if(h.indexOf('staging') !== -1) return 'https://popeonline-staging.onrender.com';
+    return 'https://pope-online-v2.onrender.com';
+  })();
+  var SPACE = 'private';
+  var STORAGE_KEY = 'pope_v67_priv';
+  var TOKEN_KEY = 'pope_session_token';
+
+  /* ─── Helpers ─── */
+  function $(id){ return document.getElementById(id); }
+  function qs(sel,root){ return (root||document).querySelector(sel); }
+  function qsa(sel,root){ return Array.from((root||document).querySelectorAll(sel)); }
+  function token(){ return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || ''; }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+  function apiHeaders(){
+    var h = {'Content-Type':'application/json'};
+    var t = token();
+    if(t) h['Authorization'] = 'Bearer ' + t;
+    return h;
+  }
+  function apiFetch(path, opts){
+    opts = opts||{};
+    return fetch(API + path, {
+      method: opts.method||'GET',
+      headers: apiHeaders(),
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+      credentials: 'include'
+    }).then(function(r){
+      return r.json().catch(function(){return{};}).then(function(d){
+        if(!r.ok){ var e=new Error(d&&d.error||'HTTP '+r.status); e.status=r.status; e.data=d; throw e; }
+        return d;
+      });
+    });
+  }
+
+  /* ─── Auth ─── */
+  function getUser(){
+    try{ var r=localStorage.getItem('pope_session_user'); return r?JSON.parse(r):null; }catch(e){ return null; }
+  }
+  function clearSession(){
+    ['pope_session_active','pope_session_user','pope_session_token','pope_token']
+      .forEach(function(k){ localStorage.removeItem(k); });
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+  function logout(){
+    /* V72 — ciblé, préserve générations */
+    var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
+    try{ sessionStorage.clear(); }catch(e){}
+    try{
+      var all = Object.keys(localStorage);
+      all.forEach(function(k){
+        if(PRESERVE.indexOf(k)!==-1)return;
+        if(k.indexOf('pope_')===0 || k.indexOf('v5_')===0 || k==='pope_session_active' || k==='pope_session_user'){
+          localStorage.removeItem(k);
+        }
+      });
+    }catch(e){}
+    // Vider visuellement les champs de l'étape 2
+    ['besoInTitle','descContexte','descProbleme','descObjectif','descDecision',
+     'descLivrable','descContraintes','descRisques','descActeurs','descPublic',
+     'needDeadline','descPieces','descNiveau','besoInDesc'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.value='';
+    });
+    location.href = 'private.html';
+  }
+  function requireAuth(){
+    if(token()) return true;
+    if(localStorage.getItem('pope_session_active') === '1') return true;
+    location.href = 'login.html?next=dashboard-private.html';
+    return false;
+  }
+
+  /* ─── State ─── */
+  function defaultState(){
+    return {
+      step:1, domain:'', domainIcon:'🎯',
+      need:{}, selectedDraft:'', localFiles:[]
+    };
+  }
+  function loadState(){
+    try{
+      var raw = sessionStorage.getItem(STORAGE_KEY) || localStorage.getItem(STORAGE_KEY);
+      return raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
+    }catch(e){ return defaultState(); }
+  }
+  function saveState(patch){
+    var s = loadState();
+    if(patch) Object.assign(s, patch);
+    var json = JSON.stringify(s);
+    try{ sessionStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    return s;
+  }
+
+  /* ─── Collect form ─── */
+  function fieldVal(id){ var e=$(id); return e?(e.value||'').trim():''; }
+  function collectNeed(){
+    var radio = qs('input[name="besoType"]:checked');
+    return {
+      title:     fieldVal('besoInTitle'),
+      context:   fieldVal('descContexte'),
+      problem:   fieldVal('descProbleme'),
+      objective: fieldVal('descObjectif'),
+      decision:  fieldVal('descDecision'),
+      deliverable:fieldVal('descLivrable'),
+      constraints:fieldVal('descContraintes'),
+      risks:     fieldVal('descRisques'),
+      actors:    fieldVal('descActeurs'),
+      audience:  fieldVal('descPublic'),
+      deadline:  fieldVal('needDeadline'),
+      pieces:    fieldVal('descPieces'),
+      detailLevel:fieldVal('descNiveau'),
+      description:fieldVal('besoInDesc'),
+      treatment: radio ? radio.value : 'conseil'
+    };
+  }
+  function hydrateNeed(n){
+    n = n||{};
+    var fields = {
+      besoInTitle:n.title, descContexte:n.context, descProbleme:n.problem,
+      descObjectif:n.objective, descDecision:n.decision, descLivrable:n.deliverable,
+      descContraintes:n.constraints, descRisques:n.risks, descActeurs:n.actors,
+      descPublic:n.audience, needDeadline:n.deadline, descPieces:n.pieces,
+      descNiveau:n.detailLevel, besoInDesc:n.description
+    };
+    Object.keys(fields).forEach(function(id){
+      var el=$(id); if(el && fields[id]!=null) el.value=fields[id];
+    });
+    if(n.treatment){
+      var r = qs('input[name="besoType"][value="'+n.treatment+'"]');
+      if(r) r.checked=true;
+    }
+  }
+
+  /* ─── Domain ─── */
+  function applyDomain(domain, icon){
+    domain = domain||''; icon = icon||'🎯';
+    // Pills
+    qsa('.v5-domain-pill').forEach(function(b){
+      b.classList.toggle('selected', b.getAttribute('data-domain')===domain);
+    });
+    // Badge step 2 (v58-domain-badge)
+    var badge=$('v58DomainBadge'), name=$('v58DomainName'), ico=$('v58DomainIcon');
+    if(badge){ badge.classList.toggle('visible', !!domain); }
+    if(name) name.textContent = domain||'—';
+    if(ico) ico.textContent = icon;
+    // Badges discrets steps 3 & 4
+    [3,4].forEach(function(n){
+      var b=$('stepDomainBadge'+n), i=$('stepDomainBadge'+n+'Icon'), nm=$('stepDomainBadge'+n+'Name');
+      if(b) b.style.display = domain ? 'flex' : 'none';
+      if(i) i.textContent = icon;
+      if(nm) nm.textContent = domain;
+    });
+    // Save
+    saveState({domain:domain, domainIcon:icon});
+  }
+
+  /* ─── Navigation : LA SEULE FONCTION, UNE SEULE FOIS ─── */
+  function goStep(n){
+    n = parseInt(n,10)||1;
+    var s = loadState();
+
+    // Guard : besoin domaine pour avancer
+    // Exception : si on revient depuis l'outil (from=app ou from=dashboard), ne pas bloquer
+    var _fromApp = (function(){ try{ var sp=new URLSearchParams(location.search); return sp.get('from')==='app'||sp.get('from')==='dashboard'; }catch(e){ return false; } })();
+    if(n > 1 && !s.domain && !_fromApp){
+      flash('Veuillez d\'abord sélectionner un domaine.', 'info');
+      n = 1;
+    }
+
+    // Persist step + need
+    var need = (n>=2) ? collectNeed() : s.need;
+    saveState({step:n, need:need});
+
+    // Panels
+    for(var i=1;i<=4;i++){
+      var panel = $('step-panel-'+i);
+      if(panel){ panel.classList.toggle('active', i===n); }
+    }
+
+    // Stepper (V66 uses .v5-step[data-step])
+    document.querySelectorAll('.v5-step').forEach(function(st){
+      var sn = parseInt(st.getAttribute('data-step'),10);
+      st.classList.toggle('active', sn===n);
+      st.classList.toggle('done', sn<n);
+    });
+
+    // Scroll top
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    // Hooks par étape
+    var _s = loadState();
+    applyDomain(_s.domain||'', _s.domainIcon||'🎯'); // sync badges on every step
+    if(n===2){ updateDraftLink(); }
+    if(n===3){ loadDraftOptions(); loadVaultFiles(); updateDraftLink(); }
+    if(n===4){ renderRecap(); }
+  }
+  // Exposer globalement pour compatibilité onclick résiduels
+  window.goStep = goStep;
+  window.forceStep = goStep;
+
+  /* ─── Flash message ─── */
+  function flash(msg, type){
+    var el = $('msgBesoin');
+    if(!el) return;
+    el.textContent = msg;
+    el.className = 'po-msg ' + (type||'info');
+    setTimeout(function(){ el.className='po-msg'; }, 4000);
+  }
+
+  /* ─── Step 2 : badge domaine ─── */
+  function renderDomainBadge(){
+    var s = loadState();
+    applyDomain(s.domain, s.domainIcon);
+  }
+
+  /* ─── Step 3 : options draft ─── */
+  function loadDraftOptions(){
+    var sel = $('archiveAttachSelect');
+    if(!sel) return;
+    var gens = [];
+    var keys = ['pope_v67_gens_priv','pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'];
+    keys.forEach(function(k){
+      try{
+        var arr = JSON.parse(localStorage.getItem(k)||'[]');
+        if(Array.isArray(arr)) gens = gens.concat(arr);
+      }catch(e){}
+    });
+    // Dédoublonner par id
+    var seen = {}; gens = gens.filter(function(g){
+      if(!g||seen[g.id]) return false; seen[g.id]=1; return true;
+    });
+    var s = loadState();
+    var html = '<option value="">Ne pas joindre de draft préparé</option>';
+    gens.slice(0,20).forEach(function(g){
+      var id = String(g.id!=null?g.id:'');
+      var lbl = esc((g.title||g.usecaseLabel||'Draft préparé') + (g.createdAt?' — '+new Date(g.createdAt).toLocaleString('fr-FR'):''));
+      html += '<option value="'+esc(id)+'">' + lbl + '</option>';
+    });
+    sel.innerHTML = html;
+    if(s.selectedDraft) sel.value = s.selectedDraft;
+    // Mise à jour état lors du changement
+    sel.onchange = function(){ saveState({selectedDraft:sel.value}); };
+  }
+
+  /* ─── Step 3 : vault files ─── */
+  function loadVaultFiles(){
+    var container = $('vaultExpertList');
+    if(!container) return;
+    container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0">Chargement\u2026</div>';
+    apiFetch('/vault').then(function(data){
+      var files = (data&&data.items)||(data&&data.files)||[];
+      if(!files.length){
+        container.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 0">'
+          + '<span style="font-size:12px;color:var(--muted)">Aucune pi\u00e8ce dans le d\u00e9p\u00f4t.</span>'
+          + '<a href="vault.html?space='+SPACE+'&return=dashboard-private.html%3Fstep%3D3" style="font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap">D\u00e9poser \u2192</a>'
+          + '</div>';
+        return;
+      }
+      container.innerHTML = files.map(function(f){
+        var rawId=f.id||f.filename||'';
+        var encId=encodeURIComponent(rawId);
+        var nm=esc(f.name||f.filename||'Fichier');
+        var sz=f.size_label||'';
+        var exp=f.expiresAt?new Date(f.expiresAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
+        var ai=f.canFeedAI?' \u00b7 utilisable IA':'';
+        return '<label style="display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
+          +'<input type="checkbox" data-vault-file value="'+encId+'" '
+          +'onchange="(function(){ var n=document.querySelectorAll(\'[data-vault-file]:checked\').length; var cnt=document.getElementById(\'vaultSelCount\'); if(cnt){cnt.textContent=n+\' pi\u00e8ce\'+(n>1?\'s\':\'\')+\' s\u00e9lectionn\u00e9e\'+(n>1?\'s\':\'\')+\' \u2714\';cnt.style.display=n>0?\'block\':\'none\';} })()" '
+          +'style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0"/>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div>'
+          +'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+sz+(exp?' expire '+exp:'')+(ai)+'</div>'
+          +'</div>'
+          +'<a href="'+API+'/vault/'+encId+'/download" target="_blank" rel="noopener" onclick="event.stopPropagation()" '
+          +'style="font-size:11px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0;padding:3px 8px;border:1px solid #bae6fd;border-radius:5px">DL</a>'
+          +'</label>';
+      }).join('');
+      var selCount=$('vaultSelCount');
+      if(selCount) selCount.style.display='none';
+    }).catch(function(){
+      container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 0">Coffre indisponible.</div>';
+    });
+  }
+
+  /* ─── Step 3 : upload local ─── */
+  var localFiles = [];
+  function renderLocalFiles(){
+    var list = $('localFilesList');
+    if(!list) return;
+    if(!localFiles.length){ list.innerHTML=''; return; }
+    list.innerHTML = localFiles.map(function(f,i){
+      var kb = Math.round(f.size/1024);
+      return '<div class="po-attach-item" data-idx="'+i+'">' +
+        '<span class="po-attach-item-ico">📄</span>' +
+        '<span class="po-attach-item-name">'+esc(f.name)+'</span>' +
+        '<span class="po-attach-item-size">'+kb+' Ko</span>' +
+        '<button class="po-attach-item-del" data-del="'+i+'" type="button" title="Supprimer">✕</button>' +
+        '</div>';
+    }).join('');
+  }
+  function addFiles(fileList){
+    Array.from(fileList).forEach(function(f){
+      if(f.size>10*1024*1024){ flash('Fichier trop lourd (max 10 Mo) : '+f.name,'err'); return; }
+      localFiles.push(f);
+    });
+    renderLocalFiles();
+  }
+
+  /* ─── Step 3 : draft link ─── */
+  function updateDraftLink(){
+    var s = loadState();
+    var appUrl = 'app-private.html?from=dashboard&step=2';
+    if(s.domain) appUrl += '&domain='+encodeURIComponent(s.domain);
+    var l1=$('lnkDraftTool'), l2=$('lnkDraftStep3');
+    if(l1) l1.href=appUrl;
+    if(l2) l2.href=appUrl;
+  }
+
+  /* ─── Step 4 : récap ─── */
+  function renderRecap(){
+    var s = loadState();
+    var n = s.need||{};
+    var type = n.treatment==='surmesure' ? '📋 Accompagnement approfondi' : '🎯 Conseil Expert ponctuel';
+    var rd=$('recapDomain'),rt=$('recapTitle'),rtype=$('recapType'),rdraft=$('recapDraft');
+    if(rd) rd.textContent = s.domain||'—';
+    if(rt) rt.textContent = n.title||'—';
+    if(rtype) rtype.textContent = type;
+    if(rdraft){
+      var sel=$('archiveAttachSelect');
+      var dval = sel?sel.value:(s.selectedDraft||'');
+      rdraft.textContent = dval ? '✅ Draft joint' : 'Aucun';
+    }
+    // Quota
+    apiFetch('/auth/me').then(function(data){
+      var rq=$('recapQuota');
+      if(rq && data){
+        var tickets = data.wallet&&data.wallet.tickets!=null ? data.wallet.tickets : (data.tickets!=null?data.tickets:'—');
+        rq.textContent = tickets + ' demande(s) disponible(s)';
+      }
+    }).catch(function(){
+      var rq=$('recapQuota'); if(rq) rq.textContent='—';
+    });
+  }
+
+  /* ─── Submit ─── */
+  function submitBesoin(){
+    var s = saveState({need:collectNeed()});
+    var n = s.need||{};
+    if(!s.domain){ flash('Domaine manquant.','err'); goStep(1); return; }
+    if(!n.title){ flash('Objet de la demande manquant.','err'); return; }
+
+    // Vérification quota côté client (double sécurité)
+    var quotaMsg = document.getElementById('quotaBlockMsg');
+    if(quotaMsg){
+      flash('Quota de conseils experts épuisé. ' + (quotaMsg.textContent||''), 'warn');
+      return;
+    }
+
+    var quotaMsg=document.getElementById('quotaBlockMsg');
+    if(quotaMsg){ flash('Quota de conseils experts épuisé.','warn'); return; }
+    var btn=$('btnSend');
+    if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
+
+    var sel=$('archiveAttachSelect');
+    var genId = sel ? sel.value : '';
+    // Construire le payload compatible /expert/request
+    var payload = {
+      subject: n.title || ('Demande ' + (s.domain||'expert')),
+      domain: s.domain,
+      type: n.treatment || 'conseil',
+      context: [
+        s.domain ? 'Domaine : ' + s.domain : '',
+        n.context ? 'Contexte : ' + n.context : '',
+        n.problem ? 'Problème : ' + n.problem : '',
+        n.constraints ? 'Contraintes : ' + n.constraints : '',
+        n.risks ? 'Points sensibles : ' + n.risks : '',
+        n.actors ? 'Acteurs : ' + n.actors : '',
+        n.deadline ? 'Échéance : ' + n.deadline : ''
+      ].filter(Boolean).join('\n'),
+      objective: n.objective || n.title || '',
+      expectations: [
+        n.objective || '',
+        n.deliverable ? 'Livrable attendu : ' + n.deliverable : '',
+        n.decision ? 'Décision : ' + n.decision : '',
+        n.detailLevel ? 'Niveau de détail : ' + n.detailLevel : '',
+        n.description ? n.description : ''
+      ].filter(Boolean).join('\n'),
+      vault_file_ids: (function(){
+        return Array.from(document.querySelectorAll('[data-vault-file]:checked')).map(function(n){return n.value;});
+      })(),
+      generation_attachment: (function(){
+        if(!genId) return null;
+        // Résoudre l'ID en objet complet depuis toutes les clés d'archive
+        var _gens=[];
+        ['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations'].forEach(function(k){
+          try{var a=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(a))_gens=_gens.concat(a);}catch(e){}
+        });
+        var _g=_gens.find(function(x){return x&&String(x.id)===String(genId);});
+        if(!_g) return null;
+        return {
+          createdAt: _g.createdAt||new Date().toISOString(),
+          usecaseLabel: _g.usecaseLabel||'Génération IA',
+          title: _g.title||_g.usecaseLabel||'',
+          domain: s.domain||'',
+          prompt: _g.prompt||{},
+          result: _g.result||''
+        };
+      })(),
+      space: SPACE
+    };
+
+    apiFetch('/expert/request', {method:'POST', body:payload}).then(function(data){
+      flash('✅ Demande envoyée à votre expert !','ok');
+      saveState(Object.assign(defaultState(),{domain:s.domain,domainIcon:s.domainIcon}));
+      setTimeout(function(){ location.href='expert-private.html'; }, 1500);
+    }).catch(function(e){
+      var msg = (e&&e.data&&e.data.error_label) || (e&&e.data&&e.data.message) || (e&&e.message) || 'Erreur lors de l\'envoi.';
+      flash(msg,'err');
+      if(btn){ btn.disabled=false; btn.textContent='🎯 Soumettre à un expert'; }
+    });
+  }
+
+  /* ─── Requests list ─── */
+  function loadRequests(){
+    var list=$('expertRequestsList');
+    if(!list) return;
+    list.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px;">Chargement…</div>';
+    apiFetch('/expert/my-requests').then(function(data){
+      var reqs = (data&&data.requests)||[];
+      if(!reqs.length){
+        list.innerHTML='<div class="po-empty-state"><div class="po-empty-ico">👤</div><strong>Aucun échange expert.</strong><p>Soumettez votre premier besoin.</p></div>';
+        return;
+      }
+      // Lien vers dashboard expert complet
+      list.innerHTML = '<div style="margin-bottom:14px;padding:12px 14px;background:linear-gradient(135deg,#eef7ff,#f0f9ff);border:1.5px solid #b8dcf0;border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">'
+        + '<div><div style="font-size:13px;font-weight:700;color:#0b2440;">Tableau de bord expert</div>'
+        + '<div style="font-size:12px;color:#50627a;margin-top:2px;">Gérez vos dossiers et consultez toutes les réponses expertes</div></div>'
+        + '<a href="expert-private.html" style="background:#0079c1;color:#fff;border-radius:9px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;">🎯 Accéder →</a>'
+        + '</div>'
+        + reqs.map(function(r){
+        var isDone = r.status==='done'||r.status==='replied';
+        var statusBg    = isDone ? '#f0fdf4' : '#fffbeb';
+        var statusColor = isDone ? '#16a34a' : '#d97706';
+        var statusLabel = isDone ? '✅ Répondu' : '⏳ En attente';
+        var date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('fr-FR') : '';
+        var rid = esc(String(r.id||''));
+        return '<div class="tracker-row" data-rid="' + rid + '" '
+          + 'style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:.15s;">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">'
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
+          + '<span style="background:#dbeafe;color:#1e40af;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;">'+esc(r.domain||'Expert')+'</span>'
+          + '<span style="background:'+statusBg+';color:'+statusColor+';border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;">'+statusLabel+'</span>'
+          + '</div>'
+          + '<div style="font-size:13px;font-weight:600;color:#0b2440;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
+          + esc(r.title||r.need&&r.need.title||'Demande expert') + '</div>'
+          + '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + date + '</div>'
+          + '</div>'
+          + (isDone ? '<a href="expert-private.html?id='+rid+'" style="background:#16a34a;color:#fff;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Lire la réponse →</a>' : '')
+          + '</div>'
+          + '</div>';
+      }).join('');
+      // Event delegation pour navigation
+      list.addEventListener('click', function(e){
+        var row=e.target.closest('.tracker-row');
+        if(row&&!e.target.closest('a')) location.href='expert-private.html?id='+row.getAttribute('data-rid');
+      });
+    }).catch(function(e){
+      list.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px;">Impossible de charger les échanges. <button class="po-btn-ghost po-btn-sm" onclick="loadRequests()">Réessayer</button></div>';
+    });
+  }
+  window.loadRequests = loadRequests;
+
+  /* ─── Tracker demandes (widget visible onglet besoin) ─── */
+  function refreshTracker(){
+    var tracker = $('requestsTracker');
+    var list = $('requestsTrackerList');
+    if(!tracker || !list) return;
+    apiFetch('/expert/my-requests').then(function(data){
+      var reqs = (data&&data.requests)||[];
+      var active = reqs.filter(function(r){ return r.status !== 'archived'; }).slice(0,3);
+      if(!active.length){ tracker.style.display='none'; return; }
+      tracker.style.display='block';
+      var html = '';
+      active.forEach(function(r){
+        var isPending = r.status !== 'done' && r.status !== 'replied';
+        var statusBg    = isPending ? '#fff7ed' : '#f0fdf4';
+        var statusColor = isPending ? '#d97706' : '#16a34a';
+        var statusLabel = isPending ? '&#9203; En attente' : '&#9989; Répondu';
+        var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
+        var rid = esc(String(r.id||''));
+        var subject = esc(r.domain||'Expert') + ' — ' + esc(r.subject||r.title||(r.need&&r.need.title)||'Demande');
+        html += '<div class="tracker-row" data-rid="' + rid + '" '
+          + 'style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;">'
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:13px;font-weight:600;color:#0d1e30;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+          + subject + '</div>'
+          + '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + date + '</div>'
+          + '</div>'
+          + '<span style="background:' + statusBg + ';color:' + statusColor + ';border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;">'
+          + statusLabel + '</span>'
+          + '</div>';
+      });
+      if(reqs.length > 3){
+        html += '<div style="text-align:center;padding-top:10px;">'
+          + '<a href="expert-private.html" style="font-size:12px;color:#0079c1;font-weight:600;text-decoration:none;">'
+          + 'Voir toutes mes demandes (' + reqs.length + ') →</a></div>';
+      }
+      list.innerHTML = html;
+      // Event delegation — pas d'onclick inline
+      list.addEventListener('click', function(e){
+        var row = e.target.closest('.tracker-row');
+        if(row){ location.href = 'expert-private.html?id=' + row.getAttribute('data-rid'); }
+      });
+    }).catch(function(){ /* silencieux */ });
+  }
+
+  /* ─── User info ─── */
+  function loadUser(){
+    apiFetch('/auth/me').then(function(data){
+      hydrateUser(data);
+      try{if(data&&data.user)localStorage.setItem('pope_session_user',JSON.stringify(data.user));}catch(e){}
+    }).catch(function(){var u=getUser();if(u)hydrateUser(u);});
+  }
+  function hydrateUser(u){
+    if(!u) return;
+    var initials = (u.name||u.email||'?').charAt(0).toUpperCase();
+    var av=$('poAvatar'); if(av) av.textContent=initials;
+    var un=$('espaceUserName'); if(un) un.textContent=u.name||u.email||'—';
+    var ue=$('espaceUserEmail'); if(ue) ue.textContent=u.email||'—';
+    var w = u.wallet||{};
+    var planEl=$('espacePlan');
+    if(planEl){
+      var planTxt = w.plan ? '🏅 Plan : <strong>'+esc(w.plan)+'</strong>' : '';
+      if(w.tickets!=null) planTxt += ' · ' + w.tickets + ' demande(s)';
+      planEl.innerHTML = '<span style="font-size:12px;color:var(--muted);">'+planTxt+'</span>';
+    }
+    // Bandeau essai
+    if(w.is_trial){
+      var banner=$('poTrialBanner');
+      if(banner){ banner.style.display='flex'; }
+      var daysEl=$('poTrialDays');
+      if(daysEl && w.trial_ends_at){
+        var diff = Math.ceil((new Date(w.trial_ends_at)-Date.now())/(1000*60*60*24));
+        daysEl.textContent = diff>0 ? 'Essai gratuit — '+diff+' jour(s) restant(s)' : 'Essai expiré';
+      }
+    }
+    // Accès expiré
+    if(w.expired){
+      var ol=$('trialExpiredOverlay'); if(ol) ol.classList.add('show');
+    }
+    
+    // Quota : bloquer le bouton soumettre si épuisé
+    var expired = w.status==='trial_expired'||w.trial_expired||w.expired;
+    var left = w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:null);
+    var plan=(w.plan||w.plan_type||'free').toLowerCase();
+    var isPaid=plan==='starter'||plan==='pro'||plan==='premium';
+    var renewDate=w.renews_at||w.next_billing_at||w.period_end||null;
+    var renewStr=renewDate?new Date(renewDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'long'}):'';
+    var noQuota=expired||(left!=null&&left<=0);
+    var btnS = $('btnSend');
+    if(btnS && !noQuota){ btnS.disabled=false; btnS.style.opacity=''; btnS.style.cursor=''; }
+    if(noQuota && btnS){
+      btnS.disabled = true;
+      btnS.style.opacity = '0.55';
+      btnS.style.cursor = 'not-allowed';
+      btnS.title = expired ? 'Essai expiré — choisissez un plan' : 'Quota épuisé ce mois';
+      // Afficher message sous le bouton
+      var msgQ = $('quotaBlockMsg');
+      if(!msgQ){
+        msgQ = document.createElement('div');
+        msgQ.id = 'quotaBlockMsg';
+        msgQ.style.cssText = 'font-size:12px;text-align:center;margin-top:8px;padding:10px 14px;background:#fff7ed;border:1px solid #fde68a;border-radius:8px;color:#92400e;';
+        msgQ.innerHTML = expired
+          ? '⏰ Essai gratuit terminé. <a href="pricing.html" style="color:#d97706;font-weight:700">Choisir un plan →</a>'
+          : (isPaid
+            ? ' Quota mensuel épuisé'+(renewStr?' — renouvellement le '+renewStr:'')+'.' 
+              +' <a href="pricing.html#extra" style="color:#1d4ed8;font-weight:700">+1 conseil à l’unité</a>'
+              +(plan!=='premium'?' ou <a href="pricing.html" style="color:#d97706;font-weight:700">passer en '+(plan==='starter'?'Pro':'Premium')+'</a>':'')+'.' 
+            : 'Quota de l’espace gratuit épuisé (non renouvelable). <a href="pricing.html" style="color:#d97706;font-weight:700">Souscrire Starter ou Pro →</a>');
+        if(btnS.parentNode) btnS.parentNode.insertBefore(msgQ, btnS.nextSibling);
+      }
+    }
+  }
+
+  /* ─── Tabs ─── */
+  function switchTab(name){
+    qsa('.v5-tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-tab')===name); });
+    qsa('.v5-tab-content').forEach(function(c){ if(c.id==='tab-'+name){ c.removeAttribute('hidden'); } else { c.setAttribute('hidden',''); }; });
+    if(name==='experts') loadRequests();
+  }
+  window.switchTab = switchTab;
+
+  /* ─── Accordéons ─── */
+  function toggleAcc(el){
+    if(!el) return;
+    el.classList.toggle('is-open');
+  }
+
+  /* ─── Restore depuis URL params ─── */
+  function restoreFromUrl(){
+    var sp = new URLSearchParams(location.search);
+    var s = loadState();
+
+    // Retour depuis app ou dashboard-tool
+    if(sp.get('from')==='app'||sp.get('from')==='dashboard'){
+      // Attacher la dernière génération si ?attach=last
+      if(sp.get('attach')==='last'){
+        var lastId = localStorage.getItem('pope_v61_last_gen') ||
+                     localStorage.getItem('pope_v54_last_generation_id') ||
+                     localStorage.getItem('pope_v58_last_gen');
+        if(lastId) saveState({selectedDraft:lastId});
+      }
+      if(s.domain) applyDomain(s.domain, s.domainIcon);
+      goStep(2);
+      return;
+    }
+
+    // Étape forcée
+    var stepParam = parseInt(sp.get('step')||'0',10);
+    if(stepParam>=1 && stepParam<=4){
+      if(s.domain) applyDomain(s.domain, s.domainIcon);
+      goStep(stepParam);
+      return;
+    }
+
+    // Chargement normal : étape 1, reset domaine
+    applyDomain('','🎯');
+    saveState({step:1, domain:'', domainIcon:'🎯'});
+    goStep(1);
+  }
+
+  /* ─── Init ─── */
+  function init(){
+    if(!requireAuth()) return;
+
+    // Topbar — wire logout en capture phase (prioritaire sur wireLogout de app.js)
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-logout]');
+      if(!btn) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      logout();
+    }, true); // true = capture phase, s'exécute avant app.js wireLogout
+    var _expBtn = document.querySelector('#trialExpiredOverlay button');
+    if(_expBtn) _expBtn.addEventListener('click', logout);
+
+    // Burger
+    var burger=$('poBurger'), menu=$('poMobileMenu');
+    if(burger && menu){
+      burger.addEventListener('click', function(){
+        menu.classList.toggle('open');
+      });
+    }
+
+    // Tabs
+    qsa('.v5-tab').forEach(function(t){
+      t.addEventListener('click', function(){ switchTab(t.getAttribute('data-tab')); });
+    });
+
+    // Stepper clics
+    qsa('.v5-step').forEach(function(st){
+      st.addEventListener('click', function(){
+        var n = parseInt(st.getAttribute('data-step'),10);
+        if(!isNaN(n)) goStep(n);
+      });
+    });
+
+    // Domain pills
+    document.addEventListener('click', function(e){
+      var pill = e.target.closest('.v5-domain-pill');
+      if(pill){
+        var domain = pill.getAttribute('data-domain')||'';
+        var icon = (pill.textContent||'').trim().split(/\s/)[0]||'🎯';
+        applyDomain(domain, icon);
+        saveState({domain:domain, domainIcon:icon});
+        goStep(2);
+      }
+    });
+
+    // Accordéons
+    document.addEventListener('click', function(e){
+      var trigger = e.target.closest('.v58-acc-trigger');
+      if(trigger){
+        var acc = trigger.closest('.v58-acc');
+        if(acc) toggleAcc(acc);
+      }
+    });
+
+    // Auto-save sur input
+    document.addEventListener('input', function(e){
+      if(e.target.closest('#step-panel-2')){
+        saveState({need:collectNeed()});
+        // Mise à jour aperçu accord
+        updateAccPreviews();
+      }
+    });
+
+    // Navigation buttons
+    $('btnStep1Next') && $('btnStep1Next').addEventListener('click', function(){ goStep(2); });
+    $('btnStep2Back') && $('btnStep2Back').addEventListener('click', function(){ goStep(1); });
+    $('btnStep2Next') && $('btnStep2Next').addEventListener('click', function(){ goStep(3); });
+    $('btnStep3Back') && $('btnStep3Back').addEventListener('click', function(){ goStep(2); });
+    $('btnStep3Next') && $('btnStep3Next').addEventListener('click', function(){ goStep(4); });
+    $('btnStep4Back') && $('btnStep4Back').addEventListener('click', function(){ goStep(3); });
+    $('btnSend') && $('btnSend').addEventListener('click', submitBesoin);
+    document.getElementById('btnChangeDomain') && document.getElementById('btnChangeDomain').addEventListener('click', function(){ goStep(1); });
+    $('btnGoToBesoin') && $('btnGoToBesoin').addEventListener('click', function(){ switchTab('besoin'); });
+    $('btnRefreshRequests') && $('btnRefreshRequests').addEventListener('click', loadRequests);
+
+    // Upload zone
+    var zone=$('uploadZone'), finput=$('fileInput');
+    if(zone && finput){
+      zone.addEventListener('click', function(){ finput.click(); });
+      zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
+      zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
+      zone.addEventListener('drop', function(e){
+        e.preventDefault(); zone.classList.remove('drag');
+        addFiles(e.dataTransfer.files);
+      });
+      finput.addEventListener('change', function(){ addFiles(finput.files); finput.value=''; });
+    }
+
+    // Supprimer fichier local
+    document.addEventListener('click', function(e){
+      var del = e.target.closest('[data-del]');
+      if(del && del.closest('#localFilesList')){
+        var idx = parseInt(del.getAttribute('data-del'),10);
+        localFiles.splice(idx,1);
+        renderLocalFiles();
+      }
+    });
+
+    // Vérification nonce de session — si changement de session, reset state
+    (function(){
+      var lsNonce = localStorage.getItem('pope_session_nonce');
+      var ssNonce = sessionStorage.getItem('pope_session_nonce');
+      // ssNonce est absent si c'est une nouvelle session navigateur (onglet fermé/rouvert)
+      // Dans ce cas on garde l'état. Mais si nonces différents → nouveau login → reset.
+      if(lsNonce && ssNonce && lsNonce !== ssNonce){
+        // Nouvelle connexion détectée → vider l'état du parcours
+        try{ sessionStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY); }catch(e){}
+        sessionStorage.setItem('pope_session_nonce', lsNonce);
+      }
+    })();
+    // Hydrater need depuis state
+    var s = loadState();
+    hydrateNeed(s.need);
+
+    // Loader user
+    loadUser();
+
+    // Routing initial
+    restoreFromUrl();
+
+    // Tracker demandes
+    refreshTracker();
+  }
+
+  /* ─── Aperçus accordéons ─── */
+  function updateAccPreviews(){
+    var map = {
+      prevCtx: ['descContexte','descProbleme'],
+      prevObj: ['descObjectif','descDecision'],
+      prevCon: ['descContraintes','descRisques'],
+      prevAct: ['descActeurs','needDeadline'],
+      prevPlus: ['descNiveau','besoInDesc']
+    };
+    Object.keys(map).forEach(function(previewId){
+      var el=$(previewId); if(!el) return;
+      var val = map[previewId].map(function(fid){
+        var f=$(fid); return f?(f.value||'').trim():'';
+      }).filter(Boolean).join(' · ').slice(0,60);
+      if(val) el.textContent=val;
+    });
+    // Dot filled
+    qsa('.v58-acc').forEach(function(acc){
+      var filled = qsa('input,textarea',acc).some(function(i){ return (i.value||'').trim(); });
+      acc.classList.toggle('has-value', filled);
+    });
+  }
+
+  // Lancer au DOMContentLoaded
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
 
 <!-- API user loader (factorized from V66) -->
 <script type="module">
@@ -1083,37 +1927,48 @@ if (!requireLogin('dashboard-private.html')) {}
 </script>
 
 <script type="module" src="./protected-topbar.js" onerror="void 0"></script>
-
-
-
-
-
 <script>
+/* Dictee vocale V87 */
 (function(){
-var _r=null,_id=null;
-var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-window.startVoice=function(id,btn){
-  var el=document.getElementById(id);if(!el)return;
-  if(_r&&_id===id){try{_r.stop();}catch(e){}return;}
-  if(_r){try{_r.stop();}catch(e){}}
-  if(!SR){alert('Dictée vocale non disponible.\nUtilisez Chrome ou Edge.');return;}
-  _r=new SR();_r.lang='fr-FR';_r.continuous=true;_r.interimResults=true;
-  _id=id;var base=el.value||'';
-  _r.onstart=function(){btn.classList.add('rec');btn.querySelector('.v87-vlbl').textContent='Arrêter';};
-  _r.onresult=function(e){
-    var f='',t='';
-    for(var i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal)f+=e.results[i][0].transcript+' ';
-      else t+=e.results[i][0].transcript;
+  var _r=null,_ab=null,_ai=null;
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  window.startVoice=function(id,btn){
+    var el=document.getElementById(id);
+    if(!el)return;
+    if(_r&&_ai===id){try{_r.stop();}catch(e){}return;}
+    if(_r){try{_r.stop();}catch(e){}}
+    if(!SR){
+      var d=document.createElement('div');
+      d.style.cssText='font-size:11px;color:#f59e0b;margin-top:4px;padding:4px 8px;background:#fffbeb;border-radius:6px;';
+      d.textContent='\u26a0\ufe0f Dict\u00e9e non disponible \u2014 utilisez Chrome ou Edge.';
+      el.parentNode.appendChild(d);setTimeout(function(){d.remove();},4000);return;
     }
-    if(f)base+=f;
-    el.value=base+(t?'…'+t:'');
-    el.dispatchEvent(new Event('input',{bubbles:true}));
+    _r=new SR();_r.lang='fr-FR';_r.continuous=true;_r.interimResults=true;
+    _ab=btn;_ai=id;var base=el.value||'';
+    _r.onstart=function(){btn.classList.add('recording');btn.querySelector('.v87-voice-lbl').textContent='Arr\u00eater';};
+    _r.onresult=function(e){
+      var fin='',intr='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' ';
+        else intr+=e.results[i][0].transcript;
+      }
+      if(fin)base+=fin;
+      el.value=base+(intr?'\u2026'+intr:'');
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+    };
+    _r.onerror=function(e){
+      if(e.error==='not-allowed'){
+        var d=document.createElement('div');
+        d.style.cssText='font-size:11px;color:#dc2626;margin-top:4px;padding:4px 8px;background:#fef2f2;border-radius:6px;';
+        d.textContent='\u26a0\ufe0f Acc\u00e8s micro refus\u00e9. Autorisez dans les param\u00e8tres.';
+        el.parentNode.appendChild(d);setTimeout(function(){d.remove();},5000);
+      }
+      _stopUI(btn);_r=null;_ai=null;_ab=null;
+    };
+    _r.onend=function(){if(el.value.endsWith('\u2026'))el.value=base;_stopUI(btn);_r=null;_ai=null;_ab=null;};
+    try{_r.start();}catch(e){_stopUI(btn);}
   };
-  _r.onerror=function(){btn.classList.remove('rec');btn.querySelector('.v87-vlbl').textContent='Dicter';_r=null;_id=null;};
-  _r.onend=function(){if(el.value.endsWith('…'))el.value=base;btn.classList.remove('rec');btn.querySelector('.v87-vlbl').textContent='Dicter';_r=null;_id=null;};
-  try{_r.start();}catch(e){btn.classList.remove('rec');}
-};
+  function _stopUI(b){if(b){b.classList.remove('recording');b.querySelector('.v87-voice-lbl').textContent='Dicter';}}
 })();
 </script>
 </body>
