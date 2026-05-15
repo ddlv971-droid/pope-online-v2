@@ -1,392 +1,394 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><script>
-(function(){
-  var h=location.hostname;
-  if(h.indexOf('staging')!==-1||h==='localhost'||h==='127.0.0.1'){
-    window.__POPE_API_BASE__=(h==='localhost'||h==='127.0.0.1')?'http://localhost:3000':'https://popeonline-staging.onrender.com';
-  }
-})();
-</script>
+<head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Suivi des demandes expertes</title>
-<link href="app.css" rel="stylesheet"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
-<style>
-html body header.v40-topbar{position:sticky!important;top:0!important;z-index:200!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;align-items:center!important;flex-direction:row!important;flex-wrap:nowrap!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;overflow:visible!important;}
+<title>POPE Online — Relecture experte</title>
+<link href="./assets/favicon-BgPk1Min.png" rel="icon" type="image/png"/>
+<style id="v40-topbar-fix">
+/* ── Anti-conflits topbar V40 ── */
+html body header.v40-topbar{
+  position:sticky!important;top:0!important;z-index:200!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  display:flex!important;align-items:center!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;
+  background:rgba(7,22,42,.97)!important;
+  backdrop-filter:blur(16px)!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  overflow:visible!important;
+}
+html body header.v40-topbar .v40-topbar-inner{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;height:58px!important;
+  width:100%!important;padding:0 20px!important;gap:10px!important;
+}
+html body header.v40-topbar .v40-topbar-brand{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;gap:9px!important;
+  text-decoration:none!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand img{
+  height:28px!important;width:auto!important;flex-shrink:0!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:baseline!important;gap:5px!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong,
+html body header.v40-topbar .v40-topbar-brand-text small{
+  white-space:nowrap!important;display:inline!important;width:auto!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text strong{
+  font-size:14px!important;font-weight:800!important;color:#fff!important;
+}
+html body header.v40-topbar .v40-topbar-brand-text small{
+  font-size:11px!important;color:rgba(255,255,255,.4)!important;
+}
+html body header.v40-topbar .v40-topbar-nav{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;
+}
+html body header.v40-topbar #v40Burger{
+  display:none;flex-direction:column!important;gap:5px!important;
+  margin-left:auto!important;flex-shrink:0!important;
+  background:none!important;border:none!important;
+  cursor:pointer!important;padding:6px!important;width:auto!important;
+}
+html body header.v40-topbar #v40Burger span{
+  display:block!important;width:22px!important;height:2px!important;
+  background:rgba(255,255,255,.8)!important;border-radius:2px!important;
+  transition:transform .25s ease,opacity .25s ease!important;
+}
+#v40MobileMenu{
+  display:none;position:fixed!important;
+  top:58px!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:201!important;
+  background:rgba(7,22,42,.98)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  padding:20px!important;overflow-y:auto!important;
+  flex-direction:column!important;gap:4px!important;
+}
+#v40MobileMenu.open{display:flex!important;}
+#v40MobileMenu a,#v40MobileMenu button{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:14px 18px!important;border-radius:12px!important;
+  font-size:15px!important;font-weight:600!important;
+  color:rgba(255,255,255,.85)!important;
+  text-decoration:none!important;background:none!important;
+  border:none!important;cursor:pointer!important;
+  width:100%!important;
+}
+#v40MobileMenu a:hover,#v40MobileMenu button:hover{
+  background:rgba(255,255,255,.07)!important;color:#fff!important;
+}
+.v40-mobile-menu-sep{
+  height:1px!important;background:rgba(255,255,255,.08)!important;
+  margin:8px 0!important;
+}
+@media(max-width:860px){
+  html body header.v40-topbar .v40-topbar-nav{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sub{display:none!important;}
+  html body header.v40-topbar .v40-topbar-sep{display:none!important;}
+  html body header.v40-topbar #v40Burger{display:flex!important;}
+}
+</style>
+<style id="v40-override">
 header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
-.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;}
-.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;}
-.v40-topbar-brand img{height:26px!important;width:auto!important;}
+.v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
+.v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
+.v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
 .v40-topbar-brand-text{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:baseline!important;gap:5px!important;white-space:nowrap!important;}
-.v40-topbar-brand-text strong{font-size:14px!important;font-weight:800!important;color:#fff!important;}
-.v40-topbar-brand-text small{font-size:11px!important;color:rgba(255,255,255,.4)!important;}
-.v40-topbar-sep{width:1px!important;height:18px!important;background:rgba(255,255,255,.1)!important;}
-.v40-topbar-sub{font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;white-space:nowrap!important;}
-.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;}
-.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;}
-.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;margin-left:auto!important;}
-.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;}
+.v40-topbar-brand-text strong{display:inline!important;white-space:nowrap!important;font-size:14px!important;font-weight:800!important;color:#fff!important;width:auto!important;line-height:1!important;}
+.v40-topbar-brand-text small{display:inline!important;white-space:nowrap!important;font-size:11px!important;color:rgba(255,255,255,.4)!important;width:auto!important;line-height:1!important;}
+.v40-topbar-sep{width:1px!important;height:18px!important;flex-shrink:0!important;background:rgba(255,255,255,.1)!important;}
+.v40-topbar-sub{white-space:nowrap!important;flex-shrink:0!important;font-size:12px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;}
+.v40-topbar-nav{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important;flex-wrap:nowrap!important;}
+.v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
+.v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
+.v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
 .v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
 .v40-mobile-menu.open{display:flex!important;}
-.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;width:100%;text-align:left;}
-.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);}
-@media(max-width:860px){.v40-topbar-nav{display:none!important;}.v40-topbar-sub{display:none!important;}.v40-topbar-sep{display:none!important;}.v40-burger{display:flex!important;}}
-
-/* ═══ SUIVI EXPERT PUBLIC V82 ═══ */
-:root{--blue:#0079c1;--blue-d:#0b3060;--blue-l:#eef7ff;--green:#16a34a;--green-l:#f0fdf4;--green-m:#bbf7d0;--amber:#d97706;--amber-l:#fffbeb;--red:#dc2626;--ink:#0b2440;--muted:#50627a;--line:#e2e8f0;--bg:#f5f7fa;--sh:0 2px 16px rgba(11,36,64,.08);}
-body{background:var(--bg);min-height:100vh;font-family:Inter,system-ui,sans-serif;}
-
-.st-hero{background:linear-gradient(135deg,#0b3060,#0079c1);padding:28px 24px;display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;}
-.st-hero-text{flex:1;min-width:200px;}
-.st-hero-eyebrow{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:8px;}
-.st-hero-title{font-size:clamp(20px,2.5vw,26px);font-weight:800;color:#fff;margin:0 0 6px;}
-.st-hero-sub{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;margin:0;}
-.st-kpis{display:flex;gap:10px;flex-shrink:0;}
-.st-kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 18px;text-align:center;min-width:72px;}
-.st-kpi-n{font-size:28px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;}
-.st-kpi-l{font-size:10px;color:rgba(255,255,255,.55);line-height:1.4;}
-
-.st-back-bar{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.st-back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--blue-d);color:#fff;border-radius:10px;padding:9px 18px;font-weight:700;font-size:13px;text-decoration:none;border:none;cursor:pointer;font-family:inherit;}
-.st-back-btn:hover{background:var(--blue);}
-.st-back-info{font-size:12px;color:var(--muted);}
-
-.st-layout{max-width:1200px;margin:0 auto;padding:24px 20px 80px;display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start;}
-.st-sidebar{display:flex;flex-direction:column;gap:14px;position:sticky;top:76px;}
-.st-sidebar-card{background:#fff;border-radius:16px;padding:18px;box-shadow:var(--sh);border:1px solid var(--line);}
-.st-sidebar-card h3{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 12px;text-transform:uppercase;letter-spacing:.05em;}
-
-.st-quota{background:linear-gradient(135deg,#0b3060,#0079c1);border-radius:20px;padding:20px;color:#fff;text-align:center;}
-.st-quota-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);margin-bottom:14px;}
-.st-quota-ring{position:relative;width:80px;height:80px;margin:0 auto 12px;}
-.st-quota-ring svg{transform:rotate(-90deg);}
-.st-quota-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.st-quota-n{font-size:26px;font-weight:800;color:#fff;line-height:1;}
-.st-quota-sub{font-size:9px;color:rgba(255,255,255,.55);margin-top:1px;}
-.st-quota-detail{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5;}
-.st-upgrade-btn{display:block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;margin-top:12px;}
-.st-upgrade-btn:hover{background:rgba(255,255,255,.25);}
-
-.st-process{display:flex;flex-direction:column;gap:8px;}
-.st-process-step{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);background:#f8fafc;}
-.st-process-step.done{color:var(--green);background:var(--green-l);}
-.st-process-step.current{color:var(--blue);background:var(--blue-l);border:1px solid #bae6fd;}
-.st-process-num{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.07);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
-.st-process-step.done .st-process-num{background:var(--green);color:#fff;}
-.st-process-step.current .st-process-num{background:var(--blue);color:#fff;}
-
-.st-main{display:flex;flex-direction:column;gap:18px;}
-.st-card{background:#fff;border-radius:20px;box-shadow:var(--sh);border:1px solid var(--line);overflow:hidden;}
-.st-card-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.st-card-head h2{margin:0;font-size:16px;font-weight:800;color:var(--ink);}
-.st-card-head p{margin:3px 0 0;font-size:12px;color:var(--muted);}
-.st-refresh-btn{background:none;border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;}
-.st-refresh-btn:hover{border-color:var(--blue);color:var(--blue);}
-
-.st-status-bar{align-items:center;gap:10px;background:var(--blue-l);border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 22px;font-size:13px;color:#1e40af;font-weight:600;display:none;}
-.st-status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.4);}50%{box-shadow:0 0 0 6px rgba(22,163,74,0);}}
-.st-status-dot.amber{background:var(--amber);animation:pulseamber 2s infinite;}
-@keyframes pulseamber{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.4);}50%{box-shadow:0 0 0 6px rgba(217,119,6,0);}}
-
-.st-request-item{padding:18px 22px;border-bottom:1px solid #f8fafc;}
-.st-request-item:last-child{border-bottom:none;}
-.st-request-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
-.st-request-subject{font-size:14px;font-weight:700;color:var(--ink);flex:1;min-width:0;}
-.st-request-domain{background:#dbeafe;color:#1e40af;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap;}
-.st-status{border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;}
-.st-status.new{background:var(--amber-l);color:var(--amber);}
-.st-status.progress{background:#eff6ff;color:var(--blue);}
-.st-status.replied{background:var(--green-l);color:var(--green);}
-.st-status.closed{background:#f1f5f9;color:var(--muted);}
-.st-request-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
-
-.st-toggle-btn{font-size:11px;color:var(--blue);background:none;border:1px solid #bae6fd;border-radius:6px;padding:3px 9px;cursor:pointer;font-family:inherit;font-weight:600;}
-.st-toggle-btn:hover{background:var(--blue-l);}
-
-.st-req-detail{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
-.st-req-section{border:1px solid var(--line);border-radius:10px;overflow:hidden;}
-.st-req-section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;background:#f8fafc;border-bottom:1px solid var(--line);}
-.st-req-section-body{font-size:13px;color:var(--ink);line-height:1.7;padding:12px;white-space:pre-wrap;}
-.st-req-gen{border-color:var(--green-m);}
-.st-req-gen .st-req-section-label{background:#dcfce7;color:#14532d;}
-.st-req-gen .st-req-section-body{background:var(--green-l);}
-.st-vault-links{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;}
-.st-vault-link{display:inline-flex;align-items:center;gap:5px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#0369a1;text-decoration:none;}
-.st-vault-link:hover{background:#dbeafe;}
-
-.st-reply-box{background:linear-gradient(135deg,#f0fdf4,#fff);border:1.5px solid var(--green-m);border-radius:12px;padding:14px 16px;margin-top:10px;}
-.st-reply-who{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;}
-.st-reply-text{font-size:13px;color:var(--ink);line-height:1.7;white-space:pre-wrap;}
-
-.st-empty{text-align:center;padding:60px 24px;}
-.st-empty-ico{font-size:44px;margin-bottom:14px;opacity:.35;}
-.st-empty-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;}
-.st-empty-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;max-width:380px;margin-left:auto;margin-right:auto;}
-.st-new-request-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue-d),var(--blue));color:#fff;border-radius:12px;padding:13px 24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(0,121,193,.3);}
-
-.st-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
-.st-toast.show{opacity:1;}
-
-@media(max-width:900px){.st-layout{grid-template-columns:1fr!important;padding:14px 12px 60px!important;}.st-sidebar{position:static!important;}.st-kpis{flex-wrap:wrap!important;}.st-hero{flex-direction:column!important;}}
+.v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
+.v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
+.v40-mobile-menu-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 0;}
+@media(max-width:860px){
+  .v40-topbar-nav{display:none!important;}
+  .v40-topbar-sub{display:none!important;}
+  .v40-topbar-sep{display:none!important;}
+  .v40-burger{display:flex!important;}
+}
 </style>
+  <script type="module" crossorigin src="./assets/expert-DB-gpILg.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/shared-QmHk-S3D.js">
+  <link rel="modulepreload" crossorigin href="./assets/cgu-DGo0aPUa.js">
+  <link rel="modulepreload" crossorigin href="./assets/protected-topbar-BQPjv2xD.js">
+  <link rel="modulepreload" crossorigin href="./assets/expert-page-BQeo9_JP.js">
+  <link rel="stylesheet" crossorigin href="./assets/cgu-DhnjAcwr.css">
 </head>
-<body data-logout-target="public.html" class="bg" data-forced-space="public">
+<body data-logout-target="public.html" class="bg v36-page po-v5-harmony po-public-v24" data-forced-space="public">
 
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
-    <a class="v40-topbar-brand" href="dashboard.html">
-      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-      <div class="v40-topbar-brand-text"><strong>POPE Online</strong><small>Conseil & Expertise</small></div>
+    <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
+      <img src="./assets/favicon-BgPk1Min.png" alt="POPE Online"/>
+      <div class="v40-topbar-brand-text">
+        <strong>POPE Online</strong>
+        <small>IA + Expertise</small>
+      </div>
     </a>
     <div class="v40-topbar-sep"></div>
-    <span class="v40-topbar-sub">Suivi des demandes expertes</span>
+    <span class="v40-topbar-sub">Relecture experte</span>
     <nav class="v40-topbar-nav">
-      <a class="v40-topbar-btn" href="dashboard.html">&#x1F3E0; Dashboard</a>
-      <a class="v40-topbar-btn" href="app.html">&#x26A1; G&#233;n&#233;rer</a>
-      <a class="v40-topbar-btn" href="vault.html?space=public&amp;return=expert.html">&#x1F4C2; D&#233;p&#244;t</a>
-      <button class="v40-topbar-btn" data-logout>D&#233;connexion</button>
+      <a class="v40-topbar-btn" href="app.html">⚡ Générer</a>
+      <a class="v40-topbar-btn" href="mission.html">🎯 Sur mesure</a>
+      <a class="v40-topbar-btn" href="vault.html?space=public&return=expert.html">📂 Dépôt</a>
+      <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
+      <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
-    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+    <button class="v40-burger" id="v40Burger" type="button" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 <div class="v40-mobile-menu" id="v40MobileMenu">
-  <a href="dashboard.html">&#x1F3E0; Dashboard</a>
-  <a href="app.html">&#x26A1; G&#233;n&#233;rer</a>
-  <div style="height:1px;background:rgba(255,255,255,.08);margin:8px 0;"></div>
-  <button data-logout>&#x1F6AA; D&#233;connexion</button>
+  <a href="dashboard.html">🏠 Dashboard</a>
+  <a href="app.html">⚡ Générer</a>
+  <a href="mission.html">🎯 Sur mesure</a>
+  <div class="v40-mobile-menu-sep"></div>
+  <button data-logout>🚪 Déconnexion</button>
+</div>
+    <button data-logout>🚪 Déconnexion</button>
 </div>
 
-<div class="st-hero">
-  <div class="st-hero-text">
-    <div class="st-hero-eyebrow">&#x1F512; Espace public &#x2014; Suivi dossiers</div>
-    <h1 class="st-hero-title">Mes demandes expertes</h1>
-    <p class="st-hero-sub">Suivez l&#x2019;avancement de vos dossiers et consultez les r&#233;ponses de vos conseillers.</p>
-  </div>
-  <div class="st-kpis">
-    <div class="st-kpi"><div class="st-kpi-n" id="kpiTotal">&#x2014;</div><div class="st-kpi-l">Demandes<br>soumises</div></div>
-    <div class="st-kpi"><div class="st-kpi-n" id="kpiPending">&#x2014;</div><div class="st-kpi-l">En cours<br>de traitement</div></div>
-    <div class="st-kpi"><div class="st-kpi-n" id="kpiLeft">&#x2014;</div><div class="st-kpi-l">Conseils<br>disponibles</div></div>
-  </div>
-</div>
+<main class="v36-expert-layout">
 
-<div class="st-back-bar">
-  <div>
-    <div style="font-size:14px;font-weight:700;color:var(--ink)">Pour soumettre une nouvelle demande experte</div>
-    <div class="st-back-info">Suivez le parcours Domaine &#x2192; Besoin &#x2192; Documents &#x2192; Envoi depuis le tableau de bord</div>
-  </div>
-  <a href="dashboard.html" class="st-back-btn">&#x2190; Retour au tableau de bord</a>
-</div>
+  <!-- ═══ SIDEBAR GAUCHE ═══ -->
+  <aside class="v36-expert-sidebar">
 
-<div class="st-toast" id="stToast"></div>
-
-<main class="st-layout">
-  <aside class="st-sidebar">
-    <div class="st-quota">
-      <div class="st-quota-label">Conseils experts disponibles</div>
-      <div class="st-quota-ring">
-        <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="7"/>
-          <circle cx="40" cy="40" r="34" fill="none" stroke="#fff" stroke-width="7"
-            stroke-dasharray="213.6" id="quotaArc" stroke-dashoffset="213.6" stroke-linecap="round"
-            style="transition:stroke-dashoffset .6s ease,stroke .4s"/>
+    <!-- Quota visuel -->
+    <div class="v36-quota-card" id="quotaCard">
+      <div class="v36-quota-label">Votre quota de relecture</div>
+      <div class="v36-quota-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="8"
+            stroke-dasharray="264" id="quotaArc" stroke-dashoffset="264" stroke-linecap="round"/>
         </svg>
-        <div class="st-quota-ring-center">
-          <div class="st-quota-n" id="quotaN">&#x2014;</div>
-          <div class="st-quota-sub">restants</div>
+        <div class="v36-quota-ring-text">
+          <div class="v36-quota-n" id="quotaN">—</div>
+          <div class="v36-quota-sub">restantes</div>
         </div>
       </div>
-      <div class="st-quota-detail" id="quotaDetail">Chargement&#x2026;</div>
-      <a href="pricing.html" class="st-upgrade-btn">Voir les offres &#x2192;</a>
+      <div class="v36-quota-detail" id="quotaDetail">Chargement…</div>
     </div>
-    <div class="st-sidebar-card">
-      <h3>Parcours de demande</h3>
-      <div class="st-process">
-        <div class="st-process-step done"><span class="st-process-num">&#x2713;</span>1. Choisir le domaine</div>
-        <div class="st-process-step done"><span class="st-process-num">&#x2713;</span>2. D&#233;crire le besoin</div>
-        <div class="st-process-step done"><span class="st-process-num">&#x2713;</span>3. Joindre des documents</div>
-        <div class="st-process-step current"><span class="st-process-num">4</span>Suivi en cours</div>
+
+    <!-- Garanties -->
+    <div class="v36-expert-guarantee">
+      <div style="font-size:13px;font-weight:700;color:#0b2440;margin-bottom:12px">Ce que vous obtenez</div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">✍️</span>
+        <div><strong>Analyse fond &amp; forme</strong>Corrections, reformulations et points de vigilance identifiés.</div>
       </div>
-      <a href="dashboard.html" style="display:block;text-align:center;margin-top:14px;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none;">Nouvelle demande &#x2192;</a>
-    </div>
-    <div class="st-sidebar-card">
-      <h3>Engagement</h3>
-      <div style="font-size:12px;color:var(--muted);line-height:1.7;">
-        <div style="display:flex;gap:8px;margin-bottom:8px;"><span>&#x23F1;&#xFE0F;</span><span><strong style="color:var(--ink)">R&#233;ponse sous 48h ouvrées</strong><br>Expert humain d&#233;di&#233;.</span></div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;"><span>&#x1F4E9;</span><span><strong style="color:var(--ink)">Notification email</strong><br>Alert&#233; d&#232;s la r&#233;ponse.</span></div>
-        <div style="display:flex;gap:8px;"><span>&#x1F512;</span><span><strong style="color:var(--ink)">Confidentialit&#233; garantie</strong><br>Dossiers strictement priv&#233;s.</span></div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">⏱️</span>
+        <div><strong>Retour sous 48h ouvrées</strong>Par votre conseiller POPE Online dédié.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">📩</span>
+        <div><strong>Réponse dans votre espace</strong>Notification email + accès direct ici.</div>
+      </div>
+      <div class="v36-guarantee-item">
+        <span style="font-size:16px">🔒</span>
+        <div><strong>Confidentialité garantie</strong>Vos documents ne sont jamais partagés.</div>
       </div>
     </div>
+
+    <!-- Différence avec sur mesure -->
+    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:16px;font-size:13px">
+      <div style="font-weight:700;color:#0b2440;margin-bottom:6px">📌 Besoin plus large ?</div>
+      <div style="color:#50627a;line-height:1.6;margin-bottom:10px">La relecture porte sur un document précis. Pour un accompagnement stratégique ou un dossier complexe, utilisez le Sur mesure.</div>
+      <a href="mission.html" style="color:#d97706;font-weight:700;font-size:13px">→ Accompagnement sur mesure</a>
+    </div>
+
   </aside>
 
-  <div class="st-main">
-    <div class="st-status-bar" id="statusBar">
-      <div class="st-status-dot" id="statusDot"></div>
-      <div id="statusText"></div>
-    </div>
-    <div class="st-card">
-      <div class="st-card-head">
-        <div><h2>Mes dossiers en cours</h2><p>Cliquez sur "Voir le d&#233;tail" pour acc&#233;der au contenu et &#224; la r&#233;ponse de l&#x2019;expert</p></div>
-        <button class="st-refresh-btn" id="btnRefresh" type="button">&#x1F504; Actualiser</button>
+  <!-- ═══ CONTENU PRINCIPAL ═══ -->
+  <div class="v36-expert-main">
+
+    <!-- Formulaire de demande -->
+    <div class="v36-expert-card">
+      <div class="v36-expert-card-head">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,#059669,#10b981);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✍️</div>
+        <div>
+          <h2 id="expertTitle">Demander une relecture experte</h2>
+          <p id="expertLead">Transmettez votre document ou votre production IA à votre conseiller pour une analyse fond &amp; forme.</p>
+        </div>
       </div>
-      <div id="requestsList"><div style="text-align:center;padding:48px;color:var(--muted);font-size:14px;">Chargement&#x2026;</div></div>
+      <div class="v36-expert-card-body">
+        <div style="margin-bottom:16px">
+          <label class="label">Objet de la relecture <span style="color:#b91c1c">*</span></label>
+          <input class="input" id="subject" placeholder="Ex : Relecture d'une réponse à un marché public MAPA"/>
+          <div style="font-size:12px;color:#50627a;margin-top:6px">Soyez précis — cela aide votre conseiller à prioriser.</div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label">Contexte &amp; enjeux</label>
+          <textarea class="input" id="context" rows="4"
+            placeholder="Précisez l'organisme concerné, l'échéance, le niveau de sensibilité du document et le destinataire final."></textarea>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label class="label" id="expertContentLabel">Document ou éléments à relire <span style="color:#b91c1c">*</span></label>
+          <textarea class="input" id="content" rows="10"
+            placeholder="Collez ici votre texte, votre draft ou décrivez précisément les éléments à expertiser.&#10;&#10;Pour les documents longs, utilisez le dépôt sécurisé ci-dessous."></textarea>
+        </div>
+
+        <!-- Pièce jointe depuis archives -->
+        <div class="card soft expert-archive-card" id="generationAttachmentCard" style="margin-bottom:16px;display:none;border-radius:14px;padding:16px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
+            <div>
+              <h3 style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0b2440">Joindre une génération archivée</h3>
+              <p class="muted" style="margin:0;font-size:12px" id="attachmentLead">Sélectionnez une génération pour l'attacher à votre demande.</p>
+            </div>
+            <span class="badge" id="attachmentStatus">Aucune sélection</span>
+          </div>
+          <select class="input" id="archiveAttachmentSelect" style="font-size:13px">
+            <option value="">Ne pas joindre de génération archivée</option>
+          </select>
+          <div id="attachmentPreview" class="fineprint" style="margin-top:10px;font-size:12px;color:#50627a"></div>
+        </div>
+
+        <!-- Pièces vault -->
+        <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces du dépôt sécurisé 48h</div>
+              <div style="font-size:12px;color:#50627a;margin-top:2px" id="expertVaultLead">Joignez des pièces complémentaires à votre demande.</div>
+            </div>
+            <a class="btn ghost" href="vault.html?space=public&amp;return=expert.html" style="font-size:13px">Gérer mes pièces</a>
+          </div>
+          <div id="vaultExpertList" class="vault-inline-list"></div>
+        </div>
+
+        <button class="v36-send-btn" id="btnSend" type="button">
+          ✍️ Envoyer ma demande de relecture
+        </button>
+        <div class="fineprint" id="msg" style="margin-top:10px;text-align:center"></div>
+      </div>
     </div>
+
+    <!-- Mes relectures -->
+    <div class="v36-requests-card" id="myRequestsPanel">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #f0f7fc;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="margin:0 0 3px;font-size:17px;font-weight:700;color:#0b2440">Mes relectures</h2>
+          <p style="margin:0;font-size:12px;color:#50627a">Historique de vos demandes et réponses de vos conseillers</p>
+        </div>
+        <button class="btn ghost" id="btnRefreshRequests" type="button" style="font-size:13px">🔄 Actualiser</button>
+      </div>
+      <div id="requestsList">
+        <div style="text-align:center;padding:32px;color:#50627a;font-size:14px">Chargement…</div>
+      </div>
+    </div>
+
   </div>
 </main>
 
 <script>
 (function(){
-  function hasSession(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
-  function getApiBase(){var e=window.__POPE_API_BASE__||'';if(e)return String(e).replace(/\/$/,'');var h=window.location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';return'https://pope-online-v2.onrender.com';}
-  function redirectToLogin(){window.location.replace('login.html?next=expert.html');}
+  function hasSession(){
+    return localStorage.getItem('pope_session_active')==='1'||
+           !!sessionStorage.getItem('pope_session_token')||
+           !!localStorage.getItem('pope_session_token');
+  }
+  function getToken(){
+    return sessionStorage.getItem('pope_session_token')||
+           localStorage.getItem('pope_session_token')||'';
+  }
+  function getApiBase(){
+    var e=window.__POPE_API_BASE__||'';
+    if(e) return String(e).replace(/\/$/,'');
+    var h=window.location.hostname;
+    if(h==='localhost'||h==='127.0.0.1') return 'http://localhost:3000';
+    return 'https://pope-online-v2.onrender.com';
+  }
+  function redirectToLogin(){
+    var path=encodeURIComponent((window.location.pathname||'')+(window.location.search||'')||'dashboard.html');
+    window.location.replace('login.html?next='+path);
+  }
+  var protected=['app.html','dashboard.html','dashboard-private.html','expert.html',
+    'mission.html','private-onboarding.html','account.html','profile.html',
+    'dashboard-admin.html','vault.html','app-private.html','expert-private.html',
+    'mission-private.html','referral.html','tutoriel.html'];
+  var path=(window.location.pathname||'').toLowerCase();
+  var isProtected=protected.some(function(f){return path.endsWith('/'+f)||path.endsWith(f);});
+  if(!isProtected) return;
   if(hasSession()){window.__popeAuthValidated=true;return;}
-  var tk=sessionStorage.getItem('pope_session_token')||localStorage.getItem('pope_session_token')||'';
+  window.__popeAuthPending=true;
   var headers={'Content-Type':'application/json'};
-  if(tk)headers['Authorization']='Bearer '+tk;
+  var token=getToken();
+  if(token) headers['Authorization']='Bearer '+token;
   fetch(getApiBase()+'/auth/me',{method:'GET',credentials:'include',headers:headers})
-    .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return{};});})
-    .then(function(d){if(d&&d.user){localStorage.setItem('pope_session_active','1');window.__popeAuthValidated=true;}else throw 0;})
-    .catch(function(){redirectToLogin();});
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json().catch(function(){return {};});
+    })
+    .then(function(data){
+      if(data&&data.user){
+        localStorage.setItem('pope_session_active','1');
+        localStorage.setItem('pope_session_user',JSON.stringify(data.user));
+        if(data.user.accountSpace) localStorage.setItem('pope_account_space',data.user.accountSpace);
+        window.__popeAuthValidated=true;
+      } else throw new Error('missing_user');
+    })
+    .catch(function(){
+      window.__popeAuthValidated=false;
+      redirectToLogin();
+    })
+    .finally(function(){window.__popeAuthPending=false;});
 })();
-</script>
+</script>
 <script>
-(function(){
-  var b=document.getElementById('v40Burger'),m=document.getElementById('v40MobileMenu');
-  if(!b||!m)return;
-  var sp=b.querySelectorAll('span');
-  function o(open){if(open){m.classList.add('open');sp[0].style.cssText='transform:rotate(45deg) translate(5px,5px)';sp[1].style.cssText='opacity:0';sp[2].style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}else{m.classList.remove('open');[0,1,2].forEach(function(i){sp[i].style.cssText='';});}}
-  b.addEventListener('click',function(){o(!m.classList.contains('open'));});
-  m.querySelectorAll('a,button').forEach(function(el){el.addEventListener('click',function(){o(false);});});
-  document.addEventListener('click',function(e){if(!b.contains(e.target)&&!m.contains(e.target))o(false);});
-})();
-</script>
+// Topbar mobile universelle V40 — burger + menu + croix
+(function() {
+  var burger  = document.getElementById('v40Burger');
+  var menu    = document.getElementById('v40MobileMenu');
+  if (!burger || !menu) return;
 
-<script>
-(function(){
-'use strict';
-var API=(function(){var h=location.hostname;if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000';if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com';return'https://pope-online-v2.onrender.com';})();
-var TOKEN_KEY='pope_session_token';
-function $(id){return document.getElementById(id);}
-function token(){return sessionStorage.getItem(TOKEN_KEY)||localStorage.getItem(TOKEN_KEY)||'';}
-function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
-var _tt;
-function toast(msg,type){var el=$('stToast');if(!el)return;el.textContent=msg;el.className='st-toast '+(type||'');el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},3500);}
-function apiH(){var h={'Content-Type':'application/json'};var t=token();if(t)h['Authorization']='Bearer '+t;return h;}
-function apiFetch(path,opts){
-  opts=opts||{};
-  return fetch(API+path,{method:opts.method||'GET',headers:apiH(),body:opts.body?JSON.stringify(opts.body):undefined,credentials:'include'})
-    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok){var e=new Error(d&&d.error||'HTTP '+r.status);e.status=r.status;e.data=d;throw e;}return d;});});
-}
-function logout(){
-  var PRESERVE=['pope_v67_gens_pub','pope_v67_gens_priv','pope_v61_generations','pope_v54_generations','pope_v53_generations','pope_ai_generations','pope_v61_last_gen','pope_v54_last_generation_id'];
-  try{
-    var saved={};PRESERVE.forEach(function(k){try{var v=localStorage.getItem(k);if(v)saved[k]=v;}catch(e){}});
-    sessionStorage.clear();
-    var all=Object.keys(localStorage);
-    all.forEach(function(k){if(PRESERVE.indexOf(k)!==-1)return;if(k.indexOf('pope_')===0||k.indexOf('v5_')===0)localStorage.removeItem(k);});
-    PRESERVE.forEach(function(k){try{if(saved[k])localStorage.setItem(k,saved[k]);}catch(e){}});
-  }catch(e){}
-  location.href='public.html';
-}
-document.addEventListener('click',function(e){var btn=e.target.closest('[data-logout]');if(!btn)return;e.preventDefault();e.stopImmediatePropagation();logout();},true);
+  var spans = burger.querySelectorAll('span');
 
-function loadQuota(){
-  apiFetch('/auth/me').then(function(data){
-    var w=data&&data.wallet||{};
-    var left=w.expert_left!=null?w.expert_left:(w.tickets!=null?w.tickets:0);
-    var limit=w.expert_limit!=null?w.expert_limit:2;
-    var expired=w.status==='trial_expired'||w.trial_expired;
-    var el=$('quotaN');if(el)el.textContent=left;
-    var det=$('quotaDetail');
-    if(det)det.textContent=expired?'Essai expir\u00e9':(left>0?left+' conseil'+(left>1?'s':'')+' sur '+limit+' ce mois':'Quota \u00e9puis\u00e9 ce mois');
-    var arc=$('quotaArc');
-    if(arc){var pct=limit>0?Math.min(left/limit,1):0;arc.style.strokeDashoffset=String(213.6*(1-pct));arc.style.stroke=left===0?'#ef4444':left<=1?'#f59e0b':'#fff';}
-    var kl=$('kpiLeft');if(kl)kl.textContent=expired?'0':left;
-  }).catch(function(){});
-}
-
-function loadRequests(){
-  var list=$('requestsList');if(!list)return;
-  list.innerHTML='<div style="text-align:center;padding:48px;color:var(--muted);font-size:14px">Chargement de vos dossiers\u2026</div>';
-  apiFetch('/expert/my-requests').then(function(data){
-    var reqs=(data&&data.requests)||[];
-    var kt=$('kpiTotal');if(kt)kt.textContent=reqs.length;
-    var pending=reqs.filter(function(r){return r.status==='new'||r.status==='in_progress';});
-    var kp=$('kpiPending');if(kp)kp.textContent=pending.length;
-    var bar=$('statusBar'),dot=$('statusDot'),stxt=$('statusText');
-    if(pending.length&&bar){bar.style.display='flex';if(dot)dot.className='st-status-dot amber';if(stxt)stxt.textContent=pending.length+' demande'+(pending.length>1?'s':'')+' en cours \u2014 R\u00e9ponse sous 48h ouvrées';}
-    else{var replied=reqs.filter(function(r){return r.status==='replied'||r.status==='done';});if(replied.length&&bar){bar.style.display='flex';if(dot)dot.className='st-status-dot';if(stxt)stxt.textContent=replied.length+' r\u00e9ponse'+(replied.length>1?'s':'')+' disponible'+(replied.length>1?'s':'');}}
-    if(!reqs.length){
-      list.innerHTML='<div class="st-empty"><div class="st-empty-ico">&#x1F4CB;</div><div class="st-empty-title">Aucune demande soumise</div><div class="st-empty-sub">Commencez par choisir un domaine d\'expertise dans votre tableau de bord.</div><a href="dashboard.html" class="st-new-request-btn">Faire une demande experte &#x2192;</a></div>';
-      return;
+  function setOpen(open) {
+    if (open) {
+      menu.classList.add('open');
+      spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+      spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+      spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+    } else {
+      menu.classList.remove('open');
+      spans[0].style.cssText = '';
+      spans[1].style.cssText = '';
+      spans[2].style.cssText = '';
     }
-    var statusMap={new:{label:'En attente',cls:'new',dot:'&#x1F7E1;'},in_progress:{label:'En cours',cls:'progress',dot:'&#x1F535;'},replied:{label:'R\u00e9pondu',cls:'replied',dot:'&#x1F7E2;'},done:{label:'R\u00e9pondu',cls:'replied',dot:'&#x1F7E2;'},closed:{label:'Cl\u00f4tur\u00e9',cls:'closed',dot:'&#x26AA;'}};
-    list.innerHTML=reqs.map(function(r){
-      var st=statusMap[r.status]||statusMap.new;
-      var dt=r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
-      var rid=esc(String(r.id||''));
-      var replyHtml='';
-      if(r.reply_text||r.response){
-        var rtext=esc(r.reply_text||r.response||'');
-        var rdt=r.replied_at?new Date(r.replied_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
-        replyHtml='<div class="st-reply-box"><div class="st-reply-who">&#x2705; R\u00e9ponse de votre conseiller expert'+(rdt?' \u2014 '+rdt:'')+'</div><div class="st-reply-text">'+rtext+'</div></div>';
-      }
-      var bodyHtml='';
-      if(r.context){bodyHtml+='<div class="st-req-section"><div class="st-req-section-label">&#x1F4CB; Contexte</div><div class="st-req-section-body">'+esc(r.context)+'</div></div>';}
-      var bt=r.content||r.description||r.expectations||r.objective||'';
-      if(bt){bodyHtml+='<div class="st-req-section"><div class="st-req-section-label">&#x1F4DD; Description du besoin</div><div class="st-req-section-body">'+esc(bt)+'</div></div>';}
-      var genHtml='';
-      var ga=r.generation_attachment;
-      if(ga&&(ga.result||ga.usecaseLabel)){
-        genHtml='<div class="st-req-section st-req-gen"><div class="st-req-section-label">&#x1F6E0;&#xFE0F; Draft IA joint'+(ga.usecaseLabel?' \u2014 '+esc(ga.usecaseLabel):'')+(ga.domain?' ('+esc(ga.domain)+')':'')+'</div>'
-          +(ga.prompt&&ga.prompt.objective?'<div style="font-size:11px;color:#065f46;padding:5px 12px;font-weight:600;border-bottom:1px solid #bbf7d0">Objectif : '+esc(ga.prompt.objective)+'</div>':'')
-          +(ga.result?'<div class="st-req-section-body" style="max-height:500px;overflow-y:auto;">'+esc(ga.result)+'</div>':'')
-          +'</div>';
-      }
-      var vaultHtml='';
-      var vids=(r.vault_file_ids&&r.vault_file_ids.length)?r.vault_file_ids:[];
-      if(vids.length){
-        vaultHtml='<div class="st-req-section"><div class="st-req-section-label">&#x1F4CE; Pi\u00e8ces jointes ('+vids.length+')</div><div class="st-vault-links">'
-          +vids.map(function(fid){var nm=decodeURIComponent(String(fid)).split('/').pop();return'<a href="'+API+'/vault/'+encodeURIComponent(fid)+'/download" target="_blank" rel="noopener" class="st-vault-link">&#x1F4C4; '+esc(nm)+'</a>';}).join('')
-          +'</div></div>';
-      }
-      var hasDetail=!!(bodyHtml||genHtml||vaultHtml);
-      var detailId='req-d-'+rid;
-      return '<div class="st-request-item">'
-        +'<div class="st-request-head"><div class="st-request-subject">'+esc(r.subject||r.objective||r.title||'Demande expert')+'</div>'
-        +(r.domain?'<span class="st-request-domain">'+esc(r.domain)+'</span>':'')
-        +'<span class="st-status '+st.cls+'">'+st.dot+' '+st.label+'</span></div>'
-        +'<div class="st-request-meta"><span>Soumis le '+dt+'</span>'
-        +(hasDetail?'<button class="st-toggle-btn" data-target="'+detailId+'">Voir le d\u00e9tail &#x25BC;</button>':'')
-        +'</div>'
-        +(hasDetail?'<div id="'+detailId+'" class="st-req-detail" hidden>'+bodyHtml+genHtml+vaultHtml+'</div>':'')
-        +replyHtml+'</div>';
-    }).join('');
-    list.addEventListener('click',function(e){
-      var btn=e.target.closest('.st-toggle-btn');
-      if(!btn)return;
-      var t=document.getElementById(btn.getAttribute('data-target'));
-      if(!t)return;
-      if(t.hasAttribute('hidden')){t.removeAttribute('hidden');btn.textContent='Masquer &#x25B2;';}
-      else{t.setAttribute('hidden','');btn.textContent='Voir le d\u00e9tail &#x25BC;';}
-    },{once:false});
-  }).catch(function(e){
-    var st=e&&e.status;
-    list.innerHTML='<div class="st-empty"><div class="st-empty-ico">'+(st===401||st===403?'&#x1F512;':'&#x26A0;&#xFE0F;')+'</div><div class="st-empty-title">'+(st===401||st===403?'Session expir\u00e9e':'Chargement impossible')+'</div><div class="st-empty-sub">'+(st===401||st===403?'Rechargez la page pour vous reconnecter.':'V\u00e9rifiez votre connexion.')+'</div>'
-      +(st!==401&&st!==403?'<button onclick="loadRequests()" style="background:var(--blue);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">R\u00e9essayer</button>':'')
-      +'</div>';
+  }
+
+  burger.addEventListener('click', function() {
+    setOpen(!menu.classList.contains('open'));
   });
-}
-function init(){
-  loadQuota();
-  loadRequests();
-  var ref=$('btnRefresh');if(ref)ref.addEventListener('click',function(){loadRequests();toast('Actualisation\u2026');});
-}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+
+  // Fermer en cliquant un lien
+  menu.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('click', function() { setOpen(false); });
+  });
+
+  // Fermer en cliquant hors du menu
+  document.addEventListener('click', function(e) {
+    if (!burger.contains(e.target) && !menu.contains(e.target)) {
+      setOpen(false);
+    }
+  });
 })();
+
 </script>
-<script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 </body>
 </html>

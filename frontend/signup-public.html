@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Cr&eacute;er un compte public</title>
-<link href="app.css" rel="stylesheet"/>
+<title>POPE Online — Cr&eacute;er un compte public</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css"/>
-<link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<link href="./assets/favicon-BgPk1Min.png" rel="icon" type="image/png"/>
+  <script type="module" crossorigin src="./assets/signup-public-wnrcx2hN.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/shared-QmHk-S3D.js">
+  <link rel="modulepreload" crossorigin href="./assets/cgu-DGo0aPUa.js">
+  <link rel="stylesheet" crossorigin href="./assets/cgu-DhnjAcwr.css">
 </head>
 <body class="v40-auth-body">
 <div class="v40-auth-wrap">
@@ -14,21 +17,21 @@
   <!-- Panneau gauche -->
   <div class="v40-auth-left">
     <div class="v40-auth-mosaic">
-      <img src="./assets/mosaic.png" alt=""/>
+      <img src="./assets/mosaic-Jmk0AzpC.png" alt=""/>
     </div>
     <div class="v40-auth-left-content">
-      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
+      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne-Cq1rL5Ae.png" alt="POPE Online"/>
       <div class="v40-trial-badge" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);max-width:340px">
         <div class="icon" style="font-size:22px;flex-shrink:0">&#127381;</div>
         <div>
           <strong style="color:#fff">Essai gratuit 15 jours</strong>
-          <p style="color:rgba(255,255,255,.65);font-size:12px;margin:4px 0 0">Production illimit&eacute;e &middot; 2 Conseils Expert &middot; Sans CB</p>
+          <p style="color:rgba(255,255,255,.65);font-size:12px;margin:4px 0 0">Production illimit&eacute;e &middot; 2 relectures expertes &middot; Sans CB</p>
         </div>
       </div>
       <h2 class="v40-auth-headline">Collectivit&eacute;s &amp;<br>organisations publiques</h2>
       <div class="v40-auth-features">
         <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Notes, d&eacute;lib&eacute;rations, march&eacute;s</div>
-        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Conseil Expert sous 48h</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Relecture experte sous 48h</div>
         <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Clausier officiel inclus</div>
       </div>
       <p class="v40-auth-tagline">L&agrave; o&ugrave; l&rsquo;expertise humaine fait toute la diff&eacute;rence</p>
@@ -40,7 +43,7 @@
     <div class="v40-auth-right-head">
       <div style="display:none;margin-bottom:20px" class="v40-mobile-logo">
         <a href="index.html" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none">
-          <img src="./assets/popeonline-logo.png" alt="POPE Online" style="height:28px"/>
+          <img src="./assets/favicon-BgPk1Min.png" alt="POPE Online" style="height:28px"/>
           <strong style="font-size:15px;font-weight:800;color:#0b2440">POPE Online</strong>
         </a>
       </div>
@@ -105,66 +108,6 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
-<script type="module">
-import { apiFetch, getApiMessage } from './api.js';
-import { showToast, getFingerprint } from './app.js';
-import { attachIntlPhone } from './phone.js';
-import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
-
-function $(id) { return document.getElementById(id); }
-var SPACE = 'public';
-
-mountTurnstile('turnstileBox').catch(function(){});
-attachIntlPhone({ selectInputId:'phoneCountrySelect', countryInputId:'phoneCountry', numberInputId:'phoneNumber', fullInputId:'phoneFull' });
-
-try { localStorage.setItem('pope_account_space', SPACE); } catch(e) {}
-
-$('togglePw').addEventListener('click', function() {
-  var i = $('password'); var h = i.type === 'password';
-  i.type = h ? 'text' : 'password';
-  this.textContent = h ? String.fromCodePoint(0x1F648) : String.fromCodePoint(0x1F441);
-});
-
-$('btnSignup').addEventListener('click', async function() {
-  var btn = $('btnSignup');
-  var msg = $('signupMsg');
-  if (!$('cgu').checked) { showToast('Acceptez les conditions d\'utilisation.', 'warn'); return; }
-  btn.disabled = true; btn.textContent = 'Création en cours...';
-  msg.textContent = ''; msg.className = 'v40-msg';
-  try {
-    var fp = await getFingerprint();
-    var data = await apiFetch('/auth/signup', { method:'POST', body:{
-      email: $('email').value.trim(),
-      password: $('password').value,
-      fullName: $('fullName').value.trim(),
-      organization: $('organization').value.trim(),
-      phoneCountry: $('phoneCountry').value,
-      phoneNumber: $('phoneNumber').value.trim(),
-      phoneFull: $('phoneFull').value,
-      fp: fp,
-      accountSpace: SPACE,
-      turnstileToken: getTurnstileToken(),
-      ref: (new URLSearchParams(window.location.search).get('ref') || '')
-    }});
-    if (data && data.mailFailed) {
-      msg.textContent = 'Compte créé mais email non envoyé. Contactez-nous.';
-      msg.className = 'v40-msg';
-    } else {
-      msg.className = 'v40-msg ok';
-      msg.textContent = 'Compte créé ! Vérifiez votre email pour activer votre compte.';
-      showToast('Compte créé !', 'ok');
-    }
-    btn.textContent = 'Compte créé !';
-  } catch(err) {
-    resetTurnstile();
-    var code = getApiMessage(err);
-    var MSGS = { email_exists:'Cette adresse email est déjà utilisée.', invalid_email:'Format d\'email invalide.' };
-    msg.textContent = MSGS[code] || ('Erreur : ' + code);
-    btn.disabled = false;
-    btn.textContent = 'Créer mon compte public →';
-  }
-});
-</script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
 </body>
 </html>

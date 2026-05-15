@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
-import { normalizeEmail, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
+import { normalizeEmail, canonicalizeEmailForAbuse, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
 
@@ -42,6 +42,11 @@ function walletPayload(row = {}) {
   const expertLimit = Number(row.expert_limit ?? 2);
   const expertUsed  = Number(row.expert_used  ?? 0);
   const expertLeft  = Math.max(0, expertLimit - expertUsed);
+  // Date de renouvellement (stockée par billing.js lors du webhook invoice.paid)
+  const renewsAt = row.renews_at || null;
+  // Date de début du plan actuel (stockée lors de checkout.session.completed)
+  const planStartAt = row.plan_start || row.trial_started_at || null;
+
   return {
     plan_code:             row.plan_code   || 'FREE',
     plan_label:            row.plan_label  || 'Free',
@@ -62,6 +67,9 @@ function walletPayload(row = {}) {
     trial_expires_at:      row.trial_expires_at || null,
     trial_days_left:       trialDaysLeft,
     trial_expired:         isTrialExpired,
+    // Dates du plan payant — alimentées par le webhook Stripe billing.js
+    renews_at:             renewsAt,
+    plan_start:            planStartAt,
   };
 }
 
@@ -148,9 +156,10 @@ router.post('/signup', async (req, res) => {
       let wasDeletedBySelf = false;
       try {
         const emailHash = sha256Hex(normalizeEmail(email));
+        const canonEmailHash = sha256Hex(canonicalizeEmailForAbuse(email));
         const selfDel = await client.query(
-          `SELECT 1 FROM deleted_accounts WHERE (email_hash=$1 OR fp_hash=$2) AND deleted_by='self' LIMIT 1`,
-          [emailHash, fp_hash]
+          `SELECT 1 FROM deleted_accounts WHERE (email_hash=$1 OR email_hash=$2 OR fp_hash=$3) AND deleted_by='self' LIMIT 1`,
+          [emailHash, canonEmailHash, fp_hash]
         );
         wasDeletedBySelf = selfDel.rowCount > 0;
       } catch (_) { /* table absente */ }
@@ -717,11 +726,19 @@ router.delete('/me', requireAuth, async (req, res) => {
         const devicesRes = await client.query(`SELECT fp_hash, ip_hash FROM devices WHERE user_id=$1 LIMIT 10`, [req.user.sub]);
         try {
           const emailHash = sha256Hex(normalizeEmail(userRow.rows[0].email));
+          const canonEmailHash = sha256Hex(canonicalizeEmailForAbuse(userRow.rows[0].email));
           const ipHash = ipToHash(req);
+          // Stocker les deux hashes pour bloquer aussi les variantes Gmail
           await client.query(
             `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by) VALUES($1,$2,$3,'self') ON CONFLICT DO NOTHING`,
             [emailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
           );
+          if (canonEmailHash !== emailHash) {
+            await client.query(
+              `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by) VALUES($1,$2,$3,'self') ON CONFLICT DO NOTHING`,
+              [canonEmailHash, devicesRes.rows[0]?.fp_hash || null, ipHash]
+            );
+          }
           for (const dev of devicesRes.rows.slice(1)) {
             await client.query(
               `INSERT INTO deleted_accounts(email_hash, fp_hash, ip_hash, deleted_by) VALUES($1,$2,null,'self') ON CONFLICT DO NOTHING`,

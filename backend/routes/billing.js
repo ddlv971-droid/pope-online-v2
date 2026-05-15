@@ -45,6 +45,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
   let event;
   try {
+    if (secret && !sig) {
+      // Si le secret Stripe est configuré mais qu'aucune signature n'est présente → rejeter
+      console.error('[stripe webhook] Signature manquante — requête rejetée');
+      return res.status(400).json({ error: 'missing_signature' });
+    }
     if (secret && sig) {
       // Vérification signature Stripe
       const parts    = sig.split(',').reduce((acc, p) => { const [k,v] = p.split('='); acc[k]=v; return acc; }, {});
@@ -93,8 +98,8 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           // Activer le wallet et sauvegarder stripe_customer_id
           const stripeCustomerId = session.customer || null;
           await client.query(
-            `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert, stripe_customer_id)
-             values($1,$2,$3,'active',true,$4,0,9999,$4,$5)
+            `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert, stripe_customer_id, plan_start, renews_at)
+             values($1,$2,$3,'active',true,$4,0,9999,$4,$5,now(),now() + interval '30 days')
              on conflict(user_id) do update set
                plan_code    = excluded.plan_code,
                plan_label   = excluded.plan_label,
@@ -105,6 +110,8 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                tickets_ai   = 9999,
                tickets_expert = excluded.expert_limit,
                stripe_customer_id = coalesce(excluded.stripe_customer_id, wallets.stripe_customer_id),
+               plan_start   = coalesce(wallets.plan_start, now()),
+               renews_at    = excluded.renews_at,
                updated_at   = now()`,
             [userId, plan.code, plan.label, plan.expertLimit, stripeCustomerId]
           );
@@ -169,6 +176,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           const plan = resolvePlanFromInvoice(lines);
 
           // Remise à zéro de expert_used + mise à jour expert_limit si plan détecté
+          // Calculer la prochaine date de renouvellement depuis la facture Stripe
+          const invoicePeriodEnd = invoice.period_end
+            ? new Date(Number(invoice.period_end) * 1000)
+            : new Date(Date.now() + 30 * 86400000);
+
           if (plan) {
             await client.query(
               `update wallets
@@ -177,16 +189,17 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                       plan_code     = $3,
                       plan_label    = $4,
                       status        = 'active',
+                      renews_at     = $5,
                       updated_at    = now()
                 where user_id = $1`,
-              [userId, plan.expertLimit, plan.code, plan.label]
+              [userId, plan.expertLimit, plan.code, plan.label, invoicePeriodEnd]
             );
             console.log(`[stripe] Renouvellement ${plan.label} — expert_used remis à 0 pour customer ${custId}`);
           } else {
             // Plan non détecté : remettre uniquement expert_used à zéro
             await client.query(
-              `update wallets set expert_used=0, status='active', updated_at=now() where user_id=$1`,
-              [userId]
+              `update wallets set expert_used=0, status='active', renews_at=$2, updated_at=now() where user_id=$1`,
+              [userId, invoicePeriodEnd]
             );
             console.log(`[stripe] Renouvellement — expert_used remis à 0 pour customer ${custId} (plan non résolu)`);
           }

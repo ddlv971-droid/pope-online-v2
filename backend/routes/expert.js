@@ -211,6 +211,19 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
     if (!replyText) return res.status(400).json({ error: 'missing_reply' });
 
     const result = await withClient(async (client) => {
+      // SECURITY: vérifier que la demande appartient à un client assigné à cet expert
+      // Les admins peuvent répondre à n'importe quelle demande
+      if (req.user.role === 'expert') {
+        const assigned = await client.query(
+          `SELECT 1 FROM expert_requests er
+           JOIN expert_assignments ea ON ea.client_id = er.user_id
+           WHERE er.id = $1 AND ea.expert_id = $2 LIMIT 1`,
+          [id, req.user.sub]
+        );
+        if (!assigned.rowCount) {
+          return { ok: false, status: 403, body: { error: 'not_assigned' } };
+        }
+      }
       const upd = await client.query(
         `update expert_requests
          set reply_text=$2, reply_by=$3, replied_at=now(), status='replied', updated_at=now()
@@ -310,6 +323,19 @@ router.post('/:id/expert-reply', requireAuth, async (req, res) => {
     if (!['expert','admin'].includes(req.user?.role)) return res.status(403).json({ error: 'forbidden' });
 
     const result = await withClient(async (client) => {
+      // SECURITY: vérifier que la demande appartient à un client assigné à cet expert
+      // Les admins peuvent répondre à n'importe quelle demande
+      if (req.user.role === 'expert') {
+        const assigned = await client.query(
+          `SELECT 1 FROM expert_requests er
+           JOIN expert_assignments ea ON ea.client_id = er.user_id
+           WHERE er.id = $1 AND ea.expert_id = $2 LIMIT 1`,
+          [id, req.user.sub]
+        );
+        if (!assigned.rowCount) {
+          return { ok: false, status: 403, body: { error: 'not_assigned' } };
+        }
+      }
       const upd = await client.query(
         `update expert_requests
          set reply_text=$2, reply_by=$3, replied_at=now(), status='replied', updated_at=now()
@@ -331,6 +357,7 @@ router.post('/:id/expert-reply', requireAuth, async (req, res) => {
       }
       return { ok: true, row };
     });
+    if (!result.ok && result.status) return res.status(result.status).json(result.body);
     return res.json(result);
   } catch(e) {
     console.error(e);
@@ -351,8 +378,8 @@ router.get('/my-assigned-requests', requireAuth, async (req, res) => {
         `select er.id, er.objective, er.expectations, er.context, er.status,
                 er.reply_text, er.reply_by, er.replied_at,
                 er.created_at, er.updated_at,
-                er.generation_attachment,
-                u.email, u.full_name, u.organization, u.id as user_id
+                er.generation_attachment, er.vault_file_ids,
+                u.email, u.full_name, u.organization, u.phone_full, u.phone_number, u.id as user_id
            from expert_requests er
            join users u on u.id = er.user_id
            join expert_assignments ea on ea.client_id = er.user_id
@@ -379,7 +406,7 @@ router.get('/my-clients', requireAuth, async (req, res) => {
     const expertId = req.user.sub;
     const rows = await withClient(async (client) => {
       const r = await client.query(
-        `select u.id, u.full_name, u.email, u.organization, ea.assigned_at,
+        `select u.id, u.full_name, u.email, u.organization, u.phone_full, u.phone_number, ea.assigned_at,
                 (select count(*) from expert_requests er
                   where er.user_id = u.id
                     and er.status not in ('replied','closed'))::int as pending_count,

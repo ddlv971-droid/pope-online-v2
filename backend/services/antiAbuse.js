@@ -4,6 +4,25 @@ export function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+/**
+ * Canonicalise l'email pour l'anti-abus (Gmail alias, +tags, dots).
+ * user+test@gmail.com → user@gmail.com
+ * u.s.e.r@gmail.com   → user@gmail.com
+ */
+export function canonicalizeEmailForAbuse(email) {
+  const norm = normalizeEmail(email);
+  const atIdx = norm.indexOf('@');
+  if (atIdx < 0) return norm;
+  let local = norm.slice(0, atIdx);
+  const domain = norm.slice(atIdx + 1);
+  const plusIdx = local.indexOf('+');
+  if (plusIdx >= 0) local = local.slice(0, plusIdx);
+  if (domain === 'gmail.com' || domain === 'googlemail.com') {
+    local = local.replace(/\./g, '');
+  }
+  return `${local}@${domain}`;
+}
+
 export function fpHash(fp) {
   return sha256Hex(fp || '');
 }
