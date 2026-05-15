@@ -19,12 +19,10 @@ const EXCLUDED_HTML = new Set([
 ]);
 
 function isCompiledOutput(filePath) {
-  // Les fichiers compilés par Vite contiennent des références à des assets hachés
-  // ex: src="./assets/shared-QmHk-S3D.js"
+  // Détecte les fichiers compilés par Vite (contiennent des assets hachés type shared-XXXXXXXX.js)
   try {
-    const content = readFileSync(filePath, 'utf8').slice(0, 2048);
-    return /src=["']\.\/assets\/[^"']+\-[A-Za-z0-9]{8}\.(js|css)["']/.test(content)
-        || /href=["']\.\/assets\/[^"']+\-[A-Za-z0-9]{8}\.(js|css)["']/.test(content);
+    const content = readFileSync(filePath, 'utf8');
+    return /assets\/[a-zA-Z0-9_-]+-[A-Za-z0-9]{8}\.(js|css)/.test(content);
   } catch { return false; }
 }
 
