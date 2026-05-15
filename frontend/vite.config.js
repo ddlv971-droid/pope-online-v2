@@ -4,11 +4,25 @@ import { readdirSync, statSync } from 'node:fs';
 
 const ROOT = resolve(__dirname);
 
+// Fichiers HTML exclus du build Vite (legacy IIFE scripts non-modules)
+const EXCLUDED_HTML = new Set([
+  'account.html',
+  'app2.html',
+  'app2-private.html',
+  'dashboard2.html',
+  'dashboard2-private.html',
+  'vault2.html',
+  'offre-gratuite.html',
+  'referral.html',
+  'parcours.html',
+  'private-onboarding.html',
+]);
+
 function htmlInputs(dir) {
   const entries = {};
   for (const name of readdirSync(dir)) {
     const full = resolve(dir, name);
-    if (statSync(full).isFile() && name.endsWith('.html')) {
+    if (statSync(full).isFile() && name.endsWith('.html') && !EXCLUDED_HTML.has(name)) {
       entries[name.replace(/\.html$/i, '')] = full;
     }
   }

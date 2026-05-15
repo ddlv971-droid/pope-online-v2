@@ -765,19 +765,19 @@ document.addEventListener('DOMContentLoaded',function(){
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, setTicketsBadge } from './app.js';
-if (!requireLogin('dashboard.html')) {{}}
+if (!requireLogin('dashboard.html')) {}
 
-(async () => {{
-  try {{
+(async () => {
+  try {
     const me = await apiFetch('/auth/me');
     if (!me) return;
     setTicketsBadge && setTicketsBadge(me.wallet);
-    const u = me.user  || {{}};
-    const w = me.wallet || {{}};
+    const u = me.user  || {};
+    const w = me.wallet || {};
 
     // ── Prénom ──
     const name = u.full_name ? u.full_name.split(' ')[0] : (u.email ? u.email.split('@')[0] : '');
-    if (name) {{ const el=document.getElementById('dashWelcome'); if(el) el.textContent='Bonjour '+name+' 👋'; }}
+    if (name) { const el=document.getElementById('dashWelcome'); if(el) el.textContent='Bonjour '+name+' 👋'; }
 
     // ── Détection plan ── (V87: plan_label est la source fiable)
     const planRaw = (w.plan_label || w.plan_code || w.plan || '').toLowerCase().trim();
@@ -792,12 +792,12 @@ if (!requireLogin('dashboard.html')) {{}}
     // renews_at : stocké par billing.js webhook à chaque paiement Stripe (V87)
     const renewRaw = w.renews_at || null;
     const renewDate = renewRaw ? new Date(renewRaw) : null;
-    const renewStr  = renewDate ? renewDate.toLocaleDateString('fr-FR',{{day:'2-digit',month:'long',year:'numeric'}}) : '';
+    const renewStr  = renewDate ? renewDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
 
     // trial_expires_at : date de fin d'essai gratuit
     const trialEndRaw = w.trial_expires_at || null;
     const trialEndDate = trialEndRaw ? new Date(trialEndRaw) : null;
-    const trialEndStr  = trialEndDate ? trialEndDate.toLocaleDateString('fr-FR',{{day:'2-digit',month:'long',year:'numeric'}}) : '';
+    const trialEndStr  = trialEndDate ? trialEndDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
     const trialDaysLeft = w.trial_days_left != null ? w.trial_days_left
       : (trialEndDate ? Math.max(0, Math.ceil((trialEndDate - Date.now()) / 86400000)) : null);
 
@@ -806,20 +806,20 @@ if (!requireLogin('dashboard.html')) {{}}
 
     // ── KPI : Conseils disponibles ──
     const leftN = document.getElementById('expertLeftN');
-    if (leftN) {{
+    if (leftN) {
       const left = w.expert_left != null ? w.expert_left : (w.tickets != null ? w.tickets : '—');
       leftN.textContent = left;
       if (Number(left) === 0) leftN.style.color = '#ef4444';
       else if (Number(left) <= 1) leftN.style.color = '#f59e0b';
       else leftN.style.color = '';
-    }}
+    }
 
     // ── KPI : Plan actif ──
     const planN = document.getElementById('planN');
-    if (planN) {{
+    if (planN) {
       const planLabel = w.plan_label || (isPaid ? planRaw.charAt(0).toUpperCase() + planRaw.slice(1) : 'Free');
       planN.textContent = planLabel;
-    }}
+    }
 
     // ── Bannière abonnement ──
     const alertEl = document.getElementById('trialAlert');
@@ -827,62 +827,62 @@ if (!requireLogin('dashboard.html')) {{}}
     const bodyEl  = document.getElementById('trialAlertBody');
     const ctaEl   = alertEl ? alertEl.querySelector('.v5-trial-cta') : null;
 
-    if (alertEl) {{
-      if (isPaid && !isCancelled) {{
+    if (alertEl) {
+      if (isPaid && !isCancelled) {
         // Abonnement payant actif
         alertEl.removeAttribute('hidden');
         alertEl.style.background = 'linear-gradient(135deg,#f0fdf4,#dcfce7)';
         alertEl.style.borderColor = '#bbf7d0';
-        if (titleEl) {{ titleEl.textContent = 'Abonnement '+(w.plan_label||planRaw)+' actif'; titleEl.style.color = '#16a34a'; }}
-        if (bodyEl) {{
+        if (titleEl) { titleEl.textContent = 'Abonnement '+(w.plan_label||planRaw)+' actif'; titleEl.style.color = '#16a34a'; }
+        if (bodyEl) {
           const renewTxt = renewStr ? 'Renouvellement le '+renewStr+'.' : '';
           bodyEl.textContent = (renewTxt || 'Abonnement actif.')+' Les crédits non utilisés ne sont pas reportés au mois suivant.';
-        }}
-        if (ctaEl) {{ ctaEl.textContent = 'Gérer mon abonnement →'; ctaEl.href = 'profile.html'; }}
-      }} else if (isCancelled) {{
+        }
+        if (ctaEl) { ctaEl.textContent = 'Gérer mon abonnement →'; ctaEl.href = 'profile.html'; }
+      } else if (isCancelled) {
         // Résilié
         alertEl.removeAttribute('hidden');
         alertEl.style.background = '';
         alertEl.style.borderColor = '';
-        if (titleEl) {{ titleEl.textContent = 'Abonnement résilié'; titleEl.style.color = '#dc2626'; }}
+        if (titleEl) { titleEl.textContent = 'Abonnement résilié'; titleEl.style.color = '#dc2626'; }
         if (bodyEl) bodyEl.textContent = 'Votre abonnement a été résilié. Vous êtes repassé en offre Free.';
-        if (ctaEl) {{ ctaEl.textContent = 'Se réabonner →'; ctaEl.href = 'pricing.html'; }}
-      }} else if (isTrialExpired) {{
+        if (ctaEl) { ctaEl.textContent = 'Se réabonner →'; ctaEl.href = 'pricing.html'; }
+      } else if (isTrialExpired) {
         // Essai expiré
         const ov = document.getElementById('trialExpiredOverlay');
         if (ov) ov.removeAttribute('hidden');
         alertEl.removeAttribute('hidden');
-        if (titleEl) {{ titleEl.textContent = 'Essai gratuit expiré'; titleEl.style.color = '#dc2626'; }}
+        if (titleEl) { titleEl.textContent = 'Essai gratuit expiré'; titleEl.style.color = '#dc2626'; }
         if (bodyEl) bodyEl.textContent = 'Votre période d\'essai est terminée. Souscrivez un plan pour continuer à accéder aux conseils experts.';
-        if (ctaEl) {{ ctaEl.textContent = 'Choisir un plan →'; ctaEl.href = 'pricing.html'; }}
-      }} else if (isTrialActive) {{
+        if (ctaEl) { ctaEl.textContent = 'Choisir un plan →'; ctaEl.href = 'pricing.html'; }
+      } else if (isTrialActive) {
         // Essai en cours
         alertEl.removeAttribute('hidden');
-        if (titleEl) {{
+        if (titleEl) {
           titleEl.textContent = trialDaysLeft != null
             ? 'Essai gratuit — '+trialDaysLeft+' jour'+(trialDaysLeft > 1 ? 's' : '')+' restant'+(trialDaysLeft > 1 ? 's' : '')
             : 'Essai gratuit en cours';
           titleEl.style.color = '';
-        }}
-        if (bodyEl) {{
+        }
+        if (bodyEl) {
           const endTxt = trialEndStr ? 'Expire le '+trialEndStr+'. ' : '';
           bodyEl.textContent = endTxt+'Souscrivez un plan pour continuer après votre essai.';
-        }}
-        if (ctaEl) {{ ctaEl.textContent = 'Voir les offres →'; ctaEl.href = 'pricing.html'; }}
-      }} else if (!isPaid && !isTrialActive && !isTrialExpired) {{
+        }
+        if (ctaEl) { ctaEl.textContent = 'Voir les offres →'; ctaEl.href = 'pricing.html'; }
+      } else if (!isPaid && !isTrialActive && !isTrialExpired) {
         // Espace gratuit sans essai actif (nouveau compte ou verified_no_trial)
         const hasNoDate = !trialEndDate && !renewDate;
-        if (!hasNoDate || status === 'verified_no_trial' || w.expert_left > 0 || w.expert_left === 0) {{
+        if (!hasNoDate || status === 'verified_no_trial' || w.expert_left > 0 || w.expert_left === 0) {
           alertEl.removeAttribute('hidden');
-          if (titleEl) {{ titleEl.textContent = 'Espace gratuit — Essai en cours'; titleEl.style.color = ''; }}
+          if (titleEl) { titleEl.textContent = 'Espace gratuit — Essai en cours'; titleEl.style.color = ''; }
           if (bodyEl) bodyEl.textContent = 'Profitez de 2 conseils experts et de la génération IA illimitée. Souscrivez un plan pour un accès continu.';
-          if (ctaEl) {{ ctaEl.textContent = 'Voir les offres →'; ctaEl.href = 'pricing.html'; }}
-        }}
-      }}
-    }}
+          if (ctaEl) { ctaEl.textContent = 'Voir les offres →'; ctaEl.href = 'pricing.html'; }
+        }
+      }
+    }
 
-  }} catch(e) {{ console.error('Dashboard module error:', e); }}
-}})();
+  } catch(e) { console.error('Dashboard module error:', e); }
+})();
 </script>
 
 <!-- ── Dictée vocale V87 ─────────────────────────────────────────── -->
