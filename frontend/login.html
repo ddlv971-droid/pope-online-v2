@@ -4,7 +4,8 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Connexion</title>
-
+<link href="app.css" rel="stylesheet"/>
+<link href="./assets/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body class="v40-auth-body">
 <div class="v40-auth-wrap">
@@ -12,16 +13,16 @@
   <!-- Panneau gauche image -->
   <div class="v40-auth-left">
     <div class="v40-auth-mosaic">
-      <img src="./assets/mosaic-Jmk0AzpC.png" alt=""/>
+      <img src="./assets/mosaic.png" alt=""/>
     </div>
     <div class="v40-auth-left-content">
-      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne-Cq1rL5Ae.png" alt="POPE Online"/>
+      <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
       <h2 class="v40-auth-headline">
         L&rsquo;expertise humaine<br>au service de vos<br><em>livrables professionnels</em>
       </h2>
       <p class="v40-auth-sub">Conseillers experts, production guid&eacute;e et validation humaine &mdash; pour chaque document que vous produisez.</p>
       <div class="v40-auth-features">
-        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Relecture experte sous 48h</div>
+        <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Conseil Expert sous 48h</div>
         <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> 18 types de livrables m&eacute;tier</div>
         <div class="v40-auth-feature"><span class="v40-auth-feature-icon">&#10003;</span> Donn&eacute;es chiffr&eacute;es &middot; RGPD</div>
       </div>
@@ -34,7 +35,7 @@
     <div class="v40-auth-right-head">
       <div style="display:none;margin-bottom:20px" class="v40-mobile-logo">
         <a href="index.html" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none">
-          <img src="./assets/favicon.png" alt="POPE Online" style="height:28px"/>
+          <img src="./assets/popeonline-logo.png" alt="POPE Online" style="height:28px"/>
           <strong style="font-size:15px;font-weight:800;color:#0b2440">POPE Online</strong>
         </a>
       </div>
@@ -73,22 +74,95 @@
     </div>
   </div>
 </div>
+<script type="module">
+import { apiFetch, getApiMessage, setSession } from './api.js';
+import { showToast, getFingerprint } from './app.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
+function $(id) { return document.getElementById(id); }
+var params = new URLSearchParams(window.location.search || '');
+var requestedNext = (params.get('next') || '').trim();
+mountTurnstile('turnstileBox').catch(function(){});
 
-<!-- Décoy anti-autofill navigateur -->
-<div style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
-  <form><input type="email" name="_d_email" tabindex="-1"/><input type="password" name="_d_pass" tabindex="-1"/></form>
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  ['identifier','password'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.setAttribute('readonly', '');
-    setTimeout(function() { el.removeAttribute('readonly'); el.value = ''; }, 50);
-    setTimeout(function() { if (!el.matches(':focus')) el.value = ''; }, 600);
-  });
+$('togglePw').addEventListener('click', function() {
+  var i = $('password');
+  var h = i.type === 'password';
+  i.type = h ? 'text' : 'password';
+  this.textContent = h ? String.fromCodePoint(0x1F648) : String.fromCodePoint(0x1F441);
+});
+
+function getDefaultNext(user) {
+  if (user && user.role === 'admin')  return 'dashboard-admin.html';
+  if (user && user.role === 'expert') return 'dashboard-expert.html';
+  return (user && user.accountSpace === 'private') ? 'dashboard-private.html' : 'dashboard.html';
+}
+
+$('btnLogin').addEventListener('click', async function() {
+  var btn = $('btnLogin');
+  var msg = $('loginMsg');
+  btn.disabled = true; btn.textContent = 'Connexion...';
+  msg.textContent = ''; msg.className = 'v40-msg';
+  try {
+    var identifier = ($('identifier').value || '').trim();
+    var password   = ($('password').value || '');
+    if (!identifier || !password) {
+      msg.textContent = 'Renseignez votre email et mot de passe.';
+      btn.disabled = false; btn.textContent = 'Se connecter \u2192'; return;
+    }
+    var fp = await getFingerprint();
+    var data = await apiFetch('/auth/login', { method:'POST', body:{ email:identifier, identifier:identifier, password:password, fp:fp, turnstileToken:getTurnstileToken() }});
+    setSession(data.user || {}, data.token || '');
+    localStorage.setItem('pope_account_space', (data.user && data.user.accountSpace) || 'public');
+    showToast('Connect\u00e9 \u2713', 'ok');
+    setTimeout(function() { window.location.href = getDefaultNext(data.user); }, 250);
+  } catch(err) {
+    resetTurnstile();
+    var code = getApiMessage(err);
+    var MSGS = { invalid_credentials:'Email ou mot de passe incorrect.', too_many_requests:'Trop de tentatives. Attendez quelques minutes.' };
+    msg.textContent = MSGS[code] || ('Erreur : ' + code);
+    btn.disabled = false; btn.textContent = 'Se connecter \u2192';
+  }
 });
 </script>
+
+<!-- Décoy anti-autofill — absorbe le remplissage automatique du navigateur -->
+<div style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+  <form><input type="email" name="email"/><input type="password" name="password"/></form>
+</div>
+
+<script>
+// Empêcher le remplissage automatique du navigateur sur les vrais champs
+document.addEventListener('DOMContentLoaded', function() {
+  // Vider immédiatement les champs (avant que Chrome ait eu le temps de les remplir)
+  var id = document.getElementById('identifier');
+  var pw = document.getElementById('password');
+  if(id) { id.value = ''; id.setAttribute('readonly', ''); setTimeout(function(){ id.removeAttribute('readonly'); }, 100); }
+  if(pw) { pw.value = ''; pw.setAttribute('readonly', ''); setTimeout(function(){ pw.removeAttribute('readonly'); }, 100); }
+  
+  // Protection supplémentaire : vider à nouveau après 500ms (Chrome remplit parfois en différé)
+  setTimeout(function() {
+    if(id && !id.matches(':focus')) id.value = '';
+    if(pw && !pw.matches(':focus')) pw.value = '';
+  }, 500);
+});
+</script>
+
+<script>
+/* Anti-autofill V87 — ne supprime les valeurs que si l'utilisateur n'a pas commencé à saisir */
+document.addEventListener('DOMContentLoaded', function() {
+  var id = document.getElementById('identifier');
+  var pw = document.getElementById('password');
+  function safeClear(el) {
+    if (!el || el === document.activeElement) return;
+    // Ne vider que si le champ semble pré-rempli par le navigateur (pas par l'utilisateur)
+    setTimeout(function() {
+      if (el !== document.activeElement) el.value = '';
+    }, 100);
+  }
+  safeClear(id);
+  safeClear(pw);
+});
+</script>
+
 </body>
 </html>

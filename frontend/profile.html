@@ -675,11 +675,10 @@ async function load() {
     }
 
     // Détection plan payant — vérifier plan ET plan_label
-    // V87: plan_label est la source fiable (walletPayload l'exporte toujours)
-    const _planRaw = (w.plan_label || w.plan_code || w.plan || w.plan_type || '').toLowerCase().trim();
+    const _planRaw = (w.plan || w.plan_type || w.plan_label || '').toLowerCase().trim();
     const _isPaid = _planRaw === 'starter' || _planRaw === 'pro' || _planRaw === 'premium'
-                 || _planRaw.startsWith('starter') || _planRaw.startsWith('pro');
-    // V87: w.renews_at est maintenant alimenté par billing.js webhook invoice.paid
+                 || _planRaw === 'pro monthly' || _planRaw === 'starter monthly'
+                 || _planRaw === 'pro annual' || _planRaw === 'starter annual';
     const _renewRaw = w.renews_at || w.next_billing_at || w.current_period_end || w.period_end || null;
     const _renewDate = _renewRaw ? new Date(_renewRaw) : null;
     const _renewStr = _renewDate ? _renewDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
