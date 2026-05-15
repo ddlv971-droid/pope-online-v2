@@ -27,25 +27,8 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
-  const csp = [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "object-src 'none'",
-    "frame-ancestors 'none'",
-    "img-src 'self' data: https: blob:",
-    "font-src 'self' data: https://fonts.gstatic.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
-    "connect-src 'self' https://challenges.cloudflare.com https://api.anthropic.com",
-    "media-src 'self' blob:",
-    "worker-src 'self' blob:",
-    "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://buy.stripe.com",
-    "form-action 'self' https://buy.stripe.com",
-    "upgrade-insecure-requests"
-  ].join('; ');
+  const csp = ["default-src 'self'","base-uri 'self'","object-src 'none'","frame-ancestors 'none'","img-src 'self' data: https:","font-src 'self' data:","style-src 'self' 'unsafe-inline' https:","script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com","connect-src 'self' https://challenges.cloudflare.com","frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com","form-action 'self'","upgrade-insecure-requests"].join('; ');
   res.setHeader('Content-Security-Policy', csp);
-  // Request ID for tracing (sans exposer d'info sensible)
-  res.setHeader('X-Request-ID', require('crypto').randomBytes(8).toString('hex'));
   if (req.secure || String(req.headers['x-forwarded-proto'] || '').includes('https'))
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -57,7 +40,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/billing/webhook', express.raw({ type: 'application/json' }));
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '8mb' }));
 
 app.use((req, res, next) => {
   const originalJson = res.json.bind(res);
