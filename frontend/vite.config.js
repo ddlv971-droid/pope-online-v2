@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
-import { readdirSync, statSync } from 'node:fs';
+import { readdirSync, statSync, readFileSync } from 'node:fs';
 
 const ROOT = resolve(__dirname);
 
@@ -18,12 +18,25 @@ const EXCLUDED_HTML = new Set([
   'private-onboarding.html',
 ]);
 
+function isCompiledOutput(filePath) {
+  // Les fichiers compilés par Vite contiennent des références à des assets hachés
+  // ex: src="./assets/shared-QmHk-S3D.js"
+  try {
+    const content = readFileSync(filePath, 'utf8').slice(0, 2048);
+    return /src=["']\.\/assets\/[^"']+\-[A-Za-z0-9]{8}\.(js|css)["']/.test(content)
+        || /href=["']\.\/assets\/[^"']+\-[A-Za-z0-9]{8}\.(js|css)["']/.test(content);
+  } catch { return false; }
+}
+
 function htmlInputs(dir) {
   const entries = {};
   for (const name of readdirSync(dir)) {
     const full = resolve(dir, name);
     if (statSync(full).isFile() && name.endsWith('.html') && !EXCLUDED_HTML.has(name)) {
-      entries[name.replace(/\.html$/i, '')] = full;
+      // Exclure les fichiers déjà compilés (contiennent des assets hachés)
+      if (!isCompiledOutput(full)) {
+        entries[name.replace(/\.html$/i, '')] = full;
+      }
     }
   }
   return entries;
