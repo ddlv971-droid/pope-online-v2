@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><script>
-/* Init : API base URL selon l'environnement + anti-flash retour APP */
-(function(){
-  var h = location.hostname;
-  if (h.indexOf('staging') !== -1 || h.indexOf('localhost') !== -1 || h === '127.0.0.1') {
-    window.__POPE_API_BASE__ = h.indexOf('localhost') !== -1 || h === '127.0.0.1'
-      ? 'http://localhost:3000'
-      : 'https://popeonline-staging.onrender.com';
-  }
-  /* Anti-flash : si retour depuis app, masquer step-panel-1 immédiatement */
-  try {
-    if (new URLSearchParams(location.search).get('from') === 'app') {
-      var st = document.createElement('style');
-      st.id = 'v67-antiflash';
-      st.textContent = '.v5-step-panel { display: none !important; }';
-      document.head && document.head.appendChild(st);
-    }
-  } catch(e) {}
-})();
-</script>
+<head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Tableau de bord Privé</title>
@@ -94,14 +75,6 @@ html body header.v40-topbar #v40Burger span{
   html body header.v40-topbar .v40-topbar-sep{display:none!important;}
   html body header.v40-topbar #v40Burger{display:flex!important;}
 }
-
-/* -- Dictee vocale V87 -- */
-.v87-voice-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
-.v87-voice-row label{margin-bottom:0!important;flex:1;}
-.v87-voice-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid #b8dcf0;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#0079c1;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:.15s;}
-.v87-voice-btn:hover{background:#eef7ff;border-color:#0079c1;}
-.v87-voice-btn.recording{background:#fef2f2;border-color:#fca5a5;color:#dc2626;animation:vpulse 1.2s ease-in-out infinite;}
-@keyframes vpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3);}50%{box-shadow:0 0 0 6px rgba(220,38,38,0);}}
 </style>
 
 <style id="v5-workspace-css">
@@ -338,6 +311,14 @@ html body header.v40-topbar #v40Burger span{
   .v5-domain-grid{grid-template-columns:1fr;}
   .v5-espace-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* V87-voice */
+.v87-vrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.v87-vrow label{flex:1;margin-bottom:0!important;}
+.v87-vbtn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid #b8dcf0;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#0079c1;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:.15s;}
+.v87-vbtn:hover{background:#eef7ff;border-color:#0079c1;}
+.v87-vbtn.rec{background:#fef2f2;border-color:#fca5a5;color:#dc2626;animation:vp87 1.2s ease-in-out infinite;}
+@keyframes vp87{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3);}50%{box-shadow:0 0 0 6px rgba(220,38,38,0);}}
 </style>
 <link rel="stylesheet" href="v58-styles.css">
 <style>
@@ -563,11 +544,11 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Contexte &amp; organisation</label><button type="button" class="v87-voice-btn" onclick="startVoice('descContexte',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Contexte &amp; organisation</label><button type="button" class="v87-vbtn" onclick="startVoice('descContexte',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descContexte" rows="3" placeholder="Qui vous êtes, votre structure, le cadre institutionnel ou contractuel de la demande…"></textarea>
               </div>
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Problème à résoudre</label><button type="button" class="v87-voice-btn" onclick="startVoice('descProbleme',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Problème à résoudre</label><button type="button" class="v87-vbtn" onclick="startVoice('descProbleme',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descProbleme" rows="2" placeholder="Quelle situation, quel blocage, quelle question précise pose problème ?"></textarea>
               </div>
             </div>
@@ -582,16 +563,16 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Objectif recherché</label><button type="button" class="v87-voice-btn" onclick="startVoice('descObjectif',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Objectif recherché</label><button type="button" class="v87-vbtn" onclick="startVoice('descObjectif',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descObjectif" rows="2" placeholder="Ce que vous souhaitez obtenir : validation, sécurisation, réponse, arbitrage, rédaction…"></textarea>
               </div>
               <div class="v58-row">
                 <div class="v58-field">
-                  <div class="v87-voice-row"><label>Décision attendue</label><button type="button" class="v87-voice-btn" onclick="startVoice('descDecision',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                  <div class="v87-vrow"><label>Décision attendue</label><button type="button" class="v87-vbtn" onclick="startVoice('descDecision',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descDecision" placeholder="Valider, refuser, arbitrer, répondre…"/>
                 </div>
                 <div class="v58-field">
-                  <div class="v87-voice-row"><label>Livrable attendu</label><button type="button" class="v87-voice-btn" onclick="startVoice('descLivrable',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                  <div class="v87-vrow"><label>Livrable attendu</label><button type="button" class="v87-vbtn" onclick="startVoice('descLivrable',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descLivrable" placeholder="Note, courrier, analyse, trame, avis…"/>
                 </div>
               </div>
@@ -607,11 +588,11 @@ html body header.v40-topbar #v40Burger span{
             </button>
             <div class="v58-acc-body">
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Contraintes connues</label><button type="button" class="v87-voice-btn" onclick="startVoice('descContraintes',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Contraintes connues</label><button type="button" class="v87-vbtn" onclick="startVoice('descContraintes',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descContraintes" rows="2" placeholder="Contraintes légales, budgétaires, politiques, organisationnelles…"></textarea>
               </div>
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Points sensibles ou risques</label><button type="button" class="v87-voice-btn" onclick="startVoice('descRisques',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Points sensibles ou risques</label><button type="button" class="v87-vbtn" onclick="startVoice('descRisques',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="descRisques" rows="2" placeholder="Confidentialité, tensions internes, précédents, risques juridiques…"></textarea>
               </div>
             </div>
@@ -627,7 +608,7 @@ html body header.v40-topbar #v40Burger span{
             <div class="v58-acc-body">
               <div class="v58-row">
                 <div class="v58-field">
-                  <div class="v87-voice-row"><label>Acteurs concernés</label><button type="button" class="v87-voice-btn" onclick="startVoice('descActeurs',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                  <div class="v87-vrow"><label>Acteurs concernés</label><button type="button" class="v87-vbtn" onclick="startVoice('descActeurs',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                   <input type="text" class="v58-input" id="descActeurs" placeholder="Élu, DG, prestataire, usager, partenaire…"/>
                 </div>
                 <div class="v58-field">
@@ -661,7 +642,7 @@ html body header.v40-topbar #v40Burger span{
                 <input type="text" class="v58-input" id="descNiveau" placeholder="Synthèse rapide / analyse approfondie / trame détaillée…"/>
               </div>
               <div class="v58-field">
-                <div class="v87-voice-row"><label>Informations complémentaires libres</label><button type="button" class="v87-voice-btn" onclick="startVoice('besoInDesc',this)" title="Dicter votre texte"><span>&#x1F399;&#xFE0F;</span><span class="v87-voice-lbl">Dicter</span></button></div>
+                <div class="v87-vrow"><label>Informations complémentaires libres</label><button type="button" class="v87-vbtn" onclick="startVoice('besoInDesc',this)" title="Dicter votre texte"><span>🎙️</span><span class="v87-vlbl">Dicter</span></button></div>
                 <textarea class="v58-textarea" id="besoInDesc" rows="3" placeholder="Tout autre élément utile : historique, tentatives précédentes, contexte informel…"></textarea>
               </div>
             </div>
@@ -1103,90 +1084,36 @@ if (!requireLogin('dashboard-private.html')) {}
 
 <script type="module" src="./protected-topbar.js" onerror="void 0"></script>
 
-<script>
-/* Dictée vocale V87 */
-(function(){
-  var _r=null,_ab=null,_ai=null;
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  window.startVoice=function(id,btn){
-    var ta=document.getElementById(id);if(!ta)return;
-    if(_r&&_ai===id){try{_r.stop();}catch(e){}return;}
-    if(_r){try{_r.stop();}catch(e){}}
-    if(!SR){
-      var d=document.createElement('div');d.style.cssText='font-size:11px;color:#f59e0b;margin-top:4px;';
-      d.textContent='⚠️ Dictée non disponible — utilisez Chrome ou Edge';
-      ta.parentNode.appendChild(d);setTimeout(function(){d.remove();},4000);return;
-    }
-    _r=new SR();_r.lang='fr-FR';_r.continuous=true;_r.interimResults=true;
-    _ab=btn;_ai=id;
-    var base=ta.value;
-    _r.onstart=function(){btn.classList.add('recording');btn.querySelector('.voice-lbl').textContent='Arrêter';};
-    _r.onresult=function(e){
-      var fin='',int='';
-      for(var i=e.resultIndex;i<e.results.length;i++){
-        if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' ';
-        else int+=e.results[i][0].transcript;
-      }
-      if(fin)base+=fin;
-      ta.value=base+(int?'…'+int:'');
-      ta.dispatchEvent(new Event('input',{bubbles:true}));
-    };
-    _r.onerror=function(e){
-      if(e.error==='not-allowed'){
-        var d=document.createElement('div');d.style.cssText='font-size:11px;color:#dc2626;margin-top:4px;';
-        d.textContent='⚠️ Accès micro refusé — autorisez dans les paramètres.';
-        ta.parentNode.appendChild(d);setTimeout(function(){d.remove();},5000);
-      }
-      stopUI(btn);_r=null;_ai=null;_ab=null;
-    };
-    _r.onend=function(){if(ta.value.endsWith('…'))ta.value=base;stopUI(btn);_r=null;_ai=null;_ab=null;};
-    try{_r.start();}catch(e){stopUI(btn);}
-  };
-  function stopUI(btn){if(btn){btn.classList.remove('recording');btn.querySelector('.voice-lbl').textContent='Dicter';}}
-})();
-</script>
+
+
+
 
 <script>
 (function(){
-  var _r=null,_ab=null,_ai=null;
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  window.startVoice=function(id,btn){
-    var el=document.getElementById(id);
-    if(!el)return;
-    if(_r&&_ai===id){try{_r.stop();}catch(e){}return;}
-    if(_r){try{_r.stop();}catch(e){}}
-    if(!SR){
-      var d=document.createElement('div');
-      d.style.cssText='font-size:11px;color:#f59e0b;margin-top:4px;padding:4px 8px;background:#fffbeb;border-radius:6px;';
-      d.textContent='⚠️ Dictée non disponible — utilisez Chrome ou Edge.';
-      el.parentNode.appendChild(d);setTimeout(function(){d.remove();},4000);return;
+var _r=null,_id=null;
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+window.startVoice=function(id,btn){
+  var el=document.getElementById(id);if(!el)return;
+  if(_r&&_id===id){try{_r.stop();}catch(e){}return;}
+  if(_r){try{_r.stop();}catch(e){}}
+  if(!SR){alert('Dictée vocale non disponible.\nUtilisez Chrome ou Edge.');return;}
+  _r=new SR();_r.lang='fr-FR';_r.continuous=true;_r.interimResults=true;
+  _id=id;var base=el.value||'';
+  _r.onstart=function(){btn.classList.add('rec');btn.querySelector('.v87-vlbl').textContent='Arrêter';};
+  _r.onresult=function(e){
+    var f='',t='';
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)f+=e.results[i][0].transcript+' ';
+      else t+=e.results[i][0].transcript;
     }
-    _r=new SR();_r.lang='fr-FR';_r.continuous=true;_r.interimResults=true;
-    _ab=btn;_ai=id;var base=el.value||'';
-    _r.onstart=function(){btn.classList.add('recording');btn.querySelector('.v87-voice-lbl').textContent='Arrêter';};
-    _r.onresult=function(e){
-      var fin='',intr='';
-      for(var i=e.resultIndex;i<e.results.length;i++){
-        if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' ';
-        else intr+=e.results[i][0].transcript;
-      }
-      if(fin)base+=fin;
-      el.value=base+(intr?'…'+intr:'');
-      el.dispatchEvent(new Event('input',{bubbles:true}));
-    };
-    _r.onerror=function(e){
-      if(e.error==='not-allowed'){
-        var d=document.createElement('div');
-        d.style.cssText='font-size:11px;color:#dc2626;margin-top:4px;padding:4px 8px;background:#fef2f2;border-radius:6px;';
-        d.textContent='⚠️ Accès micro refusé. Autorisez dans les paramètres.';
-        el.parentNode.appendChild(d);setTimeout(function(){d.remove();},5000);
-      }
-      _stopUI(btn);_r=null;_ai=null;_ab=null;
-    };
-    _r.onend=function(){if(el.value.endsWith('…'))el.value=base;_stopUI(btn);_r=null;_ai=null;_ab=null;};
-    try{_r.start();}catch(e){_stopUI(btn);}
+    if(f)base+=f;
+    el.value=base+(t?'…'+t:'');
+    el.dispatchEvent(new Event('input',{bubbles:true}));
   };
-  function _stopUI(b){if(b){b.classList.remove('recording');b.querySelector('.v87-voice-lbl').textContent='Dicter';}}
+  _r.onerror=function(){btn.classList.remove('rec');btn.querySelector('.v87-vlbl').textContent='Dicter';_r=null;_id=null;};
+  _r.onend=function(){if(el.value.endsWith('…'))el.value=base;btn.classList.remove('rec');btn.querySelector('.v87-vlbl').textContent='Dicter';_r=null;_id=null;};
+  try{_r.start();}catch(e){btn.classList.remove('rec');}
+};
 })();
 </script>
 </body>

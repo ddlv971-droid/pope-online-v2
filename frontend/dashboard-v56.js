@@ -88,7 +88,7 @@
     document.head.appendChild(st);
   }
   function patchFunctions(){
-    const oldSelect=window.selectDomain; window.selectDomain=function(btn){ if(typeof oldSelect==='function') oldSelect(btn); $$('.v5-domain-pill').forEach(b=>b.classList.remove('selected')); if(btn) btn.classList.add('selected'); saveState(); addDomainBadge(); };
+    const oldSelect=window.selectDomain; window.selectDomain=function(btn){ if(typeof oldSelect==='function') oldSelect(btn); $$('.v5-domain-pill').forEach(b=>b.classList.remove('selected')); if(btn) btn.classList.add('selected'); saveState(); addDomainBadge(); setTimeout(function(){ if(window.goStep) window.goStep(2); },120); };
     const oldGo=window.goStep; window.goStep=function(n){ saveState(); if(typeof oldGo==='function') oldGo(n); addDomainBadge(); if(Number(n)===3) fillDraftSelect(); };
     document.addEventListener('input', e=>{ if(e.target.closest('#step-panel-2')) saveState(); });
     document.addEventListener('change', e=>{ if(e.target.closest('#step-panel-2')||e.target.name==='besoType') saveState(); });
