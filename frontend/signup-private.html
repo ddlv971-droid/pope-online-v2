@@ -166,5 +166,32 @@ $('btnSignup').addEventListener('click', async function() {
   }
 });
 </script>
+
+<script>
+/* Anti-autofill V87 — empêche le pré-remplissage par le navigateur */
+(function() {
+  function clearIfUnfocused(el) {
+    if (!el || el === document.activeElement) return;
+    el.setAttribute('readonly', '');
+    el.value = '';
+    setTimeout(function() {
+      el.removeAttribute('readonly');
+      if (el !== document.activeElement) el.value = '';
+    }, 120);
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var fields = ['fullName','organization','email','phoneNumber','password'];
+    fields.forEach(function(id) { clearIfUnfocused(document.getElementById(id)); });
+    // Double protection : Chrome 147+ remplit parfois après DOMContentLoaded
+    setTimeout(function() {
+      fields.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && el !== document.activeElement) el.value = '';
+      });
+    }, 500);
+  });
+})();
+</script>
+
 </body>
 </html>

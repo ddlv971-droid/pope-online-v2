@@ -148,21 +148,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-/* Anti-autofill V87 — ne supprime les valeurs que si l'utilisateur n'a pas commencé à saisir */
-document.addEventListener('DOMContentLoaded', function() {
-  var id = document.getElementById('identifier');
-  var pw = document.getElementById('password');
-  function safeClear(el) {
-    if (!el || el === document.activeElement) return;
-    // Ne vider que si le champ semble pré-rempli par le navigateur (pas par l'utilisateur)
-    setTimeout(function() {
-      if (el !== document.activeElement) el.value = '';
-    }, 100);
+
+<script>
+/* Anti-autofill login V87 — Chrome 147+ compatible */
+(function() {
+  function protectField(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('readonly', '');
+    el.value = '';
+    setTimeout(function() { el.removeAttribute('readonly'); if (el !== document.activeElement) el.value = ''; }, 100);
+    setTimeout(function() { if (el !== document.activeElement) el.value = ''; }, 500);
+    setTimeout(function() { if (el !== document.activeElement) el.value = ''; }, 1000);
   }
-  safeClear(id);
-  safeClear(pw);
-});
+  document.addEventListener('DOMContentLoaded', function() {
+    protectField('identifier');
+    protectField('password');
+  });
+})();
 </script>
+
 
 </body>
 </html>
