@@ -27,7 +27,12 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
-  const csp = ["default-src 'self'","base-uri 'self'","object-src 'none'","frame-ancestors 'none'","img-src 'self' data: https:","font-src 'self' data:","style-src 'self' 'unsafe-inline' https:","script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com","connect-src 'self' https://challenges.cloudflare.com","frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com","form-action 'self'","upgrade-insecure-requests"].join('; ');
+  const csp = ["default-src 'self'","base-uri 'self'","object-src 'none'","frame-ancestors 'none'",
+    "img-src 'self' data: https:","font-src 'self' data:","style-src 'self' 'unsafe-inline' https:",
+    "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+    "connect-src 'self' https://challenges.cloudflare.com",
+    "frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com",
+    "form-action 'self'","upgrade-insecure-requests"].join('; ');
   res.setHeader('Content-Security-Policy', csp);
   if (req.secure || String(req.headers['x-forwarded-proto'] || '').includes('https'))
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -40,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/billing/webhook', express.raw({ type: 'application/json' }));
-app.use(express.json({ limit: '8mb' }));
+app.use(express.json({ limit: '15mb' }));
 
 app.use((req, res, next) => {
   const originalJson = res.json.bind(res);
@@ -68,27 +73,18 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Rate limit global
 app.use(rateLimit({ windowMs: 60*1000, max: 90, standardHeaders: true, legacyHeaders: false, skip: r => r.method === 'OPTIONS' }));
 
-// Rate limit strict sur les routes d'authentification (brute-force protection)
+// Rate limit strict sur les routes d'authentification
 const authStrictLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
+  windowMs: 15 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false,
   skip: r => r.method === 'OPTIONS',
-  message: { error: 'too_many_attempts' },
-  keyGenerator: (req) => {
-    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
-    return ip;
-  }
+  message: { error: 'too_many_attempts' }
 });
-app.use('/auth/signup', authStrictLimiter);
-app.use('/auth/login', authStrictLimiter);
-app.use('/auth/forgot-password', authStrictLimiter);
-app.use('/auth/verify', authStrictLimiter);
-app.use('/auth/verify-email', authStrictLimiter);
+app.use('/auth/signup',           authStrictLimiter);
+app.use('/auth/login',            authStrictLimiter);
+app.use('/auth/forgot-password',  authStrictLimiter);
+app.use('/auth/verify',           authStrictLimiter);
 
 app.get('/health', (_req, res) => res.json({ ok: true, v: 'v5.3-full-clean' }));
 
