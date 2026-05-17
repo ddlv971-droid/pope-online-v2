@@ -6940,6 +6940,14 @@ h1, h2, h3 {
   font-weight: 500; padding: 7px 12px; border-radius: 8px; transition: .15s; white-space: nowrap;
 }
 .v38-nav-links a:hover { color: #fff; background: rgba(255,255,255,.08); }
+.v38-nav-cta-signup {
+  margin-left: 6px; padding: 8px 16px !important; border-radius: 10px !important;
+  font-weight: 700 !important; color: #fff !important;
+  background: #1a9e5c !important;
+  transition: opacity .18s;
+}
+.v38-nav-cta-signup:hover { opacity: .88; }
+
 .v38-nav-cta {
   margin-left: 8px; padding: 8px 18px !important; border-radius: 10px !important;
   font-weight: 700 !important; color: #fff !important;
