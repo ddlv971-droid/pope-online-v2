@@ -22,14 +22,6 @@
   VITE_API_URL = "https://popeonline-staging.onrender.com"
   NODE_VERSION = "20"
 
-[context.production]
-  command = "npm config set registry https://registry.npmjs.org/ && npm install --registry=https://registry.npmjs.org/ && npm run build"
-
-[context.production.environment]
-  VITE_API_URL = "https://pope-online-v2.onrender.com"
-  NODE_VERSION = "20"
-  NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
-
 [[redirects]]
   from = "/sitemap.xml"
   to = "/sitemap.xml"
