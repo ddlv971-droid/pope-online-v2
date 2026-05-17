@@ -19,7 +19,7 @@ import { pool } from './db/index.js';
 dotenv.config();
 
 const isProd = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
-const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', ...(isProd ? ['CORS_ORIGIN', 'TURNSTILE_SECRET_KEY'] : [])];
+const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', ...(isProd ? ['CORS_ORIGIN', 'TURNSTILE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'] : [])];
 const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
 if (missingEnv.length) { console.error(`Missing env: ${missingEnv.join(', ')}`); process.exit(1); }
 
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self)');
   next();
 });
 
@@ -85,6 +85,15 @@ app.use('/auth/signup',           authStrictLimiter);
 app.use('/auth/login',            authStrictLimiter);
 app.use('/auth/forgot-password',  authStrictLimiter);
 app.use('/auth/verify',           authStrictLimiter);
+
+// Rate limit sur les routes IA et vault (dictée vocale, génération, upload)
+const aiVaultLimiter = rateLimit({
+  windowMs: 60 * 1000, max: 15, standardHeaders: true, legacyHeaders: false,
+  skip: r => r.method === 'OPTIONS',
+  message: { error: 'too_many_requests' }
+});
+app.use('/ai',    aiVaultLimiter);
+app.use('/vault', aiVaultLimiter);
 
 app.get('/health', (_req, res) => res.json({ ok: true, v: 'v5.3-full-clean' }));
 

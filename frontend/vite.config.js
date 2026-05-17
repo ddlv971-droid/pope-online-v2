@@ -8,6 +8,8 @@ const ROOT = resolve(__dirname);
 const EXCLUDED_HTML = new Set([
   'app2.html','app2-private.html','dashboard2.html','dashboard2-private.html',
   'vault2.html','offre-gratuite.html','parcours.html','private-onboarding.html',
+  // Fichiers legacy v1 — ne plus inclure dans le build prod
+  'closier.html',
 ]);
 
 function isCompiledOutput(fp) {

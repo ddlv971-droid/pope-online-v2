@@ -62,6 +62,15 @@ async function main() {
   await applyPatch('schema_patch_v24.sql', 'Patch V24 applied (admin promotion + idempotent V22)');
   await applyPatch('schema_patch_v29.sql', 'Patch V29 applied (plans hybrides + IA illimitee)');
   await applyPatch('schema_patch_v35.sql', 'Patch V35 applied (referral + onboarding + notifications + stripe_events)');
+  await applyPatch('schema_patch_v36.sql', 'Patch V36 applied');
+  await applyPatch('schema_patch_v52_full_clean.sql', 'Patch V52 applied');
+  await applyPatch('schema_patch_v53_full_clean.sql', 'Patch V53 applied');
+  await applyPatch('schema_patch_v54_full_clean.sql', 'Patch V54 applied');
+  await applyPatch('schema_patch_v55_full_clean.sql', 'Patch V55 applied');
+  await applyPatch('schema_patch_v56_full_clean.sql', 'Patch V56 applied');
+  await applyPatch('schema_patch_v58.sql', 'Patch V58 applied');
+  await applyPatch('schema_patch_v60.sql', 'Patch V60 applied');
+  await applyPatch('schema_patch_v87.sql', 'Patch V87 applied (renews_at + plan_start + last_login_at + session_version + security_events)');
   await seedAdmin();
   await pool.end();
 }

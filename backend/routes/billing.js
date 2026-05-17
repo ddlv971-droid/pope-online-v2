@@ -43,6 +43,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   const sig    = req.headers['stripe-signature'];
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // En production, refuser si STRIPE_WEBHOOK_SECRET absent
+  if (!secret && String(process.env.NODE_ENV || '').trim() === 'production') {
+    console.error('[stripe] STRIPE_WEBHOOK_SECRET manquant — webhook refusé');
+    return res.status(500).json({ error: 'webhook_not_configured' });
+  }
+
   let event;
   try {
     if (secret && sig) {

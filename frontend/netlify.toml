@@ -22,6 +22,14 @@
   VITE_API_URL = "https://popeonline-staging.onrender.com"
   NODE_VERSION = "20"
 
+[context.production]
+  command = "npm config set registry https://registry.npmjs.org/ && npm install --registry=https://registry.npmjs.org/ && npm run build"
+
+[context.production.environment]
+  VITE_API_URL = "https://pope-online-v2.onrender.com"
+  NODE_VERSION = "20"
+  NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
+
 [[redirects]]
   from = "/sitemap.xml"
   to = "/sitemap.xml"
@@ -97,5 +105,5 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), geolocation=()"
+    Permissions-Policy = "camera=(), geolocation=(), microphone=(self)"
     Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.youtube.com https://s.ytimg.com; connect-src 'self' https: https://cloudflareinsights.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; form-action 'self' https://buy.stripe.com; media-src 'self' blob:; worker-src 'self' blob:; upgrade-insecure-requests"
