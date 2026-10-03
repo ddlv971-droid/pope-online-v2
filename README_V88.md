@@ -171,6 +171,16 @@ Trois exemples défilent : budget, personnel communal, marchés publics.
   - sur mobile et tablette, le premier écran réunit l'accroche et le bandeau, et l'échange animé suit au premier défilement.
 - **Fichiers concernés** : `frontend/index.html`, `frontend/site-v88.css`, `frontend/public/theme-v88.css`, `frontend/assets/pope-mark-light.png`, et les 11 pages connectées dotées de la barre supérieure.
 
+### Visage humain de l'accueil (V88.3)
+
+La photo fournie (une élue au téléphone, en surimpression sur la ville) est incrustée à gauche du premier écran. Elle exploite toute la largeur de la page, comme l'ancienne version.
+
+- **Fusion avec le fond** : la photo part du bord gauche de l'écran. Un mode de fusion « multiply » transforme son voile blanc en papier de la page, et un dégradé la fait disparaître vers la droite. Sa saturation est légèrement réduite pour s'accorder à la palette.
+- **Ordinateur** : l'accroche et l'échange animé se décalent vers la droite. Le premier écran reste en plein écran, bandeau défilant compris. Vérifié en 1280×720, 1366×768 et 1920×1080.
+- **Mobile et tablette** : la photo forme un bandeau fondu en tête du premier écran, au-dessus de l'accroche. Le bandeau défilant reste visible dès l'arrivée.
+- **Fichier** : `frontend/assets/pope-visage-humain.jpg` (1280×891, 95 Ko, optimisé).
+- **À vérifier** : les droits d'utilisation de la photo (licence de banque d'images ou cession), pour un usage commercial sur le site.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

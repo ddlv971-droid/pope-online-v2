@@ -573,3 +573,86 @@ body.s-body::before {
 @media (max-width: 860px) {
   .s-hero:not(.s-hero-home)::after { width: 80vw; right: -30vw; opacity: .09; }
 }
+
+/* ==========================================================================
+   V88.3 — Visage humain de POPE Online : photo incrustée à gauche, pleine largeur
+   La photo part du bord gauche de l'écran et se fond dans le papier :
+   mode « multiply » (le voile blanc de l'image devient le fond de page)
+   + masque dégradé vers la droite.
+   ========================================================================== */
+.s-hero-home { position: relative; overflow: hidden; isolation: isolate; }
+.s-hero-photo {
+  position: absolute; z-index: 0; left: 0; top: 0;
+  height: 100%; width: min(64vw, 1180px);
+  object-fit: cover; object-position: 16% 28%;
+  mix-blend-mode: multiply;
+  filter: saturate(.82) contrast(1.03);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 34%, rgba(0,0,0,.55) 50%, transparent 74%);
+          mask-image: linear-gradient(90deg, #000 0%, #000 34%, rgba(0,0,0,.55) 50%, transparent 74%);
+  pointer-events: none; user-select: none;
+}
+/* Le contenu s'étend sur toute la largeur et laisse la place au visage à gauche */
+@media (min-width: 961px) {
+  .s-hero-home > .s-hero-grid {
+    position: relative; z-index: 1;
+    max-width: 1560px;
+    padding-left: clamp(24px, 25vw, 500px); padding-right: 40px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+    gap: clamp(32px, 3.2vw, 64px);
+  }
+  .s-hero-home .s-h1 { font-size: clamp(2.3rem, 3.3vw, 3.6rem); }
+  .s-hero-home .s-lead { font-size: 1.08rem; }
+  .s-hero-photo { width: min(58vw, 1100px); }
+}
+/* Écrans portables (961–1440 px) : visage glissé vers le bord, échange plus compact */
+@media (min-width: 961px) and (max-width: 1440px) {
+  .s-hero-photo {
+    width: 54vw; transform: translateX(-4vw); object-position: 6% 26%;
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 36%, rgba(0,0,0,.45) 50%, transparent 64%);
+            mask-image: linear-gradient(90deg, #000 0%, #000 36%, rgba(0,0,0,.45) 50%, transparent 64%);
+  }
+  .s-hero-home > .s-hero-grid { padding-left: 28vw; padding-right: 28px; gap: 36px; }
+  .s-hero-home .s-actions { gap: 10px; }
+  .s-hero-home .s-actions .s-btn { padding: 0 16px; font-size: .95rem; }
+  .s-hero-home .s-note { padding: 18px 20px 16px; }
+  .s-hero-home .s-note-q { margin-right: 18px; }
+  .s-hero-home .s-note-q blockquote { font-size: 1.08rem; }
+  .s-hero-home .s-note-from { font-size: .8rem; margin-bottom: 8px; }
+  .s-hero-home .s-note-a { margin-left: 28px; }
+  .s-hero-home .s-note-a p { font-size: .87rem; margin-bottom: 6px; }
+  .s-hero-home .s-note-sign { font-size: .8rem; margin-top: 8px; }
+  .s-hero-home .s-track { margin: 10px 0 10px 28px; font-size: .76rem; }
+  .s-hero-home .s-ex-controls { margin-left: 28px; margin-top: 10px; }
+  .s-hero-home .s-ex-tab, .s-hero-home .s-ex-pause { padding: 6px 9px; font-size: .76rem; }
+  .s-hero-home .s-exchange-caption { margin-left: 28px; font-size: .76rem; }
+  .s-hero-home .s-ex-stage { min-height: 380px; }
+}
+/* Mobile et tablette : la photo devient un bandeau en tête du premier écran */
+@media (max-width: 960px) {
+  .s-hero-photo {
+    position: relative; order: 0; display: block;
+    width: 100%; height: 36vh; height: 36svh;
+    object-position: 24% 22%;
+    -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+  }
+  .s-hero-home .s-hero-grid > div:first-child {
+    min-height: calc(100vh - 72px - 62px - 36vh);
+    min-height: calc(100svh - 72px - 62px - 36svh);
+    justify-content: flex-start;
+    padding-top: 4px;
+  }
+}
+@media (max-width: 960px) {
+  .s-hero-photo { height: 30vh; height: 30svh; }
+  .s-hero-home .s-hero-grid > div:first-child {
+    position: relative; z-index: 1; margin-top: -40px; padding-top: 0; padding-bottom: 24px;
+    min-height: calc(100vh - 72px - 62px - 30vh + 40px);
+    min-height: calc(100svh - 72px - 62px - 30svh + 40px);
+  }
+}
+@media (max-width: 560px) {
+  .s-hero-home .s-lead { font-size: 1.02rem; margin-top: 14px; }
+  .s-hero-home .s-actions { margin-top: 20px; gap: 10px; }
+  .s-hero-home .s-reassure { font-size: .86rem; margin-top: 10px; }
+}
