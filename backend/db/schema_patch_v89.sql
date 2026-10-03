@@ -32,3 +32,8 @@ BEGIN
 END $$;
 
 CREATE INDEX IF NOT EXISTS idx_users_function ON users(user_function) WHERE user_function IS NOT NULL;
+
+-- 5. Garde-fou permanent (V88.4) : aucune valeur sentinelle « illimité » dans les
+--    crédits à l'unité. Sans effet si les données sont propres ; corrige les comptes
+--    dont la valeur 9999 de la V87 aurait survécu (ex. démarrage sans db_init).
+UPDATE wallets SET tickets_expert = 0 WHERE tickets_expert >= 1000;

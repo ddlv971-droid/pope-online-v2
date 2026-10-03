@@ -1236,7 +1236,7 @@ function checkQuota(){
     if(expired){
       banner.style.cssText='background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #fde68a;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px;';
       banner.innerHTML='<span style="font-size:20px">⏰</span>'
-        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — L’outil de rédaction reste disponible. Les demandes expertes nécessitent un plan actif.</div>'
+        +'<div style="flex:1;font-size:13px;color:#92400e"><strong>Essai expiré</strong> — Souscrivez l’offre Élu pour continuer à utiliser l’outil de rédaction et solliciter un expert.</div>'
         +'<a href="pricing.html" style="background:#d97706;color:#fff;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Voir les offres</a>';
       var formCol=document.querySelector('.v69-form-col');
       if(formCol && !formCol.contains(banner)) formCol.insertBefore(banner, formCol.firstChild);

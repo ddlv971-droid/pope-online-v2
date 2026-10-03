@@ -114,6 +114,22 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'server_error' });
 });
 
+// V88.4 : le patch de base V89 est rejoué au démarrage de l'API (il est idempotent).
+// Garantit la cohérence des portefeuilles même si Render démarre l'API sans
+// passer par « npm start » (et donc sans scripts/db_init.js).
+async function ensureSchemaV89() {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const sql = fs.readFileSync(path.join(dir, 'db', 'schema_patch_v89.sql'), 'utf8');
+    await pool.query(sql);
+    console.log('[boot] patch V89 vérifié');
+  } catch (err) { console.error('[boot] patch V89 non appliqué :', err.message); }
+}
+ensureSchemaV89();
+
 const port = process.env.PORT || 8787;
 app.listen(port, () => console.log(`POPE Online API :${port}`));
 

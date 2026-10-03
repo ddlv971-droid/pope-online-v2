@@ -181,6 +181,44 @@ La photo fournie (une élue au téléphone, en surimpression sur la ville) est i
 - **Fichier** : `frontend/assets/pope-visage-humain.jpg` (1280×891, 95 Ko, optimisé).
 - **À vérifier** : les droits d'utilisation de la photo (licence de banque d'images ou cession), pour un usage commercial sur le site.
 
+### Pages de connexion et d'inscription (V88.4)
+
+Le panneau gauche des pages de connexion et d'inscription reprend le visage humain de l'accueil, comme l'image de fond de l'ancienne version.
+
+- **Traitement** : la photo est passée en camaïeu sapin (légèrement désaturée), sous un voile vert qui s'intensifie vers la droite.
+- **Ordinateur** : le visage est visible à gauche. La marque, l'accroche et les arguments se placent sur la partie droite, à l'écart du visage, avec des encarts translucides.
+- **Mobile** : le panneau devient un bandeau compact, avec la marque et l'accroche sur la photo. Le formulaire apparaît immédiatement en dessous. Le doublon du logo mobile est masqué.
+- **Pages concernées** : toutes celles qui utilisent ce panneau (connexion, inscription élu, inscription privée en veille, essai).
+- **Fichiers** : `frontend/public/theme-v88.css` et `frontend/public/images/pope-visage-humain.jpg`. Cette copie de la photo est servie telle quelle, pour être utilisable depuis le thème.
+
+### Connexion et inscription, correctifs des compteurs (V88.4)
+
+**Pages de connexion et d'inscription**
+- Le panneau gauche reprend la photo « visage humain » de l'accueil, teintée sapin, comme sur l'ancienne version (`login.html`, `signup-public.html`, `signup-private.html`).
+- Le visage reste perceptible à gauche ; le texte, au centre, est sur un voile plus dense pour rester lisible.
+- Sur mobile, la photo forme un bandeau en haut de page.
+
+**Compteur de Conseils Expert à 10 001**
+- *Cause* : des comptes conservaient la valeur sentinelle `tickets_expert = 9999` de la V87. La V88 compte ce champ comme des crédits achetés, d'où 2 (quota d'essai) + 9 999 = 10 001. La remise à plat du patch V89 ne s'était pas appliquée à ces comptes, probablement parce que l'API démarre sans passer par `npm start`, donc sans `db_init`.
+- *Corrections* :
+  1. toute valeur ≥ 1 000 est ignorée côté API (affichage et décompte) ;
+  2. le patch V89 contient désormais une remise à zéro permanente de ces valeurs (vérifiée : les vrais crédits sont conservés) ;
+  3. l'API rejoue le patch V89 à chaque démarrage, quelle que soit la commande Render.
+- Le tableau de bord affiche « ∞ » pour les offres illimitées.
+
+**Tickets IA (outil de rédaction)**
+- Chaque génération décrémentait la valeur « illimitée » (9999 → 9998…), et les comptes réinscrits ou résiliés gardaient un accès incohérent.
+- *Désormais* :
+  - accès inclus pendant l'essai et dans les offres actives, sans aucun décompte quand l'accès est illimité ;
+  - refus clair sinon : « essai terminé », « e-mail à confirmer » ou « offre à souscrire » ;
+  - la résiliation retire l'accès.
+- La bannière de l'outil de rédaction annonçait encore « l'outil reste disponible » après l'essai : texte corrigé.
+
+**Admin**
+- Changer le nombre de tickets d'un compte remettait silencieusement son offre en FREE, son quota à 2, et ainsi de suite. La mise à jour est désormais **partielle** : seuls les champs modifiés changent.
+- Le champ « Tickets » devient « Conseils Expert à l'unité » : il ajoute ou retire des crédits (ex. `1` ou `-1`).
+- Changer d'offre applique le quota du catalogue et remet le compteur du mois à zéro.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

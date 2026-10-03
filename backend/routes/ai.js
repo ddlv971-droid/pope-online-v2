@@ -44,43 +44,37 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
         return { ok: false, status: 403, body: { error: 'wallet_missing' } };
       }
 
-      // Blocage trial expiré — SAUF pour les abonnés actifs
-      const _isActive = wallet.status === 'active';
-      const _trialDateExpired = wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now();
-      const _trialStatusExpired = wallet.status === 'trial_expired';
-      if (!_isActive && (_trialDateExpired || _trialStatusExpired)) {
-        // Marquer le statut expiré si pas encore fait
-        if (!_trialStatusExpired) {
-          await client.query(
-            `update wallets set status='trial_expired', tickets_ai=0, updated_at=now() where user_id=$1`,
-            [userId]
-          );
+      // ── V88.4 : accès à l'outil de rédaction ───────────────────────────────
+      // Inclus dans l'essai (15 jours) et dans les offres payantes actives.
+      // Illimité quand ai_unlimited est vrai : aucun décompte (en V88, chaque
+      // génération décrémentait la valeur sentinelle 9999 → 9998…).
+      const status = String(wallet.status || '');
+      const trialOver = status === 'trial_expired'
+        || (status !== 'active' && wallet.trial_expires_at && new Date(wallet.trial_expires_at).getTime() < Date.now());
+      if (trialOver) {
+        if (status !== 'trial_expired' && status === 'trial_active') {
+          await client.query(`update wallets set status='trial_expired', updated_at=now() where user_id=$1`, [userId]);
         }
         await client.query('commit');
-        return {
-          ok: false,
-          status: 402,
-          body: {
-            error: 'trial_expired',
-            message: "Votre p\u00e9riode gratuite est termin\u00e9e\nContactez-nous pour d\u00e9finir l'offre adapt\u00e9e \u00e0 votre besoin"
-          }
-        };
+        return { ok: false, status: 402, body: { error: 'trial_expired' } };
       }
-
-      const tickets = Number(wallet.tickets_ai ?? 0);
-      if (tickets <= 0) {
+      if (status === 'pending_verification') {
         await client.query('rollback');
-        return {
-          ok: false,
-          status: 402,
-          body: {
-            error: 'no_tickets',
-            message: "Votre période gratuite est terminée\nContactez-nous pour définir l'offre adaptée à votre besoin"
-          }
-        };
+        return { ok: false, status: 403, body: { error: 'email_not_verified' } };
       }
-
-      await client.query('update wallets set tickets_ai = tickets_ai - 1, updated_at=now() where user_id=$1', [userId]);
+      if (!['active', 'trial_active'].includes(status)) {
+        await client.query('rollback');
+        return { ok: false, status: 402, body: { error: 'subscription_required' } };
+      }
+      const tickets = Number(wallet.tickets_ai ?? 0);
+      const unlimited = Boolean(wallet.ai_unlimited) || tickets >= 1000;
+      if (!unlimited) {
+        if (tickets <= 0) {
+          await client.query('rollback');
+          return { ok: false, status: 402, body: { error: 'no_tickets' } };
+        }
+        await client.query('update wallets set tickets_ai = tickets_ai - 1, updated_at=now() where user_id=$1', [userId]);
+      }
       await client.query('commit');
 
       const accountSpace = req.user.accountSpace || 'public';

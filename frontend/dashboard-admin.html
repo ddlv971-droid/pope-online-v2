@@ -1268,9 +1268,9 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </div>
 
       <div class="adm-detail-section">
-        <div class="adm-detail-section-title">Tickets & Accès</div>
+        <div class="adm-detail-section-title">Conseils Expert à l&rsquo;unité &amp; offre</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-          <input class="adm-input" type="number" id="panelTickets" placeholder="Nb tickets" style="width:120px"/>
+          <input class="adm-input" type="number" id="panelTickets" placeholder="Crédits à ajouter (ex. 1, ou -1)" title="Ajoute (ou retire) des Conseils Expert à l&rsquo;unité, en plus du quota mensuel de l&rsquo;offre" style="width:220px"/>
           <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveTickets">Mettre à jour</button>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
@@ -1595,9 +1595,9 @@ el('panelSaveTickets').onclick = async () => {
   const n = parseInt(el('panelTickets').value);
   if (isNaN(n)) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ ticketsAi:n, status:'active' } } });
-    showToast('Tickets mis à jour', 'ok');
-    el('panelMsg').textContent = '✓ Tickets mis à jour';
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ addExpertCredits:n } } });
+    showToast('Conseils Expert mis à jour', 'ok');
+    el('panelMsg').textContent = '✓ ' + (n >= 0 ? n + ' Conseil(s) Expert ajouté(s)' : (-n) + ' Conseil(s) Expert retiré(s)');
     el('panelMsg').className = 'adm-msg ok';
     await loadUsers();
   } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }

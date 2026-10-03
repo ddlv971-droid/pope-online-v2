@@ -1794,7 +1794,7 @@ if (!requireLogin('dashboard.html')) {}
     // ── KPI : Conseils disponibles ──
     const leftN = document.getElementById('expertLeftN');
     if (leftN) {
-      const left = w.expert_left != null ? w.expert_left : (w.tickets != null ? w.tickets : '—');
+      const left = w.expert_unlimited ? '∞' : (w.expert_left != null ? w.expert_left : (w.tickets != null ? w.tickets : '—'));
       leftN.textContent = left;
       if (left === 0) { leftN.style.color = '#ef4444'; }
       else if (left <= 1) { leftN.style.color = '#f59e0b'; }

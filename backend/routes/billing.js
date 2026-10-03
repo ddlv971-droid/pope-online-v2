@@ -185,7 +185,8 @@ async function handleSubscriptionDeleted(sub) {
     // les nouveaux Conseils Expert nécessitent une nouvelle souscription.
     await client.query(
       `update wallets set plan_code = 'FREE', plan_label = 'Découverte', status = 'cancelled',
-              expert_limit = 0, expert_used = 0, updated_at = now() where user_id = $1`,
+              expert_limit = 0, expert_used = 0, ai_unlimited = false, tickets_ai = 0,
+              updated_at = now() where user_id = $1`,
       [userId]
     );
     await client.query(

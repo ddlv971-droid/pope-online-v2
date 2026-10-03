@@ -79,7 +79,8 @@ router.post('/request', requireAuth, limiter, async (req, res) => {
 
       const limit   = Number(w.expert_limit ?? 0);
       const used    = Number(w.expert_used ?? 0);
-      const credits = Number(w.tickets_expert ?? 0);
+      const rawCredits = Number(w.tickets_expert ?? 0);
+      const credits = rawCredits >= 1000 ? 0 : rawCredits;   // ancienne sentinelle V87 ignorée
       let source = null;
       if (isUnlimited(limit) || used < limit) source = 'quota';
       else if (credits > 0) source = 'credit';
