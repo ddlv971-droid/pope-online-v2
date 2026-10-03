@@ -135,6 +135,22 @@ Pour souscrire, il faut être connecté. Sinon, la page propose de se connecter 
 - Le prompt de l'outil de rédaction est recentré sur l'élu : langage simple, points de vigilance, renvoi vers un Conseil Expert. Il se termine par une mention « premier jet à faire relire par un expert ».
 - Les domaines du tableau de bord sont réordonnés (RH, Finances, Marchés publics, Droit public, Médiation, Communication de crise), les autres passent sous « Et aussi ».
 
+### Accueil animé (V88.1)
+
+L'échange question d'élu / réponse d'expert de l'accueil est désormais animé. La séquence raconte le parcours d'une question :
+1. l'élu pose sa question ;
+2. elle est envoyée, puis confiée à un expert du domaine (le trait de suivi se remplit) ;
+3. la réponse signée apparaît, avec le délai réel, toujours sous 24 h.
+
+Trois exemples défilent : budget, personnel communal, marchés publics.
+
+- **Une seule séquence orchestrée**, sans effet de machine à écrire ni de « chat », pour ne pas évoquer l'IA.
+- **Démarrage** quand l'échange devient visible à l'écran.
+- **Pause** au survol, au focus clavier et quand l'onglet est masqué.
+- **Contrôles** : boutons pour choisir l'exemple, bouton Pause / Lecture.
+- **Accessibilité** : si le visiteur a demandé de réduire les animations (réglage système), l'échange s'affiche directement, sans mouvement. Sans JavaScript, le premier exemple reste lisible.
+- **Fichiers concernés** : `frontend/index.html`, `frontend/site-v88.css`.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

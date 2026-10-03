@@ -44,18 +44,104 @@
       </div>
       <p class="s-reassure">2 Conseils Expert offerts · Sans carte bancaire · Sans engagement</p>
     </div>
-    <figure class="s-exchange" style="margin:0">
-      <div class="s-note s-note-q">
-        <p class="s-note-from">Une adjointe aux finances, commune de 6 000 habitants</p>
-        <blockquote>« Je présente le budget jeudi au conseil. Quels points dois-je maîtriser pour répondre aux questions de l'opposition ? »</blockquote>
+    <figure class="s-exchange" id="sExchange" style="margin:0" aria-label="Exemples d'échanges entre un élu et un expert">
+      <div class="s-ex-stage" id="sExStage" data-phase="4" aria-live="polite">
+        <div class="s-note s-note-q">
+          <p class="s-note-from" data-f="from">Une adjointe aux finances, commune de 6 000 habitants</p>
+          <blockquote data-f="q">« Je présente le budget jeudi au conseil. Quels points dois-je maîtriser pour répondre aux questions de l'opposition ? »</blockquote>
+        </div>
+        <ol class="s-track" aria-label="Suivi de la question">
+          <li class="s-track-step"><span class="s-track-dot" aria-hidden="true"></span><span data-f="t1">Envoyée mardi, 18 h 40</span></li>
+          <li class="s-track-step"><span class="s-track-dot" aria-hidden="true"></span><span data-f="t2">Confiée à un expert finances locales</span></li>
+          <li class="s-track-step"><span class="s-track-dot" aria-hidden="true"></span><span data-f="t3">Réponse mercredi, 9 h 15</span></li>
+        </ol>
+        <div class="s-note s-note-a">
+          <p data-f="a1">Bonjour Madame l'adjointe, voici les trois points sur lesquels vous serez interrogée en priorité : l'évolution des dépenses de personnel, le niveau d'épargne brute et le recours à l'emprunt.</p>
+          <p data-f="a2">Je vous propose, pour chacun, une réponse courte et les chiffres de votre budget à avoir sous la main.</p>
+          <div class="s-note-sign"><strong data-f="sign">Votre expert finances locales</strong><span data-f="delay">Répondu en moins de 15 h</span></div>
+        </div>
       </div>
-      <div class="s-note s-note-a">
-        <p>Bonjour Madame l'adjointe, voici les trois points sur lesquels vous serez interrogée en priorité : l'évolution des dépenses de personnel, le niveau d'épargne brute et le recours à l'emprunt.</p>
-        <p>Je vous propose, pour chacun, une réponse courte et les chiffres de votre budget à avoir sous la main.</p>
-        <div class="s-note-sign"><strong>Votre expert finances locales</strong><span>Réponse envoyée le lendemain matin</span></div>
+      <div class="s-ex-controls">
+        <div class="s-ex-tabs" role="group" aria-label="Choisir un exemple">
+          <button type="button" class="s-ex-tab" data-i="0" aria-pressed="true">Budget</button>
+          <button type="button" class="s-ex-tab" data-i="1" aria-pressed="false">Personnel communal</button>
+          <button type="button" class="s-ex-tab" data-i="2" aria-pressed="false">Marchés publics</button>
+        </div>
+        <button type="button" class="s-ex-pause" id="sExPause" aria-pressed="false">Pause</button>
       </div>
-      <figcaption class="s-exchange-caption">Exemple d'échange, à titre d'illustration.</figcaption>
+      <figcaption class="s-exchange-caption">Exemples d'échanges, à titre d'illustration.</figcaption>
     </figure>
+<script>
+(function(){
+  var DATA=[
+    {from:"Une adjointe aux finances, commune de 6 000 habitants",
+     q:"« Je présente le budget jeudi au conseil. Quels points dois-je maîtriser pour répondre aux questions de l'opposition ? »",
+     t1:"Envoyée mardi, 18 h 40",t2:"Confiée à un expert finances locales",t3:"Réponse mercredi, 9 h 15",
+     a1:"Bonjour Madame l'adjointe, voici les trois points sur lesquels vous serez interrogée en priorité : l'évolution des dépenses de personnel, le niveau d'épargne brute et le recours à l'emprunt.",
+     a2:"Je vous propose, pour chacun, une réponse courte et les chiffres de votre budget à avoir sous la main.",
+     sign:"Votre expert finances locales",delay:"Répondu en moins de 15 h"},
+    {from:"Un maire, commune de 1 800 habitants",
+     q:"« Un agent est en conflit ouvert avec son chef de service. Que puis-je faire, et dans quel ordre ? »",
+     t1:"Envoyée lundi, 12 h 05",t2:"Confiée à une experte en ressources humaines",t3:"Réponse lundi, 19 h 30",
+     a1:"Monsieur le maire, avant toute décision, recevez chacun séparément et gardez une trace écrite de ces entretiens.",
+     a2:"Je vous détaille ensuite les options possibles, de la médiation à la procédure disciplinaire, avec les délais à respecter.",
+     sign:"Votre experte RH, fonction publique territoriale",delay:"Répondu en moins de 8 h"},
+    {from:"Un conseiller municipal, commune de 3 500 habitants",
+     q:"« Le conseil vote jeudi l'attribution d'un marché de travaux. Sur quoi dois-je être vigilant avant de voter ? »",
+     t1:"Envoyée mercredi, 21 h 10",t2:"Confiée à un spécialiste des marchés publics",t3:"Réponse jeudi, 8 h 45",
+     a1:"Bonjour, trois points méritent votre attention : le respect de la procédure annoncée, la cohérence entre l'analyse des offres et le classement, et le montant au regard du budget voté.",
+     a2:"Voici les questions précises que vous pouvez poser en séance.",
+     sign:"Votre expert marchés publics",delay:"Répondu en moins de 12 h"}
+  ];
+  var stage=document.getElementById('sExStage'), fig=document.getElementById('sExchange');
+  if(!stage||!fig)return;
+  var tabs=fig.querySelectorAll('.s-ex-tab'), pauseBtn=document.getElementById('sExPause');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur=0, timers=[], paused=reduce, hover=false;
+  function clear(){timers.forEach(clearTimeout);timers=[];}
+  function at(ms,fn){timers.push(setTimeout(fn,ms));}
+  function fill(i){
+    var d=DATA[i];
+    stage.querySelectorAll('[data-f]').forEach(function(el){el.textContent=d[el.getAttribute('data-f')];});
+    tabs.forEach(function(t,k){t.setAttribute('aria-pressed',k===i?'true':'false');});
+  }
+  function phase(n){stage.setAttribute('data-phase',String(n));}
+  /* Une seule séquence orchestrée : question, envoi, prise en charge, réponse */
+  function play(i){
+    clear(); cur=i;
+    phase(0);
+    at(450,function(){fill(i);phase(1);});
+    at(1500,function(){phase(2);});
+    at(2900,function(){phase(3);});
+    at(4600,function(){phase(4);});
+    at(11500,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); });
+  }
+  function waitResume(){ at(800,function(){ if(!paused&&!hover) play((cur+1)%DATA.length); else waitResume(); }); }
+  function show(i){ clear(); cur=i; fill(i); phase(4); if(!paused) at(9000,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); }); }
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    var i=Number(t.getAttribute('data-i'));
+    if(reduce){show(i);} else {play(i);}
+  });});
+  pauseBtn.addEventListener('click',function(){
+    paused=!paused; pauseBtn.setAttribute('aria-pressed',paused?'true':'false');
+    pauseBtn.textContent=paused?'Lecture':'Pause';
+    if(!paused){ clear(); waitResume(); }
+  });
+  fig.addEventListener('mouseenter',function(){hover=true;});
+  fig.addEventListener('mouseleave',function(){hover=false;});
+  fig.addEventListener('focusin',function(){hover=true;});
+  fig.addEventListener('focusout',function(){hover=false;});
+  if(reduce){ pauseBtn.hidden=true; return; }
+  /* Démarre quand l'échange devient visible */
+  var started=false;
+  function start(){ if(started)return; started=true; play(0); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){start();io.disconnect();}});},{threshold:.35});
+    io.observe(fig);
+  } else start();
+  document.addEventListener('visibilitychange',function(){ if(document.hidden){clear();} else if(started&&!paused){ waitResume(); } });
+})();
+</script>
   </div>
 </section>
 

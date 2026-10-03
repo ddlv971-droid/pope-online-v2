@@ -348,3 +348,73 @@ a:hover { color: var(--sapin-deep); }
 /* Lien d'évitement (accessibilité) */
 .s-skip { position: absolute; left: -9999px; top: 8px; z-index: 100; background: #fff; padding: 10px 14px; border: 2px solid var(--sapin); }
 .s-skip:focus { left: 12px; }
+
+/* ---------- Accueil : échange animé (V88.1) ----------
+   Une seule séquence orchestrée : la question arrive, elle est envoyée,
+   confiée à un expert, puis la réponse apparaît. Désactivée si l'utilisateur
+   a demandé de réduire les animations. */
+.s-ex-stage .s-note-q,
+.s-ex-stage .s-note-a,
+.s-ex-stage .s-track { transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); }
+.s-ex-stage[data-phase="0"] .s-note-q { opacity: 0; transform: rotate(-1deg) translateY(10px); }
+.s-ex-stage[data-phase="0"] .s-track { opacity: 0; }
+.s-ex-stage[data-phase="0"] .s-note-a,
+.s-ex-stage[data-phase="1"] .s-note-a,
+.s-ex-stage[data-phase="2"] .s-note-a,
+.s-ex-stage[data-phase="3"] .s-note-a { opacity: 0; transform: rotate(.6deg) translateY(14px); }
+
+/* Suivi de la question : trois étapes reliées par un trait qui se remplit */
+.s-track {
+  list-style: none; margin: 18px 0 18px 44px; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0;
+  font-size: .82rem; color: var(--ink-soft); position: relative;
+}
+.s-track-step { position: relative; padding: 18px 10px 0 0; line-height: 1.35; }
+.s-track-step::before {               /* trait vers l'étape suivante */
+  content: ''; position: absolute; top: 5px; left: 12px; right: 0; height: 2px;
+  background: var(--line);
+}
+.s-track-step::after {                /* remplissage du trait */
+  content: ''; position: absolute; top: 5px; left: 12px; right: 0; height: 2px;
+  background: var(--sapin); transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s ease;
+}
+.s-track-step:last-child::before, .s-track-step:last-child::after { display: none; }
+.s-track-dot {
+  position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--line);
+  transition: background-color .35s ease, border-color .35s ease, transform .35s ease;
+}
+.s-track-step span[data-f] { opacity: .45; transition: opacity .4s ease, color .4s ease; }
+
+.s-ex-stage[data-phase="2"] .s-track-step:nth-child(1) .s-track-dot,
+.s-ex-stage[data-phase="3"] .s-track-step:nth-child(-n+2) .s-track-dot,
+.s-ex-stage[data-phase="4"] .s-track-step .s-track-dot { background: var(--sapin); border-color: var(--sapin); }
+.s-ex-stage[data-phase="4"] .s-track-step:nth-child(3) .s-track-dot { background: var(--ocre); border-color: var(--ocre); transform: scale(1.15); }
+.s-ex-stage[data-phase="3"] .s-track-step:nth-child(1)::after,
+.s-ex-stage[data-phase="4"] .s-track-step:nth-child(-n+2)::after { transform: scaleX(1); }
+.s-ex-stage[data-phase="2"] .s-track-step:nth-child(1) span[data-f],
+.s-ex-stage[data-phase="3"] .s-track-step:nth-child(-n+2) span[data-f],
+.s-ex-stage[data-phase="4"] .s-track-step span[data-f] { opacity: 1; color: var(--ink); }
+
+/* Contrôles : choix de l'exemple + pause (accessibilité) */
+.s-ex-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 18px 0 0 44px; }
+.s-ex-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.s-ex-tab, .s-ex-pause {
+  border: 1px solid var(--line); background: #fff; color: var(--ink-soft);
+  font: 500 .84rem/1 var(--font-sans); padding: 8px 12px; border-radius: 999px; cursor: pointer;
+}
+.s-ex-tab[aria-pressed="true"] { background: var(--sapin); border-color: var(--sapin); color: #fff; }
+.s-ex-tab:hover:not([aria-pressed="true"]), .s-ex-pause:hover { border-color: var(--sapin); color: var(--sapin); }
+.s-ex-pause { border-radius: 6px; }
+.s-ex-controls + .s-exchange-caption { margin-top: 10px; }
+.s-ex-stage { min-height: 520px; }
+
+@media (max-width: 560px) {
+  .s-track { margin-left: 18px; font-size: .78rem; }
+  .s-ex-controls { margin-left: 18px; }
+  .s-ex-stage { min-height: 600px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-ex-stage * { transition: none !important; }
+}
