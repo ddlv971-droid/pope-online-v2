@@ -123,3 +123,28 @@ button, input, select, textarea { font-family: inherit; }
   color: #fff !important;
 }
 .v40-submit:hover { background: var(--sapin-deep) !important; }
+
+/* ==========================================================================
+   V88.2 — Fonds harmonisés avec le site vitrine (espace connecté)
+   Même papier, mêmes halos, même arbre POPE en filigrane fixe.
+   ========================================================================== */
+html { background-color: var(--paper); }
+body.bg, body.v69-page, body.po-vault-page, body.v40-auth-body {
+  background:
+    radial-gradient(1100px 700px at 88% -10%, rgba(221,230,223,.75), transparent 65%),
+    radial-gradient(900px 600px at -10% 110%, rgba(232,223,204,.40), transparent 60%),
+    var(--paper) !important;
+  color: var(--ink);
+}
+body.bg::before, body.v69-page::before, body.po-vault-page::before {
+  content: '' !important; position: fixed !important; inset: 0 !important;
+  pointer-events: none !important; z-index: 0 !important;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'><circle cx='17' cy='13' r='11' fill='%231F4A3D'/><path d='M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3' stroke='%23F6F7F4' stroke-width='1.1' stroke-linecap='round' fill='none'/><path d='M17 23.5v7' stroke='%231F4A3D' stroke-width='1.6' stroke-linecap='round'/><path d='M11.5 31h11' stroke='%231F4A3D' stroke-width='1' stroke-linecap='round'/></svg>") 62% 55% / auto min(88vh, 900px) no-repeat !important;
+  opacity: .035 !important;
+}
+body.v69-page > *, body.po-vault-page > * { position: relative; z-index: 1; }
+.v40-auth-right { background: rgba(255,255,255,.86) !important; }
+
+/* Barre supérieure de l'espace connecté : sapin profond (au lieu du quasi-noir) */
+html body header.v40-topbar, .v40-topbar { background: rgba(22,54,41,.97) !important; }
+html body header.v40-topbar .v40-topbar-brand img { height: 30px !important; }

@@ -418,3 +418,158 @@ a:hover { color: var(--sapin-deep); }
 @media (prefers-reduced-motion: reduce) {
   .s-ex-stage * { transition: none !important; }
 }
+
+/* ==========================================================================
+   V88.2 — Fonds de page harmonisés, filigrane, premier écran plein écran,
+   bandeau défilant
+   ========================================================================== */
+
+/* Fond commun : papier légèrement grainé (texture vectorielle, sans image externe) */
+html { background: var(--paper); }
+body.s-body { background: transparent; position: relative; }
+body.s-body::before {
+  content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(1100px 700px at 88% -10%, rgba(221,230,223,.75), transparent 65%),
+    radial-gradient(900px 600px at -10% 110%, rgba(232,223,204,.45), transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.16  0 0 0 0 0.14  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Filigrane pleine page (accueil) : l'arbre POPE, fixe, très discret */
+.s-watermark {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  display: grid; place-items: center;
+  color: var(--sapin);
+}
+.s-watermark svg {
+  width: auto; height: min(94vh, 1000px); max-width: 120vw;
+  opacity: .045;
+  transform: translateX(6vw);
+}
+@media (max-width: 860px) {
+  .s-watermark svg { height: auto; width: 150vw; transform: none; opacity: .05; }
+}
+
+/* Rythme des sections : transparentes (le fond et le filigrane respirent)
+   ou voile blanc translucide, jamais d'aplat opaque sauf l'appel final */
+.s-section { background: transparent; }
+.s-section-white { background: rgba(255,255,255,.66); }
+.s-section + .s-section { border-top-color: rgba(214,221,216,.8); }
+.s-header { background: rgba(246,247,244,.82); }
+.s-footer { background: rgba(255,255,255,.78); }
+.s-topics { background: rgba(255,255,255,.7); }
+.s-path-step, .s-plan { background: rgba(255,255,255,.92); }
+.s-extra { background: rgba(237,242,238,.85); }
+.s-final {
+  background:
+    radial-gradient(800px 420px at 85% 0%, rgba(47,107,88,.55), transparent 70%),
+    var(--sapin-deep);
+}
+
+/* ---------- Premier écran plein écran (accueil) ---------- */
+.s-first {
+  min-height: calc(100vh - 72px);
+  min-height: calc(100svh - 72px);
+  display: flex; flex-direction: column;
+}
+.s-hero-home {
+  flex: 1; display: flex; align-items: center;
+  padding: clamp(24px, 5vh, 64px) 0;
+}
+.s-hero-home > .s-wrap { width: 100%; }
+.s-hero-home .s-ex-stage { min-height: 470px; }
+@media (max-height: 880px) and (min-width: 961px) {
+  .s-hero-home .s-h1 { font-size: clamp(2.1rem, 3.9vw, 3.1rem); }
+  .s-hero-home .s-note { padding: 20px 24px 18px; }
+  .s-hero-home .s-note-q blockquote { font-size: 1.18rem; }
+  .s-hero-home .s-ex-stage { min-height: 400px; }
+  .s-hero-home .s-track { margin-top: 10px; margin-bottom: 10px; }
+  .s-hero-home .s-note-a p { font-size: .93rem; margin-bottom: 8px; }
+  .s-hero-home .s-note-sign { margin-top: 10px; }
+  .s-hero-home { padding: 18px 0; }
+  .s-hero-home .s-lead { margin-top: 16px; }
+  .s-hero-home .s-actions { margin-top: 24px; }
+}
+@media (max-width: 960px) {
+  .s-first { min-height: 0; }
+  .s-hero-home { padding: 40px 0 48px; }
+}
+
+/* ---------- Bandeau défilant des sujets ---------- */
+.s-marquee {
+  position: relative; overflow: hidden;
+  background: rgba(255,255,255,.72);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+.s-marquee-track {
+  display: flex; width: max-content;
+  animation: s-marquee 60s linear infinite;
+  will-change: transform;
+}
+.s-marquee:hover .s-marquee-track,
+.s-marquee:focus-within .s-marquee-track { animation-play-state: paused; }
+.s-marquee-list { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; flex-shrink: 0; }
+.s-marquee-list li {
+  display: flex; align-items: center;
+  font-family: var(--font-serif); font-size: 1.22rem; font-weight: 450;
+  font-variation-settings: 'opsz' 24;
+  color: var(--ink); white-space: nowrap; letter-spacing: -.005em;
+}
+.s-marquee-list li::after {            /* séparateur : petit fruit ocre de l'arbre POPE */
+  content: ''; width: 7px; height: 7px; margin: 0 34px; border-radius: 50%;
+  background: var(--ocre); opacity: .85; flex-shrink: 0;
+}
+@keyframes s-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (max-width: 560px) {
+  .s-marquee { padding: 15px 0; }
+  .s-marquee-list li { font-size: 1.05rem; }
+  .s-marquee-list li::after { margin: 0 24px; }
+  .s-marquee-track { animation-duration: 42s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-marquee { -webkit-mask-image: none; mask-image: none; }
+  .s-marquee-track { animation: none; width: auto; justify-content: center; }
+  .s-marquee-list { flex-wrap: wrap; justify-content: center; row-gap: 10px; padding: 0 24px; }
+  .s-marquee-list[aria-hidden="true"] { display: none; }
+}
+
+/* Contrôles de l'échange sur une seule ligne (ordinateur) */
+@media (min-width: 961px) {
+  .s-ex-controls { flex-wrap: nowrap; margin-top: 14px; }
+  .s-ex-tabs { flex-wrap: nowrap; }
+  .s-ex-tab, .s-ex-pause { padding: 7px 11px; font-size: .8rem; white-space: nowrap; }
+  .s-ex-controls + .s-exchange-caption { margin-top: 6px; font-size: .8rem; }
+}
+
+/* Mobile et tablette : premier écran = accroche + bandeau défilant ;
+   l'échange animé vient juste après, au premier défilement */
+@media (max-width: 960px) {
+  .s-first { min-height: 0; }
+  .s-hero-home, .s-hero-home > .s-hero-grid { display: contents; }
+  .s-hero-home .s-hero-grid > div:first-child {
+    order: 1;
+    min-height: calc(100vh - 72px - 62px);
+    min-height: calc(100svh - 72px - 62px);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 32px 24px 36px;
+  }
+  .s-first > .s-marquee { order: 2; }
+  .s-hero-home .s-exchange { order: 3; padding: 44px 24px 56px; }
+}
+
+/* Pages secondaires : rappel discret de l'arbre POPE dans le bandeau,
+   en écho au filigrane pleine page de l'accueil */
+.s-hero:not(.s-hero-home) { position: relative; overflow: hidden; }
+.s-hero:not(.s-hero-home)::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  right: -4vw; top: 40px; width: min(42vw, 560px); aspect-ratio: 1;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'><g fill='none' stroke='%231F4A3D' stroke-linecap='round'><circle cx='17' cy='13' r='11' stroke-width='.6'/><path d='M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3' stroke-width='.6'/><path d='M17 24v6.5M11.5 31h11' stroke-width='.6'/></g><circle cx='22.4' cy='8.6' r='1.6' fill='%23A8741F'/></svg>") center / contain no-repeat;
+  opacity: .08;
+}
+.s-hero:not(.s-hero-home) > .s-wrap { position: relative; z-index: 1; }
+@media (max-width: 860px) {
+  .s-hero:not(.s-hero-home)::after { width: 80vw; right: -30vw; opacity: .09; }
+}

@@ -151,6 +151,26 @@ Trois exemples défilent : budget, personnel communal, marchés publics.
 - **Accessibilité** : si le visiteur a demandé de réduire les animations (réglage système), l'échange s'affiche directement, sans mouvement. Sans JavaScript, le premier exemple reste lisible.
 - **Fichiers concernés** : `frontend/index.html`, `frontend/site-v88.css`.
 
+### Fonds de page, filigrane et premier écran (V88.2)
+
+- **Filigrane pleine page sur l'accueil** : l'arbre POPE, fixe derrière tout le contenu, très discret (environ 4,5 % d'opacité). Il reste en place pendant le défilement.
+- **Fonds harmonisés sur tout le site** :
+  - même papier légèrement grainé (texture vectorielle, sans image externe) ;
+  - deux halos doux, vert lichen en haut à droite et sable en bas à gauche ;
+  - sections transparentes ou voilées de blanc, pour que le fond respire ;
+  - appel final en sapin profond, avec un halo.
+- **Pages secondaires** (Pour les élus, Tarifs, Qui sommes-nous) : rappel de l'arbre en trait fin dans le bandeau.
+- **Espace connecté** : même papier, mêmes halos, même filigrane. La barre supérieure passe du quasi-noir au sapin profond, avec le nouveau pictogramme (`assets/pope-mark-light.png`).
+- **Bandeau défilant** des sujets, en défilement continu et sans à-coup :
+  - dix sujets en typographie à empattements, séparés par le « fruit » ocre de l'arbre ;
+  - bords fondus ;
+  - pause au survol ;
+  - liste fixe si le visiteur a demandé de réduire les animations.
+- **Premier écran plein écran** dès l'arrivée sur le site :
+  - sur ordinateur, l'accroche, l'échange animé et le bandeau occupent exactement la hauteur de l'écran (vérifié en 1366×768, 1440×900 et 1920×1080) ;
+  - sur mobile et tablette, le premier écran réunit l'accroche et le bandeau, et l'échange animé suit au premier défilement.
+- **Fichiers concernés** : `frontend/index.html`, `frontend/site-v88.css`, `frontend/public/theme-v88.css`, `frontend/assets/pope-mark-light.png`, et les 11 pages connectées dotées de la barre supérieure.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».
