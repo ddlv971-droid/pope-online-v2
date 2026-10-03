@@ -13,7 +13,7 @@ html body header.v40-topbar{
   height:58px!important;min-height:58px!important;max-height:58px!important;
   display:flex!important;align-items:center!important;
   flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
+  background:rgba(22,32,28,.97)!important;
   backdrop-filter:blur(16px)!important;
   border-bottom:1px solid rgba(255,255,255,.07)!important;
   overflow:visible!important;
@@ -64,7 +64,7 @@ html body header.v40-topbar #v40Burger span{
   display:none;position:fixed!important;
   top:58px!important;left:0!important;right:0!important;bottom:0!important;
   z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
+  background:rgba(22,32,28,.98)!important;
   backdrop-filter:blur(20px)!important;
   -webkit-backdrop-filter:blur(20px)!important;
   padding:20px!important;overflow-y:auto!important;
@@ -95,7 +95,7 @@ html body header.v40-topbar #v40Burger span{
 }
 </style>
 <style id="v40-override">
-header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(22,32,28,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
 .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
 .v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
 .v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
@@ -108,7 +108,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
 .v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
 .v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
-.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(22,32,28,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
 .v40-mobile-menu.open{display:flex!important;}
 .v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
@@ -129,14 +129,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>Conseil &amp; Expertise</small>
+        <small>L&rsquo;expertise au service des &eacute;lus</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
     <span class="v40-topbar-sub">Sur mesure</span>
     <nav class="v40-topbar-nav">
       
-      <a class="v40-topbar-btn" href="expert.html">✍️ Relecture</a>
+      <a class="v40-topbar-btn" href="expert.html">✍️ Conseil Expert</a>
       <a class="v40-topbar-btn" href="dashboard.html">🏠 Dashboard</a>
       <button class="v40-topbar-btn" data-logout>Déconnexion</button>
     </nav>
@@ -148,7 +148,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 <div class="v40-mobile-menu" id="v40MobileMenu">
   <a href="dashboard.html">🏠 Dashboard</a>
   
-  <a href="expert.html">✍️ Relecture</a>
+  <a href="expert.html">✍️ Conseil Expert</a>
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
@@ -170,21 +170,21 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <div class="v36-diff-grid">
     <div class="v36-diff-card">
       <div class="icon">⚡</div>
-      <h3>Génération guidée</h3>
+      <h3>Outil de rédaction</h3>
       <p>Vous savez ce que vous voulez produire. Vous avez le contexte et l'objectif. L'IA génère, vous exploitez.</p>
-      <a href="app.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#50627a">→ Accéder</a>
+      <a href="app.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#4B5650">→ Accéder</a>
     </div>
     <div class="v36-diff-card">
       <div class="icon">✍️</div>
-      <h3>Relecture experte</h3>
-      <p>Vous avez un document à faire valider. Un conseiller analyse le fond, la forme et les risques sous 48h.</p>
-      <a href="expert.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#50627a">→ Accéder</a>
+      <h3>Conseil Expert</h3>
+      <p>Vous avez un document à faire valider. Un conseiller analyse le fond, la forme et les risques sous 24 h.</p>
+      <a href="expert.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#4B5650">→ Accéder</a>
     </div>
     <div class="v36-diff-card active">
       <div class="icon">🎯</div>
       <h3>Sur mesure</h3>
       <p>Besoin complexe, dossier multi-étapes, stratégie à structurer. Nous cadrons et vous accompagnons.</p>
-      <span style="display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:#0079c1">✓ Vous êtes ici</span>
+      <span style="display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:#1F4A3D">✓ Vous êtes ici</span>
     </div>
   </div>
 
@@ -229,11 +229,11 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
 
       <!-- Pièces vault -->
-      <div style="background:#f8fafc;border:1px solid #e4edf6;border-radius:14px;padding:16px;margin-bottom:20px">
+      <div style="background:#F9FBFA;border:1px solid #E4EAE6;border-radius:14px;padding:16px;margin-bottom:20px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div>
-            <div style="font-size:14px;font-weight:700;color:#0b2440">📎 Pièces utiles à l'analyse</div>
-            <div style="font-size:12px;color:#50627a;margin-top:2px" id="missionVaultLead">Joignez les pièces qui aideront votre conseiller à comprendre le dossier.</div>
+            <div style="font-size:14px;font-weight:700;color:#1F2622">📎 Pièces utiles à l'analyse</div>
+            <div style="font-size:12px;color:#4B5650;margin-top:2px" id="missionVaultLead">Joignez les pièces qui aideront votre conseiller à comprendre le dossier.</div>
           </div>
           <a class="btn ghost" href="vault.html?space=public&amp;return=mission.html" style="font-size:13px">Gérer mes pièces</a>
         </div>
@@ -241,7 +241,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       </div>
 
       <!-- Disponibilité -->
-      <div style="background:#f0f7fc;border:1.5px solid #b8dcf0;border-radius:14px;padding:16px;margin-bottom:20px;font-size:13px;color:#0b3060;display:flex;align-items:flex-start;gap:12px">
+      <div style="background:#EFF3F0;border:1.5px solid #C9D8CF;border-radius:14px;padding:16px;margin-bottom:20px;font-size:13px;color:#163629;display:flex;align-items:flex-start;gap:12px">
         <span style="font-size:20px;flex-shrink:0">ℹ️</span>
         <div>
           <strong>Comment ça se passe ?</strong><br>
@@ -355,5 +355,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 })();
 
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

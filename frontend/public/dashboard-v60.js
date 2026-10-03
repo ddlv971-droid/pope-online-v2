@@ -207,24 +207,24 @@
       if (!files.length) {
         container.innerHTML = '<span style="color:#64748b">Aucune pièce déposée. ' +
           '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '" ' +
-          'style="color:#0079c1;font-weight:700">Déposer des pièces →</a></span>';
+          'style="color:#1F4A3D;font-weight:700">Déposer des pièces →</a></span>';
         return;
       }
       container.innerHTML = files.slice(0, 6).map(function(f) {
-        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f4f8">' +
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F7F4">' +
           '<span>📄</span>' +
-          '<span style="flex:1;font-size:12px;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+          '<span style="flex:1;font-size:12px;font-weight:600;color:#11281E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
             esc(f.original_name || f.filename || 'Fichier') + '</span>' +
           '<span style="font-size:11px;color:#94a3b8;white-space:nowrap">' +
             (f.size_kb ? f.size_kb + ' Ko' : '') + '</span>' +
           '</div>';
       }).join('') +
       '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '?step=3" ' +
-      'style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#0079c1">📂 Gérer le dépôt →</a>';
+      'style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#1F4A3D">📂 Gérer le dépôt →</a>';
     })
     .catch(function() {
       container.innerHTML = '<a href="vault.html?space=' + VAULT_SP + '&return=' + DASH_URL + '" ' +
-        'style="font-size:12px;font-weight:700;color:#0079c1">📂 Accéder au dépôt sécurisé →</a>';
+        'style="font-size:12px;font-weight:700;color:#1F4A3D">📂 Accéder au dépôt sécurisé →</a>';
     });
   }
 

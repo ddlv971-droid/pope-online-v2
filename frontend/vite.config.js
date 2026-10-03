@@ -20,9 +20,13 @@ function isCompiledOutput(fp) {
 function htmlInputs(dir) {
   const entries = {};
   for (const name of readdirSync(dir)) {
+    // V88 : filtrer sur l'extension AVANT statSync (le fichier temporaire
+    // vite.config.js.timestamp-*.mjs peut disparaître entre readdir et stat)
+    if (!name.endsWith('.html') || EXCLUDED_HTML.has(name)) continue;
     const full = resolve(dir, name);
-    if (statSync(full).isFile() && name.endsWith('.html')
-        && !EXCLUDED_HTML.has(name) && !isCompiledOutput(full)) {
+    let isFile = false;
+    try { isFile = statSync(full).isFile(); } catch (_) { continue; }
+    if (isFile && !isCompiledOutput(full)) {
       entries[name.replace(/\.html$/i, '')] = full;
     }
   }

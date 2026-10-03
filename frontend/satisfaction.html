@@ -28,7 +28,7 @@
   <div class="v37-criteria-card">
     <div id="criteriaWrap"></div>
 
-    <div style="margin-top:20px;padding-top:20px;border-top:1px solid #f0f7fc">
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid #EFF3F0">
       <label class="label">Commentaire libre (optionnel)</label>
       <textarea id="comment" class="input" rows="4"
         placeholder="Un retour complémentaire, une suggestion, un point à améliorer…"></textarea>
@@ -67,7 +67,7 @@ wrap.innerHTML = CRITERIA.map(function(c, ci) {
       return '<button class="v37-star-btn" type="button" data-criterion="' + c.key + '" data-value="' + n + '" title="' + LABELS[n-1] + '">' +
         EMOJIS[n-1] + '</button>';
     }).join('') +
-    '<span class="v37-star-label" id="lbl_' + c.key + '" style="font-size:13px;color:#50627a;margin-left:8px;align-self:center"></span>' +
+    '<span class="v37-star-label" id="lbl_' + c.key + '" style="font-size:13px;color:#4B5650;margin-left:8px;align-self:center"></span>' +
     '</div></div>';
 }).join('');
 
@@ -106,8 +106,8 @@ document.getElementById('btnSubmit').addEventListener('click', async function() 
     document.querySelector('.v37-criteria-card').innerHTML =
       '<div style="text-align:center;padding:40px">' +
       '<div style="font-size:56px;margin-bottom:16px">🎉</div>' +
-      '<h2 style="color:#0b2440;margin-bottom:10px">Merci pour votre retour !</h2>' +
-      '<p style="color:#50627a;font-size:14px">Votre avis est précieux et contribue directement à améliorer POPE Online.</p>' +
+      '<h2 style="color:#1F2622;margin-bottom:10px">Merci pour votre retour !</h2>' +
+      '<p style="color:#4B5650;font-size:14px">Votre avis est précieux et contribue directement à améliorer POPE Online.</p>' +
       (function(){
         var dashUrl = 'dashboard.html';
         try {
@@ -120,7 +120,7 @@ document.getElementById('btnSubmit').addEventListener('click', async function() 
         // Effacer toute session admin pour que l'utilisateur se reconnecte avec son propre compte
         try { ['pope_session_token','pope_token','pope_user','pope_session'].forEach(function(k){ localStorage.removeItem(k); sessionStorage.removeItem(k); }); } catch(e2) {}
         var loginUrl = 'login.html?next=' + encodeURIComponent(dashUrl);
-        return '<a href="' + loginUrl + '" style="display:inline-block;margin-top:20px;background:#0079c1;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Se connecter à mon espace →</a>';
+        return '<a href="' + loginUrl + '" style="display:inline-block;margin-top:20px;background:#1F4A3D;color:#fff;border-radius:12px;padding:12px 24px;font-weight:700;text-decoration:none">Se connecter à mon espace →</a>';
       }()) +
       '</div>';
   } catch(e) {
@@ -131,5 +131,7 @@ document.getElementById('btnSubmit').addEventListener('click', async function() 
   }
 });
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

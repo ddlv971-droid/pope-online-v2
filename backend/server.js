@@ -95,7 +95,7 @@ const aiVaultLimiter = rateLimit({
 app.use('/ai',    aiVaultLimiter);
 app.use('/vault', aiVaultLimiter);
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'v5.3-full-clean' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'v88-elus' }));
 
 app.use('/auth',    authRoutes);
 app.use('/ai',      aiRoutes);
@@ -133,12 +133,11 @@ async function runTrialExpiryJob() {
       try {
         await pool.query(`UPDATE wallets SET status='trial_expired',updated_at=NOW() WHERE user_id=$1 AND status='trial_active'`, [row.id]);
         const firstName = (row.full_name||'').split(' ')[0]||'Utilisateur';
-        const spaceLabel = row.account_space==='private' ? 'privé' : 'public';
         await sendMail({
           to: row.email,
           subject: `POPE Online — Votre période d'essai est terminée`,
-          text: `Bonjour ${firstName},\n\nVotre essai POPE Online (espace ${spaceLabel}) s'est terminé.\n\n${base}/pricing.html\n\n— POPE Online`,
-          html: `<p>Bonjour ${firstName},</p><p>Votre essai POPE Online (espace <strong>${spaceLabel}</strong>) s'est terminé.</p><p><a href="${base}/pricing.html" style="display:inline-block;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:12px 28px;font-weight:700;text-decoration:none">Voir les plans →</a></p><p style="color:#50627a;font-size:13px">— POPE Online</p>`
+          text: `Bonjour ${firstName},\n\nVotre essai gratuit de POPE Online est terminé. Votre compte et vos échanges restent consultables.\n\nPour continuer à solliciter un expert, l'offre Élu est à 49 € HT par mois, sans engagement : 10 Conseils Expert par mois, réponse sous 24 h.\n\n${base}/pricing.html\n\nUne question ? Un conseiller vous répond au 09 70 70 30 55.\n\nL'équipe POPE Online`,
+          html: `<div style="font-family:Arial,sans-serif;color:#1F2622;line-height:1.6"><p>Bonjour ${firstName},</p><p>Votre essai gratuit de POPE Online est terminé. Votre compte et vos échanges restent consultables.</p><p>Pour continuer à solliciter un expert, l'offre Élu est à <strong>49 € HT par mois</strong>, sans engagement : 10 Conseils Expert par mois, réponse sous 24 h.</p><p><a href="${base}/pricing.html" style="display:inline-block;background:#1F4A3D;color:#fff;border-radius:6px;padding:12px 24px;font-weight:700;text-decoration:none">Voir l'offre Élu</a></p><p style="color:#4B5650;font-size:13px">Une question ? Un conseiller vous répond au 09 70 70 30 55.<br>L'équipe POPE Online</p></div>`
         });
         console.log(`[trial-job] ✅ ${row.email}`);
       } catch(err) { console.error(`[trial-job] ❌ ${row.email}:`, err.message); }
@@ -147,4 +146,25 @@ async function runTrialExpiryJob() {
   } catch(err) { console.error('[trial-job]', err.message); }
 }
 
-setTimeout(() => { runTrialExpiryJob(); setInterval(runTrialExpiryJob, 6*60*60*1000); }, 30000);
+// V88 : remise à zéro mensuelle du quota pour les offres annuelles (Élu annuel,
+// Collectivité annuelle). Les offres mensuelles sont remises à zéro par Stripe
+// (invoice.paid) ; ce job couvre les abonnements payés une fois par an.
+async function runMonthlyQuotaResetJob() {
+  try {
+    const r = await pool.query(`
+      UPDATE wallets
+         SET expert_used = 0,
+             quota_period_start = quota_period_start + interval '1 month',
+             updated_at = NOW()
+       WHERE status = 'active'
+         AND plan_code IN ('ELU_A','COLLECTIVITE_A','STARTER_A','PRO_A')
+         AND quota_period_start IS NOT NULL
+         AND quota_period_start + interval '1 month' <= NOW()`);
+    if (r.rowCount) console.log(`[quota-job] ${r.rowCount} quota(s) annuel(s) remis à zéro`);
+  } catch (err) { console.error('[quota-job]', err.message); }
+}
+
+setTimeout(() => {
+  runTrialExpiryJob(); runMonthlyQuotaResetJob();
+  setInterval(() => { runTrialExpiryJob(); runMonthlyQuotaResetJob(); }, 6*60*60*1000);
+}, 30000);

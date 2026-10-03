@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /private.html
+Disallow: /signup-private.html
+Disallow: /trial-start-private.html
+Disallow: /dashboard
+Disallow: /dashboard-admin.html
+Disallow: /dashboard-expert.html
+
+Sitemap: https://pope-online.com/sitemap.xml

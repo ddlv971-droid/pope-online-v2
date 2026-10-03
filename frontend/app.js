@@ -137,7 +137,7 @@ export function showTrialExpiredModal(wallet) {
   if (document.getElementById('pope-trial-modal')) return;
   const overlay = document.createElement('div');
   overlay.id = 'pope-trial-modal';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(11,36,64,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(22,32,28,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;';
 
   const base = (typeof window !== 'undefined') ? window.location.origin : '';
 
@@ -153,8 +153,8 @@ export function showTrialExpiredModal(wallet) {
   const header = document.createElement('div');
   header.style.cssText = 'text-align:center;margin-bottom:32px';
   header.innerHTML = '<div style="font-size:48px;margin-bottom:16px">🎯</div>' +
-    '<h2 style="font-size:26px;font-weight:800;color:#0b2440;letter-spacing:-.02em;margin-bottom:12px">Votre période d\'essai est terminée</h2>' +
-    '<p style="color:#50627a;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">Merci d\'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d\'expertise sécurisée. <strong style="color:#0b2440">Continuez avec un plan adapté.</strong></p>';
+    '<h2 style="font-size:26px;font-weight:800;color:#1F2622;letter-spacing:-.02em;margin-bottom:12px">Votre période d\'essai est terminée</h2>' +
+    '<p style="color:#4B5650;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto">Merci d\'avoir utilisé POPE Online. Vous avez découvert la puissance de notre plateforme d\'expertise sécurisée. <strong style="color:#1F2622">Continuez avec un plan adapté.</strong></p>';
   card.appendChild(header);
 
   // Plans
@@ -162,40 +162,40 @@ export function showTrialExpiredModal(wallet) {
   plansGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px';
 
   const plans = [
-    { name:'Starter', price:'49€', period:'/mois', annual:'ou 499€/an (−15%)', features:['Production illimitée','5 relectures expertes/mois','Clausier documentaire','Support prioritaire'], url:'pricing.html?plan=starter', featured:false },
-    { name:'Pro', price:'89€', period:'/mois', annual:'ou 890€/an (−15%)', features:['Production illimitée','15 relectures expertes/mois','Clausier documentaire premium','Accompagnement inclus'], url:'pricing.html?plan=pro', featured:true },
-    { name:'Premium', price:'Sur devis', period:'', annual:'Collectivités & Entreprises', features:['Production illimitée','Relectures illimitées','Conseiller dédié','Intégration sur mesure'], url:'mailto:contact@pope-online.com?subject=Offre%20Premium', featured:false },
+    { name:'Élu', price:'49 €', period:' HT/mois', annual:'ou 499,80 € HT/an (−15 %)', features:['10 Conseils Expert par mois','Réponse en moins de 24 h','Clausier et dépôt sécurisé','Outil de rédaction'], url:'pricing.html?plan=elu', featured:true },
+    { name:'Collectivité', price:'499 €', period:' HT/mois', annual:'Collectivités de plus de 10 000 habitants', features:['Conseils Expert illimités','Plusieurs utilisateurs','Conseiller dédié','Accompagnement Pope Consulting'], url:'pricing.html?plan=collectivite', featured:false },
+    { name:'Conseil à l’unité', price:'25 €', period:' HT', annual:'Pour les abonnés Élu', features:['Un Conseil Expert supplémentaire','Même délai de réponse','Crédit ajouté dès le paiement'], url:'pricing.html?plan=credit', featured:false },
   ];
 
   plans.forEach(function(plan) {
     const col = document.createElement('div');
     col.style.cssText = plan.featured
-      ? 'border:2px solid #0079c1;border-radius:16px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,#f0f7fc,#e0f0fb);position:relative'
-      : 'border:1.5px solid #dce9f4;border-radius:16px;padding:24px 20px;text-align:center';
+      ? 'border:2px solid #1F4A3D;border-radius:16px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,#EFF3F0,#E3EBE5);position:relative'
+      : 'border:1.5px solid #D6DDD8;border-radius:16px;padding:24px 20px;text-align:center';
 
     if (plan.featured) {
       const badge = document.createElement('div');
-      badge.style.cssText = 'position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700;white-space:nowrap';
+      badge.style.cssText = 'position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1F4A3D,#2F6B58);color:#fff;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700;white-space:nowrap';
       badge.textContent = 'RECOMMANDÉ';
       col.appendChild(badge);
     }
 
     const nameEl = document.createElement('div');
-    nameEl.style.cssText = 'font-size:12px;font-weight:700;color:' + (plan.featured ? '#0079c1' : '#50627a') + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px';
+    nameEl.style.cssText = 'font-size:12px;font-weight:700;color:' + (plan.featured ? '#1F4A3D' : '#4B5650') + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px';
     nameEl.textContent = plan.name;
     col.appendChild(nameEl);
 
     const priceEl = document.createElement('div');
-    priceEl.innerHTML = '<span style="font-size:28px;font-weight:800;color:#0b2440">' + plan.price + '</span><span style="font-size:14px;font-weight:400;color:#50627a">' + plan.period + '</span>';
+    priceEl.innerHTML = '<span style="font-size:28px;font-weight:800;color:#1F2622">' + plan.price + '</span><span style="font-size:14px;font-weight:400;color:#4B5650">' + plan.period + '</span>';
     col.appendChild(priceEl);
 
     const annualEl = document.createElement('div');
-    annualEl.style.cssText = 'font-size:12px;color:#50627a;margin-bottom:16px;margin-top:4px';
+    annualEl.style.cssText = 'font-size:12px;color:#4B5650;margin-bottom:16px;margin-top:4px';
     annualEl.textContent = plan.annual;
     col.appendChild(annualEl);
 
     const ul = document.createElement('ul');
-    ul.style.cssText = 'list-style:none;text-align:left;font-size:13px;color:#0b2440;line-height:2;padding:0;margin:0 0 16px';
+    ul.style.cssText = 'list-style:none;text-align:left;font-size:13px;color:#1F2622;line-height:2;padding:0;margin:0 0 16px';
     plan.features.forEach(function(f) {
       const li = document.createElement('li');
       li.textContent = '✓ ' + f;
@@ -205,7 +205,7 @@ export function showTrialExpiredModal(wallet) {
 
     const cta = document.createElement('a');
     cta.href = plan.url.startsWith('mailto') ? plan.url : base + '/' + plan.url;
-    cta.style.cssText = 'display:block;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none';
+    cta.style.cssText = 'display:block;background:linear-gradient(135deg,#1F4A3D,#2F6B58);color:#fff;border-radius:12px;padding:11px;font-weight:700;font-size:14px;text-decoration:none';
     cta.textContent = plan.url.startsWith('mailto') ? 'Nous contacter' : 'Choisir ' + plan.name;
     col.appendChild(cta);
 
@@ -217,7 +217,7 @@ export function showTrialExpiredModal(wallet) {
   const closeWrap = document.createElement('div');
   closeWrap.style.cssText = 'text-align:center';
   const closeBtn = document.createElement('button');
-  closeBtn.style.cssText = 'background:none;border:none;color:#50627a;font-size:14px;cursor:pointer;text-decoration:underline';
+  closeBtn.style.cssText = 'background:none;border:none;color:#4B5650;font-size:14px;cursor:pointer;text-decoration:underline';
   closeBtn.textContent = 'Continuer en consultation uniquement';
   closeBtn.onclick = function() { overlay.remove(); };
   closeWrap.appendChild(closeBtn);
@@ -253,10 +253,10 @@ export function showToast(text, tone='ok'){
   style.id = 'toast-style';
   style.textContent = `
   .toast-host{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:10px;z-index:9999}
-  .toast{padding:12px 14px;border-radius:14px;color:#fff;font-weight:800;box-shadow:0 10px 26px rgba(7,22,42,.16);transition:opacity .2s ease,transform .2s ease}
-  .toast.ok{background:linear-gradient(135deg,#0c5ea8,#03A0D7)}
+  .toast{padding:12px 14px;border-radius:14px;color:#fff;font-weight:800;box-shadow:0 10px 26px rgba(22,32,28,.16);transition:opacity .2s ease,transform .2s ease}
+  .toast.ok{background:linear-gradient(135deg,#1F4A3D,#2F6B58)}
   .toast.warn{background:linear-gradient(135deg,#b7791f,#d69e2e)}
-  .toast.err{background:linear-gradient(135deg,#a3214b,#d92d8f)}
+  .toast.err{background:linear-gradient(135deg,#a3214b,#A8741F)}
   `;
   document.head.appendChild(style);
 })();

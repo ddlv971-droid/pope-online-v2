@@ -255,7 +255,7 @@
     var manageUrl = 'vault.html?space=' + VAULT_SP + '&return=' + encodeURIComponent(DASH_URL + '?step=3');
     var fallback  = '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">' +
                     '<span style="color:#64748b;font-size:12px">Aucune pièce dans le dépôt sécurisé — optionnel.</span>' +
-                    '<a href="' + manageUrl + '" style="font-size:12px;font-weight:700;color:#0079c1;white-space:nowrap">📂 Déposer des pièces →</a></div>';
+                    '<a href="' + manageUrl + '" style="font-size:12px;font-weight:700;color:#1F4A3D;white-space:nowrap">📂 Déposer des pièces →</a></div>';
     if (!t) { c.innerHTML = fallback; return; }
     c.innerHTML = '<span style="color:#64748b;font-style:italic">⏳ Chargement du dépôt…</span>';
     fetch(API_BASE + '/vault/', {
@@ -268,8 +268,8 @@
       if (!files.length) { c.innerHTML = fallback; return; }
       sessionStorage.setItem('pope_v61_vault_files', JSON.stringify(files));
       c.innerHTML = files.slice(0, 8).map(function(f) {
-        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eef2f7">' +
-               '📄<span style="flex:1;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #EFF6F3">' +
+               '📄<span style="flex:1;font-weight:600;color:#11281E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
                esc(f.original_name || f.filename || f.name || 'Document') + '</span>' +
                '<span style="font-size:11px;color:#64748b">' + esc(f.size_kb ? f.size_kb + ' Ko' : '') + '</span></div>';
       }).join('') + '<a href="' + manageUrl + '" class="v5-btn-ghost-sm" style="display:inline-block;margin-top:10px">📂 Gérer le dépôt →</a>';
@@ -321,7 +321,7 @@
         esc(g ? (g.title || g.usecaseLabel || 'Draft IA sélectionné') : 'Aucun draft sélectionné') + '</span></div>' +
         '<div class="v5-recap-row"><span class="v5-recap-key">Pièces déposées</span><span class="v5-recap-val">' +
         esc(docs.length ? docs.length + ' pièce(s) dans le dépôt sécurisé' : 'Aucune pièce détectée') + '</span></div>' +
-        '<div style="margin-top:12px;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#475569;font-size:13px;line-height:1.7">' +
+        '<div style="margin-top:12px;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#F9FBFA;color:#475569;font-size:13px;line-height:1.7">' +
         '<strong>Résumé du besoin :</strong><br>' +
         esc((buildDescription(s) || 'Aucun contexte détaillé saisi.').slice(0, 900)) + '</div>';
     }

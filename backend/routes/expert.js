@@ -5,6 +5,8 @@ import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
 import { getUserVaultFiles, buildMailAttachments } from './vault.js';
+import { isUnlimited, RESPONSE_DELAY_LABEL } from '../services/plans.js';
+import { resolveFrontendBaseUrl } from '../services/urls.js';
 
 const router = express.Router();
 const limiter = rateLimit({ windowMs: 60000, max: 10, standardHeaders: true, legacyHeaders: false });
@@ -27,9 +29,9 @@ function buildAttachmentContent(name, payload) {
 }
 
 // ── POST /expert/request ─────────────────────────────────────────────────────
-router.post('/request', optionalAuth, limiter, async (req, res) => {
+router.post('/request', requireAuth, limiter, async (req, res) => {
   try {
-    const email        = String(req.body?.email || req.user?.email || '').trim();
+    const email        = String(req.user?.email || req.body?.email || '').trim();
     const objective    = clamp(String(req.body?.subject || req.body?.objective || '').trim(), 1200);
     const expectations = clamp(String(req.body?.content || req.body?.expectations || '').trim(), 4000);
     const context      = clamp(String(req.body?.context || '').trim(), 6000);
@@ -44,39 +46,46 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
     const combined = `${objective}\n${expectations}\n${context}\n${generationAttachment?.result || ''}`;
     if (rejectIfSensitive(combined)) return res.status(400).json({ error: 'sensitive_data' });
 
-    const userId  = req.user?.sub || null;
-    const mailTo  = process.env.MAIL_TO || 'contact@popeconsulting-group.com';
+    const userId  = req.user.sub;
+    const mailTo  = process.env.MAIL_TO || 'contact@pope-online.com';
 
+    // ── V88 : contrôle unique des droits ────────────────────────────────────
+    // Ordre de consommation : quota mensuel de l'offre, puis Conseils Expert
+    // achetés à l'unité (tickets_expert). Essai : 2 Conseils Expert au total.
     const result = await withClient(async (client) => {
       await client.query('begin');
+      const wRes = await client.query('select * from wallets where user_id=$1 for update', [userId]);
+      const w = wRes.rows[0];
+      if (!w) { await client.query('rollback'); return { ok: false, status: 402, body: { error: 'wallet_missing' } }; }
 
-      // Vérif trial
-      if (userId) {
-        const walletRes = await client.query('select * from wallets where user_id=$1 for update', [userId]);
-        const wallet = walletRes.rows[0];
-        if ((wallet?.trial_expires_at && new Date(wallet.trial_expires_at) < new Date()) || wallet?.status === 'trial_expired') {
-          if (wallet?.status !== 'active') {
-            await client.query("update wallets set status='trial_expired', updated_at=now() where user_id=$1", [userId]);
-          }
-          await client.query('commit');
-          return { ok: false, status: 402, body: { error: 'trial_expired' } };
+      const status = String(w.status || '');
+      const trialOver = status === 'trial_expired'
+        || (status === 'trial_active' && w.trial_expires_at && new Date(w.trial_expires_at) < new Date());
+      if (trialOver) {
+        if (status !== 'trial_expired') {
+          await client.query("update wallets set status='trial_expired', updated_at=now() where user_id=$1", [userId]);
         }
+        await client.query('commit');
+        return { ok: false, status: 402, body: { error: 'trial_expired' } };
+      }
+      if (status === 'pending_verification') {
+        await client.query('rollback');
+        return { ok: false, status: 403, body: { error: 'email_not_verified' } };
+      }
+      if (!['active', 'trial_active'].includes(status)) {
+        await client.query('rollback');
+        return { ok: false, status: 402, body: { error: 'subscription_required' } };
       }
 
-      // ── Vérification quota relectures expertes ─────────────────
-      if (userId) {
-        const wCheck = await client.query('select * from wallets where user_id=$1', [userId]);
-        const wRow = wCheck.rows[0];
-        if (wRow) {
-          const expertUsed  = Number(wRow.expert_used  ?? 0);
-          const expertLimit = Number(wRow.expert_limit ?? 2);
-          const expertTickets = Number(wRow.tickets_expert ?? 0);
-          // Pas de tickets payants ET quota gratuit épuisé → bloquer
-          if (expertTickets <= 0 && expertUsed >= expertLimit) {
-            await client.query('rollback');
-            return { ok: false, status: 402, body: { error: 'expert_limit_reached' } };
-          }
-        }
+      const limit   = Number(w.expert_limit ?? 0);
+      const used    = Number(w.expert_used ?? 0);
+      const credits = Number(w.tickets_expert ?? 0);
+      let source = null;
+      if (isUnlimited(limit) || used < limit) source = 'quota';
+      else if (credits > 0) source = 'credit';
+      if (!source) {
+        await client.query('rollback');
+        return { ok: false, status: 402, body: { error: 'expert_limit_reached' } };
       }
 
       const ins = await client.query(
@@ -86,44 +95,24 @@ router.post('/request', optionalAuth, limiter, async (req, res) => {
          generationAttachment ? JSON.stringify(generationAttachment) : null, domain || null]
       );
       const requestId = ins.rows[0].id;
-      let usedTicket = false;
-      let wallet = null;
 
-      if (userId) {
-        const w = await client.query('select * from wallets where user_id=$1 for update', [userId]);
-        wallet = w.rows[0];
-        const t = Number(wallet?.tickets_expert ?? 0);
-        if (t > 0) {
-          usedTicket = true;
-          await client.query('update wallets set tickets_expert=tickets_expert-1, expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
-        } else {
-          const isPrivate = (req.user?.accountSpace || '').toLowerCase() === 'private';
-          const used  = Number(isPrivate ? (wallet?.private_dossiers_used ?? 0) : (wallet?.public_dossiers_used ?? 0));
-          const limit = Number(isPrivate ? (wallet?.private_dossiers_limit ?? 1) : (wallet?.public_dossiers_limit ?? 1));
-          if (used >= limit) {
-            await client.query('rollback');
-            return { ok: false, status: 402, body: { error: isPrivate ? 'private_dossier_limit_reached' : 'public_dossier_limit_reached' } };
-          }
-          await client.query(`update wallets set ${isPrivate ? 'private_dossiers_used' : 'public_dossiers_used'}=${isPrivate ? 'private_dossiers_used' : 'public_dossiers_used'}+1, expert_used=expert_used+1, updated_at=now() where user_id=$1`, [userId]);
-        }
-        await client.query(
-          'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
-          [userId, 'expert_request', JSON.stringify({ requestId, usedTicket })]
-        );
-
-        // Notification in-app : demande reçue
-        await client.query(
-          `insert into notifications(user_id, kind, title, body, link)
-           values($1,'expert_received','Demande de relecture reçue','Votre demande est en cours de traitement. Vous serez notifié dès la réponse de votre conseiller.','/expert.html')`,
-          [userId]
-        );
-
-        const refresh = await client.query('select * from wallets where user_id=$1', [userId]);
-        wallet = refresh.rows[0];
+      if (source === 'quota') {
+        await client.query('update wallets set expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
+      } else {
+        await client.query('update wallets set tickets_expert=tickets_expert-1, updated_at=now() where user_id=$1', [userId]);
       }
-
+      await client.query(
+        'insert into usage_logs(user_id, kind, meta) values($1,$2,$3::jsonb)',
+        [userId, 'expert_request', JSON.stringify({ requestId, source })]
+      );
+      await client.query(
+        `insert into notifications(user_id, kind, title, body, link)
+         values($1,'expert_received','Question transmise à un expert',$2,'/expert.html')`,
+        [userId, `Votre question a bien été transmise. Un expert vous répond sous ${RESPONSE_DELAY_LABEL}.`]
+      );
+      const refresh = await client.query('select * from wallets where user_id=$1', [userId]);
       await client.query('commit');
-      return { ok: true, requestId, usedTicket, wallet };
+      return { ok: true, requestId, usedTicket: source === 'credit', wallet: refresh.rows[0] };
     });
 
     if (!result.ok) return res.status(result.status).json(result.body);
@@ -238,7 +227,7 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
       if (row.user_id) {
         await client.query(
           `insert into notifications(user_id, kind, title, body, link)
-           values($1,'expert_replied','Votre relecture experte est prête',$2,'/expert.html')`,
+           values($1,'expert_replied','Votre Conseil Expert est prêt',$2,'/expert.html')`,
           [row.user_id, `Votre conseiller a répondu à votre demande : "${String(row.objective||'').slice(0,80)}"`]
         );
       }
@@ -250,8 +239,8 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
     // Email au client
     await sendMail({
       to: result.email,
-      subject: 'POPE Online — Votre relecture experte est prête',
-      text: `Bonjour,\n\nVotre conseiller POPE Online a répondu à votre demande de relecture.\n\nObjet de la demande :\n${result.objective}\n\nRéponse de votre conseiller :\n${replyText}\n\nConnectez-vous à votre espace pour consulter la réponse complète :\nhttps://pope-online.com/expert.html\n\nCordialement,\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
+      subject: 'POPE Online — Votre Conseil Expert est prêt',
+      text: `Bonjour,\n\nVotre expert POPE Online a répondu à votre question.\n\nVotre question :\n${result.objective}\n\nRéponse de votre expert :\n${replyText}\n\nConnectez-vous à votre espace pour consulter la réponse complète :\n${resolveFrontendBaseUrl()}/expert.html\n\nCordialement,\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
     });
 
     return res.json({ ok: true });
@@ -349,9 +338,9 @@ router.post('/:id/expert-reply', requireAuth, async (req, res) => {
         try {
           await client.query(
             `insert into notifications(user_id, kind, title, body, link)
-             values($1,'expert_replied','Votre relecture experte est prête',$2,'/dashboard.html')
+             values($1,'expert_replied','Votre Conseil Expert est prêt',$2,'/dashboard.html')
              on conflict do nothing`,
-            [row.user_id, 'Votre conseiller expert a répondu à votre demande de relecture.']
+            [row.user_id, 'Votre expert a répondu à votre question.']
           );
         } catch(_) {}
       }

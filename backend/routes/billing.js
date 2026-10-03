@@ -3,292 +3,251 @@ import crypto from 'crypto';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { requireAuth } from '../middleware/auth.js';
+import { resolveFrontendBaseUrl } from '../services/urls.js';
+import {
+  publicCatalogue, resolvePurchase, resolvePlanFromInvoiceLines, parseClientReference,
+  isUnlimited, RESPONSE_DELAY_LABEL
+} from '../services/plans.js';
 
 const router = express.Router();
+const SIGNATURE_TOLERANCE_SECONDS = 300;
 
-// ── GET /billing/plans ───────────────────────────────────────────────────────
+// ── GET /billing/plans — catalogue V88 (Élu, Collectivité, crédit) ──────────
 router.get('/plans', (_req, res) => {
-  res.json({
-    starter_m: { id: 'starter_m', name: 'Starter mensuel', price: 49, currency: 'eur', expert_limit: 5, ai_unlimited: true },
-    starter_a: { id: 'starter_a', name: 'Starter annuel',  price: 500, currency: 'eur', expert_limit: 5, ai_unlimited: true },
-    pro_m:     { id: 'pro_m',     name: 'Pro mensuel',     price: 89, currency: 'eur', expert_limit: 15, ai_unlimited: true },
-    pro_a:     { id: 'pro_a',     name: 'Pro annuel',      price: 908, currency: 'eur', expert_limit: 15, ai_unlimited: true }
-  });
+  res.json(publicCatalogue());
 });
 
-// Plan metadata depuis le price_id ou metadata Stripe
-function resolvePlan(session) {
-  const meta      = session.metadata || {};
-  const planCode  = String(meta.plan_code || '').toUpperCase();
-  const clientRef = String(meta.client_reference_id || session.client_reference_id || '').toLowerCase();
-
-  if (planCode === 'STARTER' || clientRef.includes('starter')) {
-    const isAnnual = planCode.includes('A') || clientRef.includes('_a');
-    return { label: 'Starter', code: isAnnual ? 'STARTER_A' : 'STARTER_M', expertLimit: 5 };
-  }
-  if (planCode === 'PRO' || clientRef.includes('pro')) {
-    const isAnnual = planCode.includes('A') || clientRef.includes('_a');
-    return { label: 'Pro', code: isAnnual ? 'PRO_A' : 'PRO_M', expertLimit: 15 };
-  }
-  // Fallback : tenter de déduire du montant
-  const amount = Number(session.amount_total || 0);
-  if (amount <= 4900)  return { label: 'Starter', code: 'STARTER_M', expertLimit: 5 };
-  if (amount <= 50000) return { label: 'Starter', code: 'STARTER_A', expertLimit: 5 };
-  if (amount <= 8900)  return { label: 'Pro',     code: 'PRO_M',     expertLimit: 15 };
-  return { label: 'Pro', code: 'PRO_A', expertLimit: 15 };
+// ── Vérification de signature Stripe (V88) ───────────────────────────────────
+// En V87, l'absence d'en-tête « stripe-signature » faisait sauter la vérification :
+// n'importe qui pouvait simuler un paiement. Désormais, dès qu'un secret est
+// configuré, la signature est obligatoire et datée (tolérance 5 min).
+function verifyStripeSignature(rawBody, header, secret) {
+  if (!header) return false;
+  const items = String(header).split(',').map((p) => p.trim().split('='));
+  const ts = items.find(([k]) => k === 't')?.[1];
+  const signatures = items.filter(([k]) => k === 'v1').map(([, v]) => v);
+  if (!ts || !signatures.length) return false;
+  const age = Math.abs(Math.floor(Date.now() / 1000) - Number(ts));
+  if (!Number.isFinite(age) || age > SIGNATURE_TOLERANCE_SECONDS) return false;
+  const expected = crypto.createHmac('sha256', secret).update(`${ts}.${rawBody}`).digest('hex');
+  const exp = Buffer.from(expected, 'hex');
+  return signatures.some((sig) => {
+    const got = Buffer.from(String(sig || ''), 'hex');
+    return got.length === exp.length && crypto.timingSafeEqual(got, exp);
+  });
 }
 
-// ── POST /billing/webhook — Stripe webhook ───────────────────────────────────
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig    = req.headers['stripe-signature'];
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+function limitText(limit) {
+  return isUnlimited(limit) ? 'des Conseils Expert illimités' : `${limit} Conseils Expert par mois`;
+}
 
-  // En production, refuser si STRIPE_WEBHOOK_SECRET absent
-  if (!secret && String(process.env.NODE_ENV || '').trim() === 'production') {
+// Retrouve l'utilisateur : d'abord par l'identifiant transmis par la page
+// Tarifs (client_reference_id), sinon par l'e-mail du paiement.
+async function findUserForSession(client, session) {
+  const { userId } = parseClientReference(session.client_reference_id || session.metadata?.client_reference_id);
+  if (userId) {
+    const r = await client.query('select id, email from users where id=$1 limit 1', [userId]);
+    if (r.rowCount) return r.rows[0];
+  }
+  const email = String(session.customer_email || session.customer_details?.email || '').trim().toLowerCase();
+  if (email) {
+    const r = await client.query('select id, email from users where lower(email)=$1 limit 1', [email]);
+    if (r.rowCount) return r.rows[0];
+  }
+  return null;
+}
+
+async function handleCheckoutCompleted(session) {
+  const purchase = resolvePurchase(session);
+  if (!purchase) {
+    console.warn('[stripe] achat non reconnu', session.id, session.amount_total, session.client_reference_id);
+    return;
+  }
+  const base = resolveFrontendBaseUrl();
+  let mail = null;
+
+  await withClient(async (client) => {
+    const user = await findUserForSession(client, session);
+    if (!user) {
+      console.warn('[stripe] utilisateur introuvable pour la session', session.id);
+      return;
+    }
+    const stripeCustomerId = session.customer || null;
+
+    if (purchase.kind === 'credit') {
+      // Conseil Expert à l'unité : on ajoute un crédit, sans toucher à l'abonnement
+      await client.query(
+        `update wallets set tickets_expert = coalesce(tickets_expert,0) + $2,
+                stripe_customer_id = coalesce($3, stripe_customer_id), updated_at = now()
+          where user_id = $1`,
+        [user.id, purchase.quantity, stripeCustomerId]
+      );
+      await client.query(
+        `insert into notifications(user_id, kind, title, body, link) values($1,'credit_added','Conseil Expert ajouté',$2,'/dashboard.html')`,
+        [user.id, `${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte.`]
+      );
+      console.log(`[stripe] +${purchase.quantity} crédit(s) pour ${user.email}`);
+      mail = {
+        to: user.email,
+        subject: 'POPE Online — Votre Conseil Expert supplémentaire est disponible',
+        text: `Bonjour,\n\nVotre achat est confirmé : ${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte.\n\nPoser votre question : ${base}/dashboard.html\n\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
+      };
+      return;
+    }
+
+    const plan = purchase.plan;
+    await client.query(
+      `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert, stripe_customer_id)
+       values($1,$2,$3,'active',true,$4,0,9999,0,$5)
+       on conflict(user_id) do update set
+         plan_code    = excluded.plan_code,
+         plan_label   = excluded.plan_label,
+         status       = 'active',
+         ai_unlimited = true,
+         expert_limit = excluded.expert_limit,
+         expert_used  = 0,
+         tickets_ai   = 9999,
+         stripe_customer_id = coalesce(excluded.stripe_customer_id, wallets.stripe_customer_id),
+         updated_at   = now()`,
+      [user.id, plan.code, plan.label, plan.expertLimit, stripeCustomerId]
+    );
+    try {
+      await client.query(
+        `update wallets set plan_start = now(), quota_period_start = now(),
+                renews_at = now() + ($2)::interval
+          where user_id = $1`,
+        [user.id, plan.interval === 'year' ? '1 year' : '1 month']
+      );
+    } catch (e) { console.warn('[stripe] colonnes de dates absentes :', e.message); }
+
+    await client.query(
+      `insert into notifications(user_id, kind, title, body, link) values($1,'plan_upgraded','Abonnement activé',$2,'/dashboard.html')`,
+      [user.id, `Votre offre ${plan.label} est active. Vous disposez de ${limitText(plan.expertLimit)}.`]
+    );
+    console.log(`[stripe] offre ${plan.code} activée pour ${user.email}`);
+    mail = {
+      to: user.email,
+      subject: `POPE Online — Votre offre ${plan.label} est active`,
+      text: `Bonjour,\n\nVotre offre POPE Online ${plan.label} est active.\n\nVous disposez de ${limitText(plan.expertLimit)}, avec une réponse d'expert sous ${RESPONSE_DELAY_LABEL}, ainsi que du clausier, du dépôt sécurisé et de l'outil de rédaction.\n\nAccéder à votre espace : ${base}/dashboard.html\n\nMerci de votre confiance.\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
+    };
+  });
+
+  if (mail) {
+    try { await sendMail(mail); } catch (e) { console.error('[stripe] e-mail non envoyé :', e.message); }
+  }
+}
+
+async function handleInvoicePaid(invoice) {
+  const custId = String(invoice.customer || '').trim();
+  if (!custId || invoice.billing_reason !== 'subscription_cycle') return;
+  await withClient(async (client) => {
+    const userRes = await client.query('select user_id from wallets where stripe_customer_id=$1 limit 1', [custId]);
+    if (!userRes.rowCount) { console.warn('[stripe invoice.paid] client introuvable :', custId); return; }
+    const userId = userRes.rows[0].user_id;
+    const plan = resolvePlanFromInvoiceLines(invoice.lines?.data || []);
+    const periodEnd = invoice.period_end ? new Date(Number(invoice.period_end) * 1000) : null;
+
+    if (plan) {
+      await client.query(
+        `update wallets set expert_used = 0, expert_limit = $2, plan_code = $3, plan_label = $4,
+                status = 'active', updated_at = now() where user_id = $1`,
+        [userId, plan.expertLimit, plan.code, plan.label]
+      );
+    } else {
+      await client.query(`update wallets set expert_used = 0, status = 'active', updated_at = now() where user_id = $1`, [userId]);
+    }
+    try {
+      await client.query(
+        `update wallets set quota_period_start = now(), renews_at = coalesce($2, renews_at) where user_id = $1`,
+        [userId, periodEnd]
+      );
+    } catch (_) {}
+
+    const w = await client.query('select expert_limit from wallets where user_id=$1', [userId]);
+    await client.query(
+      `insert into notifications(user_id, kind, title, body, link) values($1,'plan_renewed','Abonnement renouvelé',$2,'/dashboard.html')`,
+      [userId, `Votre abonnement a été renouvelé. Vous disposez à nouveau de ${limitText(w.rows[0]?.expert_limit ?? 0)}.`]
+    );
+    console.log(`[stripe] renouvellement traité pour ${custId}`);
+  });
+}
+
+async function handleSubscriptionDeleted(sub) {
+  const custId = String(sub.customer || '').trim();
+  if (!custId) return;
+  const base = resolveFrontendBaseUrl();
+  let email = null;
+  await withClient(async (client) => {
+    const userRes = await client.query('select user_id from wallets where stripe_customer_id=$1 limit 1', [custId]);
+    if (!userRes.rowCount) { console.warn('[stripe subscription.deleted] client introuvable :', custId); return; }
+    const userId = userRes.rows[0].user_id;
+    // Plus d'offre gratuite permanente en V88 : le compte reste consultable,
+    // les nouveaux Conseils Expert nécessitent une nouvelle souscription.
+    await client.query(
+      `update wallets set plan_code = 'FREE', plan_label = 'Découverte', status = 'cancelled',
+              expert_limit = 0, expert_used = 0, updated_at = now() where user_id = $1`,
+      [userId]
+    );
+    await client.query(
+      `insert into notifications(user_id, kind, title, body, link) values($1,'plan_cancelled','Abonnement résilié',$2,'/pricing.html')`,
+      [userId, 'Votre abonnement a été résilié. Votre compte et vos échanges restent consultables. Vous pouvez vous réabonner à tout moment.']
+    );
+    const e = await client.query('select email from users where id=$1 limit 1', [userId]);
+    email = e.rows[0]?.email || null;
+  });
+  if (email) {
+    try {
+      await sendMail({
+        to: email,
+        subject: 'POPE Online — Votre abonnement a été résilié',
+        text: `Bonjour,\n\nVotre abonnement POPE Online a bien été résilié.\n\nVotre compte, vos échanges et vos documents restent consultables. Pour solliciter à nouveau un expert, il suffit de vous réabonner : ${base}/pricing.html\n\nL'équipe POPE Online`
+      });
+    } catch (err) { console.error('[stripe] e-mail de résiliation non envoyé :', err.message); }
+  }
+}
+
+// ── POST /billing/webhook — Stripe ───────────────────────────────────────────
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const secret = String(process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+  const isProd = String(process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
+  const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : JSON.stringify(req.body || {});
+
+  if (secret) {
+    if (!verifyStripeSignature(rawBody, req.headers['stripe-signature'], secret)) {
+      console.warn('[stripe] signature invalide ou absente — événement refusé');
+      return res.status(400).json({ error: 'invalid_signature' });
+    }
+  } else if (isProd) {
     console.error('[stripe] STRIPE_WEBHOOK_SECRET manquant — webhook refusé');
     return res.status(500).json({ error: 'webhook_not_configured' });
+  } else {
+    console.warn('[stripe] STRIPE_WEBHOOK_SECRET absent : signature non vérifiée (hors production uniquement)');
   }
 
   let event;
+  try { event = JSON.parse(rawBody); }
+  catch { return res.status(400).json({ error: 'parse_error' }); }
+
+  // Idempotence : un événement déjà traité n'est pas rejoué
   try {
-    if (secret && sig) {
-      // Vérification signature Stripe
-      const parts    = sig.split(',').reduce((acc, p) => { const [k,v] = p.split('='); acc[k]=v; return acc; }, {});
-      const ts       = parts.t;
-      const payload  = `${ts}.${req.body.toString()}`;
-      const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-      if (!crypto.timingSafeEqual(Buffer.from(parts.v1||'','hex'), Buffer.from(expected,'hex'))) {
-        return res.status(400).json({ error: 'invalid_signature' });
-      }
-    }
-    event = JSON.parse(req.body.toString());
+    const ins = await withClient((client) => client.query(
+      'insert into stripe_events(id, type, payload) values($1,$2,$3::jsonb) on conflict do nothing returning id',
+      [event.id, event.type, rawBody]
+    ));
+    if (ins && ins.rowCount === 0) return res.json({ received: true, duplicate: true });
   } catch (e) {
-    return res.status(400).json({ error: 'parse_error' });
+    console.warn('[stripe] journalisation impossible :', e.message);
   }
 
-  // Idempotence
   try {
-    await withClient(async (client) => {
-      await client.query(
-        'insert into stripe_events(id, type, payload) values($1,$2,$3::jsonb) on conflict do nothing',
-        [event.id, event.type, JSON.stringify(event)]
-      );
-    });
-  } catch (_) {}
-
-  // Traiter l'événement
-  if (event.type === 'checkout.session.completed') {
-    const session   = event.data.object;
-    const userEmail = String(session.customer_email || session.customer_details?.email || '').trim().toLowerCase();
-    const plan      = resolvePlan(session);
-
-    if (userEmail) {
-      try {
-        await withClient(async (client) => {
-          // Trouver l'utilisateur
-          const userRes = await client.query(
-            'select id from users where email=$1 limit 1',
-            [userEmail]
-          );
-          if (!userRes.rowCount) {
-            console.warn(`[stripe] user not found for email: ${userEmail}`);
-            return;
-          }
-          const userId = userRes.rows[0].id;
-
-          // Activer le wallet et sauvegarder stripe_customer_id
-          const stripeCustomerId = session.customer || null;
-          await client.query(
-            `insert into wallets(user_id, plan_code, plan_label, status, ai_unlimited, expert_limit, expert_used, tickets_ai, tickets_expert, stripe_customer_id)
-             values($1,$2,$3,'active',true,$4,0,9999,$4,$5)
-             on conflict(user_id) do update set
-               plan_code    = excluded.plan_code,
-               plan_label   = excluded.plan_label,
-               status       = 'active',
-               ai_unlimited = true,
-               expert_limit = excluded.expert_limit,
-               expert_used  = 0,
-               tickets_ai   = 9999,
-               tickets_expert = excluded.expert_limit,
-               stripe_customer_id = coalesce(excluded.stripe_customer_id, wallets.stripe_customer_id),
-               updated_at   = now()`,
-            [userId, plan.code, plan.label, plan.expertLimit, stripeCustomerId]
-          );
-
-          // Notification in-app
-          await client.query(
-            `insert into notifications(user_id, kind, title, body, link)
-             values($1,'plan_upgraded','Abonnement activé',$2,'/dashboard.html')`,
-            [userId, `Votre plan ${plan.label} est actif. Vous disposez de ${plan.expertLimit} relectures expertes par mois.`]
-          );
-
-          // Mise à jour plan_start + renews_at (V87 — colonnes optionnelles)
-          try {
-            await client.query(
-              `update wallets
-                  set plan_start = coalesce(plan_start, now()),
-                      renews_at  = now() + interval '30 days'
-                where user_id = $1`,
-              [userId]
-            );
-          } catch (_) {}
-
-          console.log(`[stripe] plan ${plan.label} activé pour ${userEmail}`);
-        });
-
-        // Email de confirmation
-        await sendMail({
-          to: userEmail,
-          subject: `POPE Online — Votre abonnement ${plan.label} est actif`,
-          text: `Bonjour,\n\nVotre abonnement POPE Online ${plan.label} est maintenant actif.\n\nVous disposez de :\n• Production de livrables IA illimitée\n• ${plan.expertLimit} relectures expertes par mois\n• Accès au clausier documentaire\n\nConnectez-vous à votre espace :\nhttps://pope-online.com/dashboard.html\n\nMerci de votre confiance.\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
-        });
-      } catch (e) {
-        console.error('[stripe webhook] error:', e.message);
-      }
-    }
-  }
-
-  // ── Renouvellement mensuel → remise à zéro du compteur expert_used ──────────
-  if (event.type === 'invoice.paid') {
-    const invoice        = event.data.object;
-    const custId         = String(invoice.customer || '').trim();
-    const billingReason  = invoice.billing_reason; // 'subscription_cycle' = renouvellement
-    const lines          = invoice.lines?.data || [];
-
-    // Déduire le plan depuis les line items de la facture
-    function resolvePlanFromInvoice(lines) {
-      for (const line of lines) {
-        const desc = String(line.description || line.price?.nickname || '').toLowerCase();
-        if (desc.includes('pro'))     return { label: 'Pro',     code: 'PRO_M',     expertLimit: 15 };
-        if (desc.includes('starter')) return { label: 'Starter', code: 'STARTER_M', expertLimit: 5  };
-        const amount = Number(line.amount || 0);
-        if (amount >= 8900)  return { label: 'Pro',     code: 'PRO_M',     expertLimit: 15 };
-        if (amount >= 4900)  return { label: 'Starter', code: 'STARTER_M', expertLimit: 5  };
-      }
-      return null;
-    }
-
-    if (custId && billingReason === 'subscription_cycle') {
-      try {
-        await withClient(async (client) => {
-          // Récupérer l'utilisateur via stripe_customer_id
-          const userRes = await client.query(
-            'select user_id from wallets where stripe_customer_id=$1 limit 1',
-            [custId]
-          );
-          if (!userRes.rowCount) {
-            console.warn('[stripe invoice.paid] customer introuvable:', custId);
-            return;
-          }
-          const userId = userRes.rows[0].user_id;
-
-          // Tenter de déduire le plan depuis la facture
-          const plan = resolvePlanFromInvoice(lines);
-
-          // Remise à zéro de expert_used + mise à jour expert_limit si plan détecté
-          if (plan) {
-            await client.query(
-              `update wallets
-                  set expert_used   = 0,
-                      expert_limit  = $2,
-                      plan_code     = $3,
-                      plan_label    = $4,
-                      status        = 'active',
-                      updated_at    = now()
-                where user_id = $1`,
-              [userId, plan.expertLimit, plan.code, plan.label]
-            );
-            console.log(`[stripe] Renouvellement ${plan.label} — expert_used remis à 0 pour customer ${custId}`);
-          } else {
-            // Plan non détecté : remettre uniquement expert_used à zéro
-            await client.query(
-              `update wallets set expert_used=0, status='active', updated_at=now() where user_id=$1`,
-              [userId]
-            );
-            console.log(`[stripe] Renouvellement — expert_used remis à 0 pour customer ${custId} (plan non résolu)`);
-          }
-          // Mise à jour renews_at (V87 — colonne optionnelle)
-          try {
-            const invoicePeriodEnd = invoice.period_end
-              ? new Date(Number(invoice.period_end) * 1000)
-              : new Date(Date.now() + 30 * 86400000);
-            await client.query(
-              `update wallets set renews_at=$2 where user_id=$1`,
-              [userId, invoicePeriodEnd]
-            );
-          } catch (_) {}
-
-          // Notification in-app
-          const expertLimit = plan?.expertLimit || 0;
-          await client.query(
-            `insert into notifications(user_id, kind, title, body, link)
-             values($1,'plan_renewed','Abonnement renouvelé',$2,'/expert.html')`,
-            [userId, `Votre abonnement a été renouvelé. Vous disposez à nouveau de ${expertLimit} relectures expertes ce mois.`]
-          );
-        });
-      } catch (e) {
-        console.error('[stripe invoice.paid] Erreur:', e.message);
-      }
-    }
-  }
-
-  // ── Abonnement annulé → downgrade vers Free ───────────────────────────────
-  if (event.type === 'customer.subscription.deleted') {
-    const sub    = event.data.object;
-    const custId = String(sub.customer || '').trim();
-
-    if (custId) {
-      try {
-        await withClient(async (client) => {
-          // Récupérer l'utilisateur
-          const userRes = await client.query(
-            'select user_id from wallets where stripe_customer_id=$1 limit 1',
-            [custId]
-          );
-          if (!userRes.rowCount) {
-            console.warn('[stripe subscription.deleted] customer introuvable:', custId);
-            return;
-          }
-          const userId = userRes.rows[0].user_id;
-
-          // Downgrade vers Free : conserver les données, rétrograder le plan
-          await client.query(
-            `update wallets
-                set plan_code    = 'FREE',
-                    plan_label   = 'Free',
-                    status       = 'cancelled',
-                    expert_limit = 2,
-                    expert_used  = 0,
-                    ai_unlimited = false,
-                    tickets_ai   = 0,
-                    updated_at   = now()
-              where user_id = $1`,
-            [userId]
-          );
-          console.log(`[stripe] Abonnement annulé — downgrade Free pour customer ${custId}`);
-
-          // Notification in-app
-          await client.query(
-            `insert into notifications(user_id, kind, title, body, link)
-             values($1,'plan_cancelled','Abonnement résilié',$2,'/pricing.html')`,
-            [userId, 'Votre abonnement a été résilié. Vous êtes repassé en offre Free (2 relectures/mois). Réabonnez-vous à tout moment.']
-          );
-
-          // Email de confirmation
-          const emailRes = await client.query('select email from users where id=$1 limit 1', [userId]);
-          if (emailRes.rowCount) {
-            const email = emailRes.rows[0].email;
-            await sendMail({
-              to: email,
-              subject: 'POPE Online — Votre abonnement a été résilié',
-              text: `Bonjour,\n\nVotre abonnement POPE Online a bien été résilié.\n\nVous continuez à accéder à POPE Online en offre Free (2 relectures expertes par mois).\n\nPour vous réabonner : https://pope-online.com/pricing.html\n\nL'équipe POPE Online`
-            });
-          }
-        });
-      } catch (e) {
-        console.error('[stripe subscription.deleted] Erreur:', e.message);
-      }
-    }
+    if (event.type === 'checkout.session.completed') await handleCheckoutCompleted(event.data.object);
+    else if (event.type === 'invoice.paid') await handleInvoicePaid(event.data.object);
+    else if (event.type === 'customer.subscription.deleted') await handleSubscriptionDeleted(event.data.object);
+  } catch (e) {
+    console.error(`[stripe] erreur de traitement ${event.type} :`, e.message);
+    // On libère l'événement pour que Stripe le renvoie automatiquement
+    try { await withClient((client) => client.query('delete from stripe_events where id=$1', [event.id])); } catch (_) {}
+    return res.status(500).json({ error: 'processing_failed' });
   }
 
   res.json({ received: true });

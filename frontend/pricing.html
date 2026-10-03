@@ -3,453 +3,275 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>POPE Online — Offres & Tarifs</title>
-<meta name="description" content="Choisissez l'offre POPE Online adaptée : Free, Starter, Pro ou Premium. Production fiable, validée, exploitable immédiatement."/>
+<title>Offres et tarifs — POPE Online pour les élus</title>
+<meta name="description" content="Offre Élu à 49 € HT/mois, offre Collectivité à 499 € HT/mois. Essai gratuit 15 jours, sans carte bancaire."/>
+<link rel="canonical" href="https://pope-online.com/pricing.html"/>
+<meta property="og:title" content="Offres et tarifs — POPE Online pour les élus"/>
+<meta property="og:description" content="Offre Élu à 49 € HT/mois, offre Collectivité à 499 € HT/mois. Essai gratuit 15 jours, sans carte bancaire."/>
+<meta property="og:type" content="website"/>
+<meta name="theme-color" content="#1F4A3D"/>
 <link rel="icon" href="./assets/favicon.png" type="image/png"/>
-<link rel="stylesheet" href="app.css"/>
-<style>
-:root{--blue:#0079c1;--cyan:#03a0d7;--dark:#0b2440;--muted:#50627a;--line:#dce9f4;--light:#f0f7fc}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(155deg,#f0f7fc,#e3f0fa,#d4e8f6);min-height:100vh;color:var(--dark)}
-.pnav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.pnav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--dark);font-weight:800;font-size:17px}
-.pnav-brand img{height:36px}
-.pnav-back{text-decoration:none;color:var(--blue);font-size:14px;font-weight:600;border:1px solid var(--blue);padding:8px 16px;border-radius:12px;transition:.2s}
-.pnav-back:hover{background:var(--blue);color:#fff}
-.phero{text-align:center;padding:56px 24px 40px}
-.phero h1{font-size:clamp(26px,5vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px}
-.phero h1 span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.phero p{font-size:17px;color:var(--muted);max-width:560px;margin:0 auto 32px;line-height:1.65}
-/* Toggle */
-.ptoggle-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px}
-.ptoggle-label{font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s}
-.ptoggle-label.active{color:var(--blue)}
-.ptoggle{width:52px;height:28px;background:#dce9f4;border-radius:999px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
-.ptoggle.on{background:linear-gradient(135deg,var(--blue),var(--cyan))}
-.ptoggle-thumb{position:absolute;top:4px;left:4px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.ptoggle.on .ptoggle-thumb{transform:translateX(24px)}
-.psave{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700}
-.pbilling-info{text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px;min-height:20px}
-/* Grid plans */
-.pgrid-wrap{max-width:1100px;margin:0 auto 80px;padding:0 20px}
-.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
-.plan{background:#fff;border-radius:22px;padding:28px 22px;border:2px solid var(--line);position:relative;transition:transform .2s,box-shadow .2s}
-.plan:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.1)}
-.plan.featured{border-color:var(--blue);background:linear-gradient(165deg,#f0f7fc,#e8f4fd)}
-.plan.featured::before{content:'Recommandé';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:999px;padding:4px 16px;font-size:11px;font-weight:700;white-space:nowrap}
-.plan-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-.plan-name{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:4px}
-.plan-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:20px;min-height:44px}
-.plan-price-wrap{margin-bottom:20px;min-height:72px}
-.plan-amount{font-size:36px;font-weight:800;color:var(--dark);letter-spacing:-.02em;line-height:1}
-.plan-period{font-size:14px;color:var(--muted);font-weight:400}
-.plan-annual{font-size:12px;color:#065f46;font-weight:600;margin-top:6px;min-height:16px}
-.plan-feats{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:10px}
-.plan-feats li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--dark);line-height:1.45}
-.plan-feats li.off{color:var(--muted)}
-.plan-feats li .fi{font-size:14px;flex-shrink:0;margin-top:1px}
-.plan-cta{display:block;width:100%;text-align:center;padding:13px;border-radius:14px;font-size:14px;font-weight:700;text-decoration:none;transition:.2s;cursor:pointer;border:none;font-family:inherit}
-.cta-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 6px 20px rgba(0,121,193,.3)}
-.cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,121,193,.4)}
-.cta-ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
-.cta-ghost:hover{border-color:var(--blue);color:var(--blue)}
-/* Clausier */
-.pclausier{max-width:1100px;margin:0 auto 40px;padding:0 20px}
-.pclausier-card{background:#fff;border-radius:20px;padding:28px 32px;border:1.5px solid var(--line);display:flex;align-items:center;gap:24px}
-.pclausier-card .icon{font-size:36px;flex-shrink:0}
-/* FAQ */
-.pfaq{max-width:760px;margin:0 auto 80px;padding:0 20px}
-.pfaq h2{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:24px;text-align:center}
-.faq-item{background:#fff;border-radius:14px;border:1.5px solid var(--line);margin-bottom:10px}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;cursor:pointer;font-weight:700;font-size:15px;color:var(--dark);user-select:none}
-.faq-q:hover{color:var(--blue)}
-.faq-icon{width:28px;height:28px;border-radius:8px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;transition:background .2s,transform .3s;color:var(--blue)}
-.faq-a{padding:0 20px;font-size:14px;color:var(--muted);line-height:1.7;overflow:hidden;max-height:0;transition:max-height .35s ease,padding .35s ease}
-.faq-item.open .faq-a{max-height:400px;padding-bottom:18px}
-.faq-item.open .faq-icon{background:var(--blue);color:#fff;transform:rotate(45deg)}
-/* Stripe modal */
-.stripe-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(11,36,64,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
-.stripe-overlay.active{display:flex}
-.stripe-card{background:#fff;border-radius:24px;padding:40px;max-width:480px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.2);position:relative}
-/* Responsive */
-@media(max-width:900px){.pgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.pgrid{grid-template-columns:1fr}.pclausier-card{flex-direction:column;text-align:center}}
-</style>
+<link rel="apple-touch-icon" href="./assets/favicon.png"/>
+<link rel="stylesheet" href="/theme-v88.css"/>
+<link rel="stylesheet" href="./site-v88.css"/>
+<script src="./site-config.js"></script>
 </head>
-<body>
-<nav class="pnav">
-  <a class="pnav-brand" href="index.html">
-    <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
-    <span>POPE Online</span>
-  </a>
-  <a class="pnav-back" href="index.html">← Retour</a>
-</nav>
-
-<div class="phero">
-  <h1>Des livrables <span>fiables et expertisés</span><br>à chaque usage</h1>
-  <p>Choisissez le plan adapté à votre volume de production. L'expertise humaine est au cœur de chaque offre.</p>
-
-  <div class="ptoggle-wrap">
-    <span class="ptoggle-label active" id="lbl-mensuel">Mensuel</span>
-    <div class="ptoggle" id="billing-toggle" role="switch" aria-checked="false" tabindex="0">
-      <div class="ptoggle-thumb"></div>
-    </div>
-    <span class="ptoggle-label" id="lbl-annuel">Annuel</span>
-    <span class="psave">−15%</span>
-  </div>
-</div>
-
-<div class="pgrid-wrap">
-  <p style="text-align:center;font-size:12px;color:#7a8fa8;margin-bottom:6px">Tous les prix sont indiqués hors taxes (HT). TVA applicable selon la réglementation en vigueur.</p>
-  <p class="pbilling-info" id="billing-info">Facturation mensuelle · Sans engagement · Résiliable à tout moment</p>
-
-  <div style="text-align:center;margin-bottom:20px">
-    <span style="background:#eef7ff;border:1px solid #b8dcf0;color:#0079c1;border-radius:999px;padding:6px 20px;font-size:13px;font-weight:700">🏛️ 🔒 Espaces public &amp; privé — Mêmes tarifs, deux accès différenciés</span>
-  </div>
-
-  <div class="pgrid">
-    <!-- FREE -->
-    <div class="plan">
-      <div class="plan-badge">Découverte</div>
-      <div class="plan-name">Free</div>
-      <div class="plan-desc">15 jours pour découvrir l'expertise humaine sécurisée</div>
-      <div class="plan-price-wrap">
-        <div><span class="plan-amount">0€</span></div>
-        <div class="plan-period">15 jours · Sans carte bancaire</div>
-        <div class="plan-annual">&nbsp;</div>
-      </div>
-      <ul class="plan-feats">
-        <li><span class="fi">✓</span><strong>2 Conseils Expert offerts</strong></li>        
-        <li><span class="fi">✓</span>Accompagnement sur mesure</li>
-	<li><span class="fi">✓</span>Dépôt sécurisé 48h</li>        
-	<li><span class="fi">✓</span>Outil de rédaction IA illimité pendant 15 jours</li>
-        <li><span class="fi">✓</span>Clausier documentaire</li>
-        <li class="off"><span class="fi">—</span>Conseiller dédié</li>
-      </ul>
-      <a href="signup.html" class="plan-cta cta-ghost">Commencer gratuitement</a>
-    </div>
-
-    <!-- STARTER -->
-    <div class="plan">
-      <div class="plan-badge">Essentiel</div>
-      <div class="plan-name">Starter</div>
-      <div class="plan-desc">Pour les professionnels qui produisent régulièrement</div>
-      <div class="plan-price-wrap">
-        <div><span class="plan-amount" id="s-amount">89€</span><span class="plan-period"> HT<span id="s-period">/mois</span></span></div>
-        <div class="plan-annual" id="s-annual">&nbsp;</div>
-      </div>
-      <ul class="plan-feats">
-        <li><span class="fi">✓</span><strong>5 Conseils Expert/mois</strong></li>        
-        <li><span class="fi">✓</span>Accompagnement sur mesure</li>
-	<li><span class="fi">✓</span>Dépôt sécurisé 48h</li>        
-	<li><span class="fi">✓</span>Outil de rédaction IA illimité</li>
-        <li><span class="fi">✓</span>Clausier documentaire</li>
-        <li class="off"><span class="fi">—</span>Conseiller dédié</li>
-      </ul>
-      <button class="plan-cta cta-primary" onclick="openCheckout('starter')">Souscrire Starter</button>
-    </div>
-
-    <!-- PRO -->
-    <div class="plan featured">
-      <div class="plan-badge" style="color:var(--blue)">Professionnel</div>
-      <div class="plan-name">Pro</div>
-      <div class="plan-desc">Pour les structures à fort volume de documents sensibles</div>
-      <div class="plan-price-wrap">
-        <div><span class="plan-amount" id="p-amount">149€</span><span class="plan-period"> HT<span id="p-period">/mois</span></span></div>
-        <div class="plan-annual" id="p-annual">&nbsp;</div>
-      </div>
-      <ul class="plan-feats">
-        <li><span class="fi">✓</span><strong>12 Conseils Expert/mois</strong></li>
-        <li><span class="fi">✓</span>Accompagnement sur mesure</li>
-        <li><span class="fi">✓</span>Dépôt sécurisé 48h</li>        
-	<li><span class="fi">✓</span>Outil de rédaction IA illimité</li>
-        <li><span class="fi">✓</span>Clausier documentaire premium</li>
-        <li><span class="fi">✓</span>Conseiller dédié</li>
-      </ul>
-      <button class="plan-cta cta-primary" onclick="openCheckout('pro')">Souscrire Pro</button>
-    </div>
-
-    <!-- PREMIUM -->
-    <div class="plan">
-      <div class="plan-badge">Excellence</div>
-      <div class="plan-name">Premium</div>
-      <div class="plan-desc">Collectivités, entreprises et structures à enjeux élevés</div>
-      <div class="plan-price-wrap">
-        <div><span class="plan-amount" style="font-size:26px">Sur devis</span></div>
-        <div class="plan-period">Validité 12 mois</div>
-        <div class="plan-annual">&nbsp;</div>
-      </div>
-      <ul class="plan-feats">
-        <li><span class="fi">✓</span><strong>Conseils Expert illimités</strong></li>
-	<li><span class="fi">✓</span>Déploiement multi-utilisateurs</li>        
-        <li><span class="fi">✓</span>Accompagnement stratégique</li>
-	<li><span class="fi">✓</span>Conseiller dédié</li>        
-	<li><span class="fi">✓</span>Outil de rédaction IA illimité</li>
-        <li><span class="fi">✓</span>Clausier sur mesure</li>        
-      </ul>
-      <a href="mailto:contact@pope-online.com?subject=Offre%20Premium%20POPE%20Online" class="plan-cta cta-ghost">Nous contacter</a>
-    </div>
-  </div>
-</div>
-
-<!-- Crédit expert à l'unité — pour abonnés Starter & Pro -->
-<div id="extra" style="max-width:860px;margin:0 auto 32px;padding:0 20px;">
-  <div style="background:#f0f7fc;border:1px solid #b8dcf0;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-    <div style="flex:1;min-width:180px;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#50627a;margin-bottom:5px;">Abonnés Starter &amp; Pro — quota mensuel épuisé</div>
-      <div style="font-size:15px;font-weight:800;color:#0b2440;margin-bottom:3px;">Conseil expert supplémentaire à l'unité</div>
-      <div style="font-size:12px;color:#50627a;line-height:1.5;">Même qualité, réponse sous 48h. Crédit ajouté instantanément. Aucun abonnement.</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
-      <div style="text-align:right;">
-        <span style="font-size:26px;font-weight:800;color:#0b2440;">25€</span>
-        <div style="font-size:11px;color:#64748b;">HT · unique</div>
-      </div>
-      <button onclick="openCreditCheckout()" style="background:#0079c1;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Acheter →</button>
-    </div>
-  </div>
-</div>
-
-<!-- CLOSIER -->
-<div class="pclausier">
-  <div class="pclausier-card">
-    <div class="icon">📚</div>
-    <div>
-      <h3 style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px">Clausier documentaire</h3>
-      <p style="font-size:14px;color:var(--muted);line-height:1.6">Le clausier POPE Online est disponible dès l'offre gratuite. Accédez à une bibliothèque de modèles officiels : marchés publics (DC1, DC2, DC4, MAPA), courriers administratifs, délibérations, formalités et RH. Sources gouvernementales vérifiées (economie.gouv.fr, service-public.fr, AMF, Légifrance).</p>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ -->
-<div class="pfaq">
-  <h2>Questions fréquentes</h2>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      Qu'est-ce qu'une conseil expert ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">Un conseiller POPE Online analyse votre document sur le fond, la forme et les formulations. Vous recevez un retour personnalisé par email dans les 48h. C'est la garantie d'un livrable sécurisé avant diffusion ou arbitrage officiel.</div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      La production de livrables est-elle vraiment illimitée ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">Oui, sur tous les plans payants et pendant l'essai gratuit. La seule limite porte sur le nombre de Conseils Expert mensuelles. Vous produisez autant de documents que nécessaire, sans restriction.</div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      Que se passe-t-il après les 15 jours gratuits ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">Votre compte reste accessible en consultation. La production et la conseil expert sont suspendues jusqu'à souscription d'un plan. Vous recevez un email récapitulatif avec les options disponibles. Aucune facturation automatique sans votre accord.</div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      Les relectures non utilisées sont-elles reportées ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">Non, les Conseils Expert sont comptabilisées par mois calendaire et ne se cumulent pas d'un mois sur l'autre. Elles sont dimensionnées pour correspondre à un usage professionnel régulier.</div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      Le paiement est-il sécurisé ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">Oui. Le paiement est traité par Stripe, leader mondial du paiement en ligne. Vos données bancaires ne transitent jamais sur nos serveurs. Stripe est certifié PCI DSS niveau 1 et utilise le chiffrement SSL 256 bits. Vous êtes redirigé vers une page Stripe sécurisée.</div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q">
-      Quelle est la différence entre espace public et privé ?
-      <span class="faq-icon">+</span>
-    </div>
-    <div class="faq-a">L'espace public est conçu pour les collectivités, établissements et organisations publiques (notes, délibérations, courriers institutionnels). L'espace privé est calibré pour les artisans, indépendants et TPE (formalités, marchés, courriers métier). Les plans tarifaires s'appliquent aux deux espaces.</div>
-  </div>
-</div>
-
-<!-- STRIPE MODAL -->
-<div class="stripe-overlay" id="stripe-overlay">
-  <div class="stripe-card">
-    <button onclick="closeCheckout()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#50627a;line-height:1">✕</button>
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="width:52px;height:52px;background:linear-gradient(135deg,#0079c1,#03a0d7);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">🔒</div>
-      <h2 style="font-size:20px;font-weight:800;color:#0b2440;margin:0 0 4px" id="co-title">Souscrire Starter</h2>
-      <p style="font-size:15px;color:#0079c1;font-weight:700;margin:0" id="co-price"></p>
-    </div>
-    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap">
-      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a">🔒 SSL 256-bit</span>
-      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a">💳 Stripe</span>
-      <span style="background:#f0f7fc;border:1px solid #dce9f4;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#50627a">✓ PCI DSS</span>
-    </div>
-    <div style="background:#f0f7fc;border-radius:14px;padding:16px;margin-bottom:20px;font-size:13px;color:#0b2440;line-height:1.8" id="co-details"></div>
-    <a id="co-link" href="#" target="_blank" rel="noopener noreferrer"
-       style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:15px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.3);margin-bottom:12px">
-      Payer en toute sécurité →
+<body class="s-body">
+<a class="s-skip" href="#contenu">Aller au contenu</a>
+<header class="s-header">
+  <div class="s-wrap s-header-in">
+    <a class="s-brand" href="index.html" aria-label="POPE Online, accueil">
+      <svg viewBox="0 0 34 34" aria-hidden="true" focusable="false"><circle cx="17" cy="13" r="11" fill="#1F4A3D"/><path d="M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3" stroke="#F6F7F4" stroke-width="1.7" stroke-linecap="round" fill="none"/><circle cx="22.4" cy="8.6" r="2.4" fill="#A8741F"/><path d="M17 23.5v7" stroke="#1F4A3D" stroke-width="2.4" stroke-linecap="round"/><path d="M11.5 31h11" stroke="#1F4A3D" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span class="s-brand-text"><span class="s-brand-name">Pope Online</span><span class="s-brand-sig">L'expertise au service des élus</span></span>
     </a>
-    <p style="text-align:center;font-size:12px;color:#7a8fa8;margin:0">
-      Vous serez redirigé vers Stripe · Annulation possible à tout moment<br>
-      <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a>
-    </p>
+    <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span></span></button>
+    <nav class="s-nav" id="sNav" aria-label="Navigation principale">
+      <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html" aria-current="page">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="mailto:contact@pope-online.com">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
+    </nav>
+  </div>
+</header>
+<main id="contenu">
+
+<section class="s-hero" style="padding-bottom:40px">
+  <div class="s-wrap">
+    <h1 class="s-h1" style="max-width:15em">Un expert à vos côtés, pour le prix d'un abonnement.</h1>
+    <p class="s-lead">Tous les prix sont hors taxes. Sans engagement, résiliable à tout moment.</p>
+    <div class="s-billing" role="group" aria-label="Période de facturation">
+      <button type="button" id="bMonthly" aria-pressed="true">Mensuel</button>
+      <button type="button" id="bAnnual" aria-pressed="false">Annuel, 15 % de remise</button>
+    </div>
+    <p class="s-billing-note" id="billingNote">Facturation mensuelle, sans engagement.</p>
+
+    <div class="s-plans">
+      <article class="s-plan">
+        <h2 class="s-plan-name">Découverte</h2>
+        <p class="s-plan-for">Pour tout élu qui veut tester le service.</p>
+        <div class="s-plan-price">0 €</div>
+        <p class="s-plan-sub">Pendant 15 jours, sans carte bancaire</p>
+        <ul>
+          <li>2 Conseils Expert offerts</li>
+          <li>Clausier (base documentaire)</li>
+          <li>Dépôt sécurisé de documents</li>
+          <li>Outil de rédaction</li>
+        </ul>
+        <a class="s-btn s-btn-ghost" href="signup-public.html">Commencer l'essai</a>
+      </article>
+
+      <article class="s-plan s-plan-featured">
+        <span class="s-plan-flag">L'offre des élus</span>
+        <h2 class="s-plan-name">Élu</h2>
+        <p class="s-plan-for">Maires, adjoints, conseillers municipaux, DGS.</p>
+        <div class="s-plan-price"><span id="eluPrice">49 €</span><small id="eluPeriod">HT / mois</small></div>
+        <p class="s-plan-sub" id="eluSub">ou 499,80 € HT par an</p>
+        <ul>
+          <li>10 Conseils Expert par mois</li>
+          <li>Réponse en moins de 24 h</li>
+          <li>Clausier (base documentaire)</li>
+          <li>Dépôt sécurisé de documents</li>
+          <li>Outil de rédaction</li>
+        </ul>
+        <button class="s-btn s-btn-primary" type="button" data-plan="elu">Souscrire l'offre Élu</button>
+      </article>
+
+      <article class="s-plan">
+        <h2 class="s-plan-name">Collectivité</h2>
+        <p class="s-plan-for">Pour les collectivités de plus de 10 000 habitants.</p>
+        <div class="s-plan-price"><span id="colPrice">499 €</span><small id="colPeriod">HT / mois</small></div>
+        <p class="s-plan-sub" id="colSub">ou 5 089,80 € HT par an</p>
+        <ul>
+          <li>Conseils Expert illimités</li>
+          <li>Réponse sous 24 h</li>
+          <li>Plusieurs utilisateurs</li>
+          <li>Un conseiller dédié</li>
+          <li>Accès à l'accompagnement Pope Consulting</li>
+        </ul>
+        <button class="s-btn s-btn-ghost" type="button" data-plan="collectivite">Souscrire ou demander un devis</button>
+      </article>
+    </div>
+
+    <div class="s-extra" id="extra">
+      <div>
+        <h2 class="s-h3">Abonnés Élu : un Conseil Expert supplémentaire</h2>
+        <p>Votre quota mensuel est épuisé ? Ajoutez un Conseil Expert à l'unité, même délai de réponse. Le crédit est ajouté à votre compte dès le paiement.</p>
+      </div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:12px">
+        <span class="s-extra-price">25 € HT</span>
+        <button class="s-btn s-btn-ghost" type="button" data-plan="credit">Acheter un Conseil Expert</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="s-section s-section-white">
+  <div class="s-wrap s-narrow">
+    <h2 class="s-h2" style="margin-bottom:28px">Questions fréquentes</h2>
+    <div class="s-faq">
+      <details><summary>Qu'est-ce qu'un Conseil Expert ?</summary><p>Un expert de Pope Online étudie votre question et vos documents, puis vous adresse une réponse écrite, argumentée et personnelle, en moins de 24 h. C'est l'appui dont vous avez besoin avant de décider, de signer ou de présenter un dossier.</p></details>
+      <details><summary>Qui paie l'abonnement : l'élu ou la commune ?</summary><p>L'offre Élu est souscrite et réglée par l'élu, à titre personnel. Le compte lui est attaché et reste strictement personnel. L'offre Collectivité est souscrite par la collectivité, pour plusieurs utilisateurs.</p></details>
+      <details><summary>Mes questions sont-elles visibles par les services de la mairie ?</summary><p>Non. Chaque compte est personnel. Vos échanges avec l'expert restent confidentiels.</p></details>
+      <details><summary>Qui sont les experts ?</summary><p>Des professionnels issus du terrain public et privé : juristes, financiers, spécialistes des marchés publics et des ressources humaines.</p></details>
+      <details><summary>POPE Online remplace-t-il mes services ou un avocat ?</summary><p>Non. POPE Online vous aide à comprendre et à décider. Pour un contentieux, l'expert vous orientera vers le bon interlocuteur.</p></details>
+      <details><summary>Que se passe-t-il après les 15 jours gratuits ?</summary><p>Votre compte reste accessible en consultation. Les Conseils Expert sont suspendus jusqu'à la souscription d'une offre. Aucun prélèvement n'a lieu sans votre accord.</p></details>
+      <details><summary>Les Conseils Expert non utilisés sont-ils reportés ?</summary><p>Non. Les Conseils Expert sont comptés par mois et ne se cumulent pas d'un mois sur l'autre. Ils sont dimensionnés pour un usage régulier d'élu.</p></details>
+      <details><summary>Le paiement est-il sécurisé ?</summary><p>Oui. Le paiement est traité par Stripe, certifié PCI DSS niveau 1. Vos coordonnées bancaires ne transitent jamais par nos serveurs.</p></details>
+      <details><summary>Puis-je résilier à tout moment ?</summary><p>Oui, l'abonnement est sans engagement. Vous pouvez le résilier depuis votre espace ou depuis la page <a href="resiliation.html">résiliation</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="s-modal-back" id="coBack" aria-hidden="true">
+  <div class="s-modal" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+    <button class="s-modal-close" type="button" id="coClose" aria-label="Fermer">×</button>
+    <h2 id="coTitle">Souscrire</h2>
+    <p class="s-modal-price" id="coPrice"></p>
+    <ul id="coList"></ul>
+    <div id="coActions"></div>
+    <p class="s-modal-foot">Paiement sécurisé par Stripe · Sans engagement</p>
   </div>
 </div>
 
 <script>
-// ── Configuration Stripe Payment Links ──────────────────────────────────────
-// Remplacez ces URLs par vos vrais liens Stripe Payment Links
-// ⚠️ REMPLACEZ ces URLs par vos vrais Stripe Payment Links
-// Créez-les sur : https://dashboard.stripe.com/payment-links
-// ── Détection automatique STAGING vs PROD ────────────────────────────────────
-// En staging, remplacez les URLs _TEST par vos vrais Payment Links de test Stripe
-// (Mode Test → Payment Links → Créer un lien → copier l'URL buy.stripe.com/test_xxx)
-var IS_STAGING = window.location.hostname !== 'pope-online.com';
-
-var STRIPE_LIVE = {
-  starter_m: 'https://buy.stripe.com/4gMeV71ve0RSe3g9YDb7y05',
-  starter_a: 'https://buy.stripe.com/eVq3cp2zi3000cqc6Lb7y06',
-  pro_m:     'https://buy.stripe.com/14A6oB1ve8kk6AO8Uzb7y07',
-  pro_a:     'https://buy.stripe.com/00wfZb1vegQQ7ES3Afb7y08'
-};
-
-var STRIPE_TEST = {
-  starter_m: 'https://buy.stripe.com/test_eVq5kxei0eIIcZceeTb7y00', 
-  starter_a: 'https://buy.stripe.com/test_fZu5kx8XGcAA2ky2wbb7y01',
-  pro_m:     'https://buy.stripe.com/test_7sYdR32zibww8IW9YDb7y02',
-  pro_a:     'https://buy.stripe.com/test_dRm5kxfm48kk9N0gn1b7y03'
-};
-
-var STRIPE = IS_STAGING ? STRIPE_TEST : STRIPE_LIVE;
-
-if (IS_STAGING) {
-  console.warn('[POPE] Mode staging — Payment Links Stripe TEST actifs');
-}
-
-// ── Tarifs (ne pas modifier les prix mensuels) ─────────────────────────────
-var PLANS = {
-  starter: { name: 'Starter', monthly: 89, annual: 908, annualMonthly: 76, save: 160, expert: 5 },
-  pro:     { name: 'Pro',     monthly: 149, annual: 1520, annualMonthly: 127, save: 268, expert: 12 }
-};
-
-// ── Toggle mensuel / annuel ────────────────────────────────────────────────
-var isAnnual = false;
-var toggle = document.getElementById('billing-toggle');
-
-function setBilling(annual) {
-  isAnnual = annual;
-  toggle.classList.toggle('on', annual);
-  toggle.setAttribute('aria-checked', annual ? 'true' : 'false');
-
-  var lm = document.getElementById('lbl-mensuel');
-  var la = document.getElementById('lbl-annuel');
-  lm.classList.toggle('active', !annual);
-  la.classList.toggle('active', annual);
-
-  document.getElementById('billing-info').textContent = annual
-    ? 'Facturation annuelle · Paiement en une fois · Économisez 15%'
-    : 'Facturation mensuelle · Sans engagement · Résiliable à tout moment';
-
-  // Starter
-  document.getElementById('s-amount').textContent = annual ? PLANS.starter.annual + '€' : PLANS.starter.monthly + '€';
-  document.getElementById('s-period').textContent = annual ? '/an' : '/mois';
-  document.getElementById('s-annual').textContent = annual
-    ? 'soit ' + PLANS.starter.annualMonthly + '€ HT/mois · économisez ' + PLANS.starter.save + '€'
-    : 'ou ' + PLANS.starter.annual + '€ HT/an (−15%)';
-
-  // Pro
-  document.getElementById('p-amount').textContent = annual ? PLANS.pro.annual + '€' : PLANS.pro.monthly + '€';
-  document.getElementById('p-period').textContent = annual ? '/an' : '/mois';
-  document.getElementById('p-annual').textContent = annual
-    ? 'soit ' + PLANS.pro.annualMonthly + '€ HT/mois · économisez ' + PLANS.pro.save + '€'
-    : 'ou ' + PLANS.pro.annual + '€ HT/an (−15%)';
-}
-
-toggle.addEventListener('click', function() { setBilling(!isAnnual); });
-toggle.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setBilling(!isAnnual); }
-});
-
-// Initialiser les prix annuels visibles dès le départ
-document.getElementById('s-annual').textContent = 'ou ' + PLANS.starter.annual + '€ HT/an (−15%)';
-document.getElementById('p-annual').textContent = 'ou ' + PLANS.pro.annual + '€ HT/an (−15%)';
-
-// ── FAQ ────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.faq-item').forEach(function(item) {
-  var q = item.querySelector('.faq-q');
-  q.addEventListener('click', function() {
-    var isOpen = item.classList.contains('open');
-    // Fermer tous
-    document.querySelectorAll('.faq-item').forEach(function(i) {
-      i.classList.remove('open');
-      i.querySelector('.faq-icon').textContent = '+';
+(function(){
+  var S=window.POPE_SITE||{}, disc=S.annualDiscount||0.15, annual=false;
+  function eur(v){return v.toLocaleString('fr-FR',{minimumFractionDigits:(v%1?2:0),maximumFractionDigits:2})+' €';}
+  function yearly(m){return Math.round(m*12*(1-disc)*100)/100;}
+  var elu=(S.plans&&S.plans.elu&&S.plans.elu.monthly)||49, col=(S.plans&&S.plans.collectivite&&S.plans.collectivite.monthly)||499;
+  function render(){
+    document.getElementById('bMonthly').setAttribute('aria-pressed',annual?'false':'true');
+    document.getElementById('bAnnual').setAttribute('aria-pressed',annual?'true':'false');
+    document.getElementById('billingNote').textContent=annual?'Facturation annuelle en une fois, 15 % de remise.':'Facturation mensuelle, sans engagement.';
+    [['elu',elu],['col',col]].forEach(function(p){
+      var y=yearly(p[1]);
+      document.getElementById(p[0]+'Price').textContent=annual?eur(y):eur(p[1]);
+      document.getElementById(p[0]+'Period').textContent=annual?'HT / an':'HT / mois';
+      document.getElementById(p[0]+'Sub').textContent=annual?('soit '+eur(Math.round(y/12*100)/100)+' HT par mois'):('ou '+eur(y)+' HT par an');
     });
-    // Ouvrir si était fermé
-    if (!isOpen) {
-      item.classList.add('open');
-      item.querySelector('.faq-icon').textContent = '+'; // le CSS rotate suffit
+  }
+  document.getElementById('bMonthly').onclick=function(){annual=false;render();};
+  document.getElementById('bAnnual').onclick=function(){annual=true;render();};
+  render();
+
+  function sessionUser(){try{return JSON.parse(localStorage.getItem('pope_session_user')||'null');}catch(e){return null;}}
+  function link(key){var set=(S.stripe&&(S.isProd?S.stripe.live:S.stripe.test))||{};return set[key]||'';}
+  function withRef(url,key,u){
+    if(!url)return '';
+    var q=[];q.push('client_reference_id='+encodeURIComponent(key+(u&&u.id?'--'+u.id:'')));
+    if(u&&u.email)q.push('prefilled_email='+encodeURIComponent(u.email));
+    return url+(url.indexOf('?')>-1?'&':'?')+q.join('&');
+  }
+  var back=document.getElementById('coBack');
+  function close(){back.classList.remove('open');back.setAttribute('aria-hidden','true');}
+  document.getElementById('coClose').onclick=close;
+  back.addEventListener('click',function(e){if(e.target===back)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  function open(plan){
+    var u=sessionUser(), key, title, price, items, mailSubject;
+    if(plan==='elu'){key=annual?'elu_a':'elu_m';title='Offre Élu'+(annual?', annuelle':', mensuelle');price=annual?eur(yearly(elu))+' HT par an':eur(elu)+' HT par mois';
+      items=['10 Conseils Expert par mois','Réponse en moins de 24 h','Clausier, dépôt sécurisé, outil de rédaction'];mailSubject='Souscription offre Élu';}
+    else if(plan==='collectivite'){key=annual?'collectivite_a':'collectivite_m';title='Offre Collectivité'+(annual?', annuelle':', mensuelle');price=annual?eur(yearly(col))+' HT par an':eur(col)+' HT par mois';
+      items=['Conseils Expert illimités','Plusieurs utilisateurs et un conseiller dédié','Accès à l’accompagnement Pope Consulting'];mailSubject='Offre Collectivité';}
+    else {key='credit';title='Un Conseil Expert à l\'unité';price=(S.creditPrice||25)+' € HT';items=['Réservé aux abonnés Élu','Crédit ajouté dès le paiement'];mailSubject='Conseil Expert à l\'unité';}
+    document.getElementById('coTitle').textContent=title;
+    document.getElementById('coPrice').textContent=price;
+    document.getElementById('coList').innerHTML=items.map(function(i){return '<li>'+i+'</li>';}).join('');
+    var act=document.getElementById('coActions'), url=link(key);
+    var mail='mailto:'+(S.email||'contact@pope-online.com')+'?subject='+encodeURIComponent(mailSubject);
+    if(!u){
+      act.innerHTML='<p style="margin:0 0 14px;color:var(--ink-soft)">Pour souscrire, connectez-vous à votre compte. Pas encore de compte ? L\'essai gratuit de 15 jours vous permet de le créer.</p>'+
+        '<a class="s-btn s-btn-primary" href="login.html?next='+encodeURIComponent('pricing.html')+'">Me connecter</a>'+
+        '<a class="s-btn s-btn-ghost" style="margin-top:10px" href="signup-public.html">Créer mon compte</a>';
+    } else if(url){
+      act.innerHTML='<a class="s-btn s-btn-primary" rel="noopener" href="'+withRef(url,key,u)+'">Continuer vers le paiement</a>'+
+        (plan==='collectivite'?'<a class="s-btn s-btn-ghost" style="margin-top:10px" href="'+mail+'">Demander un devis</a>':'');
+    } else {
+      act.innerHTML='<a class="s-btn s-btn-primary" href="'+mail+'">'+(plan==='collectivite'?'Demander un devis':'Nous écrire pour souscrire')+'</a>';
     }
-  });
-});
-
-// ── Checkout Stripe ────────────────────────────────────────────────────────
-function openCheckout(plan) {
-  var p = PLANS[plan];
-  var annual = isAnnual;
-  var price = annual ? p.annual + '€ HT/an' : p.monthly + '€ HT/mois';
-  var link = annual ? STRIPE[plan + '_a'] : STRIPE[plan + '_m'];
-
-  document.getElementById('co-title').textContent = 'Souscrire ' + p.name + (annual ? ' · Annuel' : ' · Mensuel');
-  document.getElementById('co-price').textContent = price;
-  document.getElementById('co-details').innerHTML =
-    '<strong>Plan ' + p.name + (annual ? ' annuel' : ' mensuel') + '</strong><br>' +
-    '✓ Production de livrables illimitée<br>' +
-    '✓ ' + p.expert + ' Conseils Expert/mois<br>' +
-    '✓ Clausier documentaire inclus<br>' +
-    (annual ? '✓ Économie de ' + p.save + '€ par rapport au mensuel' : '✓ Sans engagement · Résiliable à tout moment');
-  // Si pas de lien Stripe configuré → redirection vers email
-  var finalLink = link && link.startsWith('https://buy.stripe.com/') && !link.includes('LIEN_')
-    ? link
-    : 'mailto:contact@pope-online.com?subject=Souscription%20' + p.name + (annual ? '%20Annuel' : '%20Mensuel') + '&body=Bonjour%2C%0A%0AJe%20souhaite%20souscrire%20au%20plan%20' + p.name + (annual ? '%20annuel.' : '%20mensuel.');
-  document.getElementById('co-link').href = finalLink;
-  document.getElementById('co-link').textContent = finalLink.startsWith('mailto')
-    ? 'Nous contacter pour souscrire →'
-    : 'Payer en toute sécurité →';
-
-  document.getElementById('stripe-overlay').classList.add('active');
-}
-
-function closeCheckout() {
-  document.getElementById('stripe-overlay').classList.remove('active');
-}
-
-document.getElementById('stripe-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeCheckout();
-});
-
-// ── Wording selon l'espace ─────────────────────────────────────────────────
-// Espace commun - même tarifs public et privé
-// Pas de différenciation visuelle nécessaire
+    back.classList.add('open');back.setAttribute('aria-hidden','false');
+  }
+  document.querySelectorAll('[data-plan]').forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-plan'));});});
+  var want=new URLSearchParams(location.search).get('plan');
+  if(want==='elu'||want==='collectivite'||want==='credit')open(want);
+})();
 </script>
+</main>
+<footer class="s-footer">
+  <div class="s-wrap s-footer-in">
+    <div class="s-footer-contact">
+      <strong>Pope Online, une offre Pope Consulting</strong>
+      <span>Un conseiller vous répond au <a href="tel:+33970703055">09 70 70 30 55</a></span>
+      <span><a href="mailto:contact@pope-online.com">contact@pope-online.com</a></span>
+    </div>
+    <nav aria-label="Liens légaux">
+      <a href="elus.html">Pour les élus</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="about.html">Qui sommes-nous</a>
+      <a href="tutoriel.html">Tutoriel</a>
+      <a href="legal.html">Mentions légales</a>
+      <a href="cgu.html">CGU</a>
+      <a href="cgv.html">CGV</a>
+      <a href="privacy.html">Confidentialité</a>
+    </nav>
+  </div>
+  <div class="s-wrap" style="margin-top:22px">© Pope Consulting SAS</div>
+</footer>
+
+<div class="ck-overlay" id="ckOverlay" hidden></div>
+<div class="ck-panel" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitleMain">
+  <h2 id="ckTitleMain">Vos données restent les vôtres</h2>
+  <p>Nous utilisons des cookies pour sécuriser votre session et mesurer la fréquentation du site. Aucune donnée n'est revendue.</p>
+  <div class="ck-actions">
+    <button class="s-btn s-btn-ghost" id="ckRefuse" type="button">Refuser</button>
+    <button class="s-btn s-btn-ghost" id="ckConfig" type="button">Personnaliser</button>
+    <button class="s-btn s-btn-primary" id="ckAccept" type="button">Tout accepter</button>
+  </div>
+  <p class="ck-legal">En savoir plus : <a href="privacy.html">politique de confidentialité</a> et <a href="cgu.html">CGU</a>.</p>
+</div>
+<div class="ck-panel" id="ckPrefs" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitlePrefs">
+  <h2 id="ckTitlePrefs">Personnaliser mes choix</h2>
+  <label class="ck-pref"><input type="checkbox" checked disabled/><span><span class="ck-pref-name">Cookies essentiels (obligatoires)</span><br><span class="ck-pref-desc">Connexion sécurisée, session, protection contre la fraude.</span></span></label>
+  <label class="ck-pref"><input type="checkbox" id="ckSwAnalytics"/><span><span class="ck-pref-name">Mesure d'audience</span><br><span class="ck-pref-desc">Statistiques anonymisées pour améliorer le service.</span></span></label>
+  <label class="ck-pref"><input type="checkbox" id="ckSwFunctional"/><span><span class="ck-pref-name">Préférences</span><br><span class="ck-pref-desc">Mémorisation de vos réglages d'affichage.</span></span></label>
+  <label class="ck-pref"><input type="checkbox" id="ckSwMarketing"/><span><span class="ck-pref-name">Communication adaptée</span><br><span class="ck-pref-desc">Contenus adaptés à votre profil, utilisés uniquement par Pope Online.</span></span></label>
+  <div class="ck-actions" style="margin-top:12px">
+    <button class="s-btn s-btn-ghost" id="ckBack" type="button">Retour</button>
+    <button class="s-btn s-btn-primary" id="ckSave" type="button">Enregistrer mes choix</button>
+  </div>
+</div>
 
 <script>
-var CREDIT_LINKS = {
-  prod: 'https://buy.stripe.com/5kQ9AN1veeIIgbo2wbb7y04',
-  test: 'https://buy.stripe.com/test_5kQ9AN1veeIIgbo2wbb7y04'
-};
-function openCreditCheckout(){
-  var isTest=window.location.hostname.indexOf('staging')!==-1||window.location.hostname==='localhost';
-  var url=isTest?CREDIT_LINKS.test:CREDIT_LINKS.prod;
-  if(url.indexOf('TODO')!==-1){
-    alert('Lien de paiement non configuré.\nCréez un Payment Link Stripe "Conseil Expert 1 crédit" à 25€ HT et mettez à jour CREDIT_LINKS dans pricing.html.');
-    return;
+(function(){
+  /* Menu mobile */
+  var b=document.getElementById('sBurger'), n=document.getElementById('sNav');
+  if(b&&n){
+    b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');});
+    n.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){n.classList.remove('open');b.setAttribute('aria-expanded','false');});});
   }
-  window.open(url,'_blank','noopener,noreferrer');
-}
+  /* Cookies : même clé et même format qu'en V87 */
+  var KEY='pope_cookie_choice',ov=document.getElementById('ckOverlay'),mn=document.getElementById('ckMain'),pr=document.getElementById('ckPrefs');
+  function chk(id){var e=document.getElementById(id);return !!(e&&e.checked);}
+  function save(c){
+    try{localStorage.setItem(KEY,JSON.stringify({v:2,choice:c,analytics:c==='accept'||chk('ckSwAnalytics'),functional:c==='accept'||chk('ckSwFunctional'),marketing:c==='accept'||chk('ckSwMarketing'),ts:Date.now()}));}catch(e){}
+    ov.hidden=true;mn.hidden=true;pr.hidden=true;
+  }
+  var known=false;try{var s=localStorage.getItem(KEY);if(s){var p=JSON.parse(s);known=!!(p&&p.choice);}}catch(e){}
+  if(!known){ov.hidden=false;mn.hidden=false;}
+  document.getElementById('ckAccept').onclick=function(){save('accept');};
+  document.getElementById('ckRefuse').onclick=function(){save('refuse');};
+  document.getElementById('ckConfig').onclick=function(){mn.hidden=true;pr.hidden=false;};
+  document.getElementById('ckBack').onclick=function(){pr.hidden=true;mn.hidden=false;};
+  document.getElementById('ckSave').onclick=function(){save('custom');};
+  /* Liens vers l'espace connecté : passage par la connexion si pas de session */
+  var prot={'app.html':1,'expert.html':1,'mission.html':1,'dashboard.html':1,'vault.html':1,'referral.html':1,'profile.html':1,
+            'app-private.html':1,'expert-private.html':1,'mission-private.html':1,'dashboard-private.html':1};
+  function has(){return localStorage.getItem('pope_session_active')==='1'||!!sessionStorage.getItem('pope_session_token')||!!localStorage.getItem('pope_session_token');}
+  document.addEventListener('click',function(e){
+    var l=e.target.closest('a[href]');if(!l)return;var h=l.getAttribute('href')||'';
+    if(/^(https?:|mailto:|tel:|#)/.test(h))return;
+    var c=h.replace(/^\.\//,''),p=c.split('?')[0].split('#')[0];
+    if(!prot[p]||has())return;e.preventDefault();window.location.href='login.html?next='+encodeURIComponent(c);
+  },true);
+})();
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 
 function planCodeToLabel(code) {
-  return { FREE: 'Free', STARTER: 'Starter', PRO: 'Pro', PREMIUM: 'Premium' }[String(code).toUpperCase()] || 'Free';
+  return planLabel(code);
 }
 
 import express from 'express';
@@ -10,6 +10,7 @@ import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
+import { planLabel, getPlan, TRIAL_EXPERT_LIMIT } from '../services/plans.js';
 
 
 const router = express.Router();
@@ -152,7 +153,7 @@ router.post('/users', async (req, res) => {
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
       await client.query(`insert into wallets(user_id, plan_code, plan_label, status, tickets_ai, tickets_expert, ai_unlimited, expert_limit, expert_used, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','Custom','trial_active',$2,$2,false,$2,0,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+                          values($1,'CUSTOM','Sur mesure','trial_active',$2,0,false,$2,0,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -187,9 +188,11 @@ router.put('/users/:id', async (req, res) => {
       }
       if (req.body.wallet) {
         const w = req.body.wallet;
-        // tickets_expert suit tickets_ai sauf si explicitement fourni
-        const ticketsAi = Number(w.ticketsAi ?? 0);
-        const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : ticketsAi;
+        // V88 : tickets_expert = Conseils Expert achetés à l'unité (0 par défaut).
+        // Le quota mensuel est porté par expert_limit, déduit de l'offre si non fourni.
+        const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : 0;
+        const catalogPlan = getPlan(w.planCode);
+        const defaultExpertLimit = catalogPlan ? catalogPlan.expertLimit : TRIAL_EXPERT_LIMIT;
         await client.query(
           `insert into wallets(
              user_id, plan_code, plan_label, status,
@@ -197,7 +200,7 @@ router.put('/users/:id', async (req, res) => {
              ai_unlimited, expert_limit, expert_used,
              public_dossiers_limit, private_dossiers_limit, private_users_limit,
              trial_expires_at
-           ) values($1,$2,$3,$4,$5,$5,$6,$7,0,$8,$9,$10,$11)
+           ) values($1,$2,$3,$4,$5,$12,$6,$7,0,$8,$9,$10,$11)
            on conflict(user_id) do update set
              plan_code=excluded.plan_code,
              plan_label=excluded.plan_label,
@@ -213,16 +216,17 @@ router.put('/users/:id', async (req, res) => {
              updated_at=now()`,
           [
             id,
-            w.planCode || 'FREE',
+            (catalogPlan?.code || w.planCode || 'FREE'),
             planCodeToLabel(w.planCode || 'FREE'),
             w.status || 'trial_active',
             Number(w.ticketsAi ?? 9999),
             Boolean(w.aiUnlimited !== undefined ? w.aiUnlimited : true),
-            Number(w.expertLimit ?? 2),
+            Number(w.expertLimit ?? defaultExpertLimit),
             Number(w.publicDossiersLimit ?? 1),
             Number(w.privateDossiersLimit ?? 1),
             Number(w.privateUsersLimit ?? 1),
-            w.trialExpiresAt || null
+            w.trialExpiresAt || null,
+            ticketsExpert
           ]
         );
       }
