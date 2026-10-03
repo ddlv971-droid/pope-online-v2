@@ -387,12 +387,8 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
           </div>
           <div class="pf-stats-grid">
             <div class="pf-stat">
-              <div class="pf-stat-val" id="statTickets">—</div>
-              <div class="pf-stat-label">Tickets IA</div>
-            </div>
-            <div class="pf-stat">
               <div class="pf-stat-val" id="statExpert">—</div>
-              <div class="pf-stat-label">Conseils Experts</div>
+              <div class="pf-stat-label">Conseils Expert disponibles</div>
             </div>
             <div class="pf-stat">
               <div class="pf-stat-val" id="statStatus" style="font-size:15px;margin-top:4px">—</div>
@@ -654,12 +650,12 @@ async function load() {
 
     // Abonnement
     el('subPlan').textContent = w.plan_label || 'Free';
-    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente' };
+    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente', cancelled:'⚪ Résilié', verified_no_trial:'⚪ Sans essai' };
     const statusLabel  = statusLabels[w.status] || w.status || '—';
-    el('subDetails').textContent = (w.plan_label || 'Free') + ' · ' + statusLabel;
+    el('subDetails').textContent = (w.plan_label || 'Découverte') + ' · ' + statusLabel;
 
-    el('statTickets').textContent = w.ai_unlimited ? '∞' : (w.tickets_ai ?? '—');
-    el('statExpert').textContent  = w.expert_left   ?? (w.expert_limit ?? '—');
+    // V88.5 : carte « Tickets IA » retirée (l'outil de rédaction n'est plus mis en avant)
+    el('statExpert').textContent  = w.expert_unlimited ? '∞' : (w.expert_left ?? (w.expert_limit ?? '—'));
     el('statStatus').textContent  = statusLabel;
 
     // Date de début du plan

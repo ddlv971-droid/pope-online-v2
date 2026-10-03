@@ -219,6 +219,13 @@ Le panneau gauche des pages de connexion et d'inscription reprend le visage huma
 - Le champ « Tickets » devient « Conseils Expert à l'unité » : il ajoute ou retire des crédits (ex. `1` ou `-1`).
 - Changer d'offre applique le quota du catalogue et remet le compteur du mois à zéro.
 
+### Espace « Mon compte » (V88.5)
+
+- La carte « Tickets IA » est retirée de l'onglet Abonnement (`profile.html`). Elle n'apportait rien à l'élu, et l'outil de rédaction n'est plus mis en avant.
+- La carte restante devient « Conseils Expert disponibles » et affiche « ∞ » pour les offres illimitées. La grille de cartes se réorganise d'elle-même sur quatre colonnes.
+- Les statuts « Résilié » et « Sans essai » ont désormais un libellé lisible.
+- La valeur IA reste consultable dans le tableau de bord admin, pour usage interne.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».
