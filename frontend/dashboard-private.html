@@ -1575,9 +1575,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         msgQ.innerHTML = expired
           ? '⏰ Essai gratuit terminé. <a href="pricing.html" style="color:#d97706;font-weight:700">Choisir un plan →</a>'
           : (isPaid
-            ? ' Quota mensuel épuisé'+(renewStr?' — renouvellement le '+renewStr:'')+'.' 
-              +' <a href="pricing.html#extra" style="color:#1F4A3D;font-weight:700">+1 conseil à l’unité</a>'
-              +(plan==='elu'?' ou <a href="pricing.html" style="color:#d97706;font-weight:700">découvrir l’offre Collectivité</a>':'')+'.' 
+            ? 'Vos Conseils Expert du mois sont utilisés'+(renewStr?' (renouvellement le '+renewStr+')':'')+'. Vous gardez l’accès à votre espace, au clausier, au dépôt sécurisé et à l’outil de rédaction. ' 
+              +'<a href="pricing.html#extra" style="color:#1F4A3D;font-weight:700">Ajouter un pack de 3 Conseils Expert (25 € HT)</a>'
+              +(plan==='elu'?' ou <a href="pricing.html" style="color:#d97706;font-weight:700">passer à l’offre Commune</a>':'')+'.' 
             : 'Quota de l’espace gratuit épuisé (non renouvelable). <a href="pricing.html" style="color:#d97706;font-weight:700">Souscrire l’offre Élu</a>');
         if(btnS.parentNode) btnS.parentNode.insertBefore(msgQ, btnS.nextSibling);
       }

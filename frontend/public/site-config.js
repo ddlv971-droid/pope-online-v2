@@ -22,6 +22,10 @@
     // Témoignages : présentés à titre d'illustration tant que les témoignages
     // signés des élus de la bêta ne sont pas recueillis (voir README_V88.md).
     showTestimonials: true,
+    // Passer à false UNIQUEMENT lorsque les témoignages affichés sont de vrais
+    // témoignages d'élus, publiés avec leur accord écrit : la mention « exemples
+    // illustratifs » disparaît alors.
+    testimonialsAreIllustrative: true,
 
     // Prise de rendez-vous : lien d'agenda en ligne optionnel (Calendly, Cal.com…).
     // Vide = le formulaire de contact propose un créneau souhaité.
@@ -37,7 +41,8 @@
       commune:      { monthly: 149, label: 'Commune',      expert: 10, seats: 3, extraSeat: 25, maxSeats: 5 },
       collectivite: { monthly: 499, label: 'Collectivité', expert: 'illimités' }
     },
-    creditPrice: 25,
+    creditPrice: 25,        // pack de 3 Conseils Expert, utilisables pendant un mois
+    creditPack: 3,
 
     // Liens de paiement Stripe — À CRÉER dans Stripe (voir README_V88.md).
     // Tant qu'un lien est vide, le bouton propose un contact par e-mail.

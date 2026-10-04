@@ -163,8 +163,8 @@ export function showTrialExpiredModal(wallet) {
 
   const plans = [
     { name:'Élu', price:'49 €', period:' HT/mois', annual:'ou 499,80 € HT/an (−15 %)', features:['10 Conseils Expert par mois','Réponse en moins de 24 h','Clausier et dépôt sécurisé','Outil de rédaction'], url:'pricing.html?plan=elu', featured:true },
-    { name:'Collectivité', price:'499 €', period:' HT/mois', annual:'Collectivités de plus de 10 000 habitants', features:['Conseils Expert illimités','Plusieurs utilisateurs','Conseiller dédié','Accompagnement Pope Consulting'], url:'pricing.html?plan=collectivite', featured:false },
-    { name:'Conseil à l’unité', price:'25 €', period:' HT', annual:'Pour les abonnés Élu', features:['Un Conseil Expert supplémentaire','Même délai de réponse','Crédit ajouté dès le paiement'], url:'pricing.html?plan=credit', featured:false },
+    { name:'Collectivité', price:'499 €', period:' HT/mois', annual:'Collectivités et groupements de plus de 10 000 habitants', features:['Conseils Expert illimités','Plusieurs utilisateurs','Conseiller dédié','Accompagnement Pope Consulting'], url:'pricing.html?plan=collectivite', featured:false },
+    { name:'Pack de 3 Conseils', price:'25 €', period:' HT', annual:'Pour les abonnés', features:['3 Conseils Expert supplémentaires','Même délai de réponse','Utilisables pendant un mois'], url:'pricing.html?plan=credit', featured:false },
   ];
 
   plans.forEach(function(plan) {

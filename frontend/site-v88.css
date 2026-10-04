@@ -355,7 +355,7 @@ a:hover { color: var(--sapin-deep); }
    a demandé de réduire les animations. */
 .s-ex-stage .s-note-q,
 .s-ex-stage .s-note-a,
-.s-ex-stage .s-track { transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); }
+.s-ex-stage .s-track { transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
 .s-ex-stage[data-phase="0"] .s-note-q { opacity: 0; transform: rotate(-1deg) translateY(10px); }
 .s-ex-stage[data-phase="0"] .s-track { opacity: 0; }
 .s-ex-stage[data-phase="0"] .s-note-a,
@@ -377,7 +377,7 @@ a:hover { color: var(--sapin-deep); }
 .s-track-step::after {                /* remplissage du trait */
   content: ''; position: absolute; top: 5px; left: 12px; right: 0; height: 2px;
   background: var(--sapin); transform: scaleX(0); transform-origin: left;
-  transition: transform 1.2s ease;
+  transition: transform 1.8s ease;
 }
 .s-track-step:last-child::before, .s-track-step:last-child::after { display: none; }
 .s-track-dot {
@@ -385,7 +385,7 @@ a:hover { color: var(--sapin-deep); }
   background: var(--paper); border: 2px solid var(--line);
   transition: background-color .35s ease, border-color .35s ease, transform .35s ease;
 }
-.s-track-step span[data-f] { opacity: .45; transition: opacity .4s ease, color .4s ease; }
+.s-track-step span[data-f] { opacity: .45; transition: opacity .6s ease, color .6s ease; }
 
 .s-ex-stage[data-phase="2"] .s-track-step:nth-child(1) .s-track-dot,
 .s-ex-stage[data-phase="3"] .s-track-step:nth-child(-n+2) .s-track-dot,
@@ -950,3 +950,29 @@ button.s-btn { font-family: var(--font-sans); }
   .s-header .s-nav:not(.open) { display: none !important; }
   .s-header .s-nav.open { display: flex !important; }
 }
+
+/* ==========================================================================
+   V88.9 — Tarifs : mise en avant dynamique ; profils : avatars anonymes
+   ========================================================================== */
+.s-plans .s-plan { transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; position: relative; }
+@media (min-width: 901px) {
+  .s-plans .s-plan-featured { margin: 0; padding-top: 42px; padding-bottom: 30px; border: 1px solid var(--line); border-left: 0; }
+  .s-plans .s-plan-featured + .s-plan { border-left: 0; }
+  .s-plans .s-plan.is-active {
+    border: 2px solid var(--sapin) !important; z-index: 2;
+    box-shadow: 0 22px 40px -28px rgba(22,54,41,.55); transform: translateY(-6px);
+  }
+}
+@media (max-width: 900px) {
+  .s-plans .s-plan.is-active { border: 2px solid var(--sapin) !important; }
+  .s-plans .s-plan-featured:not(.is-active) { border: 1px solid var(--line) !important; }
+}
+.s-plan-flag { top: 14px; }
+
+.s-profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.s-profile-head .s-profile-top { margin: 0; flex-direction: column; align-items: flex-start; gap: 2px; }
+.s-avatar { flex: none; width: 58px; height: 58px; border-radius: 50%; overflow: hidden; filter: grayscale(1); box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--line); }
+.s-avatar svg { width: 100%; height: 100%; display: block; }
+
+/* Témoignages : mention discrète */
+.s-testimonials-note { font-size: .76rem; opacity: .8; }

@@ -26,7 +26,7 @@
     </a>
     <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span class="s-burger-lines" aria-hidden="true"></span></button>
     <nav class="s-nav" id="sNav" aria-label="Navigation principale">
-      <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html" aria-current="page">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
+      <a href="elus.html">Pour qui ?</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html" aria-current="page">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
     </nav>
   </div>
 </header>
@@ -34,7 +34,7 @@
 
 <section class="s-hero" style="padding-bottom:40px">
   <div class="s-wrap">
-    <h1 class="s-h1" style="max-width:15em">Un expert à vos côtés, pour le prix d'un abonnement.</h1>
+    <h1 class="s-h1" style="max-width:15em">Un expert à vos côtés, pour le prix d'un abonnement</h1>
     <p class="s-lead">Tous les prix sont hors taxes. Sans engagement, résiliable à tout moment.</p>
     <div class="s-billing" role="group" aria-label="Période de facturation">
       <button type="button" id="bMonthly" aria-pressed="true">Mensuel</button>
@@ -75,7 +75,7 @@
 
       <article class="s-plan">
         <h2 class="s-plan-name">Commune</h2>
-        <p class="s-plan-for">Pour les communes de moins de 10 000 habitants. Payée par la commune.</p>
+        <p class="s-plan-for">Pour les communes de moins de 10 000 habitants.</p>
         <div class="s-plan-price"><span id="comPrice">149 €</span><small id="comPeriod">HT / mois</small></div>
         <p class="s-plan-sub" id="comSub">ou 1 519,80 € HT par an</p>
         <ul>
@@ -86,12 +86,12 @@
           <li>Devis, bon de commande, mandat administratif</li>
           <li>Facture déposée sur Chorus Pro</li>
         </ul>
-        <button class="s-btn s-btn-ghost" type="button" data-contact="devis_commune">Demander un devis</button>
+        <button class="s-btn s-btn-ghost" type="button" data-devis="commune">Demander un devis</button>
       </article>
 
       <article class="s-plan">
         <h2 class="s-plan-name">Collectivité</h2>
-        <p class="s-plan-for">Pour les collectivités de plus de 10 000 habitants.</p>
+        <p class="s-plan-for">Pour les collectivités et groupements de plus de 10 000 habitants.</p>
         <div class="s-plan-price"><span id="colPrice">499 €</span><small id="colPeriod">HT / mois</small></div>
         <p class="s-plan-sub" id="colSub">ou 5 089,80 € HT par an</p>
         <ul>
@@ -101,18 +101,18 @@
           <li>Un conseiller dédié à la collectivité</li>
           <li>Accès à l'accompagnement Pope Consulting</li>
         </ul>
-        <button class="s-btn s-btn-ghost" type="button" data-plan="collectivite">Souscrire ou demander un devis</button>
+        <button class="s-btn s-btn-ghost" type="button" data-devis="collectivite">Demander un devis</button>
       </article>
     </div>
 
     <div class="s-extra" id="extra">
       <div>
-        <h2 class="s-h3">Abonnés Élu : un Conseil Expert supplémentaire</h2>
-        <p>Votre quota mensuel est épuisé ? Ajoutez un Conseil Expert à l'unité, même délai de réponse. Le crédit est ajouté à votre compte dès le paiement.</p>
+        <h2 class="s-h3">Abonnés : un pack de 3 Conseils Expert supplémentaires</h2>
+        <p>Vos Conseils Expert du mois sont utilisés ? Ajoutez 3 Conseils Expert, avec le même délai de réponse. Ils sont crédités dès le paiement et utilisables pendant un mois.</p>
       </div>
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:12px">
         <span class="s-extra-price">25 € HT</span>
-        <button class="s-btn s-btn-ghost" type="button" data-plan="credit">Acheter un Conseil Expert</button>
+        <button class="s-btn s-btn-ghost" type="button" data-plan="credit">Acheter le pack</button>
       </div>
     </div>
 
@@ -146,7 +146,8 @@
     <h2 class="s-h2" style="margin-bottom:28px">Questions fréquentes</h2>
     <div class="s-faq">
       <details><summary>Qu'est-ce qu'un Conseil Expert ?</summary><p>Un expert de Pope Online étudie votre question et vos documents, puis vous adresse une réponse écrite, argumentée et personnelle, en moins de 24 h. C'est l'appui dont vous avez besoin avant de décider, de signer ou de présenter un dossier.</p></details>
-      <details><summary>Qui paie l'abonnement : l'élu ou la commune ?</summary><p>L'offre Élu est souscrite et réglée par l'élu, à titre personnel. Les offres Commune et Collectivité sont achetées par la collectivité, sur devis : bon de commande, facture déposée sur Chorus Pro et paiement par mandat administratif. Dans tous les cas, chaque compte reste personnel.</p></details>
+      <details><summary>Qui paie l'abonnement : l'élu ou la commune ?</summary><p>L'offre Élu est souscrite et réglée par l'élu, à titre personnel. Les offres Commune et Collectivité sont achetées par la commune, la collectivité ou le groupement, sur devis : bon de commande, facture déposée sur Chorus Pro et paiement par mandat administratif. Dans tous les cas, chaque compte reste personnel.</p></details>
+      <details><summary>Que se passe-t-il quand mes 10 Conseils Expert du mois sont utilisés ?</summary><p>Vous gardez l'accès à votre espace, au clausier, au dépôt sécurisé et à l'outil de rédaction. Pour solliciter un expert avant le mois suivant, ajoutez un pack de 3 Conseils Expert (25 € HT, utilisables pendant un mois) ou passez à l'offre Commune.</p></details>
       <details><summary>Que signifie « sous 24 h » ?</summary><p>24 heures ouvrées, du lundi au vendredi. Une question envoyée le vendredi après 17 h reçoit sa réponse le lundi. En outre-mer, le délai est calculé à votre heure locale. Si nous dépassons ce délai, le Conseil Expert ne vous est pas décompté.</p></details>
       <details><summary>Aurai-je toujours le même expert ?</summary><p>Chaque question est confiée à un expert désigné selon son domaine. Pour un même dossier, vous gardez le même interlocuteur, y compris pour vos questions de suivi.</p></details>
       <details><summary>Mes questions sont-elles visibles par les services de la mairie ?</summary><p>Non. Chaque compte est personnel. Vos échanges avec l'expert restent confidentiels.</p></details>
@@ -216,7 +217,7 @@
       items=['10 Conseils Expert par mois','Réponse en moins de 24 h','Clausier, dépôt sécurisé, outil de rédaction'];mailSubject='Souscription offre Élu';}
     else if(plan==='collectivite'){key=annual?'collectivite_a':'collectivite_m';title='Offre Collectivité'+(annual?', annuelle':', mensuelle');price=annual?eur(yearly(col))+' HT par an':eur(col)+' HT par mois';
       items=['Conseils Expert illimités','Plusieurs utilisateurs et un conseiller dédié','Accès à l’accompagnement Pope Consulting'];mailSubject='Offre Collectivité';}
-    else {key='credit';title='Un Conseil Expert à l\'unité';price=(S.creditPrice||25)+' € HT';items=['Réservé aux abonnés Élu','Crédit ajouté dès le paiement'];mailSubject='Conseil Expert à l\'unité';}
+    else {key='credit';title='Pack de 3 Conseils Expert';price=(S.creditPrice||25)+' € HT';items=['Réservé aux abonnés','3 Conseils Expert crédités dès le paiement','Utilisables pendant un mois'];mailSubject='Pack de 3 Conseils Expert';}
     document.getElementById('coTitle').textContent=title;
     document.getElementById('coPrice').textContent=price;
     document.getElementById('coList').innerHTML=items.map(function(i){return '<li>'+i+'</li>';}).join('');
@@ -228,16 +229,30 @@
         '<a class="s-btn s-btn-ghost" style="margin-top:10px" href="signup-public.html">Créer mon compte</a>';
     } else if(url){
       act.innerHTML='<a class="s-btn s-btn-primary" rel="noopener" href="'+withRef(url,key,u)+'">Continuer vers le paiement</a>'+
-        (plan==='collectivite'?'<button class="s-btn s-btn-ghost" style="margin-top:10px" type="button" data-contact="devis_collectivite">Demander un devis</button>':'');
+        (plan==='collectivite'?'<button class="s-btn s-btn-ghost" style="margin-top:10px" type="button" data-devis="collectivite">Demander un devis</button>':'');
     } else {
-      act.innerHTML=(plan==='collectivite'?'<button class="s-btn s-btn-primary" type="button" data-contact="devis_collectivite">Demander un devis</button>':'<a class="s-btn s-btn-primary" href="'+mail+'">Nous écrire pour souscrire</a>');
+      act.innerHTML=(plan==='collectivite'?'<button class="s-btn s-btn-primary" type="button" data-devis="collectivite">Demander un devis</button>':'<a class="s-btn s-btn-primary" href="'+mail+'">Nous écrire pour souscrire</a>');
     }
     back.classList.add('open');back.setAttribute('aria-hidden','false');
   }
+  /* Mise en avant dynamique : l'offre Élu par défaut, la carte survolée ou centrée ensuite */
+  (function(){
+    var grid=document.querySelector('.s-plans'); if(!grid)return;
+    var cards=[].slice.call(grid.querySelectorAll('.s-plan')), def=grid.querySelector('.s-plan-featured')||cards[0];
+    function activate(c){cards.forEach(function(k){var on=k===c;k.classList.toggle('is-active',on);
+      var b=k.querySelector('.s-btn');if(b){b.classList.toggle('s-btn-primary',on);b.classList.toggle('s-btn-ghost',!on);}});}
+    activate(def);
+    cards.forEach(function(c){c.addEventListener('mouseenter',function(){activate(c);});c.addEventListener('focusin',function(){activate(c);});});
+    grid.addEventListener('mouseleave',function(){activate(def);});
+    grid.addEventListener('focusout',function(e){if(!grid.contains(e.relatedTarget))activate(def);});
+    grid.addEventListener('scroll',function(){if(window.innerWidth>640)return;var mid=grid.scrollLeft+grid.clientWidth/2,best=def,d=1e9;
+      cards.forEach(function(c){var m=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(m<d){d=m;best=c;}});activate(best);},{passive:true});
+  })();
   document.getElementById('coActions').addEventListener('click',function(e){if(e.target.closest('[data-contact]'))close();});
   document.querySelectorAll('[data-plan]').forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-plan'));});});
   var want=new URLSearchParams(location.search).get('plan');
-  if(want==='elu'||want==='collectivite'||want==='credit')open(want);
+  if(want==='elu'||want==='credit')open(want);
+  if(want==='commune'||want==='collectivite'){setTimeout(function(){if(window.POPE_openDevis)window.POPE_openDevis(want);},300);}
 })();
 </script>
 </main>
@@ -249,7 +264,7 @@
       <span><a href="mailto:contact@pope-online.com">contact@pope-online.com</a></span>
     </div>
     <nav aria-label="Liens légaux">
-      <a href="elus.html">Pour les élus</a>
+      <a href="elus.html">Pour qui ?</a>
       <a href="pricing.html">Tarifs</a>
       <a href="about.html">Qui sommes-nous</a>
       <a href="tutoriel.html">Tutoriel</a>
@@ -268,14 +283,12 @@
   <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
     <button class="s-modal-close" type="button" id="ctClose" aria-label="Fermer">×</button>
     <h2 id="ctTitle">Parler à un conseiller</h2>
-    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>.</p>
+    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
     <form id="ctForm" class="s-form" novalidate>
       <label class="s-field s-field-full">Votre demande
         <select name="subject" id="ctSubject">
           <option value="rappel">Être rappelé par téléphone</option>
           <option value="visio">Prendre rendez-vous en visioconférence</option>
-          <option value="devis_commune">Demander un devis : offre Commune</option>
-          <option value="devis_collectivite">Demander un devis : offre Collectivité</option>
           <option value="question">Poser une question sur le service</option>
         </select>
       </label>
@@ -348,6 +361,77 @@ form.addEventListener('submit', async (e) => {
   } finally { btn.disabled = false; btn.textContent = 'Envoyer ma demande'; }
 });
 </script>
+<div class="s-modal-back" id="dvBack" aria-hidden="true">
+  <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="dvTitle">
+    <button class="s-modal-close" type="button" id="dvClose" aria-label="Fermer">×</button>
+    <p class="s-kicker" style="margin:0 0 6px" id="dvKicker">Achat public, sans carte bancaire</p>
+    <h2 id="dvTitle">Demander un devis : offre Commune</h2>
+    <p class="s-muted" style="margin:0 0 16px">Indiquez-nous votre collectivité et le nombre de comptes souhaités. Un conseiller vous adresse un devis sous un jour ouvré.</p>
+    <form id="dvForm" class="s-form" novalidate>
+      <input type="hidden" name="offer" id="dvOffer" value="commune"/>
+      <label class="s-field s-field-full">Collectivité ou groupement<input name="organization" required placeholder="Commune de…, Communauté de communes de…"/></label>
+      <label class="s-field">Nombre d'habitants<input name="population" inputmode="numeric" placeholder="Ex. 6 500"/></label>
+      <label class="s-field">Nombre de comptes souhaités<select name="seats" id="dvSeats"></select></label>
+      <label class="s-field">Nom et prénom<input name="name" autocomplete="name" required/></label>
+      <label class="s-field">Fonction<input name="role" placeholder="Maire, DGS, directeur financier…"/></label>
+      <label class="s-field">E-mail<input name="email" type="email" autocomplete="email" required/></label>
+      <label class="s-field">Téléphone<input name="phone" type="tel" autocomplete="tel"/></label>
+      <label class="s-field s-field-full">Adresse de facturation (facultatif)<textarea name="billing_address" rows="2"></textarea></label>
+      <label class="s-field s-field-full">Message (facultatif)<textarea name="message" rows="2" placeholder="Date de démarrage souhaitée, besoins particuliers…"></textarea></label>
+      <input name="website" tabindex="-1" autocomplete="off" class="s-hp" aria-hidden="true"/>
+      <p class="s-form-msg" id="dvMsg" role="status"></p>
+      <div class="s-field-full s-form-actions"><button class="s-btn s-btn-primary" type="submit" id="dvSubmit">Recevoir mon devis</button></div>
+      <p class="s-field-full s-muted" style="margin:0;font-size:.84rem">Facture déposée sur Chorus Pro, paiement par mandat administratif.</p>
+    </form>
+  </div>
+</div>
+<script type="module">
+const API = ((import.meta.env && import.meta.env.VITE_API_URL) || 'https://pope-online-v2.onrender.com').trim().replace(/\/$/, '');
+const back = document.getElementById('dvBack'), form = document.getElementById('dvForm'), msg = document.getElementById('dvMsg');
+const OFFERS = {
+  commune: { title: 'Demander un devis : offre Commune', seats: ['3 comptes', '4 comptes', '5 comptes'] },
+  collectivite: { title: 'Demander un devis : offre Collectivité', seats: ['Jusqu\u2019à 5 comptes', '6 à 10 comptes', '11 à 20 comptes', 'Plus de 20 comptes'] },
+};
+function open(offer) {
+  const o = OFFERS[offer] ? offer : 'commune';
+  document.getElementById('dvOffer').value = o;
+  document.getElementById('dvTitle').textContent = OFFERS[o].title;
+  document.getElementById('dvSeats').innerHTML = OFFERS[o].seats.map((t) => '<option>' + t + '</option>').join('');
+  msg.textContent = ''; msg.className = 's-form-msg';
+  back.classList.add('open'); back.setAttribute('aria-hidden', 'false');
+  setTimeout(() => form.querySelector('[name=organization]').focus(), 50);
+}
+function close() { back.classList.remove('open'); back.setAttribute('aria-hidden', 'true'); }
+window.POPE_openDevis = open;
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-devis]');
+  if (!t) return;
+  e.preventDefault();
+  const sub = document.getElementById('coBack'); if (sub) { sub.classList.remove('open'); sub.setAttribute('aria-hidden', 'true'); }
+  open(t.getAttribute('data-devis'));
+});
+document.getElementById('dvClose').onclick = close;
+back.addEventListener('click', (e) => { if (e.target === back) close(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
+  if (!data.organization || !data.name || !data.email) {
+    msg.textContent = 'Indiquez au moins la collectivité, votre nom et votre e-mail.'; msg.className = 's-form-msg err'; return;
+  }
+  data.subject = data.offer === 'collectivite' ? 'devis_collectivite' : 'devis_commune';
+  const btn = document.getElementById('dvSubmit'); btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    const res = await fetch(API + '/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    form.reset();
+    msg.textContent = 'Merci, votre demande de devis est bien partie. Un conseiller vous adresse votre devis sous un jour ouvré.'; msg.className = 's-form-msg ok';
+  } catch (err) {
+    msg.innerHTML = "L'envoi n'a pas abouti. Écrivez-nous à <a href=\"mailto:contact@pope-online.com?subject=Demande%20de%20devis\">contact@pope-online.com</a>.";
+    msg.className = 's-form-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Recevoir mon devis'; }
+});
+</script>
 
 <div class="s-mbar" id="sMbar" aria-hidden="true">
   <a class="s-btn s-btn-primary" href="signup-public.html">Tester gratuitement</a>
@@ -379,6 +463,7 @@ form.addEventListener('submit', async (e) => {
 <script>
 (function(){
   /* Témoignages illustratifs : masquables depuis site-config.js */
+  if(window.POPE_SITE&&window.POPE_SITE.testimonialsAreIllustrative===false){document.querySelectorAll('[data-testimonials-note]').forEach(function(e){e.remove();});}
   if(window.POPE_SITE&&window.POPE_SITE.showTestimonials===false){document.querySelectorAll('[data-testimonials]').forEach(function(e){e.remove();});}
   /* Menu mobile */
   var b=document.getElementById('sBurger'), n=document.getElementById('sNav');

@@ -39,7 +39,7 @@ const FR_MESSAGES = {
   contact_missing_fields: "Indiquez votre nom et un moyen de vous joindre (e-mail ou téléphone).",
   private_space_disabled: "Les inscriptions à l'espace entreprises sont momentanément fermées. Contactez-nous au 09 70 70 30 55.",
   subscription_required: "Pour solliciter un expert, souscrivez l'offre Élu (49 € HT par mois, sans engagement).",
-  expert_limit_reached: "Vos Conseils Expert du mois sont utilisés. Vous pouvez en ajouter un à l'unité depuis la page Tarifs.",
+  expert_limit_reached: "Vos Conseils Expert du mois sont utilisés. Ajoutez un pack de 3 Conseils Expert (25 € HT) ou passez à l'offre Commune depuis la page Tarifs.",
   email_not_verified: "Confirmez d'abord votre adresse e-mail grâce au lien reçu à l'inscription.",
   no_tickets: "Votre quota gratuit est atteint.",
   public_dossier_limit_reached: "Le quota gratuit des dossiers publics est atteint.",

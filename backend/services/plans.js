@@ -31,7 +31,8 @@ export const PLANS = {
   CUSTOM:         { code: 'CUSTOM',         family: 'custom',       label: 'Sur mesure',    paid: false, expertLimit: TRIAL_EXPERT_LIMIT },
 };
 
-export const CREDIT = { code: 'CREDIT', label: 'Conseil Expert à l\'unité', price: 25, quantity: 1 };
+// V88.9 : pack de 3 Conseils Expert supplémentaires, 25 € HT, utilisables pendant un mois
+export const CREDIT = { code: 'CREDIT', label: 'Pack de 3 Conseils Expert', price: 25, quantity: 3, validity: '1 month' };
 
 // Alias acceptés (admin, métadonnées Stripe, anciens codes sans suffixe)
 const ALIASES = {
@@ -91,7 +92,7 @@ export function resolvePurchase(session = {}) {
   const metaCode = String(meta.plan_code || '').toUpperCase();
 
   if (key === 'credit' || metaCode === 'CREDIT') {
-    return { kind: 'credit', quantity: Number(meta.quantity || 1) || 1 };
+    return { kind: 'credit', quantity: CREDIT.quantity * (Number(meta.packs || 1) || 1) };
   }
   const byKey = getPlan(key) || getPlan(metaCode);
   if (byKey) return { kind: 'plan', plan: byKey };
@@ -99,7 +100,7 @@ export function resolvePurchase(session = {}) {
   // Repli sur le montant (centimes), en dernier recours
   const amount = Number(session.amount_total || 0);
   if (session.mode === 'payment' && amount > 0 && amount <= 2500 * 10) {
-    return { kind: 'credit', quantity: Math.max(1, Math.round(amount / 2500)) };
+    return { kind: 'credit', quantity: CREDIT.quantity * Math.max(1, Math.round(amount / 2500)) };
   }
   const table = [
     [4900, 'ELU_M'], [49980, 'ELU_A'], [49900, 'COLLECTIVITE_M'], [508980, 'COLLECTIVITE_A'],

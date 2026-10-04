@@ -26,7 +26,7 @@
     </a>
     <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span class="s-burger-lines" aria-hidden="true"></span></button>
     <nav class="s-nav" id="sNav" aria-label="Navigation principale">
-      <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
+      <a href="elus.html">Pour qui ?</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
     </nav>
   </div>
 </header>
@@ -39,7 +39,7 @@
   <div class="s-wrap s-hero-grid">
     <div>
       <p class="s-kicker">Maires, adjoints, conseillers municipaux</p>
-      <h1 class="s-h1">L'expert qui sécurise vos décisions d'élu.</h1>
+      <h1 class="s-h1">L'expert qui sécurise vos décisions d'élu</h1>
       <p class="s-lead">Budget, personnel communal, marchés publics : posez votre question, un expert de terrain vous répond sous 24 h. Confidentiel, sans engagement.</p>
       <div class="s-actions">
         <a class="s-btn s-btn-primary" href="signup-public.html">Tester gratuitement 15 jours</a>
@@ -113,14 +113,14 @@
   function play(i){
     clear(); cur=i;
     phase(0);
-    at(450,function(){fill(i);phase(1);});
-    at(1500,function(){phase(2);});
-    at(2900,function(){phase(3);});
-    at(4600,function(){phase(4);});
-    at(11500,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); });
+    at(675,function(){fill(i);phase(1);});
+    at(2250,function(){phase(2);});
+    at(4350,function(){phase(3);});
+    at(6900,function(){phase(4);});
+    at(17250,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); });
   }
   function waitResume(){ at(800,function(){ if(!paused&&!hover) play((cur+1)%DATA.length); else waitResume(); }); }
-  function show(i){ clear(); cur=i; fill(i); phase(4); if(!paused) at(9000,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); }); }
+  function show(i){ clear(); cur=i; fill(i); phase(4); if(!paused) at(13500,function(){ if(!paused&&!hover) play((i+1)%DATA.length); else waitResume(); }); }
   tabs.forEach(function(t){t.addEventListener('click',function(){
     var i=Number(t.getAttribute('data-i'));
     if(reduce){show(i);} else {play(i);}
@@ -211,7 +211,7 @@
 <section class="s-section s-section-white">
   <div class="s-wrap">
     <div class="s-section-head">
-      <h2 class="s-h2">Comment ça marche</h2>
+      <h2 class="s-h2">Comment ça marche ?</h2>
     </div>
     <ol class="s-steps">
       <li><h3 class="s-h3">Vous posez votre question</h3><p>Vous décrivez votre situation et déposez vos documents, en toute confidentialité.</p></li>
@@ -240,31 +240,46 @@
     </div>
     <div class="s-profiles s-snap" data-snap aria-label="Profils d'experts, faites défiler">
       <article class="s-profile">
-        <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <div class="s-profile-head">
+          <span class="s-avatar" title="Photo non publiée, profil anonymisé"><svg viewBox="0 0 80 80" aria-hidden="true" focusable="false"><defs><linearGradient id="avh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E8E5"/><stop offset="1" stop-color="#CDD4CF"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#avh)"/><circle cx="40" cy="33" r="12" fill="#B5BDB7"/><path d="M28 30c0-8 5-13 12-13s12 5 12 13c-2-4-6-6-12-6s-10 2-12 6z" fill="#8E9891"/><path d="M12 80c2-16 14-23 28-23s26 7 28 23z" fill="#9AA39D"/><path d="M34 58l6 9 6-9" fill="#E4E8E5"/></svg></span>
+          <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        </div>
         <h3>Finances locales et pilotage</h3>
         <p class="s-profile-lead">Ancien directeur général des services d'une commune de 25 000 habitants et ancien directeur des finances.</p>
         <ul><li>A piloté un programme d'investissement de 72 M€ sur cinq ans, financé à 38 % par des subventions.</li><li>Maîtrise la lecture d'un budget : épargne brute, endettement, prospective.</li><li>Forme les cadres territoriaux aux finances et au pilotage.</li></ul>
         <div class="s-profile-tags"><span>Budget</span><span>Subventions</span><span>Marchés publics</span></div>
       </article><article class="s-profile">
-        <div class="s-profile-top"><span class="s-profile-years">20 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <div class="s-profile-head">
+          <span class="s-avatar" title="Photo non publiée, profil anonymisé"><svg viewBox="0 0 80 80" aria-hidden="true" focusable="false"><defs><linearGradient id="avf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E8E5"/><stop offset="1" stop-color="#CDD4CF"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#avf)"/><path d="M40 15c-11 0-17 8-17 18 0 7 1 13-3 20 6 2 12 2 20 2s14 0 20-2c-4-7-3-13-3-20 0-10-6-18-17-18z" fill="#8E9891"/><circle cx="40" cy="34" r="11" fill="#B5BDB7"/><path d="M14 80c2-15 13-22 26-22s24 7 26 22z" fill="#9AA39D"/></svg></span>
+          <div class="s-profile-top"><span class="s-profile-years">20 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        </div>
         <h3>Urbanisme et projets d'aménagement</h3>
         <p class="s-profile-lead">Ingénieure territoriale principale, ancienne directrice d'un service instructeur des autorisations d'urbanisme.</p>
         <ul><li>A conduit la révision d'un PLU et la dématérialisation de l'instruction des permis.</li><li>A piloté des opérations de A à Z : groupes scolaires, médiathèque, aménagements urbains.</li><li>A monté plus de 12 M€ de financements, dont 9 M€ de fonds européens.</li></ul>
         <div class="s-profile-tags"><span>Permis et PLU</span><span>Travaux</span><span>Financements</span></div>
       </article><article class="s-profile">
-        <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <div class="s-profile-head">
+          <span class="s-avatar" title="Photo non publiée, profil anonymisé"><svg viewBox="0 0 80 80" aria-hidden="true" focusable="false"><defs><linearGradient id="avh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E8E5"/><stop offset="1" stop-color="#CDD4CF"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#avh)"/><circle cx="40" cy="33" r="12" fill="#B5BDB7"/><path d="M28 30c0-8 5-13 12-13s12 5 12 13c-2-4-6-6-12-6s-10 2-12 6z" fill="#8E9891"/><path d="M12 80c2-16 14-23 28-23s26 7 28 23z" fill="#9AA39D"/><path d="M34 58l6 9 6-9" fill="#E4E8E5"/></svg></span>
+          <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        </div>
         <h3>Management, dialogue social et gouvernance</h3>
         <p class="s-profile-lead">Directeur de cabinet d'une grande collectivité, ancien directeur général adjoint d'une agglomération de 67 000 habitants.</p>
         <ul><li>A conduit des réorganisations de services en dialogue avec les organisations syndicales.</li><li>Connaît de l'intérieur la relation entre l'exécutif, le cabinet et l'administration.</li><li>Longue expérience des collectivités d'outre-mer et de l'intercommunalité.</li></ul>
         <div class="s-profile-tags"><span>Personnel et conflits</span><span>Gouvernance</span><span>Outre-mer</span></div>
       </article><article class="s-profile">
-        <div class="s-profile-top"><span class="s-profile-years">30 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <div class="s-profile-head">
+          <span class="s-avatar" title="Photo non publiée, profil anonymisé"><svg viewBox="0 0 80 80" aria-hidden="true" focusable="false"><defs><linearGradient id="avh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E8E5"/><stop offset="1" stop-color="#CDD4CF"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#avh)"/><circle cx="40" cy="33" r="12" fill="#B5BDB7"/><path d="M28 30c0-8 5-13 12-13s12 5 12 13c-2-4-6-6-12-6s-10 2-12 6z" fill="#8E9891"/><path d="M12 80c2-16 14-23 28-23s26 7 28 23z" fill="#9AA39D"/><path d="M34 58l6 9 6-9" fill="#E4E8E5"/></svg></span>
+          <div class="s-profile-top"><span class="s-profile-years">30 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        </div>
         <h3>Déontologie, contrôle et prévention des risques</h3>
         <p class="s-profile-lead">Ancien directeur du contrôle interne et de l'audit d'un département, puis associé responsable du secteur public local d'un cabinet d'audit international.</p>
         <ul><li>A accompagné plus de dix collectivités et organismes publics dans la prévention des atteintes à la probité.</li><li>Spécialiste des conflits d'intérêts et du contrôle interne.</li><li>Membre de commissions nationales de normalisation en gouvernance et conformité.</li></ul>
         <div class="s-profile-tags"><span>Conflits d'intérêts</span><span>Contrôle</span><span>Marchés publics</span></div>
       </article><article class="s-profile">
-        <div class="s-profile-top"><span class="s-profile-years">5 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <div class="s-profile-head">
+          <span class="s-avatar" title="Photo non publiée, profil anonymisé"><svg viewBox="0 0 80 80" aria-hidden="true" focusable="false"><defs><linearGradient id="avf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E8E5"/><stop offset="1" stop-color="#CDD4CF"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#avf)"/><path d="M40 15c-11 0-17 8-17 18 0 7 1 13-3 20 6 2 12 2 20 2s14 0 20-2c-4-7-3-13-3-20 0-10-6-18-17-18z" fill="#8E9891"/><circle cx="40" cy="34" r="11" fill="#B5BDB7"/><path d="M14 80c2-15 13-22 26-22s24 7 26 22z" fill="#9AA39D"/></svg></span>
+          <div class="s-profile-top"><span class="s-profile-years">5 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        </div>
         <h3>Audit financier et fonds européens</h3>
         <p class="s-profile-lead">Double formation en science politique et en finance, cinq ans d'audit financier dans un cabinet international de référence.</p>
         <ul><li>Analyse la fiabilité des comptes et la solidité du contrôle interne.</li><li>Vérifie la conformité des dépenses aux règles des fonds européens (FEDER, FSE+).</li><li>Prépare les collectivités aux audits et aux contrôles.</li></ul>
@@ -278,7 +293,7 @@
         <a class="s-profile-link" href="#exemple">Lire un Conseil Expert complet</a>
       </article>
     </div>
-    <p class="s-profiles-note">Cinq experts du réseau, présentés de manière anonyme : leurs noms ne sont pas publiés afin de garantir leur indépendance vis-à-vis des collectivités qu'ils conseillent.</p>
+    <p class="s-profiles-note">Cinq experts du réseau, présentés de manière anonyme : leurs noms et leurs photos ne sont pas publiés afin de garantir leur indépendance vis-à-vis des collectivités qu'ils conseillent.</p>
   </div>
 </section>
 
@@ -316,14 +331,14 @@
         <figcaption><strong>Directeur général des services</strong>commune de 12 000 habitants</figcaption>
       </figure>
     </div>
-    <p class="s-testimonials-note">Témoignages présentés à titre d'illustration, en attendant ceux des élus de la phase bêta.</p>
+    <p class="s-testimonials-note" data-testimonials-note>Exemples illustratifs, en attendant les témoignages des élus de la bêta.</p>
   </div>
 </section>
 
 
 <section class="s-final">
   <div class="s-wrap">
-    <h2 class="s-h2">Votre prochain dossier sensible, ne le traitez pas seul.</h2>
+    <h2 class="s-h2">Votre prochain dossier sensible, ne le traitez pas seul</h2>
     <p>Essai gratuit de 15 jours, 2 Conseils Expert offerts, sans carte bancaire.</p>
     <div class="s-actions">
       <a class="s-btn s-btn-light" href="signup-public.html">Tester gratuitement</a>
@@ -340,7 +355,7 @@
       <span><a href="mailto:contact@pope-online.com">contact@pope-online.com</a></span>
     </div>
     <nav aria-label="Liens légaux">
-      <a href="elus.html">Pour les élus</a>
+      <a href="elus.html">Pour qui ?</a>
       <a href="pricing.html">Tarifs</a>
       <a href="about.html">Qui sommes-nous</a>
       <a href="tutoriel.html">Tutoriel</a>
@@ -359,14 +374,12 @@
   <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
     <button class="s-modal-close" type="button" id="ctClose" aria-label="Fermer">×</button>
     <h2 id="ctTitle">Parler à un conseiller</h2>
-    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>.</p>
+    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
     <form id="ctForm" class="s-form" novalidate>
       <label class="s-field s-field-full">Votre demande
         <select name="subject" id="ctSubject">
           <option value="rappel">Être rappelé par téléphone</option>
           <option value="visio">Prendre rendez-vous en visioconférence</option>
-          <option value="devis_commune">Demander un devis : offre Commune</option>
-          <option value="devis_collectivite">Demander un devis : offre Collectivité</option>
           <option value="question">Poser une question sur le service</option>
         </select>
       </label>
@@ -439,6 +452,77 @@ form.addEventListener('submit', async (e) => {
   } finally { btn.disabled = false; btn.textContent = 'Envoyer ma demande'; }
 });
 </script>
+<div class="s-modal-back" id="dvBack" aria-hidden="true">
+  <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="dvTitle">
+    <button class="s-modal-close" type="button" id="dvClose" aria-label="Fermer">×</button>
+    <p class="s-kicker" style="margin:0 0 6px" id="dvKicker">Achat public, sans carte bancaire</p>
+    <h2 id="dvTitle">Demander un devis : offre Commune</h2>
+    <p class="s-muted" style="margin:0 0 16px">Indiquez-nous votre collectivité et le nombre de comptes souhaités. Un conseiller vous adresse un devis sous un jour ouvré.</p>
+    <form id="dvForm" class="s-form" novalidate>
+      <input type="hidden" name="offer" id="dvOffer" value="commune"/>
+      <label class="s-field s-field-full">Collectivité ou groupement<input name="organization" required placeholder="Commune de…, Communauté de communes de…"/></label>
+      <label class="s-field">Nombre d'habitants<input name="population" inputmode="numeric" placeholder="Ex. 6 500"/></label>
+      <label class="s-field">Nombre de comptes souhaités<select name="seats" id="dvSeats"></select></label>
+      <label class="s-field">Nom et prénom<input name="name" autocomplete="name" required/></label>
+      <label class="s-field">Fonction<input name="role" placeholder="Maire, DGS, directeur financier…"/></label>
+      <label class="s-field">E-mail<input name="email" type="email" autocomplete="email" required/></label>
+      <label class="s-field">Téléphone<input name="phone" type="tel" autocomplete="tel"/></label>
+      <label class="s-field s-field-full">Adresse de facturation (facultatif)<textarea name="billing_address" rows="2"></textarea></label>
+      <label class="s-field s-field-full">Message (facultatif)<textarea name="message" rows="2" placeholder="Date de démarrage souhaitée, besoins particuliers…"></textarea></label>
+      <input name="website" tabindex="-1" autocomplete="off" class="s-hp" aria-hidden="true"/>
+      <p class="s-form-msg" id="dvMsg" role="status"></p>
+      <div class="s-field-full s-form-actions"><button class="s-btn s-btn-primary" type="submit" id="dvSubmit">Recevoir mon devis</button></div>
+      <p class="s-field-full s-muted" style="margin:0;font-size:.84rem">Facture déposée sur Chorus Pro, paiement par mandat administratif.</p>
+    </form>
+  </div>
+</div>
+<script type="module">
+const API = ((import.meta.env && import.meta.env.VITE_API_URL) || 'https://pope-online-v2.onrender.com').trim().replace(/\/$/, '');
+const back = document.getElementById('dvBack'), form = document.getElementById('dvForm'), msg = document.getElementById('dvMsg');
+const OFFERS = {
+  commune: { title: 'Demander un devis : offre Commune', seats: ['3 comptes', '4 comptes', '5 comptes'] },
+  collectivite: { title: 'Demander un devis : offre Collectivité', seats: ['Jusqu\u2019à 5 comptes', '6 à 10 comptes', '11 à 20 comptes', 'Plus de 20 comptes'] },
+};
+function open(offer) {
+  const o = OFFERS[offer] ? offer : 'commune';
+  document.getElementById('dvOffer').value = o;
+  document.getElementById('dvTitle').textContent = OFFERS[o].title;
+  document.getElementById('dvSeats').innerHTML = OFFERS[o].seats.map((t) => '<option>' + t + '</option>').join('');
+  msg.textContent = ''; msg.className = 's-form-msg';
+  back.classList.add('open'); back.setAttribute('aria-hidden', 'false');
+  setTimeout(() => form.querySelector('[name=organization]').focus(), 50);
+}
+function close() { back.classList.remove('open'); back.setAttribute('aria-hidden', 'true'); }
+window.POPE_openDevis = open;
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-devis]');
+  if (!t) return;
+  e.preventDefault();
+  const sub = document.getElementById('coBack'); if (sub) { sub.classList.remove('open'); sub.setAttribute('aria-hidden', 'true'); }
+  open(t.getAttribute('data-devis'));
+});
+document.getElementById('dvClose').onclick = close;
+back.addEventListener('click', (e) => { if (e.target === back) close(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
+  if (!data.organization || !data.name || !data.email) {
+    msg.textContent = 'Indiquez au moins la collectivité, votre nom et votre e-mail.'; msg.className = 's-form-msg err'; return;
+  }
+  data.subject = data.offer === 'collectivite' ? 'devis_collectivite' : 'devis_commune';
+  const btn = document.getElementById('dvSubmit'); btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    const res = await fetch(API + '/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    form.reset();
+    msg.textContent = 'Merci, votre demande de devis est bien partie. Un conseiller vous adresse votre devis sous un jour ouvré.'; msg.className = 's-form-msg ok';
+  } catch (err) {
+    msg.innerHTML = "L'envoi n'a pas abouti. Écrivez-nous à <a href=\"mailto:contact@pope-online.com?subject=Demande%20de%20devis\">contact@pope-online.com</a>.";
+    msg.className = 's-form-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Recevoir mon devis'; }
+});
+</script>
 
 <div class="s-mbar" id="sMbar" aria-hidden="true">
   <a class="s-btn s-btn-primary" href="signup-public.html">Tester gratuitement</a>
@@ -470,6 +554,7 @@ form.addEventListener('submit', async (e) => {
 <script>
 (function(){
   /* Témoignages illustratifs : masquables depuis site-config.js */
+  if(window.POPE_SITE&&window.POPE_SITE.testimonialsAreIllustrative===false){document.querySelectorAll('[data-testimonials-note]').forEach(function(e){e.remove();});}
   if(window.POPE_SITE&&window.POPE_SITE.showTestimonials===false){document.querySelectorAll('[data-testimonials]').forEach(function(e){e.remove();});}
   /* Menu mobile */
   var b=document.getElementById('sBurger'), n=document.getElementById('sNav');

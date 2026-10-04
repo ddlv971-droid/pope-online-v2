@@ -187,3 +187,8 @@ html body header.v40-topbar .v40-topbar-brand img { height: 30px !important; }
   input, select, textarea { font-size: 16px !important; }   /* pas de zoom automatique sur iOS */
   .v5-domain-pill { min-height: 44px; }
 }
+
+/* V88.9 — Panneau des pages de connexion / inscription : lignes justifiées à gauche */
+.v40-auth-features { text-align: left !important; }
+.v40-auth-feature { display: flex !important; align-items: flex-start !important; justify-content: flex-start !important; gap: 10px; text-align: left !important; }
+.v40-auth-feature-icon { flex: none; }

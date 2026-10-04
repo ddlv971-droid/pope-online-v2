@@ -46,7 +46,8 @@ function walletPayload(row = {}) {
   // Conseils Expert achetés à l'unité. Une valeur ≥ 1000 est l'ancienne sentinelle
   // « illimité » de la V87 (9999) : elle ne doit jamais être comptée comme crédits.
   const rawCredits  = Number(row.tickets_expert || 0);
-  const credits     = rawCredits >= 1000 ? 0 : Math.max(0, rawCredits);
+  const creditsExpired = row.credits_expire_at && new Date(row.credits_expire_at) < new Date();
+  const credits     = (rawCredits >= 1000 || creditsExpired) ? 0 : Math.max(0, rawCredits);
   const unlimited   = isUnlimited(expertLimit);
   const expertLeft  = unlimited ? 9999 : Math.max(0, expertLimit - expertUsed) + credits;
   // Date de renouvellement (stockée par billing.js lors du webhook invoice.paid)
@@ -61,6 +62,7 @@ function walletPayload(row = {}) {
     is_paid:               isPaidPlan(row.plan_code) && String(row.status || '') === 'active',
     expert_unlimited:      unlimited,
     expert_credits:        credits,
+    expert_credits_expire_at: credits > 0 ? (row.credits_expire_at || null) : null,
     status:                row.status      || 'pending_verification',
     ai_unlimited:          Boolean(row.ai_unlimited),
     expert_limit:          expertLimit,

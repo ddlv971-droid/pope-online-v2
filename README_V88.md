@@ -331,6 +331,41 @@ Les élus consulteront le site à 80 % sur téléphone. Le site vitrine a été 
 
 Les pages vitrine ne chargent plus `app.css`, ce qui les rend nettement plus légères sur mobile. Vérifié sur le build : à l'ouverture le menu est caché, il s'ouvre puis se referme au toucher, et il se referme quand on choisit un lien.
 
+### Modifications issues du call du 4 octobre 2026 (V88.9)
+
+Cette version reprend le document *POPE_Online_modifications_call_04-10-2026* annoté par les associés.
+
+1. **Demande de devis distincte du contact.**
+   - Nouvelle fenêtre « Demander un devis : offre Commune / offre Collectivité ».
+   - Champs : collectivité, habitants, nombre de comptes, nom, fonction, e-mail, téléphone, adresse de facturation, message.
+   - Message de confirmation propre au devis, et e-mail d'accusé de réception rappelant le circuit Chorus Pro.
+   - L'offre Collectivité ne passe plus par la connexion ni par la carte bancaire.
+   - Les devis ont été retirés du menu déroulant de « Parler à un conseiller ».
+   - API : la route `/contact` enregistre les champs du devis (`schema_patch_v91.sql`).
+2. **Pack de 3 Conseils Expert supplémentaires à 25 € HT, utilisables pendant un mois** (au lieu d'un Conseil à l'unité à 25 €).
+   - Le webhook crédite 3 Conseils et fixe une échéance d'un mois ; les crédits échus sont ignorés puis remis à zéro.
+   - **Stripe** : renommer le produit du lien de paiement existant (même prix, 25 €) en « Pack de 3 Conseils Expert ».
+   - La synthèse du document annoté mentionnait 12 € HT, le détail un pack de 3 pour 25 € : c'est le détail qui a été appliqué.
+3. **Mise en avant dynamique des offres.**
+   - L'offre Élu est en avant à l'arrivée.
+   - La carte survolée, ou sélectionnée au clavier, prend le relais avec un bouton plein et un léger relief.
+   - Sur mobile, c'est la carte centrée dans le carrousel.
+4. **Libellés des offres** : Collectivité devient « Pour les collectivités et groupements de plus de 10 000 habitants » (cartes, FAQ, devis). Mention « Payée par la commune » supprimée sur l'offre Commune.
+5. **Comparatif IA** : phrase « Notre outil de rédaction utilise lui aussi l'IA… » supprimée.
+6. **Menu « Pour qui ? »** (au lieu de « Pour les élus »). La page présente désormais les « élus locaux et leurs collaborateurs » : sur-titre, texte d'introduction et balises de référencement.
+7. **Pages de connexion et d'inscription** : « Budget, ressources humaines, marchés publics, urbanisme… » et « RGPD · Données chiffrées ». Les lignes du panneau sont justifiées à gauche.
+8. **Ponctuation des titres** : « Comment ça marche ? » ; plus de point final sur les titres affirmatifs (accroches et appels finaux).
+9. **Quota atteint.**
+   - Nouvelle question dans la FAQ Tarifs.
+   - Message du tableau de bord : l'accès à l'espace, au clausier, au dépôt et à l'outil de rédaction est conservé ; on peut ajouter un pack de 3 ou passer à l'offre Commune.
+10. **Profils d'experts** : avatar gris anonyme indiquant le genre de chaque expert. Aucune photo réelle n'est publiée, pour préserver l'anonymat.
+11. **Échange animé de l'accueil** ralenti 1,5 fois pour laisser le temps de lire.
+
+**Mention sous les témoignages (point non appliqué tel quel).** Le document demandait de supprimer la mention « présentés à titre d'illustration ».
+- Tant que les témoignages sont inventés, les publier sans mention constituerait une pratique commerciale trompeuse (faux avis, Code de la consommation).
+- La mention a donc été raccourcie et rendue discrète : « Exemples illustratifs, en attendant les témoignages des élus de la bêta ».
+- Elle disparaît automatiquement en passant `testimonialsAreIllustrative: false` dans `site-config.js`, à faire **uniquement** une fois les vrais témoignages publiés avec l'accord écrit des élus.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

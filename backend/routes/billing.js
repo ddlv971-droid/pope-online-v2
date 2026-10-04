@@ -77,20 +77,24 @@ async function handleCheckoutCompleted(session) {
     if (purchase.kind === 'credit') {
       // Conseil Expert à l'unité : on ajoute un crédit, sans toucher à l'abonnement
       await client.query(
-        `update wallets set tickets_expert = coalesce(tickets_expert,0) + $2,
+        `update wallets set
+                tickets_expert = (case when credits_expire_at is not null and credits_expire_at < now() then 0
+                                       when coalesce(tickets_expert,0) >= 1000 then 0
+                                       else coalesce(tickets_expert,0) end) + $2,
+                credits_expire_at = now() + interval '1 month',
                 stripe_customer_id = coalesce($3, stripe_customer_id), updated_at = now()
           where user_id = $1`,
         [user.id, purchase.quantity, stripeCustomerId]
       );
       await client.query(
         `insert into notifications(user_id, kind, title, body, link) values($1,'credit_added','Conseil Expert ajouté',$2,'/dashboard.html')`,
-        [user.id, `${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte.`]
+        [user.id, `${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte, utilisables pendant un mois.`]
       );
       console.log(`[stripe] +${purchase.quantity} crédit(s) pour ${user.email}`);
       mail = {
         to: user.email,
-        subject: 'POPE Online — Votre Conseil Expert supplémentaire est disponible',
-        text: `Bonjour,\n\nVotre achat est confirmé : ${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte.\n\nPoser votre question : ${base}/dashboard.html\n\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
+        subject: 'POPE Online — Vos Conseils Expert supplémentaires sont disponibles',
+        text: `Bonjour,\n\nVotre achat est confirmé : ${purchase.quantity} Conseil${purchase.quantity > 1 ? 's' : ''} Expert ${purchase.quantity > 1 ? 'ont été ajoutés' : 'a été ajouté'} à votre compte. Ils sont utilisables pendant un mois.\n\nPoser votre question : ${base}/dashboard.html\n\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
       };
       return;
     }

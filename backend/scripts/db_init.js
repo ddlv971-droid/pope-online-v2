@@ -74,6 +74,7 @@ async function main() {
   await applyPatch('schema_patch_v88.sql', 'Patch V88 applied (colonnes expert_requests + expert_assignments + users garanties en prod)');
   await applyPatch('schema_patch_v89.sql', 'Patch V89 applied (repositionnement élus : profil élu, quota mensuel, normalisation des crédits)');
   await applyPatch('schema_patch_v90.sql', 'Patch V90 applied (demandes de contact, rendez-vous et devis)');
+  await applyPatch('schema_patch_v91.sql', 'Patch V91 applied (pack de 3 Conseils Expert, champs devis)');
   await seedAdmin();
   await pool.end();
 }
