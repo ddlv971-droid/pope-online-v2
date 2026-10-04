@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>POPE Online — L'expert qui sécurise vos décisions d'élu</title>
 <meta name="description" content="Maires, adjoints, conseillers municipaux : budget, personnel communal, marchés publics. Un expert de terrain vous répond sous 24 h. Essai gratuit 15 jours."/>
 <link rel="canonical" href="https://pope-online.com/"/>
@@ -24,7 +24,7 @@
       <svg viewBox="0 0 34 34" aria-hidden="true" focusable="false"><circle cx="17" cy="13" r="11" fill="#1F4A3D"/><path d="M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3" stroke="#F6F7F4" stroke-width="1.7" stroke-linecap="round" fill="none"/><circle cx="22.4" cy="8.6" r="2.4" fill="#A8741F"/><path d="M17 23.5v7" stroke="#1F4A3D" stroke-width="2.4" stroke-linecap="round"/><path d="M11.5 31h11" stroke="#1F4A3D" stroke-width="1.6" stroke-linecap="round"/></svg>
       <span class="s-brand-text"><span class="s-brand-name">Pope Online</span><span class="s-brand-sig">L'expertise au service des élus</span></span>
     </a>
-    <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span></span></button>
+    <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span class="s-burger-lines" aria-hidden="true"></span></button>
     <nav class="s-nav" id="sNav" aria-label="Navigation principale">
       <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
     </nav>
@@ -238,7 +238,7 @@
       <h2 class="s-h2">Qui vous répond ?</h2>
       <p>Des praticiens qui ont exercé dans les collectivités, à des postes de responsabilité. Chacun lit votre dossier en entier et vous répond personnellement.</p>
     </div>
-    <div class="s-profiles">
+    <div class="s-profiles s-snap" data-snap aria-label="Profils d'experts, faites défiler">
       <article class="s-profile">
         <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
         <h3>Finances locales et pilotage</h3>
@@ -304,7 +304,7 @@
     <div class="s-section-head">
       <h2 class="s-h2">Ce que nous disent les élus</h2>
     </div>
-    <div class="s-testimonials">
+    <div class="s-testimonials s-snap" data-snap aria-label="Témoignages, faites défiler">
       <figure class="s-testimonial">
         <blockquote>« Ma première question me paraissait presque trop simple pour être posée. La réponse est arrivée le lendemain matin : claire, sourcée, avec ce qu'il fallait vérifier auprès de ma secrétaire de mairie. Je ne cherche plus seul, tard le soir. »</blockquote>
         <figcaption><strong>Maire</strong>commune rurale de 2 300 habitants</figcaption>
@@ -432,6 +432,10 @@ form.addEventListener('submit', async (e) => {
 });
 </script>
 
+<div class="s-mbar" id="sMbar" aria-hidden="true">
+  <a class="s-btn s-btn-primary" href="signup-public.html">Tester gratuitement</a>
+  <button class="s-mbar-call" type="button" data-contact="rappel" aria-label="Être rappelé par un conseiller"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg><span>Rappel</span></button>
+</div>
 <div class="ck-overlay" id="ckOverlay" hidden></div>
 <div class="ck-panel" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitleMain">
   <h2 id="ckTitleMain">Vos données restent les vôtres</h2>
@@ -461,9 +465,33 @@ form.addEventListener('submit', async (e) => {
   if(window.POPE_SITE&&window.POPE_SITE.showTestimonials===false){document.querySelectorAll('[data-testimonials]').forEach(function(e){e.remove();});}
   /* Menu mobile */
   var b=document.getElementById('sBurger'), n=document.getElementById('sNav');
+  function setMenu(o){n.classList.toggle('open',o);document.body.classList.toggle('s-menu-open',o);b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Fermer le menu':'Ouvrir le menu');}
   if(b&&n){
-    b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');});
-    n.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){n.classList.remove('open');b.setAttribute('aria-expanded','false');});});
+    b.addEventListener('click',function(){setMenu(!n.classList.contains('open'));});
+    n.querySelectorAll('a,button').forEach(function(a){a.addEventListener('click',function(){setMenu(false);});});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false);});
+    window.addEventListener('resize',function(){if(window.innerWidth>1180)setMenu(false);});
+  }
+  /* Carrousels mobiles (profils, témoignages, offres) : points de repère */
+  document.querySelectorAll('[data-snap]').forEach(function(track){
+    var items=[].slice.call(track.children); if(items.length<2)return;
+    var dots=document.createElement('div'); dots.className='s-dots'; dots.setAttribute('aria-hidden','true');
+    items.forEach(function(){dots.appendChild(document.createElement('span'));});
+    track.parentNode.insertBefore(dots,track.nextSibling);
+    function upd(){var c=track.scrollLeft+track.clientWidth/2,best=0,d=1e9;items.forEach(function(it,i){var m=Math.abs(it.offsetLeft+it.offsetWidth/2-c);if(m<d){d=m;best=i;}});
+      [].forEach.call(dots.children,function(s,i){s.classList.toggle('on',i===best);});}
+    track.addEventListener('scroll',function(){window.requestAnimationFrame(upd);},{passive:true});
+    var start=track.getAttribute('data-snap-start');
+    if(start&&window.innerWidth<=900){var el=track.querySelector(start);if(el)track.scrollLeft=el.offsetLeft-16;}
+    upd();
+  });
+  /* Barre d'action collante (mobile) : après le premier écran, masquée sur l'appel final et le pied de page */
+  var bar=document.getElementById('sMbar');
+  if(bar){
+    var hideZones=document.querySelectorAll('.s-final,.s-footer'), inZone=0;
+    function show(){var on=window.scrollY>window.innerHeight*0.7&&inZone===0;bar.classList.toggle('on',on);bar.setAttribute('aria-hidden',on?'false':'true');}
+    if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){inZone+=e.isIntersecting?1:-1;if(inZone<0)inZone=0;});show();});hideZones.forEach(function(z){io.observe(z);});}
+    window.addEventListener('scroll',show,{passive:true}); show();
   }
   /* Cookies : même clé et même format qu'en V87 */
   var KEY='pope_cookie_choice',ov=document.getElementById('ckOverlay'),mn=document.getElementById('ckMain'),pr=document.getElementById('ckPrefs');

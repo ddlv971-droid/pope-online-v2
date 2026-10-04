@@ -177,3 +177,13 @@ html body header.v40-topbar .v40-topbar-brand img { height: 30px !important; }
   .v40-auth-brand-logo { max-height: 40px; width: auto; }
   .v40-mobile-logo { display: none !important; }
 }
+
+/* V88.7 — Espace connecté sur mobile portrait */
+@media (max-width: 640px) {
+  .v40-topbar-brand-text small { display: none !important; }
+  .v5-tabs-bar { overflow-x: auto !important; flex-wrap: nowrap !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .v5-tabs-bar::-webkit-scrollbar { display: none; }
+  .v5-tab { flex: none !important; white-space: nowrap; min-height: 44px; }
+  input, select, textarea { font-size: 16px !important; }   /* pas de zoom automatique sur iOS */
+  .v5-domain-pill { min-height: 44px; }
+}

@@ -297,6 +297,27 @@ Cette version répond à la note *Analyse critique du site du point de vue des �
 - [ ] **Cadre juridique** : les Conseils Expert comportent une part de conseil juridique, activité réglementée (loi du 31 décembre 1971, art. 54 et suivants). Faire vérifier par un avocat les conditions dans lesquelles les experts peuvent la délivrer.
 - [ ] Recruter un expert « statut de la fonction publique territoriale » : premier besoin des élus (50 %), absent des cinq profils actuels.
 
+### Mobile d'abord (V88.7)
+
+Les élus consulteront le site à 80 % sur téléphone. Le site vitrine a été revu en portrait, et vérifié en 390 et 412 px de large (iPhone, Galaxy) :
+
+- **Bouton menu** :
+  - ses dimensions sont verrouillées : Samsung Internet l'étirait sur la moitié de l'écran ;
+  - l'icône se transforme en croix à l'ouverture.
+- **Menu plein écran** : grandes entrées, page en cours repérée, bouton « Tester gratuitement » en bas, page figée derrière le menu, fermeture par Échap.
+- **Barre d'action collante** :
+  - « Tester gratuitement » et « Rappel » ;
+  - elle apparaît après le premier écran et s'efface sur l'appel final et le pied de page ;
+  - elle tient compte des encoches et de la barre système (`safe-area`).
+- **Carrousels à faire glisser**, avec points de repère, pour les profils d'experts, les témoignages et les offres. La page Tarifs s'ouvre directement sur l'offre Élu, ce qui divise la longueur de la page d'accueil par deux.
+- **Comparatif IA / expert** : il devient des cartes empilées, sans défilement horizontal.
+- **Échange animé** : onglets sur une ligne, défilants.
+- **Boutons** : pleine largeur, 52 px de haut.
+- **Formulaire de contact et souscription** : ils s'ouvrent en feuille depuis le bas de l'écran. Les champs font au moins 16 px, ce qui évite le zoom automatique de Safari sur iPhone.
+- **Bandeau cookies** : en feuille, boutons empilés.
+- **Pied de page** : liens espacés pour le doigt.
+- **Espace connecté** : onglets du tableau de bord défilants, signature de la barre supérieure masquée sur petit écran, champs à 16 px.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».
