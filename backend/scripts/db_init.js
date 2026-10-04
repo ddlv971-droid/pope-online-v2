@@ -73,6 +73,7 @@ async function main() {
   await applyPatch('schema_patch_v87.sql', 'Patch V87 applied (renews_at + plan_start + last_login_at + session_version + security_events)');
   await applyPatch('schema_patch_v88.sql', 'Patch V88 applied (colonnes expert_requests + expert_assignments + users garanties en prod)');
   await applyPatch('schema_patch_v89.sql', 'Patch V89 applied (repositionnement élus : profil élu, quota mensuel, normalisation des crédits)');
+  await applyPatch('schema_patch_v90.sql', 'Patch V90 applied (demandes de contact, rendez-vous et devis)');
   await seedAdmin();
   await pool.end();
 }

@@ -15,8 +15,17 @@
     // (à faire aussi côté API : variable PRIVATE_SPACE_ENABLED=true sur Render).
     privateSpaceEnabled: false,
 
-    // Délai de réponse affiché partout
+    // Délai de réponse affiché partout (jours ouvrés : du lundi au vendredi)
     responseDelay: '24 h',
+    responseDelayDetail: "24 h ouvrées, du lundi au vendredi. Une question envoyée le vendredi après 17 h reçoit sa réponse le lundi. En outre-mer, le délai est calculé à l'heure locale.",
+
+    // Témoignages : présentés à titre d'illustration tant que les témoignages
+    // signés des élus de la bêta ne sont pas recueillis (voir README_V88.md).
+    showTestimonials: true,
+
+    // Prise de rendez-vous : lien d'agenda en ligne optionnel (Calendly, Cal.com…).
+    // Vide = le formulaire de contact propose un créneau souhaité.
+    bookingUrl: '',
 
     phone: { display: '09 70 70 30 55', href: 'tel:+33970703055' },
     email: 'contact@pope-online.com',
@@ -25,6 +34,7 @@
     annualDiscount: 0.15,
     plans: {
       elu:          { monthly: 49,  label: 'Élu',          expert: 10 },
+      commune:      { monthly: 149, label: 'Commune',      expert: 10, seats: 3, extraSeat: 25, maxSeats: 5 },
       collectivite: { monthly: 499, label: 'Collectivité', expert: 'illimités' }
     },
     creditPrice: 25,

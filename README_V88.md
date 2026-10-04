@@ -226,6 +226,77 @@ Le panneau gauche des pages de connexion et d'inscription reprend le visage huma
 - Les statuts « Résilié » et « Sans essai » ont désormais un libellé lisible.
 - La valeur IA reste consultable dans le tableau de bord admin, pour usage interne.
 
+### Incarner l'expertise et lever les freins à l'achat (V88.6)
+
+Cette version répond à la note *Analyse critique du site du point de vue des élus* (3 octobre 2026).
+
+**1. Donner un visage à l'expertise**
+- **Profils** : cinq profils d'experts anonymisés, construits à partir des CV de l'équipe (finances locales, urbanisme, management et dialogue social, déontologie et contrôle, audit et fonds européens), plus une carte « Et aussi, +30 experts ». Ils figurent sur l'accueil (« Qui vous répond ? ») et sur la page Qui sommes-nous.
+  - Anonymisation : ni noms ni photos. Les employeurs exacts sont généralisés.
+  - Une mention explique pourquoi les noms ne sont pas publiés : l'indépendance vis-à-vis des collectivités conseillées.
+- **Exemple de Conseil Expert téléchargeable** : `frontend/public/docs/exemple-conseil-expert-urbanisme.pdf`, 5 pages. Une adjointe d'une commune de 15 000 habitants interroge sur un permis contesté alors que le PLU est en révision. Le document comprend :
+  - une synthèse ;
+  - le droit applicable, avec ses articles ;
+  - l'analyse et les options ;
+  - le calendrier ;
+  - une trame d'arrêté de sursis ;
+  - des éléments de langage pour les riverains ;
+  - une liste de vérifications.
+- **Témoignages** : six témoignages, dont trois nuancés. Trois figurent sur l'accueil, les six sur la page élus.
+  - Ils sont présentés **à titre d'illustration**, avec une mention visible.
+  - `showTestimonials: false` dans `site-config.js` les masque partout.
+
+**2. Offre Commune (moins de 10 000 habitants)**
+- **Prix proposé** : 149 € HT/mois pour 3 comptes, +25 € par compte jusqu'à 5, soit 199 €. 10 Conseils Expert par mois et par compte. Ce prix est **à valider**.
+- **Circuit d'achat public** : devis, bon de commande, facture Chorus Pro, mandat administratif, avec la mention du seuil de l'article R.2122-8 du code de la commande publique.
+- **Côté technique** : plans `COMMUNE_M` / `COMMUNE_A` au catalogue et dans l'admin. Les comptes sont activés manuellement par l'admin après le bon de commande.
+
+**3. Urbanisme**
+- Ajouté sur l'accueil (quatre sujets prioritaires, dans l'ordre de l'enquête), dans le bandeau défilant et parmi les exemples de questions.
+- Ajouté aussi dans les domaines du tableau de bord, en domaine prioritaire, et parmi les profils d'experts.
+
+**4. Au-delà du municipal**
+- Profil « Élus intercommunaux, départementaux et régionaux », avec ou sans délégation.
+- Section « Élus d'outre-mer » : collectivités uniques, octroi de mer, fonds européens, délai à l'heure locale, rappel sur les horaires locaux.
+
+**5. Neutralité**
+- Nouvelle page `deontologie.html` (charte en 8 engagements), reliée au pied de page, à la FAQ et à la page élus.
+- Formulation neutre pour les conseillers municipaux : « poser les bonnes questions en séance ».
+
+**6. Promesses précisées**
+- Délai : « 24 h ouvrées », vendredi soir → lundi, heure locale en outre-mer, Conseil Expert non décompté en cas de dépassement.
+- « Expert désigné, même interlocuteur pour un dossier » remplace « expert dédié ».
+- Incohérence corrigée : 2 Conseils Expert offerts partout.
+- Nouvelles questions de FAQ : assurance, hébergement et RGPD, opposition, usage raisonnable.
+
+**7. Objection de l'IA gratuite**
+- Tableau comparatif « IA généraliste / Conseil Expert » sur la page élus.
+- Glossaire (Conseil Expert, Clausier, Dépôt sécurisé, Outil de rédaction) sur la page Tarifs.
+
+**8. Calendrier électoral**
+- Section « Nouvel élu ? Votre première année de mandat » sur la page élus.
+
+**9. Conversion**
+- « Parler à un conseiller » ouvre un formulaire : rappel, rendez-vous visio, devis Commune ou Collectivité, avec un créneau souhaité.
+- Il remplace le lien téléphonique, inopérant sur ordinateur. Le lien « Contact » du menu ouvre le même formulaire.
+- **Côté technique** :
+  - nouvelle route API `POST /contact` (anti-robots, limite de 8 envois par heure) ;
+  - chaque demande est enregistrée (table `contact_requests`, patch `schema_patch_v90.sql`), envoyée par e-mail à `MAIL_TO` et confirmée par e-mail au demandeur ;
+  - `bookingUrl` dans `site-config.js` ajoute un lien d'agenda en ligne (Calendly, Cal.com…) si vous en avez un.
+- Clause d'usage raisonnable ajoutée sur l'offre Collectivité.
+
+**À valider avant la mise en production (affirmations ajoutées au site)**
+- [ ] Prix et contenu de l'offre Commune.
+- [ ] Engagement « Conseil Expert non décompté si le délai de 24 h ouvrées est dépassé ».
+- [ ] Rappel sur les horaires locaux d'outre-mer.
+- [ ] **Assurance responsabilité civile professionnelle** : la FAQ l'affirme ; vérifier l'attestation.
+- [ ] **Hébergement dans l'Union européenne** : la FAQ l'affirme ; vérifier la région Render de l'API et de la base, ainsi que le stockage des pièces.
+- [ ] Engagements de la charte de déontologie (cloisonnement, déport des experts), à faire approuver par les associés et accepter par chaque expert.
+- [ ] Accord des cinq experts sur la publication de leur profil anonymisé.
+- [ ] **Témoignages** : les remplacer par ceux des élus de la bêta, avec leur accord écrit. Publier comme réels des avis inventés constituerait une pratique commerciale trompeuse (Code de la consommation).
+- [ ] **Cadre juridique** : les Conseils Expert comportent une part de conseil juridique, activité réglementée (loi du 31 décembre 1971, art. 54 et suivants). Faire vérifier par un avocat les conditions dans lesquelles les experts peuvent la délivrer.
+- [ ] Recruter un expert « statut de la fonction publique territoriale » : premier besoin des élus (50 %), absent des cinq profils actuels.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

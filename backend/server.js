@@ -12,6 +12,7 @@ import usageRoutes from './routes/usage.js';
 import adminRoutes from './routes/admin.js';
 import clientRoutes from './routes/client.js';
 import vaultRoutes from './routes/vault.js';
+import contactRoutes from './routes/contact.js';
 import clientFicheRoutes from './routes/client_fiche.js'; // ← V5 : fiches client BDD
 import { localizeApiBody } from './services/i18n.js';
 import { pool } from './db/index.js';
@@ -107,6 +108,7 @@ app.use('/admin',   adminRoutes);
 app.use('/admin',   clientFicheRoutes);  // ← V5 : GET/POST /admin/client-fiche/:userId
 app.use('/client',  clientRoutes);
 app.use('/vault',   vaultRoutes);
+app.use('/contact', contactRoutes);   // V88.6 : contact, rendez-vous, devis
 
 app.use((err, _req, res, _next) => {
   if (String(err?.message || '').includes('CORS')) return res.status(403).json({ error: 'cors_blocked' });
@@ -123,9 +125,10 @@ async function ensureSchemaV89() {
     const path = await import('path');
     const { fileURLToPath } = await import('url');
     const dir = path.dirname(fileURLToPath(import.meta.url));
-    const sql = fs.readFileSync(path.join(dir, 'db', 'schema_patch_v89.sql'), 'utf8');
-    await pool.query(sql);
-    console.log('[boot] patch V89 vérifié');
+    for (const f of ['schema_patch_v89.sql', 'schema_patch_v90.sql']) {
+      await pool.query(fs.readFileSync(path.join(dir, 'db', f), 'utf8'));
+    }
+    console.log('[boot] patchs V89-V90 vérifiés');
   } catch (err) { console.error('[boot] patch V89 non appliqué :', err.message); }
 }
 ensureSchemaV89();
@@ -173,7 +176,7 @@ async function runMonthlyQuotaResetJob() {
              quota_period_start = quota_period_start + interval '1 month',
              updated_at = NOW()
        WHERE status = 'active'
-         AND plan_code IN ('ELU_A','COLLECTIVITE_A','STARTER_A','PRO_A')
+         AND plan_code IN ('ELU_A','COMMUNE_A','COLLECTIVITE_A','STARTER_A','PRO_A')
          AND quota_period_start IS NOT NULL
          AND quota_period_start + interval '1 month' <= NOW()`);
     if (r.rowCount) console.log(`[quota-job] ${r.rowCount} quota(s) annuel(s) remis à zéro`);

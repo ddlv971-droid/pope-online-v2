@@ -17,6 +17,9 @@ export const PLANS = {
   FREE:           { code: 'FREE',           family: 'free',         label: 'Découverte',    paid: false, monthly: 0,   expertLimit: TRIAL_EXPERT_LIMIT },
   ELU_M:          { code: 'ELU_M',          family: 'elu',          label: 'Élu',           paid: true,  monthly: 49,  price: 49,           interval: 'month', expertLimit: 10 },
   ELU_A:          { code: 'ELU_A',          family: 'elu',          label: 'Élu',           paid: true,  monthly: 49,  price: yearly(49),   interval: 'year',  expertLimit: 10 },
+  // V88.6 : offre Commune (moins de 10 000 hab.) — achat public, sur devis. Prix à valider.
+  COMMUNE_M:      { code: 'COMMUNE_M',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: 149,          interval: 'month', expertLimit: 10, seats: 3 },
+  COMMUNE_A:      { code: 'COMMUNE_A',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: yearly(149),  interval: 'year',  expertLimit: 10, seats: 3 },
   COLLECTIVITE_M: { code: 'COLLECTIVITE_M', family: 'collectivite', label: 'Collectivité',  paid: true,  monthly: 499, price: 499,          interval: 'month', expertLimit: UNLIMITED },
   COLLECTIVITE_A: { code: 'COLLECTIVITE_A', family: 'collectivite', label: 'Collectivité',  paid: true,  monthly: 499, price: yearly(499),  interval: 'year',  expertLimit: UNLIMITED },
   // Historique (non commercialisé)
@@ -32,7 +35,7 @@ export const CREDIT = { code: 'CREDIT', label: 'Conseil Expert à l\'unité', pr
 
 // Alias acceptés (admin, métadonnées Stripe, anciens codes sans suffixe)
 const ALIASES = {
-  ELU: 'ELU_M', COLLECTIVITE: 'COLLECTIVITE_M', STARTER: 'STARTER_M', PRO: 'PRO_M',
+  ELU: 'ELU_M', COLLECTIVITE: 'COLLECTIVITE_M', COMMUNE: 'COMMUNE_M', STARTER: 'STARTER_M', PRO: 'PRO_M',
   ELU_MENSUEL: 'ELU_M', ELU_ANNUEL: 'ELU_A',
 };
 
@@ -131,7 +134,7 @@ export function publicCatalogue() {
   return {
     currency: 'eur', taxes: 'HT', annual_discount: ANNUAL_DISCOUNT, response_delay: RESPONSE_DELAY_LABEL,
     trial: { days: TRIAL_DAYS, expert_limit: TRIAL_EXPERT_LIMIT },
-    plans: ['ELU_M', 'ELU_A', 'COLLECTIVITE_M', 'COLLECTIVITE_A'].map((c) => pick(PLANS[c])),
+    plans: ['ELU_M', 'ELU_A', 'COMMUNE_M', 'COMMUNE_A', 'COLLECTIVITE_M', 'COLLECTIVITE_A'].map((c) => pick(PLANS[c])),
     credit: { code: CREDIT.code, label: CREDIT.label, price: CREDIT.price },
   };
 }

@@ -26,7 +26,7 @@
     </a>
     <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span></span></button>
     <nav class="s-nav" id="sNav" aria-label="Navigation principale">
-      <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="mailto:contact@pope-online.com">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
+      <a href="elus.html">Pour les élus</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
     </nav>
   </div>
 </header>
@@ -43,7 +43,7 @@
       <p class="s-lead">Budget, personnel communal, marchés publics : posez votre question, un expert de terrain vous répond sous 24 h. Confidentiel, sans engagement.</p>
       <div class="s-actions">
         <a class="s-btn s-btn-primary" href="signup-public.html">Tester gratuitement 15 jours</a>
-        <a class="s-btn s-btn-ghost" href="tel:+33970703055">Parler à un conseiller</a>
+        <button class="s-btn s-btn-ghost" type="button" data-contact="rappel">Parler à un conseiller</button>
       </div>
       <p class="s-reassure">2 Conseils Expert offerts · Sans carte bancaire · Sans engagement</p>
     </div>
@@ -153,10 +153,12 @@
     <ul class="s-marquee-list">
           <li>Budget communal</li>
           <li>Personnel communal</li>
+          <li>Urbanisme</li>
           <li>Marchés publics</li>
           <li>Délibérations</li>
           <li>Conseil municipal</li>
-          <li>Expert dédié</li>
+          <li>Intercommunalité</li>
+          <li>Un expert par dossier</li>
           <li>Statut de la fonction publique territoriale</li>
           <li>Communication de crise</li>
           <li>Réponse sous 24 h</li>
@@ -165,10 +167,12 @@
     <ul class="s-marquee-list" aria-hidden="true">
           <li>Budget communal</li>
           <li>Personnel communal</li>
+          <li>Urbanisme</li>
           <li>Marchés publics</li>
           <li>Délibérations</li>
           <li>Conseil municipal</li>
-          <li>Expert dédié</li>
+          <li>Intercommunalité</li>
+          <li>Un expert par dossier</li>
           <li>Statut de la fonction publique territoriale</li>
           <li>Communication de crise</li>
           <li>Réponse sous 24 h</li>
@@ -181,9 +185,9 @@
 <section class="s-section">
   <div class="s-wrap">
     <div class="s-section-head">
-      <h2 class="s-h2">Trois sujets sur lesquels les élus nous sollicitent en priorité</h2>
+      <h2 class="s-h2">Quatre sujets sur lesquels les élus nous sollicitent en priorité</h2>
     </div>
-    <div class="s-cols">
+    <div class="s-cols s-cols-4">
       <div class="s-col">
         <h3 class="s-h3">Personnel communal</h3>
         <p>Recrutement, carrière, discipline, conflit : comprenez vos obligations d'employeur avant de décider.</p>
@@ -191,6 +195,10 @@
       <div class="s-col">
         <h3 class="s-h3">Budget et finances</h3>
         <p>Lisez votre budget, préparez vos arbitrages et posez les bonnes questions avant le conseil municipal.</p>
+      </div>
+      <div class="s-col">
+        <h3 class="s-h3">Urbanisme</h3>
+        <p>Permis de construire, PLU, recours des riverains : sécurisez vos décisions avant de signer un arrêté.</p>
       </div>
       <div class="s-col">
         <h3 class="s-h3">Marchés publics</h3>
@@ -207,8 +215,8 @@
     </div>
     <ol class="s-steps">
       <li><h3 class="s-h3">Vous posez votre question</h3><p>Vous décrivez votre situation et déposez vos documents, en toute confidentialité.</p></li>
-      <li><h3 class="s-h3">Un expert étudie votre dossier</h3><p>Un expert de terrain (juriste, financier, spécialiste des marchés publics) étudie votre dossier.</p></li>
-      <li><h3 class="s-h3">Vous décidez en connaissance de cause</h3><p>Vous recevez une réponse claire et argumentée sous 24 h.</p></li>
+      <li><h3 class="s-h3">Un expert étudie votre dossier</h3><p>Un expert désigné selon le domaine (juriste, financier, urbaniste, spécialiste des marchés publics) étudie votre dossier. Vous gardez le même interlocuteur jusqu'à la fin.</p></li>
+      <li><h3 class="s-h3">Vous décidez en connaissance de cause</h3><p>Vous recevez une réponse claire et argumentée sous 24 h ouvrées.</p></li>
     </ol>
   </div>
 </section>
@@ -216,7 +224,7 @@
 <section class="s-section">
   <div class="s-wrap">
     <div class="s-facts">
-      <div class="s-fact"><div class="s-fact-value">24 h</div><div class="s-fact-label">Réponse expert garantie</div></div>
+      <div class="s-fact"><div class="s-fact-value">24 h</div><div class="s-fact-label">Réponse expert, jours ouvrés</div></div>
       <div class="s-fact"><div class="s-fact-value">15 jours</div><div class="s-fact-label">Essai gratuit, sans carte bancaire</div></div>
       <div class="s-fact"><div class="s-fact-value">100 %</div><div class="s-fact-label">Dédié aux élus et aux collectivités</div></div>
       <div class="s-fact"><div class="s-fact-value">+30</div><div class="s-fact-label">Experts mobilisables</div></div>
@@ -227,23 +235,91 @@
 <section class="s-section s-section-white" id="experts">
   <div class="s-wrap">
     <div class="s-section-head">
-      <h2 class="s-h2">Des experts issus du terrain</h2>
-      <p>Derrière chaque réponse, un professionnel issu du terrain public ou privé. Il lit votre dossier en entier et vous répond personnellement.</p>
+      <h2 class="s-h2">Qui vous répond ?</h2>
+      <p>Des praticiens qui ont exercé dans les collectivités, à des postes de responsabilité. Chacun lit votre dossier en entier et vous répond personnellement.</p>
     </div>
-    <div class="s-experts">
-      <div class="s-expert"><h3>Ressources humaines</h3><p>Statut de la fonction publique territoriale, recrutement, carrière, discipline.</p></div>
-      <div class="s-expert"><h3>Finances et gestion</h3><p>Budget M57, préparation budgétaire, fiscalité locale, plans de financement.</p></div>
-      <div class="s-expert"><h3>Marchés publics</h3><p>Choix de la procédure, analyse des offres, points de vigilance avant signature.</p></div>
-      <div class="s-expert"><h3>Droit public</h3><p>Délibérations, actes, compétences, sécurisation avant le contrôle de légalité.</p></div>
-      <div class="s-expert"><h3>Médiation et conflits</h3><p>Tensions au sein des équipes, conflits avec un administré, sortie de crise.</p></div>
-      <div class="s-expert"><h3>Communication de crise</h3><p>Polémique locale, prise de parole publique, réponse sur les réseaux sociaux.</p></div>
+    <div class="s-profiles">
+      <article class="s-profile">
+        <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <h3>Finances locales et pilotage</h3>
+        <p class="s-profile-lead">Ancien directeur général des services d'une commune de 25 000 habitants et ancien directeur des finances.</p>
+        <ul><li>A piloté un programme d'investissement de 72 M€ sur cinq ans, financé à 38 % par des subventions.</li><li>Maîtrise la lecture d'un budget : épargne brute, endettement, prospective.</li><li>Forme les cadres territoriaux aux finances et au pilotage.</li></ul>
+        <div class="s-profile-tags"><span>Budget</span><span>Subventions</span><span>Marchés publics</span></div>
+      </article><article class="s-profile">
+        <div class="s-profile-top"><span class="s-profile-years">20 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <h3>Urbanisme et projets d'aménagement</h3>
+        <p class="s-profile-lead">Ingénieure territoriale principale, ancienne directrice d'un service instructeur des autorisations d'urbanisme.</p>
+        <ul><li>A conduit la révision d'un PLU et la dématérialisation de l'instruction des permis.</li><li>A piloté des opérations de A à Z : groupes scolaires, médiathèque, aménagements urbains.</li><li>A monté plus de 12 M€ de financements, dont 9 M€ de fonds européens.</li></ul>
+        <div class="s-profile-tags"><span>Permis et PLU</span><span>Travaux</span><span>Financements</span></div>
+      </article><article class="s-profile">
+        <div class="s-profile-top"><span class="s-profile-years">28 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <h3>Management, dialogue social et gouvernance</h3>
+        <p class="s-profile-lead">Directeur de cabinet d'une grande collectivité, ancien directeur général adjoint d'une agglomération de 67 000 habitants.</p>
+        <ul><li>A conduit des réorganisations de services en dialogue avec les organisations syndicales.</li><li>Connaît de l'intérieur la relation entre l'exécutif, le cabinet et l'administration.</li><li>Longue expérience des collectivités d'outre-mer et de l'intercommunalité.</li></ul>
+        <div class="s-profile-tags"><span>Personnel et conflits</span><span>Gouvernance</span><span>Outre-mer</span></div>
+      </article><article class="s-profile">
+        <div class="s-profile-top"><span class="s-profile-years">30 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <h3>Déontologie, contrôle et prévention des risques</h3>
+        <p class="s-profile-lead">Ancien directeur du contrôle interne et de l'audit d'un département, puis associé responsable du secteur public local d'un cabinet d'audit international.</p>
+        <ul><li>A accompagné plus de dix collectivités et organismes publics dans la prévention des atteintes à la probité.</li><li>Spécialiste des conflits d'intérêts et du contrôle interne.</li><li>Membre de commissions nationales de normalisation en gouvernance et conformité.</li></ul>
+        <div class="s-profile-tags"><span>Conflits d'intérêts</span><span>Contrôle</span><span>Marchés publics</span></div>
+      </article><article class="s-profile">
+        <div class="s-profile-top"><span class="s-profile-years">5 ans</span><span class="s-profile-years-label">de terrain</span></div>
+        <h3>Audit financier et fonds européens</h3>
+        <p class="s-profile-lead">Double formation en science politique et en finance, cinq ans d'audit financier dans un cabinet international de référence.</p>
+        <ul><li>Analyse la fiabilité des comptes et la solidité du contrôle interne.</li><li>Vérifie la conformité des dépenses aux règles des fonds européens (FEDER, FSE+).</li><li>Prépare les collectivités aux audits et aux contrôles.</li></ul>
+        <div class="s-profile-tags"><span>Comptes</span><span>Fonds européens</span><span>Contrôles</span></div>
+      </article>
+      <article class="s-profile s-profile-more">
+        <div class="s-profile-top"><span class="s-profile-years">+30</span><span class="s-profile-years-label">experts mobilisables</span></div>
+        <h3>Et aussi</h3>
+        <p class="s-profile-lead">Le réseau couvre les autres sujets du quotidien d'un élu :</p>
+        <ul><li>Ressources humaines et statut de la fonction publique territoriale</li><li>Droit public, délibérations et actes</li><li>Médiation et communication de crise</li><li>Transition écologique et cybersécurité</li></ul>
+        <a class="s-profile-link" href="#exemple">Lire un Conseil Expert complet</a>
+      </article>
     </div>
-    <p class="s-also"><strong>Et aussi :</strong> travaux et maîtrise d'ouvrage, audit des organisations, transition écologique, cybersécurité, usages de l'intelligence artificielle.</p>
+    <p class="s-profiles-note">Cinq experts du réseau, présentés de manière anonyme : leurs noms ne sont pas publiés afin de garantir leur indépendance vis-à-vis des collectivités qu'ils conseillent.</p>
   </div>
 </section>
 
-<!-- Emplacement réservé aux témoignages d'élus pilotes : à activer après la bêta,
-     avec leur accord écrit (cahier des modifications, bloc 6). -->
+<section class="s-section">
+  <div class="s-wrap">
+    <div class="s-sample" id="exemple">
+      <div class="s-sample-doc" aria-hidden="true">
+        <span class="s-sample-doc-kicker">Conseil Expert</span>
+        <span class="s-sample-doc-title">Permis de construire contesté et PLU en révision</span>
+        <span class="s-sample-doc-meta">Commune de 15 000 habitants · 5 pages</span>
+      </div>
+      <div>
+        <h3 class="s-h3">Lisez un Conseil Expert complet</h3>
+        <p>Une adjointe à l'urbanisme nous interroge sur un projet de 32 logements contesté par les riverains, alors que le PLU est en révision. Voici la réponse de l'experte, telle qu'elle l'a reçue, anonymisée.</p>
+        <a class="s-btn s-btn-primary" href="/docs/exemple-conseil-expert-urbanisme.pdf" download>Télécharger l'exemple (PDF)</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="s-section s-section-white" id="temoignages" data-testimonials>
+  <div class="s-wrap">
+    <div class="s-section-head">
+      <h2 class="s-h2">Ce que nous disent les élus</h2>
+    </div>
+    <div class="s-testimonials">
+      <figure class="s-testimonial">
+        <blockquote>« Ma première question me paraissait presque trop simple pour être posée. La réponse est arrivée le lendemain matin : claire, sourcée, avec ce qu'il fallait vérifier auprès de ma secrétaire de mairie. Je ne cherche plus seul, tard le soir. »</blockquote>
+        <figcaption><strong>Maire</strong>commune rurale de 2 300 habitants</figcaption>
+      </figure><figure class="s-testimonial">
+        <blockquote>« Ma première demande est partie sans le document principal : j'avais joint le mauvais fichier. L'expert m'a appelé dans l'heure, nous avons repris la question ensemble au téléphone, et la réponse complète est arrivée le lendemain. Un faux départ de ma part, rattrapé avec beaucoup de simplicité. »</blockquote>
+        <figcaption><strong>Conseiller municipal délégué</strong>commune de 4 500 habitants</figcaption>
+      </figure><figure class="s-testimonial">
+        <blockquote>« Le premier avis était solide, mais trop long pour être transmis tel quel au maire. Je l'ai signalé : depuis, chaque réponse commence par une synthèse de cinq lignes. C'est exactement ce dont un DGS a besoin. »</blockquote>
+        <figcaption><strong>Directeur général des services</strong>commune de 12 000 habitants</figcaption>
+      </figure>
+    </div>
+    <p class="s-testimonials-note">Témoignages présentés à titre d'illustration, en attendant ceux des élus de la phase bêta.</p>
+  </div>
+</section>
+
 
 <section class="s-final">
   <div class="s-wrap">
@@ -251,7 +327,7 @@
     <p>Essai gratuit de 15 jours, 2 Conseils Expert offerts, sans carte bancaire.</p>
     <div class="s-actions">
       <a class="s-btn s-btn-light" href="signup-public.html">Tester gratuitement</a>
-      <a class="s-btn s-btn-outline-light" href="tel:+33970703055">Parler à un conseiller</a>
+      <button class="s-btn s-btn-outline-light" type="button" data-contact="rappel">Parler à un conseiller</button>
     </div>
   </div>
 </section>
@@ -268,6 +344,8 @@
       <a href="pricing.html">Tarifs</a>
       <a href="about.html">Qui sommes-nous</a>
       <a href="tutoriel.html">Tutoriel</a>
+      <a href="deontologie.html">Charte de déontologie</a>
+      <a href="#contact" data-contact="rappel">Être rappelé</a>
       <a href="legal.html">Mentions légales</a>
       <a href="cgu.html">CGU</a>
       <a href="cgv.html">CGV</a>
@@ -276,6 +354,83 @@
   </div>
   <div class="s-wrap" style="margin-top:22px">© Pope Consulting SAS</div>
 </footer>
+
+<div class="s-modal-back" id="ctBack" aria-hidden="true">
+  <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
+    <button class="s-modal-close" type="button" id="ctClose" aria-label="Fermer">×</button>
+    <h2 id="ctTitle">Parler à un conseiller</h2>
+    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>.</p>
+    <form id="ctForm" class="s-form" novalidate>
+      <label class="s-field s-field-full">Votre demande
+        <select name="subject" id="ctSubject">
+          <option value="rappel">Être rappelé par téléphone</option>
+          <option value="visio">Prendre rendez-vous en visioconférence</option>
+          <option value="devis_commune">Demander un devis : offre Commune</option>
+          <option value="devis_collectivite">Demander un devis : offre Collectivité</option>
+          <option value="question">Poser une question sur le service</option>
+        </select>
+      </label>
+      <label class="s-field">Nom et prénom<input name="name" autocomplete="name" required/></label>
+      <label class="s-field">Fonction
+        <select name="role">
+          <option value="">Choisir</option><option>Maire</option><option>Adjoint(e)</option><option>Conseiller(ère) municipal(e)</option>
+          <option>Élu(e) intercommunal(e), départemental(e) ou régional(e)</option><option>DGS ou secrétaire de mairie</option><option>Autre</option>
+        </select>
+      </label>
+      <label class="s-field s-field-full">Collectivité<input name="organization" placeholder="Commune, intercommunalité, département…"/></label>
+      <label class="s-field">E-mail<input name="email" type="email" autocomplete="email"/></label>
+      <label class="s-field">Téléphone<input name="phone" type="tel" autocomplete="tel"/></label>
+      <label class="s-field s-field-full">Créneau souhaité<input name="slot" placeholder="Ex. jeudi matin, ou mardi après 18 h, heure de Guadeloupe"/></label>
+      <label class="s-field s-field-full">Message (facultatif)<textarea name="message" rows="3"></textarea></label>
+      <input name="website" tabindex="-1" autocomplete="off" class="s-hp" aria-hidden="true"/>
+      <p class="s-form-msg" id="ctMsg" role="status"></p>
+      <div class="s-field-full s-form-actions">
+        <button class="s-btn s-btn-primary" type="submit" id="ctSubmit">Envoyer ma demande</button>
+        <a class="s-btn s-btn-ghost" id="ctBooking" href="#" target="_blank" rel="noopener" hidden>Réserver un créneau en ligne</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script type="module">
+import { apiFetch } from './api.js';
+const back = document.getElementById('ctBack'), form = document.getElementById('ctForm'), msg = document.getElementById('ctMsg');
+const S = window.POPE_SITE || {};
+const booking = document.getElementById('ctBooking');
+if (S.bookingUrl) { booking.href = S.bookingUrl; booking.hidden = false; }
+function open(subject) {
+  if (subject) document.getElementById('ctSubject').value = subject;
+  msg.textContent = ''; msg.className = 's-form-msg';
+  back.classList.add('open'); back.setAttribute('aria-hidden', 'false');
+  setTimeout(() => form.querySelector('[name=name]').focus(), 50);
+}
+function close() { back.classList.remove('open'); back.setAttribute('aria-hidden', 'true'); }
+window.POPE_openContact = open;
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-contact]');
+  if (!t) return;
+  e.preventDefault(); open(t.getAttribute('data-contact') || 'rappel');
+});
+document.getElementById('ctClose').onclick = close;
+back.addEventListener('click', (e) => { if (e.target === back) close(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+if (/[#&]contact\b/.test(location.hash)) open();
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
+  if (!data.name || (!data.email && !data.phone)) {
+    msg.textContent = 'Indiquez votre nom et un moyen de vous joindre (e-mail ou téléphone).'; msg.className = 's-form-msg err'; return;
+  }
+  const btn = document.getElementById('ctSubmit'); btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    await apiFetch('/contact', { method: 'POST', body: data });
+    form.reset();
+    msg.textContent = 'Merci, votre demande est bien partie. Un conseiller revient vers vous sous un jour ouvré.'; msg.className = 's-form-msg ok';
+  } catch (err) {
+    msg.innerHTML = "L'envoi n'a pas abouti. Écrivez-nous à <a href=\"mailto:contact@pope-online.com\">contact@pope-online.com</a> ou appelez le 09 70 70 30 55.";
+    msg.className = 's-form-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Envoyer ma demande'; }
+});
+</script>
 
 <div class="ck-overlay" id="ckOverlay" hidden></div>
 <div class="ck-panel" id="ckMain" hidden role="dialog" aria-modal="true" aria-labelledby="ckTitleMain">
@@ -302,6 +457,8 @@
 
 <script>
 (function(){
+  /* Témoignages illustratifs : masquables depuis site-config.js */
+  if(window.POPE_SITE&&window.POPE_SITE.showTestimonials===false){document.querySelectorAll('[data-testimonials]').forEach(function(e){e.remove();});}
   /* Menu mobile */
   var b=document.getElementById('sBurger'), n=document.getElementById('sNav');
   if(b&&n){

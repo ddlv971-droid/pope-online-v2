@@ -19,6 +19,7 @@ const FR_MESSAGES = {
   user_not_found: "Utilisateur introuvable.",
   wallet_missing: "Aucun accès n'est associé à ce compte.",
   trial_expired: "Votre période d'essai est terminée. Souscrivez l'offre Élu pour continuer à solliciter un expert.",
+  contact_missing_fields: "Indiquez votre nom et un moyen de vous joindre (e-mail ou téléphone).",
   private_space_disabled: "Les inscriptions à l'espace entreprises sont momentanément fermées. Contactez-nous au 09 70 70 30 55.",
   subscription_required: "Pour solliciter un expert, souscrivez l'offre Élu (49 € HT par mois, sans engagement).",
   expert_limit_reached: "Vos Conseils Expert du mois sont utilisés. Vous pouvez en ajouter un à l'unité depuis la page Tarifs.",
