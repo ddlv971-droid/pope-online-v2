@@ -255,7 +255,15 @@
   </div>
 </div>
 <script type="module">
-import { apiFetch } from './api.js';
+/* V88.8 : aucun import de api.js ici. Importer api.js faisait charger par Vite la
+   feuille de style de l'espace connecté (app.css) sur le site vitrine, dont une règle
+   rendait le menu mobile toujours visible. */
+const API = ((import.meta.env && import.meta.env.VITE_API_URL) || 'https://pope-online-v2.onrender.com').trim().replace(/\/$/, '');
+async function apiFetch(path, { method = 'GET', body = null } = {}) {
+  const res = await fetch(API + path, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : null, credentials: 'include' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json().catch(() => ({}));
+}
 const back = document.getElementById('ctBack'), form = document.getElementById('ctForm'), msg = document.getElementById('ctMsg');
 const S = window.POPE_SITE || {};
 const booking = document.getElementById('ctBooking');

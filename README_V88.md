@@ -318,6 +318,19 @@ Les élus consulteront le site à 80 % sur téléphone. Le site vitrine a été 
 - **Pied de page** : liens espacés pour le doigt.
 - **Espace connecté** : onglets du tableau de bord défilants, signature de la barre supérieure masquée sur petit écran, champs à 16 px.
 
+### Correctif menu mobile (V88.8)
+
+**Symptôme.** Sur mobile, le menu restait affiché par-dessus la page d'accueil, même fermé.
+
+**Cause.** Depuis la V88.6, le formulaire de contact importait `api.js`. Vite rangeait alors le code des pages vitrine dans un morceau commun auquel est rattachée la feuille de style de l'espace connecté (`app.css`, 245 Ko). Une règle de cette feuille (`nav { display: flex }` sous 768 px) forçait l'affichage du menu.
+
+**Corrections.**
+1. Le formulaire de contact appelle l'API sans importer `api.js`.
+2. Le polyfill Vite est isolé dans son propre morceau (`vite.config.js`).
+3. Un garde-fou CSS fait qu'un menu fermé reste caché, quelle que soit la feuille de style chargée.
+
+Les pages vitrine ne chargent plus `app.css`, ce qui les rend nettement plus légères sur mobile. Vérifié sur le build : à l'ouverture le menu est caché, il s'ouvre puis se referme au toucher, et il se referme quand on choisit un lien.
+
 ### E-mails
 
 Fin d'essai (API et script cron), activation, crédit ajouté, renouvellement, résiliation et réponse d'expert sont réécrits. Ils ne mentionnent plus d'espace, ni Starter/Pro, ni « relecture ».

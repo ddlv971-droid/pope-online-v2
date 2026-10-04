@@ -943,3 +943,10 @@ button.s-btn { font-family: var(--font-sans); }
 /* Champs de formulaire : jamais plus larges que la feuille */
 .s-form, .s-field { min-width: 0; }
 .s-field input, .s-field select, .s-field textarea { width: 100%; min-width: 0; box-sizing: border-box; }
+
+/* Garde-fou V88.8 : le menu mobile n'est visible qu'ouvert, quelle que soit
+   la feuille de style chargée par ailleurs */
+@media (max-width: 1180px) {
+  .s-header .s-nav:not(.open) { display: none !important; }
+  .s-header .s-nav.open { display: flex !important; }
+}

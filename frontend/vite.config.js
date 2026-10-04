@@ -46,6 +46,9 @@ export default defineConfig(({ mode }) => ({
         // Eviter que api.js soit extrait en chunk separe
         // qui peut etre bloque par certains proxies/firewalls
         manualChunks: (id) => {
+          // V88.8 : polyfill Vite isolé. Sinon Rollup le range dans un chunk commun
+          // porteur d'app.css, qui se retrouvait chargé sur les pages du site vitrine.
+          if (id.includes('modulepreload-polyfill')) return 'polyfill';
           // Chunk partagé stable pour éviter que app.js finisse dans cgu
           if (id.includes('/app.js') || id.includes('/api.js') ||
               id.includes('/archive.js') || id.includes('/turnstile.js') ||
