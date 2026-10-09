@@ -152,8 +152,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
-    <button data-logout>🚪 Déconnexion</button>
-</div>
 
 <main class="v36-mission-layout">
 
@@ -171,7 +169,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v36-diff-card">
       <div class="icon">⚡</div>
       <h3>Outil de rédaction</h3>
-      <p>Vous savez ce que vous voulez produire. Vous avez le contexte et l'objectif. L'IA génère, vous exploitez.</p>
+      <p>Vous savez ce que vous voulez produire. Vous avez le contexte et l'objectif. L'outil vous guide, vous exploitez.</p>
       <a href="app.html" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#4B5650">→ Accéder</a>
     </div>
     <div class="v36-diff-card">
@@ -195,6 +193,42 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <p id="missionFormLead">Plus votre description est précise, plus notre proposition d'accompagnement sera pertinente. Nous revenons vers vous après analyse et cadrage.</p>
     </div>
     <div class="v36-mission-form-body">
+
+            <!-- Coordonnées -->
+      <div class="v36-field">
+        <label for="fullName">
+          Votre nom
+          <span class="v36-field-badge required">Obligatoire</span>
+        </label>
+        <input class="input" id="fullName" autocomplete="name" placeholder="Prénom Nom"/>
+      </div>
+      <div class="v36-field">
+        <label for="organization">Collectivité / structure</label>
+        <input class="input" id="organization" autocomplete="organization" placeholder="Ex : Commune de …, Communauté de communes …"/>
+      </div>
+      <div class="v36-field">
+        <label for="phone">Téléphone (pour vous rappeler)</label>
+        <input class="input" id="phone" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"/>
+      </div>
+      <div class="v36-field">
+        <label for="domain">
+          Domaine concerné
+          <span class="v36-field-badge required">Obligatoire</span>
+        </label>
+        <select class="input" id="domain">
+          <option value="">Choisir un domaine…</option>
+          <option>Budget et finances locales</option>
+          <option>Ressources humaines</option>
+          <option>Marchés publics</option>
+          <option>Urbanisme et aménagement</option>
+          <option>Institutions et juridique</option>
+          <option>Autre / plusieurs domaines</option>
+        </select>
+      </div>
+      <div class="v36-field">
+        <label for="deadline">Échéance souhaitée</label>
+        <input class="input" id="deadline" placeholder="Ex : conseil municipal du 15 décembre, sous 2 semaines…"/>
+      </div>
 
       <!-- Sujet -->
       <div class="v36-field">
@@ -245,7 +279,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <span style="font-size:20px;flex-shrink:0">ℹ️</span>
         <div>
           <strong>Comment ça se passe ?</strong><br>
-          Votre demande est transmise à votre conseiller POPE Online. Après analyse, nous revenons vers vous dans les <strong>48h ouvrées</strong> avec un cadrage et une proposition d'accompagnement. Vous recevez une notification par email et dans votre espace.
+          Votre demande est transmise à l'équipe POPE Online (contact@pope-online.com, avec copie à Pope Consulting). Après analyse, nous revenons vers vous dans les <strong>24 h ouvrées</strong> avec un cadrage et une proposition d'accompagnement. Vous recevez une notification par email et dans votre espace.
         </div>
       </div>
 

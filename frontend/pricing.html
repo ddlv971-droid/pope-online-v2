@@ -26,7 +26,7 @@
     </a>
     <button class="s-burger" id="sBurger" type="button" aria-expanded="false" aria-controls="sNav" aria-label="Ouvrir le menu"><span class="s-burger-lines" aria-hidden="true"></span></button>
     <nav class="s-nav" id="sNav" aria-label="Navigation principale">
-      <a href="elus.html">Pour qui ?</a><a href="elus.html#exemples">Exemples de questions</a><a href="pricing.html" aria-current="page">Tarifs</a><a href="about.html">Qui sommes-nous</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
+      <a href="elus.html">Pour qui ?</a><a href="about.html">Qui sommes-nous</a><a href="pricing.html" aria-current="page">Tarifs</a><a href="#contact" data-contact="rappel">Contact</a><a href="login.html">Connexion</a><a class="s-btn s-btn-primary s-btn-sm" href="signup-public.html">Tester gratuitement</a>
     </nav>
   </div>
 </header>
@@ -223,15 +223,20 @@
     document.getElementById('coList').innerHTML=items.map(function(i){return '<li>'+i+'</li>';}).join('');
     var act=document.getElementById('coActions'), url=link(key);
     var mail='mailto:'+(S.email||'contact@pope-online.com')+'?subject='+encodeURIComponent(mailSubject);
+    var nextUrl='pricing.html?plan='+plan+(annual?'&billing=annual':'');
     if(!u){
-      act.innerHTML='<p style="margin:0 0 14px;color:var(--ink-soft)">Pour souscrire, connectez-vous à votre compte. Pas encore de compte ? L\'essai gratuit de 15 jours vous permet de le créer.</p>'+
-        '<a class="s-btn s-btn-primary" href="login.html?next='+encodeURIComponent('pricing.html')+'">Me connecter</a>'+
+      act.innerHTML='<p style="margin:0 0 14px;color:var(--ink-soft)">Pour souscrire, connectez-vous à votre compte. Pas encore de compte ? L\'essai gratuit de 15 jours vous permet de le créer.</p>'+
+        '<a class="s-btn s-btn-primary" href="login.html?next='+encodeURIComponent(nextUrl)+'">Me connecter</a>'+
         '<a class="s-btn s-btn-ghost" style="margin-top:10px" href="signup-public.html">Créer mon compte</a>';
+    } else if(plan==='collectivite'){
+      act.innerHTML=(url?'<a class="s-btn s-btn-primary" rel="noopener" href="'+withRef(url,key,u)+'">Continuer vers le paiement</a>':'')+
+        '<button class="s-btn '+(url?'s-btn-ghost':'s-btn-primary')+'" style="margin-top:10px" type="button" data-devis="collectivite">Demander un devis</button>';
     } else if(url){
-      act.innerHTML='<a class="s-btn s-btn-primary" rel="noopener" href="'+withRef(url,key,u)+'">Continuer vers le paiement</a>'+
-        (plan==='collectivite'?'<button class="s-btn s-btn-ghost" style="margin-top:10px" type="button" data-devis="collectivite">Demander un devis</button>':'');
+      act.innerHTML='<a class="s-btn s-btn-primary" rel="noopener" href="'+withRef(url,key,u)+'">Continuer vers le paiement</a>';
     } else {
-      act.innerHTML=(plan==='collectivite'?'<button class="s-btn s-btn-primary" type="button" data-devis="collectivite">Demander un devis</button>':'<a class="s-btn s-btn-primary" href="'+mail+'">Nous écrire pour souscrire</a>');
+      /* Pas de lien statique : la session de paiement Stripe est créée par l'API */
+      act.innerHTML='<button class="s-btn s-btn-primary" type="button" data-pay="'+key+'" data-mail="'+mail+'">Continuer vers le paiement</button>'+
+        '<p id="coMsg" role="alert" style="margin:10px 0 0;color:#a1261b;font-size:14px"></p>';
     }
     back.classList.add('open');back.setAttribute('aria-hidden','false');
   }
@@ -248,12 +253,31 @@
     grid.addEventListener('scroll',function(){if(window.innerWidth>640)return;var mid=grid.scrollLeft+grid.clientWidth/2,best=def,d=1e9;
       cards.forEach(function(c){var m=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(m<d){d=m;best=c;}});activate(best);},{passive:true});
   })();
-  document.getElementById('coActions').addEventListener('click',function(e){if(e.target.closest('[data-contact]'))close();});
+  document.getElementById('coActions').addEventListener('click',function(e){
+    if(e.target.closest('[data-contact]'))close();
+    var pay=e.target.closest('[data-pay]'); if(!pay)return;
+    var msg=document.getElementById('coMsg'); if(msg)msg.textContent='';
+    var label=pay.textContent; pay.disabled=true; pay.textContent='Redirection vers le paiement…';
+    window.POPE_checkout(pay.getAttribute('data-pay')).then(function(r){
+      if(r&&r.url){window.location.href=r.url;return;}
+      throw {message:'Paiement indisponible.'};
+    }).catch(function(err){
+      pay.disabled=false; pay.textContent=label;
+      if(err&&err.status===401){window.location.href='login.html?next='+encodeURIComponent('pricing.html?plan='+(pay.getAttribute('data-pay').indexOf('credit')===0?'credit':'elu')+(annual?'&billing=annual':''));return;}
+      var unavailable=err&&err.data&&(err.data.error==='payment_not_configured'||err.data.error==='payment_provider_error');
+      if(msg)msg.innerHTML=(unavailable?'Le paiement en ligne est momentanément indisponible. ':'Le paiement n\'a pas pu démarrer. ')+'<a href="'+pay.getAttribute('data-mail')+'">Nous écrire pour souscrire</a>';
+    });
+  });
   document.querySelectorAll('[data-plan]').forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-plan'));});});
-  var want=new URLSearchParams(location.search).get('plan');
+  var qs=new URLSearchParams(location.search), want=qs.get('plan');
+  if(qs.get('billing')==='annual'){annual=true;render();}
   if(want==='elu'||want==='credit')open(want);
   if(want==='commune'||want==='collectivite'){setTimeout(function(){if(window.POPE_openDevis)window.POPE_openDevis(want);},300);}
 })();
+</script>
+<script type="module">
+import { apiFetch } from './api.js';
+window.POPE_checkout = function (key) { return apiFetch('/billing/checkout', { method: 'POST', body: { plan: key } }); };
 </script>
 </main>
 <footer class="s-footer">
@@ -264,12 +288,12 @@
       <span><a href="mailto:contact@pope-online.com">contact@pope-online.com</a></span>
     </div>
     <nav aria-label="Liens légaux">
-      <a href="elus.html">Pour qui ?</a>
-      <a href="pricing.html">Tarifs</a>
+      <a href="elus.html">Pour qui ?</a>
       <a href="about.html">Qui sommes-nous</a>
+      <a href="pricing.html">Tarifs</a>
+      <a href="#contact" data-contact="rappel">Être rappelé</a>
       <a href="tutoriel.html">Tutoriel</a>
       <a href="deontologie.html">Charte de déontologie</a>
-      <a href="#contact" data-contact="rappel">Être rappelé</a>
       <a href="legal.html">Mentions légales</a>
       <a href="cgu.html">CGU</a>
       <a href="cgv.html">CGV</a>

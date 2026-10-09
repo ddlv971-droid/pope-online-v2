@@ -307,6 +307,13 @@ function loadQuota(){
   }).catch(function(){});
 }
 
+function dlFile(id,name){
+  fetch(API+'/expert/files/'+encodeURIComponent(id),{headers:{Authorization:'Bearer '+token()},credentials:'include'})
+    .then(function(r){if(!r.ok)throw new Error('Erreur '+r.status);return r.blob();})
+    .then(function(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name||'document';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},60000);})
+    .catch(function(e){toast('T\u00e9l\u00e9chargement impossible : '+e.message,'err');});
+}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ef]');if(!b)return;e.preventDefault();dlFile(b.getAttribute('data-ef'),b.getAttribute('data-name'));});
 function loadRequests(){
   var list=$('requestsList');if(!list)return;
   list.innerHTML='<div style="text-align:center;padding:48px;color:var(--muted);font-size:14px">Chargement de vos dossiers\u2026</div>';
@@ -346,8 +353,13 @@ function loadRequests(){
           +'</div>';
       }
       var vaultHtml='';
+      var rfiles=(r.files&&r.files.length)?r.files.filter(function(f){return f.kind!=='generation';}):[];
       var vids=(r.vault_file_ids&&r.vault_file_ids.length)?r.vault_file_ids:[];
-      if(vids.length){
+      if(rfiles.length){
+        vaultHtml='<div class="st-req-section"><div class="st-req-section-label">&#x1F4CE; Pi\u00e8ces jointes ('+rfiles.length+')</div><div class="st-vault-links">'
+          +rfiles.map(function(f){return'<a href="#" data-ef="'+esc(f.id)+'" data-name="'+esc(f.name)+'" class="st-vault-link">&#x1F4C4; '+esc(f.name)+'</a>';}).join('')
+          +'</div></div>';
+      } else if(vids.length){
         vaultHtml='<div class="st-req-section"><div class="st-req-section-label">&#x1F4CE; Pi\u00e8ces jointes ('+vids.length+')</div><div class="st-vault-links">'
           +vids.map(function(fid){var nm=decodeURIComponent(String(fid)).split('/').pop();return'<a href="'+API+'/vault/'+encodeURIComponent(fid)+'/download" target="_blank" rel="noopener" class="st-vault-link">&#x1F4C4; '+esc(nm)+'</a>';}).join('')
           +'</div></div>';

@@ -5,7 +5,7 @@ import { sendMail } from '../services/mailer.js';
 import { requireAuth } from '../middleware/auth.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
 import {
-  publicCatalogue, resolvePurchase, resolvePlanFromInvoiceLines, parseClientReference,
+  publicCatalogue, getPlan, CREDIT, resolvePurchase, resolvePlanFromInvoiceLines, parseClientReference,
   isUnlimited, RESPONSE_DELAY_LABEL
 } from '../services/plans.js';
 
@@ -15,6 +15,89 @@ const SIGNATURE_TOLERANCE_SECONDS = 300;
 // ── GET /billing/plans — catalogue V88 (Élu, Collectivité, crédit) ──────────
 router.get('/plans', (_req, res) => {
   res.json(publicCatalogue());
+});
+
+// ── POST /billing/checkout — ouvre la page de paiement Stripe (V88.11) ───────
+// Corrige « Souscrire l'offre Élu ne renvoie pas au paiement » : plus besoin de créer des
+// liens de paiement à la main. Nécessite STRIPE_SECRET_KEY sur l'API (clé « sk_live_… » en
+// production, « sk_test_… » en recette). Si STRIPE_PAYMENT_LINK_<OFFRE> est défini
+// (ex. STRIPE_PAYMENT_LINK_ELU_M), ce lien est utilisé à la place.
+// Offres vendues en ligne : Élu mensuel/annuel et pack de Conseils Expert.
+// Collectivité reste sur devis.
+function formEncode(obj, prefix = '', out = []) {
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined || v === null) continue;
+    const key = prefix ? `${prefix}[${k}]` : k;
+    if (typeof v === 'object') formEncode(v, key, out);
+    else out.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(v))}`);
+  }
+  return out;
+}
+
+router.post('/checkout', requireAuth, async (req, res) => {
+  try {
+    const key = String(req.body?.plan || '').trim().toLowerCase();
+    const allowed = { elu_m: 'ELU_M', elu_a: 'ELU_A', credit: 'CREDIT' };
+    if (!allowed[key]) return res.status(400).json({ error: 'unknown_plan' });
+
+    const userId = req.user.sub;
+    const email = String(req.user.email || '').trim();
+    const reference = `${key}--${userId}`;
+
+    const linkEnv = process.env[`STRIPE_PAYMENT_LINK_${key.toUpperCase()}`];
+    if (linkEnv) {
+      const url = new URL(linkEnv);
+      url.searchParams.set('client_reference_id', reference);
+      if (email) url.searchParams.set('prefilled_email', email);
+      return res.json({ ok: true, url: url.toString() });
+    }
+
+    const secret = process.env.STRIPE_SECRET_KEY;
+    if (!secret) return res.status(503).json({ error: 'payment_not_configured' });
+
+    const base = resolveFrontendBaseUrl();
+    const isCredit = key === 'credit';
+    const plan = isCredit ? null : getPlan(allowed[key]);
+    const unitAmount = Math.round((isCredit ? CREDIT.price : plan.price) * 100);
+    const productName = isCredit
+      ? 'POPE Online — Pack de 3 Conseils Expert (valable 1 mois)'
+      : `POPE Online — Offre Élu (${plan.interval === 'year' ? 'annuelle, -15 %' : 'mensuelle'})`;
+
+    const params = {
+      mode: isCredit ? 'payment' : 'subscription',
+      client_reference_id: reference,
+      success_url: `${base}/dashboard.html?paiement=ok`,
+      cancel_url: `${base}/pricing.html?paiement=annule`,
+      allow_promotion_codes: 'true',
+      metadata: { plan_code: isCredit ? 'CREDIT' : plan.code, client_reference_id: reference, user_id: userId },
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: 'eur',
+          unit_amount: unitAmount,
+          product_data: { name: productName, metadata: { plan_code: isCredit ? 'CREDIT' : plan.code } },
+          ...(isCredit ? {} : { recurring: { interval: plan.interval === 'year' ? 'year' : 'month' } })
+        }
+      }]
+    };
+    if (email) params.customer_email = email;
+    if (!isCredit) params.subscription_data = { metadata: { plan_code: plan.code, user_id: userId } };
+
+    const r = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formEncode(params).join('&')
+    });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok || !out.url) {
+      console.error('[billing] création session Stripe refusée :', out?.error?.message || r.status);
+      return res.status(502).json({ error: 'payment_provider_error' });
+    }
+    return res.json({ ok: true, url: out.url });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server_error' });
+  }
 });
 
 // ── Vérification de signature Stripe (V88) ───────────────────────────────────

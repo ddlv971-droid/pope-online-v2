@@ -125,10 +125,10 @@ async function ensureSchemaV89() {
     const path = await import('path');
     const { fileURLToPath } = await import('url');
     const dir = path.dirname(fileURLToPath(import.meta.url));
-    for (const f of ['schema_patch_v89.sql', 'schema_patch_v90.sql', 'schema_patch_v91.sql']) {
+    for (const f of ['schema_patch_v89.sql', 'schema_patch_v90.sql', 'schema_patch_v91.sql', 'schema_patch_v92.sql']) {
       await pool.query(fs.readFileSync(path.join(dir, 'db', f), 'utf8'));
     }
-    console.log('[boot] patchs V89-V91 vérifiés');
+    console.log('[boot] patchs V89-V92 vérifiés');
   } catch (err) { console.error('[boot] patch V89 non appliqué :', err.message); }
 }
 ensureSchemaV89();

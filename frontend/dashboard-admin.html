@@ -1349,7 +1349,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 
 <script type="module">
-import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
+import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSession } from './api.js';
 window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
@@ -1838,11 +1838,22 @@ async function loadExpert() {
             '<p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.65;white-space:pre-wrap">' + esc(m.reply_text) + '</p>' +
           '</div>';
       }
-      var expectHtml = m.expectations ?
-        '<div style="margin-bottom:10px">' +
-          '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Attentes client</span>' +
-          '<p style="font-size:13px;color:rgba(255,255,255,.65);margin:5px 0 0;line-height:1.55">' + esc(m.expectations.substring(0,200)) + (m.expectations.length > 200 ? '&hellip;' : '') + '</p>' +
-        '</div>' : '';
+      var lbl = function(t){ return '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">' + t + '</span>'; };
+      var para = function(t){ return '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55;white-space:pre-wrap;word-break:break-word">' + esc(t) + '</p>'; };
+      var expectHtml = m.expectations ? '<div style="margin-bottom:10px">' + lbl('Demande / attentes du client') + para(m.expectations) + '</div>' : '';
+      var contextHtml = m.context ? '<div style="margin-bottom:10px">' + lbl('Contexte') + para(m.context) + '</div>' : '';
+      var domainHtml = m.domain ? '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(0,176,240,.12);color:#7dd3fc;border:1px solid rgba(0,176,240,.25)">' + esc(m.domain) + '</span>' : '';
+      var ga = m.generation_attachment;
+      if (typeof ga === 'string') { try { ga = JSON.parse(ga); } catch (e) { ga = null; } }
+      var genHtml = (ga && ga.result) ? '<details style="margin-bottom:10px"><summary style="cursor:pointer;font-size:12px;color:#7dd3fc">Premier jet joint par le client (' + esc(ga.usecaseLabel || 'texte généré') + ')</summary>' + para(ga.result) + '</details>' : '';
+      var files = (m.files || []).filter(function(f){ return f.kind !== 'generation'; });
+      var genFile = (m.files || []).filter(function(f){ return f.kind === 'generation'; })[0];
+      var fileBtns = (m.files || []).map(function(f){
+        var kb = f.size >= 1048576 ? (f.size/1048576).toFixed(1) + ' Mo' : Math.max(1, Math.round(f.size/1024)) + ' Ko';
+        return '<button class="adm-btn adm-btn-sm" type="button" data-expert-file="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin:0 6px 6px 0">\u2B07 ' + esc(f.name) + ' <small style="opacity:.6">(' + kb + ')</small></button>';
+      }).join('');
+      var filesHtml = fileBtns ? '<div style="margin-bottom:10px">' + lbl('Pi\u00e8ces jointes (' + (m.files||[]).length + ')') + '<div style="margin-top:6px">' + fileBtns + '</div></div>' : '';
+      var mailWarn = (m.mail_sent === false) ? '<div style="margin-bottom:10px;font-size:12px;color:#fbbf24">\u26a0 L\'e-mail de notification vers contact@pope-online.com n\'a pas pu partir : cette demande n\'est visible qu\'ici.</div>' : '';
       var btnLabel = hasReply ? '\u270f\ufe0f Modifier la r\u00e9ponse' : '\u270d\ufe0f R\u00e9diger la r\u00e9ponse';
       return '<div style="border:1px solid ' + borderColor + ';border-radius:14px;padding:18px;margin-bottom:14px;background:#163226">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
@@ -1851,15 +1862,15 @@ async function loadExpert() {
             '<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">' + esc(m.email || m.user_email || '') + '</div>' +
           '</div>' +
           '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
-            '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:' + sc.bg + ';color:' + sc.color + ';border:1px solid ' + sc.border + '">' + sc.label + '</span>' +
+            domainHtml + '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:' + sc.bg + ';color:' + sc.color + ';border:1px solid ' + sc.border + '">' + sc.label + '</span>' +
             '<span style="font-size:11px;color:rgba(255,255,255,.4)">' + fmtDate(m.created_at) + '</span>' +
           '</div>' +
         '</div>' +
         '<div style="margin-bottom:10px">' +
           '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Objectif</span>' +
-          '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55">' + esc((m.objective || '\u2014').substring(0, 200)) + (m.objective && m.objective.length > 200 ? '&hellip;' : '') + '</p>' +
+          para(m.objective || '\u2014') +
         '</div>' +
-        expectHtml +
+        expectHtml + contextHtml + genHtml + filesHtml + mailWarn +
         replyHtml +
         '<div style="margin-top:12px">' +
           '<button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply(\'' + esc(m.id) + '\')">' + btnLabel + '</button>' +
@@ -1868,6 +1879,14 @@ async function loadExpert() {
     }).join('');
   } catch(e) { el('expertList').innerHTML = '<p style="color:var(--red);padding:16px">Erreur: '+esc(getApiMessage(e))+'</p>'; }
 }
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-expert-file]');
+  if (!b) return;
+  b.disabled = true;
+  try { await apiDownload('/expert/files/' + encodeURIComponent(b.dataset.expertFile), b.dataset.name || 'document'); }
+  catch (err) { showToast(err.message || 'Téléchargement impossible', 'err'); }
+  b.disabled = false;
+});
 let currentMissionId = null;
 window.startReply = (id) => {
   currentMissionId = id;

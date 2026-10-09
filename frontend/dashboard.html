@@ -541,7 +541,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <p>Sélectionnez le domaine le plus proche de votre situation.</p>
       </div>
       <div class="v5-domain-grid" id="domainGrid">
-        <button class="v5-domain-pill v88-primary" data-domain="Ressources humaines">Personnel communal (RH, statut FPT)</button>
+        <button class="v5-domain-pill v88-primary" data-domain="Ressources humaines">Personnel (RH, statut FPT)</button>
         <button class="v5-domain-pill v88-primary" data-domain="Finances et Gestion">Budget et finances</button>
         <button class="v5-domain-pill v88-primary" data-domain="Urbanisme">Urbanisme (permis, PLU, recours)</button>
         <button class="v5-domain-pill v88-primary" data-domain="Marches publics">Marchés publics</button>
@@ -760,6 +760,12 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           </div>
           <a href="vault.html?space=public&amp;return=dashboard.html%3Fstep%3D3" class="v5-btn-ghost-sm" style="flex-shrink:0;white-space:nowrap;font-size:11px">&#x1F4E4; D&#233;poser des pi&#232;ces</a>
         </div>
+        <div id="vaultDrop" role="button" tabindex="0" style="border:2px dashed #9DB8AA;border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:#F9FBFA;margin-bottom:12px">
+          <strong style="font-size:13px;color:var(--ink)">&#x1F4CE; Ajouter des fichiers depuis votre ordinateur</strong>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Cliquez ou glissez-d&#233;posez &#183; PDF, Word, Excel, PowerPoint, TXT, CSV, images &#183; 10 Mo max par fichier &#183; conserv&#233;s 48 h</div>
+          <input type="file" id="vaultFileInput" multiple style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip,.jpg,.jpeg,.png,.gif,.webp"/>
+        </div>
+        <div id="vaultUpMsg" role="status" style="font-size:12px;margin:-4px 0 10px;color:var(--muted)"></div>
         <div id="vaultExpertList" style="min-height:32px"><div style="font-size:12px;color:var(--muted);padding:8px 0">Chargement&#x2026;</div></div>
         <div id="vaultSelCount" style="font-size:11px;color:var(--blue);font-weight:600;margin-top:8px;display:none"></div>
       </div>
@@ -1235,6 +1241,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   function loadVaultFiles(){
     var container = $('vaultExpertList');
     if(!container) return;
+    var keep=Array.prototype.map.call(document.querySelectorAll('[data-vault-file]:checked'),function(n){return n.value;}).concat((window.__vaultAutoCheck||[]).map(encodeURIComponent));
+    window.__vaultAutoCheck=[];
     container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0">Chargement&#x2026;</div>';
     apiFetch('/vault').then(function(data){
       var files = (data&&data.items)||(data&&data.files)||[];
@@ -1246,9 +1254,9 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         var rawId=f.id||f.filename||'';
         var encId=encodeURIComponent(rawId);
         var nm=esc(f.name||f.filename||'Fichier');
-        var sz=f.size_label||'';
+        var sz=f.size?(f.size>=1048576?(f.size/1048576).toFixed(1)+' Mo':Math.max(1,Math.round(f.size/1024))+' Ko'):(f.size_label||'');
         var exp=f.expiresAt?new Date(f.expiresAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
-        var ai=f.canFeedAI?' \u00b7 IA':'';
+        var ai='';
         return '<label style="display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #F2F7F5;cursor:pointer;">'
           +'<input type="checkbox" data-vault-file value="'+encId+'" '
           +'onchange="(function(){ var n=document.querySelectorAll(\'[data-vault-file]:checked\').length; var cnt=document.getElementById(\'vaultSelCount\'); if(cnt){cnt.textContent=n+\' pi\u00e8ce\'+(n>1?\'s\':\'\')+\' s\u00e9lectionn\u00e9e\'+(n>1?\'s\':\'\')+\' \u2714\';cnt.style.display=n>0?\'block\':\'none\';} })()" '
@@ -1259,34 +1267,47 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
           +'style="font-size:11px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0;padding:3px 8px;border:1px solid #C9D8CF;border-radius:5px">DL</a>'
           +'</label>';
       }).join('');
-      var sel=$('vaultSelCount'); if(sel)sel.style.display='none';
+      keep.forEach(function(v){ var cb=document.querySelector('[data-vault-file][value="'+v+'"]'); if(cb) cb.checked=true; });
+      var nSel=document.querySelectorAll('[data-vault-file]:checked').length, cnt=$('vaultSelCount');
+      if(cnt){ cnt.textContent=nSel+' pi\u00e8ce'+(nSel>1?'s':'')+' s\u00e9lectionn\u00e9e'+(nSel>1?'s':'')+' \u2714'; cnt.style.display=nSel>0?'block':'none'; }
     }).catch(function(){
       container.innerHTML = '<div style="font-size:12px;color:var(--muted)">Coffre indisponible.</div>';
     });
   }
 
-  /* ─── Step 3 : upload local ─── */
-  var localFiles = [];
-  function renderLocalFiles(){
-    var list = $('localFilesList');
-    if(!list) return;
-    if(!localFiles.length){ list.innerHTML=''; return; }
-    list.innerHTML = localFiles.map(function(f,i){
-      var kb = Math.round(f.size/1024);
-      return '<div class="po-attach-item" data-idx="'+i+'">' +
-        '<span class="po-attach-item-ico">📄</span>' +
-        '<span class="po-attach-item-name">'+esc(f.name)+'</span>' +
-        '<span class="po-attach-item-size">'+kb+' Ko</span>' +
-        '<button class="po-attach-item-del" data-del="'+i+'" type="button" title="Supprimer">✕</button>' +
-        '</div>';
-    }).join('');
-  }
-  function addFiles(fileList){
-    Array.from(fileList).forEach(function(f){
-      if(f.size>10*1024*1024){ flash('Fichier trop lourd (max 10 Mo) : '+f.name,'err'); return; }
-      localFiles.push(f);
+  /* ─── Step 3 : dépôt de fichiers (envoyés au dépôt sécurisé, puis cochés automatiquement) ─── */
+  function fileToBase64(file){
+    return new Promise(function(resolve,reject){
+      var r=new FileReader();
+      r.onload=function(){ var s=String(r.result||''); resolve(s.slice(s.indexOf(',')+1)); };
+      r.onerror=function(){ reject(new Error('Lecture du fichier impossible.')); };
+      r.readAsDataURL(file);
     });
-    renderLocalFiles();
+  }
+  function uploadFiles(fileList){
+    var files=Array.prototype.slice.call(fileList||[]);
+    var msg=$('vaultUpMsg');
+    if(!files.length) return;
+    var okIds=[], errors=[];
+    if(msg){ msg.style.color='var(--muted)'; msg.textContent='Envoi en cours\u2026'; }
+    var chain=Promise.resolve();
+    files.forEach(function(f){
+      chain=chain.then(function(){
+        if(f.size>10*1024*1024){ errors.push(f.name+' : fichier trop volumineux (10 Mo maximum).'); return; }
+        return fileToBase64(f).then(function(b64){
+          return apiFetch('/vault/upload',{method:'POST',body:{name:f.name,type:f.type||'application/octet-stream',purpose:'expert',contentBase64:b64}});
+        }).then(function(res){ if(res&&res.item&&res.item.id) okIds.push(res.item.id); })
+        .catch(function(e){ errors.push(f.name+' : '+((e&&e.message&&e.message!=='api_error')?e.message:'dépôt impossible.')); });
+      });
+    });
+    chain.then(function(){
+      window.__vaultAutoCheck=(window.__vaultAutoCheck||[]).concat(okIds);
+      if(msg){
+        msg.style.color=errors.length?'#a1261b':'#14532d';
+        msg.innerHTML=(okIds.length?(okIds.length+' fichier'+(okIds.length>1?'s':'')+' ajouté'+(okIds.length>1?'s':'')+' et joint'+(okIds.length>1?'s':'')+' à votre demande. '):'')+errors.map(esc).join('<br>');
+      }
+      loadVaultFiles();
+    });
   }
 
   /* ─── Step 3 : draft link ─── */
@@ -1343,6 +1364,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     var quotaMsg = document.getElementById('quotaBlockMsg');
     if(quotaMsg){ flash('Quota de conseils experts épuisé.', 'warn'); return; }
 
+    if(document.querySelectorAll('[data-vault-file]:checked').length>8){ flash('8 pièces jointes maximum par demande.','warn'); return; }
     var btn=$('btnSend');
     if(btn){ btn.disabled=true; btn.textContent='Envoi en cours…'; }
 
@@ -1384,7 +1406,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         if(!_g) return null;
         return {
           createdAt: _g.createdAt||new Date().toISOString(),
-          usecaseLabel: _g.usecaseLabel||'Génération IA',
+          usecaseLabel: _g.usecaseLabel||'Génération',
           title: _g.title||_g.usecaseLabel||'',
           domain: s.domain||'',
           prompt: _g.prompt||{},
@@ -1693,28 +1715,17 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     $('btnGoToBesoin') && $('btnGoToBesoin').addEventListener('click', function(){ switchTab('besoin'); });
     $('btnRefreshRequests') && $('btnRefreshRequests').addEventListener('click', loadRequests);
 
-    // Upload zone
-    var zone=$('uploadZone'), finput=$('fileInput');
-    if(zone && finput){
-      zone.addEventListener('click', function(){ finput.click(); });
-      zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
-      zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
-      zone.addEventListener('drop', function(e){
-        e.preventDefault(); zone.classList.remove('drag');
-        addFiles(e.dataTransfer.files);
-      });
-      finput.addEventListener('change', function(){ addFiles(finput.files); finput.value=''; });
-    }
-
-    // Supprimer fichier local
-    document.addEventListener('click', function(e){
-      var del = e.target.closest('[data-del]');
-      if(del && del.closest('#localFilesList')){
-        var idx = parseInt(del.getAttribute('data-del'),10);
-        localFiles.splice(idx,1);
-        renderLocalFiles();
-      }
-    });
+    // Dépôt de fichiers (étape 3)
+    (function(){
+      var zone=$('vaultDrop'), finput=$('vaultFileInput');
+      if(!zone||!finput) return;
+      zone.addEventListener('click',function(e){ if(e.target!==finput) finput.click(); });
+      zone.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); finput.click(); } });
+      zone.addEventListener('dragover',function(e){ e.preventDefault(); zone.style.background='#EDF2EE'; });
+      zone.addEventListener('dragleave',function(){ zone.style.background='#F9FBFA'; });
+      zone.addEventListener('drop',function(e){ e.preventDefault(); zone.style.background='#F9FBFA'; uploadFiles(e.dataTransfer.files); });
+      finput.addEventListener('change',function(){ uploadFiles(finput.files); finput.value=''; });
+    })();
 
     // Vérification nonce de session — si changement de session, reset state
     (function(){

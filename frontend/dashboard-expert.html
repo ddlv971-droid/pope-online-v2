@@ -457,7 +457,7 @@ function renderRequests(statusFilter) {
 
     var genHtml = '';
     if (req.generation_attachment && req.generation_attachment.result) {
-      var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration IA');
+      var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration');
       var genText  = esc(req.generation_attachment.result || '');
       var genDomain = req.generation_attachment.domain ? ' (' + esc(req.generation_attachment.domain) + ')' : '';
       genHtml = '<div class="exp-req-separator"></div>'
@@ -471,19 +471,17 @@ function renderRequests(statusFilter) {
 
     // Pièces déposées par le client
     var vaultHtml = '';
-    var vids = (req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids 
-              : (req.files && req.files.length) ? req.files
-              : (req.attachments && req.attachments.length) ? req.attachments
-              : [];
-    if (vids.length) {
-      var _APIBASE = (function(){ var h=location.hostname; if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000'; if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com'; return'https://pope-online-v2.onrender.com'; })();
+    var rfiles = (req.files && req.files.length) ? req.files.filter(function(f){ return f.kind !== 'generation'; }) : [];
+    var legacy = (!rfiles.length && req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids : [];
+    if (rfiles.length || legacy.length) {
+      var btnStyle = 'display:inline-flex;align-items:center;gap:5px;background:rgba(31,74,61,.1);border:1px solid rgba(31,74,61,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#6E9E89;cursor:pointer;font-family:inherit;';
       vaultHtml = '<div class="exp-req-separator"></div>'
         + '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">&#x1F4CE; Pi&egrave;ces d&eacute;pos&eacute;es (' + vids.length + ')</div>'
+        + '<div class="exp-req-section-label">&#x1F4CE; Pi&egrave;ces jointes (' + (rfiles.length || legacy.length) + ')</div>'
         + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">'
-        + vids.map(function(fid){
-            var nm = decodeURIComponent(String(fid)).split('/').pop();
-            return '<button onclick="downloadVaultFile(\'' + encodeURIComponent(fid) + '\')" '              + 'style="display:inline-flex;align-items:center;gap:5px;background:rgba(31,74,61,.1);border:1px solid rgba(31,74,61,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#6E9E89;cursor:pointer;font-family:inherit;">&#x1F4C4; ' + esc(nm) + '</button>';          }).join('')
+        + (rfiles.length
+          ? rfiles.map(function(f){ return '<button type="button" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="' + btnStyle + '">&#x1F4C4; ' + esc(f.name) + '</button>'; }).join('')
+          : legacy.map(function(fid){ var nm = decodeURIComponent(String(fid)).split('/').pop(); return '<button type="button" onclick="downloadVaultFile(\'' + encodeURIComponent(fid) + '\')" style="' + btnStyle + '">&#x1F4C4; ' + esc(nm) + '</button>'; }).join(''))
         + '</div></div>';
     }
 
@@ -529,6 +527,16 @@ function renderRequests(statusFilter) {
   }).join('');
 }
 
+
+document.addEventListener('click', function(e) {
+  var b = e.target.closest('[data-ef]'); if (!b) return;
+  var tk = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
+  var apiBase = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:3000' : location.hostname.indexOf('staging') !== -1 ? 'https://popeonline-staging.onrender.com' : 'https://pope-online-v2.onrender.com';
+  fetch(apiBase + '/expert/files/' + encodeURIComponent(b.getAttribute('data-ef')), { headers: { Authorization: 'Bearer ' + tk }, credentials: 'include' })
+    .then(function(r) { if (!r.ok) throw new Error('Erreur ' + r.status); return r.blob(); })
+    .then(function(blob) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = b.getAttribute('data-name') || 'document'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function() { URL.revokeObjectURL(a.href); }, 60000); })
+    .catch(function(err) { showToast('Téléchargement impossible : ' + err.message, 'err'); });
+});
 
 // Téléchargement de pièces avec authentification
 function downloadVaultFile(encodedFid) {

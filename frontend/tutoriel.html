@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Tutoriel</title>
 <link href="app.css" rel="stylesheet"/>
+<link href="tuto-motion.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style id="v40-topbar-fix">
 /* ── Anti-conflits topbar V40 ── */
@@ -147,8 +148,6 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   <div class="v40-mobile-menu-sep"></div>
   <button data-logout>🚪 Déconnexion</button>
 </div>
-    <button data-logout>🚪 Déconnexion</button>
-</div>
 
 <main class="v37-tuto-layout">
 
@@ -158,18 +157,19 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <p>Découvrez comment produire, sécuriser et soumettre vos besoins à des experts professionnels en quelques minutes.</p>
   </div>
 
-  <!-- Vidéo -->
-  <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(22,32,28,.1);margin-bottom:28px">
-    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden">
-      <iframe
-        src="https://www.youtube.com/embed/zlwqsgjmEKg?rel=0&modestbranding=1&playsinline=1"
-        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        title="Tutoriel POPE Online">
-      </iframe>
+  <!-- Vidéo motion design -->
+  <section class="pm-wrap" id="pmRoot" aria-label="Vidéo animée : le fonctionnement de POPE Online">
+    <div class="pm-stage paused" role="img" aria-label="Animation avec des avatars : un élu choisit son domaine, qualifie son besoin, joint ses pièces, l’expert lui répond sous 24 h ouvrées.">
+      <svg viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
     </div>
-  </div>
+    <div class="pm-bar" aria-hidden="true"><i></i></div>
+    <div class="pm-ctrl">
+      <button class="pm-btn" type="button" data-pm="play">▶ Lecture</button>
+      <button class="pm-btn ghost" type="button" data-pm="replay">↺ Revoir</button>
+      <div class="pm-dots" role="group" aria-label="Choisir une scène"></div>
+    </div>
+    <div class="pm-cap" aria-live="polite"></div>
+  </section>
 
   <!-- Étapes -->
   <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1F2622">Comment ça marche ?</h2>
@@ -177,52 +177,46 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     <div class="v37-step-card">
       <div class="v37-step-num">1</div>
       <div class="v37-step-content">
-        <h3>Déposez votre besoin</h3>
-        <p>Expliquez votre situation, le résultat attendu, le délai, les contraintes et les pièces disponibles. L’entrée du parcours est désormais le besoin utilisateur.</p>
+        <h3>Choisissez votre domaine</h3>
+        <p>Budget, ressources humaines, marchés publics, urbanisme… Votre demande est confiée à l’expert du domaine concerné.</p>
       </div>
     </div>
     <div class="v37-step-card">
       <div class="v37-step-num">2</div>
       <div class="v37-step-content">
-        <h3>Qualifiez le contexte</h3>
-        <p>Précisez le domaine d’expertise, les acteurs concernés, les risques, les échéances et les documents utiles pour permettre une analyse humaine rapide.</p>
+        <h3>Qualifiez votre besoin</h3>
+        <p>Décrivez la situation, le résultat attendu, les contraintes et l’échéance. Quelques lignes précises suffisent.</p>
       </div>
     </div>
     <div class="v37-step-card">
       <div class="v37-step-num">3</div>
       <div class="v37-step-content">
-        <h3>Préparez un draft si utile</h3>
-        <p>Le draft devient une pièce d’appui facultative : il aide à cadrer la demande, mais la valeur centrale reste l’analyse et la sécurisation par un expert POPE Online.</p>
+        <h3>Joignez vos pièces</h3>
+        <p>Ajoutez vos documents au dépôt sécurisé (conservés 48 h) et, si vous le souhaitez, un premier jet rédigé avec l’outil de rédaction.</p>
       </div>
     </div>
     <div class="v37-step-card">
       <div class="v37-step-num">4</div>
       <div class="v37-step-content">
-        <h3>Recevez le retour expert</h3>
-        <p>Un conseiller POPE Online analyse votre besoin et vous transmet un retour personnalisé sous 24 h, directement dans votre espace.</p>
+        <h3>Recevez la réponse de l’expert</h3>
+        <p>Un expert vous répond sous 24 h ouvrées, directement dans votre espace. Vous êtes prévenu par e-mail.</p>
       </div>
     </div>
   </div>
 
-  <!-- Services -->
-  <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1F2622">Comment fonctionne POPE Online</h2>
-  <div class="v37-dash-grid" style="margin-bottom:28px">
+  <!-- Deux parcours -->
+  <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1F2622">Deux façons de nous solliciter</h2>
+  <div class="v37-dash-grid pm-two" style="margin-bottom:28px">
     <div class="v37-service-card main">
-      <div class="v37-service-tag blue">🎯 Qualification du besoin</div>
-      <h2>Exprimer clairement votre besoin</h2>
-      <p>Vous décrivez la situation, vos objectifs, vos contraintes et les pièces disponibles. Un draft peut être préparé comme support, sans remplacer l’expertise humaine.</p>
-      <a class="v37-service-cta primary" href="app.html" id="tutoGenLink">Préparer mon besoin →</a>
+      <div class="v37-service-tag blue">🎯 Qualification du besoin &amp; Conseil Expert</div>
+      <h2>Une question précise ? Un expert vous répond sous 24 h</h2>
+      <p>Le parcours commence par le choix du domaine : il oriente votre demande vers l’expert concerné. Vous qualifiez ensuite votre besoin, joignez vos pièces, puis un expert vous fournit un conseil exploitable, directement dans votre espace. Vous gardez le même interlocuteur pour vos questions de suivi.</p>
+      <a class="v37-service-cta primary" href="dashboard.html?step=1" id="tutoExpertLink">Choisir mon domaine et poser ma question →</a>
     </div>
     <div class="v37-service-card">
-      <div class="v37-service-tag green">🎯 Conseil Expert</div>
-      <h2>Conseil Expert — retour sous 24 h</h2>
-      <p>Un conseiller POPE Online analyse votre besoin, vos pièces et les points de vigilance pour vous fournir un retour exploitable.</p>
-      <a class="v37-service-cta secondary" href="expert.html" id="tutoExpertLink">Soumettre mon besoin</a>
-    </div>
-    <div class="v37-service-card">
-      <div class="v37-service-tag amber">🎯 Sur mesure</div>
-      <h2>Accompagnement sur mesure</h2>
-      <p>Pour les dossiers complexes nécessitant un suivi structuré sur plusieurs étapes.</p>
+      <div class="v37-service-tag amber">🧭 Sur mesure</div>
+      <h2>Un besoin plus large ? Accompagnement sur mesure</h2>
+      <p>Pour un dossier complexe ou un accompagnement suivi : qualifiez votre besoin. Il est envoyé à l’équipe POPE Online (contact@pope-online.com, avec copie à Pope Consulting) et un conseiller vous recontacte sous 24 h ouvrées.</p>
       <a class="v37-service-cta secondary" href="mission.html" id="tutoMissionLink">Qualifier mon besoin</a>
     </div>
   </div>
@@ -296,6 +290,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 <script type="module">
 import { apiFetch } from './api.js';
 import { requireLogin, wireLogout } from './app.js';
+import { mountTutoMotion } from './tuto-motion.js';
+mountTutoMotion(document.getElementById('pmRoot'));
 if (!requireLogin('tutoriel.html')) {}
 wireLogout();
 (async () => {
@@ -308,8 +304,7 @@ wireLogout();
     if (homeLink) homeLink.href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
     if (backLink)  backLink.href = isPrivate ? 'dashboard-private.html' : 'dashboard.html';
     if (isPrivate) {
-      document.getElementById('tutoGenLink').href    = 'app-private.html';
-      document.getElementById('tutoExpertLink').href = 'expert-private.html';
+      document.getElementById('tutoExpertLink').href = 'dashboard-private.html?step=1';
       document.getElementById('tutoMissionLink').href = 'mission-private.html';
     }
   } catch {}

@@ -4,7 +4,8 @@ import { requireAuth, optionalAuth, requireAdmin } from '../middleware/auth.js';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
-import { getUserVaultFiles, buildMailAttachments } from './vault.js';
+import fs from 'fs';
+import { getUserVaultFiles } from './vault.js';
 import { isUnlimited, RESPONSE_DELAY_LABEL } from '../services/plans.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
 
@@ -28,6 +29,27 @@ function buildAttachmentContent(name, payload) {
   return Buffer.from(html, 'utf8').toString('base64');
 }
 
+function safeFileName(name = 'document') {
+  return String(name || 'document').replace(/[^a-zA-Z0-9._-]+/g, '_').slice(-120) || 'document';
+}
+
+// Ajoute à chaque demande la liste (sans contenu) de ses pièces jointes conservées.
+async function withFiles(client, rows) {
+  if (!rows.length) return rows;
+  const ids = rows.map((r) => r.id);
+  const f = await client.query(
+    `select id, request_id, kind, name, mime_type, size_bytes, created_at
+       from expert_request_files where request_id = any($1::uuid[]) order by created_at asc`,
+    [ids]
+  );
+  const byReq = new Map();
+  for (const x of f.rows) {
+    if (!byReq.has(x.request_id)) byReq.set(x.request_id, []);
+    byReq.get(x.request_id).push({ id: x.id, kind: x.kind, name: x.name, type: x.mime_type, size: Number(x.size_bytes || 0), createdAt: x.created_at });
+  }
+  return rows.map((r) => ({ ...r, files: byReq.get(r.id) || [] }));
+}
+
 // ── POST /expert/request ─────────────────────────────────────────────────────
 router.post('/request', requireAuth, limiter, async (req, res) => {
   try {
@@ -48,6 +70,31 @@ router.post('/request', requireAuth, limiter, async (req, res) => {
 
     const userId  = req.user.sub;
     const mailTo  = process.env.MAIL_TO || 'contact@pope-online.com';
+
+    // ── V88.11 : copie des pièces AVANT toute consommation de droit ───────────
+    // Le dépôt sécurisé est purgé après 48 h : on en conserve une copie liée à la demande
+    // pour que l'équipe POPE et l'expert puissent toujours l'ouvrir depuis le dashboard.
+    const snapshots = [];
+    if (vaultFileIds.length) {
+      const wanted = [...new Set(vaultFileIds.map(String))];
+      const vaultFiles = await withClient(c => getUserVaultFiles(c, userId, wanted));
+      if (vaultFiles.length < wanted.length) {
+        return res.status(400).json({ error: 'vault_file_missing' });
+      }
+      for (const f of vaultFiles) {
+        let buf;
+        try { buf = fs.readFileSync(f.path); } catch { return res.status(400).json({ error: 'vault_file_missing' }); }
+        snapshots.push({ kind: 'vault', name: safeFileName(f.name), type: f.type, buffer: buf });
+      }
+    }
+    if (generationAttachment?.result) {
+      snapshots.push({
+        kind: 'generation',
+        name: 'pope-online-generation-attachee.doc',
+        type: 'application/msword',
+        buffer: Buffer.from(buildAttachmentContent('Pièce jointe de génération', generationAttachment), 'base64')
+      });
+    }
 
     // ── V88 : contrôle unique des droits ────────────────────────────────────
     // Ordre de consommation : quota mensuel de l'offre, puis Conseils Expert
@@ -91,12 +138,20 @@ router.post('/request', requireAuth, limiter, async (req, res) => {
       }
 
       const ins = await client.query(
-        `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status, domain)
-         values($1,$2,$3,$4,$5,$6,'new',$7) returning id`,
+        `insert into expert_requests(user_id, email, objective, expectations, context, generation_attachment, status, domain, vault_file_ids)
+         values($1,$2,$3,$4,$5,$6,'new',$7,$8) returning id`,
         [userId, email, objective, expectations, context,
-         generationAttachment ? JSON.stringify(generationAttachment) : null, domain || null]
+         generationAttachment ? JSON.stringify(generationAttachment) : null, domain || null,
+         vaultFileIds.map(String)]
       );
       const requestId = ins.rows[0].id;
+      for (const f of snapshots) {
+        await client.query(
+          `insert into expert_request_files(request_id, user_id, kind, name, mime_type, size_bytes, content)
+           values($1,$2,$3,$4,$5,$6,$7)`,
+          [requestId, userId, f.kind, f.name, f.type, f.buffer.length, f.buffer]
+        );
+      }
 
       if (source === 'quota') {
         await client.query('update wallets set expert_used=expert_used+1, updated_at=now() where user_id=$1', [userId]);
@@ -119,28 +174,31 @@ router.post('/request', requireAuth, limiter, async (req, res) => {
 
     if (!result.ok) return res.status(result.status).json(result.body);
 
-    // Email équipe
-    const attachments = [];
-    if (generationAttachment?.result) {
-      attachments.push({
-        filename: 'pope-online-generation-attachee.doc',
-        content: buildAttachmentContent('Pièce jointe de génération', generationAttachment),
-        type: 'application/msword'
+    // Email équipe (la demande est déjà enregistrée et visible dans le dashboard admin :
+    // un incident d'envoi ne doit ni annuler la demande ni faire perdre le droit consommé).
+    let mailSent = true;
+    try {
+      const attachments = snapshots.map((f) => ({
+        filename: f.name,
+        content: f.buffer.toString('base64'),
+        type: f.type,
+        disposition: 'attachment'
+      }));
+      const lines = snapshots.map((f) => `  - ${f.name} (${Math.round(f.buffer.length / 1024)} Ko${f.kind === 'generation' ? ', génération jointe' : ''})`).join('\n');
+      await sendMail({
+        to: mailTo,
+        replyTo: email,
+        subject: `POPE Online — Demande EXPERT #${result.requestId.slice(0,8)} (${email})`,
+        text: `Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\nDomaine: ${domain || '(non précisé)'}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context||'(non précisé)'}\n\nPièces jointes (${snapshots.length}) :\n${lines || '  (aucune)'}\nTicket utilisé: ${result.usedTicket?'OUI':'NON'}\n\n→ Demande complète et pièces jointes dans le dashboard admin POPE Online\n\n— POPE Online`,
+        attachments
       });
+    } catch (mailErr) {
+      mailSent = false;
+      console.error('[expert] envoi e-mail équipe impossible :', mailErr?.message || mailErr);
     }
-    if (userId && vaultFileIds.length) {
-      const vaultFiles = await withClient(c => getUserVaultFiles(c, userId, vaultFileIds));
-      attachments.push(...buildMailAttachments(vaultFiles));
-    }
+    await withClient(c => c.query('update expert_requests set mail_sent=$2 where id=$1', [result.requestId, mailSent])).catch(() => {});
 
-    await sendMail({
-      to: mailTo,
-      subject: `POPE Online — Demande EXPERT #${result.requestId.slice(0,8)} (${email})`,
-      text: `Nouvelle demande POPE EXPERT\n\nID: ${result.requestId}\nClient: ${email}\nDomaine: ${domain || '(non précisé)'}\n\nObjet:\n${objective}\n\nDemande:\n${expectations}\n\nContexte:\n${context||'(non précisé)'}\n\nPJ génération: ${generationAttachment?.result?'OUI':'NON'}\nPJ vault: ${vaultFileIds.length}\nTicket utilisé: ${result.usedTicket?'OUI':'NON'}\n\n→ Répondre via le dashboard admin POPE Online\n\n— POPE Online`,
-      attachments
-    });
-
-    return res.json({ ok: true, requestId: result.requestId, usedTicket: result.usedTicket, wallet: result.wallet });
+    return res.json({ ok: true, requestId: result.requestId, usedTicket: result.usedTicket, wallet: result.wallet, attachments: snapshots.length, mailSent });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error', detail: String(e?.message || e) });
@@ -154,14 +212,14 @@ router.get('/my-requests', requireAuth, async (req, res) => {
     const rows = await withClient(async (client) => {
       const r = await client.query(
         `select id, domain, objective, expectations, context, status,
-                reply_text, reply_by, replied_at, created_at, updated_at
+                reply_text, reply_by, replied_at, created_at, updated_at, generation_attachment
          from expert_requests
          where user_id = $1
          order by created_at desc
          limit 50`,
         [userId]
       );
-      return r.rows;
+      return withFiles(client, r.rows);
     });
     return res.json({ requests: rows });
   } catch (e) {
@@ -185,7 +243,7 @@ router.get('/all', requireAdmin, async (req, res) => {
            left join users u on u.id = er.user_id
            order by er.created_at desc limit 100`;
       const r = await client.query(q, status ? [status] : []);
-      return r.rows;
+      return withFiles(client, r.rows);
     });
     return res.json({ requests: rows });
   } catch (e) {
@@ -265,6 +323,38 @@ router.put('/:id/status', requireAdmin, async (req, res) => {
     ));
     return res.json({ ok: true });
   } catch (e) {
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ── GET /expert/files/:fileId — téléchargement d'une pièce jointe de demande ──
+// Autorisé : le client propriétaire, un admin, l'expert assigné au client.
+router.get('/files/:fileId', requireAuth, async (req, res) => {
+  try {
+    const f = await withClient(async (client) => {
+      const q = await client.query(
+        `select f.name, f.mime_type, f.content, er.user_id as owner_id
+           from expert_request_files f join expert_requests er on er.id = f.request_id
+          where f.id = $1 limit 1`,
+        [req.params.fileId]
+      );
+      const row = q.rows[0];
+      if (!row) return null;
+      let allowed = req.user.role === 'admin' || String(row.owner_id) === String(req.user.sub);
+      if (!allowed && req.user.role === 'expert') {
+        const a = await client.query('select 1 from expert_assignments where expert_id=$1 and client_id=$2 limit 1', [req.user.sub, row.owner_id]);
+        allowed = a.rowCount > 0;
+      }
+      return allowed ? row : 'forbidden';
+    });
+    if (!f) return res.status(404).json({ error: 'file_not_found' });
+    if (f === 'forbidden') return res.status(403).json({ error: 'forbidden' });
+    res.setHeader('Content-Type', f.mime_type || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${safeFileName(f.name)}"`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    return res.end(f.content);
+  } catch (e) {
+    console.error(e);
     return res.status(500).json({ error: 'server_error' });
   }
 });
@@ -366,7 +456,7 @@ router.get('/my-assigned-requests', requireAuth, async (req, res) => {
     const expertId = req.user.sub;
     const rows = await withClient(async (client) => {
       const r = await client.query(
-        `select er.id, er.objective, er.expectations, er.context, er.status,
+        `select er.id, er.domain, er.objective, er.expectations, er.context, er.status,
                 er.reply_text, er.reply_by, er.replied_at,
                 er.created_at, er.updated_at,
                 er.generation_attachment, er.vault_file_ids,
@@ -379,7 +469,7 @@ router.get('/my-assigned-requests', requireAuth, async (req, res) => {
           limit 100`,
         [expertId]
       );
-      return r.rows;
+      return withFiles(client, r.rows);
     });
     return res.json({ requests: rows });
   } catch(e) {
