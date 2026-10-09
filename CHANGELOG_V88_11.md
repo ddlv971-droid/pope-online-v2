@@ -20,3 +20,9 @@
 - CGV : délai « 48 heures ouvrées » à aligner sur 24 h.
 - CGU § « Contenus générés par l'IA » conservé (information légale) : à vous de valider.
 - Les copies de pièces jointes de demandes expert sont conservées (hors purge 48 h) : à mentionner dans la politique de confidentialité.
+
+---
+# V88_12
+- Header : « Pour qui ? · Qui sommes-nous ? · Tarifs · Connexion · Tester gratuitement » à gauche près du logo ; à droite « Rechercher » (fenêtre de recherche dans le site) et icône Contact (rappel / écrire). « Qui sommes-nous ? » avec « ? » en header et footer.
+- Dashboard expert (et admin) : pièce jointe facultative (10 Mo, formats courants) en plus du texte de réponse ; envoyée aussi par e-mail au client lors d'une réponse admin.
+- Espace client : onglet « Mes Conseils Expert » dans le profil (profile.html?sec=conseils) avec téléchargement de la pièce jointe de l'expert ; également visible dans la page Conseil Expert.

@@ -976,3 +976,32 @@ button.s-btn { font-family: var(--font-sans); }
 
 /* Témoignages : mention discrète */
 .s-testimonials-note { font-size: .76rem; opacity: .8; }
+
+/* ---------- V88_12 : menu à gauche près du logo, outils Rechercher / Contact à droite ---------- */
+.s-header .s-nav { margin-left: 8px; gap: 22px; }
+.s-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.s-tool {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px;
+  border: 0; background: none; color: var(--ink); font: inherit; font-size: .96rem; font-weight: 500;
+  border-radius: 8px; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.s-tool:hover { color: var(--sapin); background: rgba(31,74,61,.07); }
+.s-tool:focus-visible { outline: 3px solid var(--sapin); outline-offset: 2px; }
+@media (max-width: 1180px) {
+  .s-header .s-nav { margin-left: 0; }
+  .s-tools { order: 2; }
+  .s-burger { order: 3; margin-left: 0; }
+}
+@media (max-width: 640px) { .s-tool-label { display: none; } .s-tool { padding: 0 9px; } }
+
+/* Recherche */
+.s-search-back { position: fixed; inset: 0; z-index: 400; background: rgba(22,32,28,.55); display: none; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; }
+.s-search-back.open { display: flex; }
+.s-search { background: var(--paper, #fff); width: 100%; max-width: 560px; border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,.3); overflow: hidden; }
+.s-search input { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid var(--line, #ddd); padding: 18px 20px; font: inherit; font-size: 1.05rem; background: transparent; color: var(--ink); }
+.s-search input:focus { outline: none; }
+.s-search ul { list-style: none; margin: 0; padding: 6px; max-height: 50vh; overflow-y: auto; }
+.s-search li a, .s-search li button { display: block; width: 100%; text-align: left; box-sizing: border-box; padding: 12px 14px; border: 0; background: none; border-radius: 8px; color: var(--ink); text-decoration: none; font: inherit; cursor: pointer; }
+.s-search li a:hover, .s-search li button:hover, .s-search li .on { background: rgba(31,74,61,.09); }
+.s-search li small { display: block; color: #5b665f; font-size: .84rem; margin-top: 2px; }
+.s-search-empty { padding: 18px 20px; color: #5b665f; }

@@ -631,6 +631,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
               <label class="adm-label">Réponse de l'expert</label>
               <textarea class="adm-textarea" id="expertReply" placeholder="Rédigez votre retour expert…"></textarea>
             </div>
+            <div class="adm-form-group" style="margin-bottom:12px">
+              <label class="adm-label">Pièce jointe (facultative)</label>
+              <input type="file" id="expertReplyFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip,.jpg,.jpeg,.png,.gif,.webp" style="color:inherit">
+            </div>
             <div style="display:flex;gap:10px">
               <button class="adm-btn adm-btn-primary" id="expertSendBtn">✓ Envoyer la réponse</button>
               <button class="adm-btn adm-btn-ghost" id="expertCancelBtn">Annuler</button>
@@ -1836,6 +1840,7 @@ async function loadExpert() {
               '\u2713 R\u00e9ponse de l\'expert &middot; ' + fmtDate(m.replied_at) + byStr +
             '</div>' +
             '<p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.65;white-space:pre-wrap">' + esc(m.reply_text) + '</p>' +
+            (m.files || []).filter(function(f){ return f.kind === 'reply'; }).map(function(f){ return '<button class="adm-btn adm-btn-sm" type="button" data-expert-file="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin-top:10px">\u2B07 Pi\u00e8ce jointe de la r\u00e9ponse : ' + esc(f.name) + '</button>'; }).join('') +
           '</div>';
       }
       var lbl = function(t){ return '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">' + t + '</span>'; };
@@ -1848,11 +1853,11 @@ async function loadExpert() {
       var genHtml = (ga && ga.result) ? '<details style="margin-bottom:10px"><summary style="cursor:pointer;font-size:12px;color:#7dd3fc">Premier jet joint par le client (' + esc(ga.usecaseLabel || 'texte généré') + ')</summary>' + para(ga.result) + '</details>' : '';
       var files = (m.files || []).filter(function(f){ return f.kind !== 'generation'; });
       var genFile = (m.files || []).filter(function(f){ return f.kind === 'generation'; })[0];
-      var fileBtns = (m.files || []).map(function(f){
+      var fileBtns = (m.files || []).filter(function(f){ return f.kind !== 'reply'; }).map(function(f){
         var kb = f.size >= 1048576 ? (f.size/1048576).toFixed(1) + ' Mo' : Math.max(1, Math.round(f.size/1024)) + ' Ko';
         return '<button class="adm-btn adm-btn-sm" type="button" data-expert-file="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin:0 6px 6px 0">\u2B07 ' + esc(f.name) + ' <small style="opacity:.6">(' + kb + ')</small></button>';
       }).join('');
-      var filesHtml = fileBtns ? '<div style="margin-bottom:10px">' + lbl('Pi\u00e8ces jointes (' + (m.files||[]).length + ')') + '<div style="margin-top:6px">' + fileBtns + '</div></div>' : '';
+      var filesHtml = fileBtns ? '<div style="margin-bottom:10px">' + lbl('Pi\u00e8ces jointes du client (' + (m.files||[]).filter(function(f){ return f.kind !== 'reply'; }).length + ')') + '<div style="margin-top:6px">' + fileBtns + '</div></div>' : '';
       var mailWarn = (m.mail_sent === false) ? '<div style="margin-bottom:10px;font-size:12px;color:#fbbf24">\u26a0 L\'e-mail de notification vers contact@pope-online.com n\'a pas pu partir : cette demande n\'est visible qu\'ici.</div>' : '';
       var btnLabel = hasReply ? '\u270f\ufe0f Modifier la r\u00e9ponse' : '\u270d\ufe0f R\u00e9diger la r\u00e9ponse';
       return '<div style="border:1px solid ' + borderColor + ';border-radius:14px;padding:18px;margin-bottom:14px;background:#163226">' +
@@ -1899,7 +1904,14 @@ window.startReply = (id) => {
 el('expertSendBtn').onclick = async () => {
   if (!currentMissionId) return;
   try {
-    await apiFetch(`/expert/${currentMissionId}/reply`, { method:'POST', body:{ reply_text: el('expertReply').value.trim() } });
+    const f = el('expertReplyFile').files[0];
+    let attachment = null;
+    if (f) {
+      if (f.size > 10*1024*1024) { el('expertMsg').textContent = 'Pièce jointe trop volumineuse (10 Mo maximum).'; el('expertMsg').className = 'adm-msg err'; return; }
+      attachment = { name: f.name, contentBase64: await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => { const t = String(r.result || ''); ok(t.slice(t.indexOf(',') + 1)); }; r.onerror = ko; r.readAsDataURL(f); }) };
+    }
+    await apiFetch(`/expert/${currentMissionId}/reply`, { method:'POST', body:{ reply_text: el('expertReply').value.trim(), attachment } });
+    el('expertReplyFile').value = '';
     showToast('Réponse envoyée', 'ok');
     el('expertReplyBox').hidden = true;
     await loadExpert();

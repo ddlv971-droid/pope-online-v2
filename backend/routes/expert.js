@@ -5,7 +5,7 @@ import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { clamp, rejectIfSensitive } from '../services/rgpd.js';
 import fs from 'fs';
-import { getUserVaultFiles } from './vault.js';
+import { getUserVaultFiles, checkAttachment } from './vault.js';
 import { isUnlimited, RESPONSE_DELAY_LABEL } from '../services/plans.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
 
@@ -48,6 +48,23 @@ async function withFiles(client, rows) {
     byReq.get(x.request_id).push({ id: x.id, kind: x.kind, name: x.name, type: x.mime_type, size: Number(x.size_bytes || 0), createdAt: x.created_at });
   }
   return rows.map((r) => ({ ...r, files: byReq.get(r.id) || [] }));
+}
+
+// Pièce jointe facultative d'une réponse d'expert (en plus du texte)
+function readReplyAttachment(body) {
+  const a = body?.attachment;
+  if (!a || !a.contentBase64) return { ok: true, file: null };
+  const r = checkAttachment(a.name, a.contentBase64);
+  return r.ok ? { ok: true, file: r } : { ok: false, error: r.error };
+}
+async function storeReplyAttachment(client, requestId, userId, file) {
+  if (!file) return;
+  await client.query("delete from expert_request_files where request_id=$1 and kind='reply'", [requestId]);
+  await client.query(
+    `insert into expert_request_files(request_id, user_id, kind, name, mime_type, size_bytes, content)
+     values($1,$2,'reply',$3,$4,$5,$6)`,
+    [requestId, userId, file.name, file.type, file.buffer.length, file.buffer]
+  );
 }
 
 // ── POST /expert/request ─────────────────────────────────────────────────────
@@ -258,6 +275,8 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
     const replyText = String(req.body?.reply_text || '').trim();
     const replyBy   = String(req.user?.email || 'conseiller@pope-online.com');
     if (!replyText) return res.status(400).json({ error: 'missing_reply' });
+    const att = readReplyAttachment(req.body);
+    if (!att.ok) return res.status(400).json({ error: att.error });
 
     const result = await withClient(async (client) => {
       // SECURITY: vérifier que la demande appartient à un client assigné à cet expert
@@ -282,6 +301,7 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
       );
       if (!upd.rowCount) return { ok: false };
       const row = upd.rows[0];
+      await storeReplyAttachment(client, id, req.user.sub, att.file);
 
       // Notification in-app pour le client
       if (row.user_id) {
@@ -294,16 +314,17 @@ router.post('/:id/reply', requireAdmin, async (req, res) => {
       return { ok: true, email: row.email, objective: row.objective, userId: row.user_id };
     });
 
-    if (!result.ok) return res.status(404).json({ error: 'not_found' });
+    if (!result.ok) return res.status(result.status || 404).json(result.body || { error: 'not_found' });
 
-    // Email au client
+    // Email au client (non bloquant : la réponse est déjà enregistrée dans son espace)
     await sendMail({
       to: result.email,
+      attachments: att.file ? [{ filename: att.file.name, content: att.file.buffer.toString('base64'), type: att.file.type, disposition: 'attachment' }] : [],
       subject: 'POPE Online — Votre Conseil Expert est prêt',
       text: `Bonjour,\n\nVotre expert POPE Online a répondu à votre question.\n\nVotre question :\n${result.objective}\n\nRéponse de votre expert :\n${replyText}\n\nConnectez-vous à votre espace pour consulter la réponse complète :\n${resolveFrontendBaseUrl()}/expert.html\n\nCordialement,\nL'équipe POPE Online\ncontact@pope-online.com — 09 70 70 30 55`
-    });
+    }).catch((e) => console.error('[expert] e-mail de réponse non envoyé :', e?.message || e));
 
-    return res.json({ ok: true });
+    return res.json({ ok: true, attachment: Boolean(att.file) });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'server_error' });
@@ -402,6 +423,8 @@ router.post('/:id/expert-reply', requireAuth, async (req, res) => {
     const replyBy   = String(req.user?.email || '');
     if (!replyText) return res.status(400).json({ error: 'missing_reply' });
     if (!['expert','admin'].includes(req.user?.role)) return res.status(403).json({ error: 'forbidden' });
+    const att = readReplyAttachment(req.body);
+    if (!att.ok) return res.status(400).json({ error: att.error });
 
     const result = await withClient(async (client) => {
       // SECURITY: vérifier que la demande appartient à un client assigné à cet expert
@@ -426,6 +449,7 @@ router.post('/:id/expert-reply', requireAuth, async (req, res) => {
       );
       if (!upd.rowCount) return { ok: false };
       const row = upd.rows[0];
+      await storeReplyAttachment(client, id, req.user.sub, att.file);
       if (row.user_id) {
         try {
           await client.query(

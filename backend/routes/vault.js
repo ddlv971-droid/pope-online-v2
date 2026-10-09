@@ -252,6 +252,19 @@ function validateUploadBuffer(name = '', type = '', buffer = Buffer.alloc(0)) {
 }
 
 
+// Contrôle d'un fichier envoyé hors dépôt (ex. pièce jointe d'une réponse d'expert)
+export function checkAttachment(name = '', contentBase64 = '') {
+  const clean = safeName(name || 'document');
+  const normalized = normalizeUploadType(clean, '');
+  if (!normalized.ok) return { ok: false, error: 'invalid_file_type' };
+  const buffer = Buffer.from(String(contentBase64 || ''), 'base64');
+  if (!buffer.length) return { ok: false, error: 'missing_file' };
+  if (buffer.length > MAX_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+  const check = validateUploadBuffer(clean, normalized.type, buffer);
+  if (!check.ok) return { ok: false, error: check.error };
+  return { ok: true, name: clean, type: normalized.type, buffer };
+}
+
 function cleanExtractedText(raw = '') {
   return String(raw || '')
     .replace(/\u0000/g, ' ')

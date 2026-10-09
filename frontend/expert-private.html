@@ -446,10 +446,12 @@ function loadRequests(){
       var replyHtml='';
       if(r.reply_text||r.response){
         var rtext=esc(r.reply_text||r.response||'');
+        var rfs=(r.files||[]).filter(function(f){return f.kind==='reply';});
+        var rfHtml=rfs.length?'<div class="st-vault-links" style="margin-top:12px">'+rfs.map(function(f){return'<a href="#" data-ef="'+esc(f.id)+'" data-name="'+esc(f.name)+'" class="st-vault-link">&#x2B07; Pi\u00e8ce jointe de l\u2019expert : '+esc(f.name)+'</a>';}).join('')+'</div>':'';
         var rdt=r.replied_at?new Date(r.replied_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'';
         replyHtml='<div class="st-reply-box">'
           +'<div class="st-reply-who">&#x2705; Réponse de votre conseiller expert'+(rdt?' — '+rdt:'')+'</div>'
-          +'<div class="st-reply-text">'+rtext+'</div>'
+          +'<div class="st-reply-text">'+rtext+'</div>'+rfHtml
           +'</div>';
       }
 
@@ -472,7 +474,7 @@ function loadRequests(){
 
       /* Pièces jointes */
       var vaultHtml='';
-      var rfiles=(r.files&&r.files.length)?r.files.filter(function(f){return f.kind!=='generation';}):[];
+      var rfiles=(r.files&&r.files.length)?r.files.filter(function(f){return f.kind==='vault';}):[];
       var vids=(r.vault_file_ids&&r.vault_file_ids.length)?r.vault_file_ids:[];
       if(rfiles.length){
         vaultHtml='<div class="st-req-section"><div class="st-req-section-label">&#x1F4CE; Pi\u00e8ces jointes ('+rfiles.length+')</div><div class="st-vault-links">'

@@ -471,7 +471,7 @@ function renderRequests(statusFilter) {
 
     // Pièces déposées par le client
     var vaultHtml = '';
-    var rfiles = (req.files && req.files.length) ? req.files.filter(function(f){ return f.kind !== 'generation'; }) : [];
+    var rfiles = (req.files && req.files.length) ? req.files.filter(function(f){ return f.kind === 'vault'; }) : [];
     var legacy = (!rfiles.length && req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids : [];
     if (rfiles.length || legacy.length) {
       var btnStyle = 'display:inline-flex;align-items:center;gap:5px;background:rgba(31,74,61,.1);border:1px solid rgba(31,74,61,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#6E9E89;cursor:pointer;font-family:inherit;';
@@ -489,11 +489,16 @@ function renderRequests(statusFilter) {
     if (isReplied) {
       replyOrForm = '<div class="exp-req-separator"></div>'
         + '<div><div class="exp-req-section-label">Votre r\u00e9ponse (' + fmtDate(req.replied_at) + ')</div>'
-        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">' + esc(req.reply_text || '') + '</div></div>';
+        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">' + esc(req.reply_text || '') + '</div>'
+        + (req.files || []).filter(function(f){ return f.kind === 'reply'; }).map(function(f){ return '<button type="button" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin-top:8px;display:inline-flex;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#22c55e;cursor:pointer;font-family:inherit">&#x1F4CE; ' + esc(f.name) + '</button>'; }).join('')
+        + '</div>';
     } else {
       replyOrForm = '<div class="exp-reply-zone" id="replyZone-' + rid + '">'
         + '<div class="exp-req-section-label" style="margin-bottom:8px">R\u00e9diger votre r\u00e9ponse experte</div>'
         + '<textarea class="exp-textarea" id="replyText-' + rid + '" placeholder="R\u00e9digez votre analyse fond &amp; forme."></textarea>'
+        + '<div style="margin:10px 0 4px"><label class="exp-req-section-label" for="replyFile-' + rid + '">Pi\u00e8ce jointe (facultative)</label>'
+        + '<input type="file" id="replyFile-' + rid + '" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip,.jpg,.jpeg,.png,.gif,.webp" style="display:block;margin-top:6px;font-size:12px;color:inherit">'
+        + '<div style="font-size:11px;opacity:.6;margin-top:3px">PDF, Word, Excel, PowerPoint, images\u2026 10 Mo max. Le client la t\u00e9l\u00e9charge depuis son espace.</div></div>'
         + '<div class="exp-btn-row">'
         + '<button class="exp-action-btn exp-btn-primary" onclick="submitReply(&quot;' + rid + '&quot;)">\u2713 Envoyer</button>'
         + '<button class="exp-action-btn exp-btn-secondary" onclick="cancelReply(&quot;' + rid + '&quot;)">Annuler</button>'
@@ -588,13 +593,28 @@ window.cancelReply = (id) => {
   openReplyId = null;
 };
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => { const t = String(r.result || ''); resolve(t.slice(t.indexOf(',') + 1)); };
+    r.onerror = () => reject(new Error('Lecture du fichier impossible.'));
+    r.readAsDataURL(file);
+  });
+}
 window.submitReply = async (id) => {
   const ta = el('replyText-'+id);
   const msg = el('replyMsg-'+id);
   const text = ta?.value?.trim();
   if (!text) { msg.textContent = 'Rédigez votre réponse avant d\'envoyer.'; msg.className = 'exp-msg err'; return; }
   try {
-    await apiFetch('/expert/'+id+'/expert-reply', { method:'POST', body:{ reply_text: text } });
+    const fi = el('replyFile-'+id);
+    const f = fi && fi.files && fi.files[0];
+    let attachment = null;
+    if (f) {
+      if (f.size > 10*1024*1024) { msg.textContent = 'Pièce jointe trop volumineuse (10 Mo maximum).'; msg.className = 'exp-msg err'; return; }
+      attachment = { name: f.name, contentBase64: await fileToBase64(f) };
+    }
+    await apiFetch('/expert/'+id+'/expert-reply', { method:'POST', body:{ reply_text: text, attachment } });
     showToast('Réponse envoyée au client', 'ok');
     await loadRequests();
   } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'exp-msg err'; }

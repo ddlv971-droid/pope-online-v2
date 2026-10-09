@@ -307,6 +307,9 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
       <button class="pf-nav-item" data-sec="abonnement">
         <span class="pf-nav-icon">💎</span> Mon abonnement
       </button>
+      <button class="pf-nav-item" data-sec="conseils">
+        <span class="pf-nav-icon">✍️</span> Mes Conseils Expert
+      </button>
       <button class="pf-nav-item" data-sec="paiements">
         <span class="pf-nav-icon">🧾</span> Paiements & Factures
       </button>
@@ -411,6 +414,20 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
       </div>
 
       <!-- Paiements & Factures -->
+      <!-- Conseils Expert : réponses et pièces jointes de l'expert -->
+      <div class="pf-card" id="secConseils">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">✍️</span>
+          <div>
+            <div class="pf-card-title">Mes Conseils Expert</div>
+            <div class="pf-card-sub">Vos demandes, les réponses de l'expert et ses pièces jointes</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div id="conseilsList" style="color:var(--pf-muted)">Chargement…</div>
+        </div>
+      </div>
+
       <div class="pf-card" id="secPaiements">
         <div class="pf-card-head">
           <span class="pf-card-icon">🧾</span>
@@ -565,6 +582,9 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
     <button class="pf-mobile-nav-item" data-sec="abonnement">
       <span class="pf-nav-icon">💎</span>Offre
     </button>
+    <button class="pf-mobile-nav-item" data-sec="conseils">
+      <span class="pf-nav-icon">✍️</span>Conseils
+    </button>
     <button class="pf-mobile-nav-item" data-sec="paiements">
       <span class="pf-nav-icon">🧾</span>Factures
     </button>
@@ -578,7 +598,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 </nav>
 
 <script type="module">
-import { apiFetch, getApiMessage, clearSession } from './api.js';
+import { apiFetch, apiDownload, getApiMessage, clearSession } from './api.js';
 import { requireLogin, wireLogout, showToast } from './app.js';
 if (!requireLogin('profile.html')) {}
 wireLogout();
@@ -590,11 +610,42 @@ function esc(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 const SEC_MAP = {
   infos:       'secInfos',
   abonnement:  'secAbonnement',
+  conseils:    'secConseils',
   paiements:   'secPaiements',
   securite:    'secSecurite',
   resiliation: 'secResiliation',
   donnees:     'secDonnees'
 };
+
+// ── Mes Conseils Expert ───────────────────────────────────
+async function loadConseils() {
+  const box = el('conseilsList');
+  try {
+    const data = await apiFetch('/expert/my-requests');
+    const reqs = data.requests || [];
+    if (!reqs.length) { box.innerHTML = '<p>Aucune demande pour le moment. <a href="dashboard.html">Poser une question à un expert</a>.</p>'; return; }
+    const fmt = d => d ? new Date(d).toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' }) : '';
+    box.innerHTML = reqs.map(r => {
+      const replied = !!(r.reply_text && r.reply_text.trim());
+      const rf = (r.files || []).filter(f => f.kind === 'reply');
+      return '<div style="border:1px solid var(--pf-border,#dfe6e1);border-radius:12px;padding:14px 16px;margin-bottom:12px">'
+        + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>' + esc(r.objective || 'Demande') + '</strong>'
+        + '<span style="font-size:12px;color:' + (replied ? '#14663f' : '#8a6d00') + '">' + (replied ? '✓ Répondu le ' + esc(fmt(r.replied_at)) : 'En attente · sous 24 h ouvrées') + '</span></div>'
+        + '<div style="font-size:12px;opacity:.7;margin:3px 0 8px">' + esc(r.domain || '') + (r.domain ? ' · ' : '') + 'envoyée le ' + esc(fmt(r.created_at)) + '</div>'
+        + (replied ? '<div style="white-space:pre-wrap;font-size:14px;line-height:1.55">' + esc(r.reply_text) + '</div>' : '')
+        + rf.map(f => '<button type="button" class="pf-btn pf-btn-primary" style="margin-top:10px;margin-right:8px" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '">⬇ Télécharger la pièce jointe de l’expert : ' + esc(f.name) + '</button>').join('')
+        + '</div>';
+    }).join('');
+  } catch (e) { box.textContent = getApiMessage(e); }
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-ef]');
+  if (!b) return;
+  b.disabled = true;
+  try { await apiDownload('/expert/files/' + encodeURIComponent(b.dataset.ef), b.dataset.name || 'document'); }
+  catch (err) { showToast(err.message || 'Téléchargement impossible', 'err'); }
+  b.disabled = false;
+});
 
 // ── Fonction centrale de navigation ───────────────────────
 function navigateTo(secKey) {
@@ -611,6 +662,7 @@ function navigateTo(secKey) {
   }
   // Actions spécifiques par section
   if (secKey === 'paiements') loadInvoices();
+  if (secKey === 'conseils') loadConseils();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -622,7 +674,7 @@ document.querySelectorAll('.pf-sidebar [data-sec], #pfMobileNav [data-sec]').for
 // ── Chargement initial : afficher secInfos ────────────────
 // (CORRECTION du bug: appeler navigateTo au lieu de compter sur la classe HTML
 //  qui est supprimée lors du bundling Vite)
-navigateTo('infos');
+navigateTo(SEC_MAP[new URLSearchParams(location.search).get('sec')] ? new URLSearchParams(location.search).get('sec') : 'infos');
 
 // ── Chargement des données utilisateur ───────────────────
 async function load() {
