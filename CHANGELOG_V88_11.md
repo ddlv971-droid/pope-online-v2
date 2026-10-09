@@ -33,3 +33,8 @@
 - Formulaire « Parler à un conseiller » : « Créneau souhaité » devient un planning (10 prochains jours ouvrés + tranches de 30 min, 9 h – 17 h 30, heure de Paris) ; l'heure locale du visiteur est ajoutée s'il est dans un autre fuseau (ex. outre-mer).
 - Footer : « Être rappelé » remplacé par l'icône Contact du header (toutes les pages à ce footer).
 - Correctif : le bouton « Réserver un créneau en ligne » ne s'affiche plus quand aucun lien d'agenda n'est configuré.
+
+---
+# V88_14
+- Créneau souhaité : nouveau sélecteur (cartes de jours défilables avec flèches, heures en pastilles groupées Matin / Après-midi, carte de confirmation avec l'heure locale du visiteur), adapté au mobile.
+- Page principale : « Maires, adjoints, conseillers municipaux, collaborateurs » (accroche + descriptions meta).
