@@ -38,7 +38,7 @@
     annualDiscount: 0.15,
     plans: {
       elu:          { monthly: 49,  label: 'Élu',          expert: 10 },
-      commune:      { monthly: 149, label: 'Commune',      expert: 10, seats: 3, extraSeat: 25, maxSeats: 5 },
+      commune:      { monthly: 149, label: 'Commune',      expert: 15, seats: 3, extraSeat: 25, maxSeats: 5 },
       collectivite: { monthly: 499, label: 'Collectivité', expert: 'illimités' }
     },
     creditPrice: 25,        // pack de 3 Conseils Expert, utilisables pendant un mois

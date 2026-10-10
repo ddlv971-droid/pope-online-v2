@@ -18,8 +18,8 @@ export const PLANS = {
   ELU_M:          { code: 'ELU_M',          family: 'elu',          label: 'Élu',           paid: true,  monthly: 49,  price: 49,           interval: 'month', expertLimit: 10 },
   ELU_A:          { code: 'ELU_A',          family: 'elu',          label: 'Élu',           paid: true,  monthly: 49,  price: yearly(49),   interval: 'year',  expertLimit: 10 },
   // V88.6 : offre Commune (moins de 10 000 hab.) — achat public, sur devis. Prix à valider.
-  COMMUNE_M:      { code: 'COMMUNE_M',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: 149,          interval: 'month', expertLimit: 10, seats: 3 },
-  COMMUNE_A:      { code: 'COMMUNE_A',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: yearly(149),  interval: 'year',  expertLimit: 10, seats: 3 },
+  COMMUNE_M:      { code: 'COMMUNE_M',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: 149,          interval: 'month', expertLimit: 15, seats: 3 },
+  COMMUNE_A:      { code: 'COMMUNE_A',      family: 'commune',      label: 'Commune',       paid: true,  monthly: 149, price: yearly(149),  interval: 'year',  expertLimit: 15, seats: 3 },
   COLLECTIVITE_M: { code: 'COLLECTIVITE_M', family: 'collectivite', label: 'Collectivité',  paid: true,  monthly: 499, price: 499,          interval: 'month', expertLimit: UNLIMITED },
   COLLECTIVITE_A: { code: 'COLLECTIVITE_A', family: 'collectivite', label: 'Collectivité',  paid: true,  monthly: 499, price: yearly(499),  interval: 'year',  expertLimit: UNLIMITED },
   // Historique (non commercialisé)

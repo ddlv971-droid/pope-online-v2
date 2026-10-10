@@ -38,3 +38,9 @@
 # V88_14
 - Créneau souhaité : nouveau sélecteur (cartes de jours défilables avec flèches, heures en pastilles groupées Matin / Après-midi, carte de confirmation avec l'heure locale du visiteur), adapté au mobile.
 - Page principale : « Maires, adjoints, conseillers municipaux, collaborateurs » (accroche + descriptions meta).
+
+---
+# V88_15
+- Pricing : offres Commune et Collectivité refondues en miroir de l'offre Élu (mêmes 5 items), améliorées (Commune : 15 Conseils Expert/mois et par compte au lieu de 10, traitement prioritaire, clausier enrichi ; Collectivité : illimité, traitement prioritaire) puis complétées d'options propres à chaque profil. Plus de mention « Devis, bon de commande, mandat administratif / Chorus Pro » dans les offres.
+- Backend/site-config alignés : COMMUNE = 15 Conseils Expert/mois/compte.
+- À valider : options spécifiques proposées (expert référent, visio de prise en main, point de suivi régulier, clausier enrichi) = engagements commerciaux à confirmer. Le bloc « Votre commune peut acheter POPE Online simplement » (devis, bon de commande, Chorus Pro) et les boutons « Demander un devis » sont conservés.

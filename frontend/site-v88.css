@@ -1041,3 +1041,6 @@ button.s-btn { font-family: var(--font-sans); }
 .s-slots-ok { flex: 0 0 26px; height: 26px; border-radius: 50%; background: #1F4A3D; color: #fff; display: grid; place-items: center; font-size: .85rem; font-weight: 700; }
 .s-form-actions [hidden], .s-btn[hidden] { display: none !important; }
 .s-slots, .s-slots-strip, .s-slots-days, .s-slots-times { min-width: 0; max-width: 100%; box-sizing: border-box; }
+
+/* V88_15 : options spécifiques Commune / Collectivité */
+.s-plan li.s-plan-plus strong { color: var(--sapin, #1F4A3D); }
