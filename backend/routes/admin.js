@@ -1,6 +1,6 @@
 
 function planCodeToLabel(code) {
-  return { FREE: 'Free', STARTER: 'Starter', PRO: 'Pro', PREMIUM: 'Premium' }[String(code).toUpperCase()] || 'Free';
+  return planLabel(code);
 }
 
 import express from 'express';
@@ -10,6 +10,7 @@ import { withClient } from '../db/index.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
+import { planLabel, getPlan, TRIAL_EXPERT_LIMIT } from '../services/plans.js';
 
 
 const router = express.Router();
@@ -152,7 +153,7 @@ router.post('/users', async (req, res) => {
         [email, passwordHash, fullName, organization, accountSpace, phoneFull]
       );
       await client.query(`insert into wallets(user_id, plan_code, plan_label, status, tickets_ai, tickets_expert, ai_unlimited, expert_limit, expert_used, public_dossiers_limit, private_dossiers_limit, private_users_limit)
-                          values($1,'CUSTOM','Custom','trial_active',$2,$2,false,$2,0,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
+                          values($1,'CUSTOM','Sur mesure','trial_active',$2,0,false,$2,0,$3,$4,$5) on conflict do nothing`, [ins.rows[0].id, entitlements.ticketsAi, entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]);
       await client.query('commit');
       return { id: ins.rows[0].id };
     });
@@ -187,9 +188,35 @@ router.put('/users/:id', async (req, res) => {
       }
       if (req.body.wallet) {
         const w = req.body.wallet;
-        // tickets_expert suit tickets_ai sauf si explicitement fourni
-        const ticketsAi = Number(w.ticketsAi ?? 0);
-        const ticketsExpert = w.ticketsExpert !== undefined ? Number(w.ticketsExpert) : ticketsAi;
+        // V88.4 : mise à jour PARTIELLE. Seuls les champs envoyés sont modifiés ;
+        // les autres conservent leur valeur actuelle. (En V87/V88, un simple
+        // changement de tickets remettait l'offre à FREE, le quota à 2, etc.)
+        const cur = (await client.query('select * from wallets where user_id=$1', [id])).rows[0] || {};
+        const has = (k) => w[k] !== undefined && w[k] !== null && w[k] !== '';
+        const catalogPlan = has('planCode') ? getPlan(w.planCode) : null;
+        const planCode = has('planCode') ? (catalogPlan?.code || String(w.planCode).toUpperCase()) : (cur.plan_code || 'FREE');
+        const planChanged = has('planCode') && planCode !== cur.plan_code;
+        const expertLimit = has('expertLimit') ? Number(w.expertLimit)
+          : planChanged ? (catalogPlan ? catalogPlan.expertLimit : TRIAL_EXPERT_LIMIT)
+          : Number(cur.expert_limit ?? TRIAL_EXPERT_LIMIT);
+        // Conseils Expert à l'unité : valeur absolue (ticketsExpert) ou ajout (addExpertCredits)
+        let ticketsExpert = Number(cur.tickets_expert || 0);
+        if (ticketsExpert >= 1000) ticketsExpert = 0;               // ancienne valeur sentinelle V87
+        if (has('ticketsExpert')) ticketsExpert = Math.max(0, Number(w.ticketsExpert));
+        if (has('addExpertCredits')) ticketsExpert = Math.max(0, ticketsExpert + Number(w.addExpertCredits));
+        const aiUnlimited = has('aiUnlimited') ? Boolean(w.aiUnlimited) : (cur.ai_unlimited ?? true);
+        const ticketsAi = has('ticketsAi') ? Number(w.ticketsAi) : Number(cur.tickets_ai ?? 9999);
+        const values = [
+          id, planCode, planLabel(planCode),
+          has('status') ? String(w.status) : (cur.status || 'trial_active'),
+          ticketsAi, aiUnlimited, expertLimit,
+          has('publicDossiersLimit') ? Number(w.publicDossiersLimit) : Number(cur.public_dossiers_limit ?? 1),
+          has('privateDossiersLimit') ? Number(w.privateDossiersLimit) : Number(cur.private_dossiers_limit ?? 1),
+          has('privateUsersLimit') ? Number(w.privateUsersLimit) : Number(cur.private_users_limit ?? 1),
+          has('trialExpiresAt') ? w.trialExpiresAt : (cur.trial_expires_at || null),
+          ticketsExpert,
+          planChanged ? 0 : Number(cur.expert_used ?? 0)
+        ];
         await client.query(
           `insert into wallets(
              user_id, plan_code, plan_label, status,
@@ -197,7 +224,7 @@ router.put('/users/:id', async (req, res) => {
              ai_unlimited, expert_limit, expert_used,
              public_dossiers_limit, private_dossiers_limit, private_users_limit,
              trial_expires_at
-           ) values($1,$2,$3,$4,$5,$5,$6,$7,0,$8,$9,$10,$11)
+           ) values($1,$2,$3,$4,$5,$12,$6,$7,$13,$8,$9,$10,$11)
            on conflict(user_id) do update set
              plan_code=excluded.plan_code,
              plan_label=excluded.plan_label,
@@ -206,25 +233,19 @@ router.put('/users/:id', async (req, res) => {
              tickets_expert=excluded.tickets_expert,
              ai_unlimited=excluded.ai_unlimited,
              expert_limit=excluded.expert_limit,
+             expert_used=excluded.expert_used,
              public_dossiers_limit=excluded.public_dossiers_limit,
              private_dossiers_limit=excluded.private_dossiers_limit,
              private_users_limit=excluded.private_users_limit,
              trial_expires_at=excluded.trial_expires_at,
              updated_at=now()`,
-          [
-            id,
-            w.planCode || 'FREE',
-            planCodeToLabel(w.planCode || 'FREE'),
-            w.status || 'trial_active',
-            Number(w.ticketsAi ?? 9999),
-            Boolean(w.aiUnlimited !== undefined ? w.aiUnlimited : true),
-            Number(w.expertLimit ?? 2),
-            Number(w.publicDossiersLimit ?? 1),
-            Number(w.privateDossiersLimit ?? 1),
-            Number(w.privateUsersLimit ?? 1),
-            w.trialExpiresAt || null
-          ]
+          values
         );
+        if (planChanged && catalogPlan?.paid) {
+          try {
+            await client.query(`update wallets set plan_start=coalesce(plan_start, now()), quota_period_start=now() where user_id=$1`, [id]);
+          } catch (_) {}
+        }
       }
       await client.query('commit');
       return res.json({ ok: true });

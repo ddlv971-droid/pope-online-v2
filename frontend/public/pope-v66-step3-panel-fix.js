@@ -135,11 +135,11 @@
       return;
     }
     list.innerHTML = files.map(function(f, i){
-      return '<div class="v65-file-row" style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f7">'
+      return '<div class="v65-file-row" style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #EFF6F3">'
         + '<span>📄</span>'
         + '<span style="flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(f.name) + '</span>'
         + '<span style="font-size:11px;color:#64748b">' + esc(f.size || '') + '</span>'
-        + '<button type="button" data-v65-remove="' + i + '" style="border:none;background:#f1f5f9;border-radius:8px;padding:5px 8px;cursor:pointer">Retirer</button>'
+        + '<button type="button" data-v65-remove="' + i + '" style="border:none;background:#F2F7F5;border-radius:8px;padding:5px 8px;cursor:pointer">Retirer</button>'
         + '</div>';
     }).join('');
     list.querySelectorAll('[data-v65-remove]').forEach(function(btn){
@@ -160,7 +160,7 @@
     var box = document.createElement('div');
     box.id = 'v65UploadBox';
     box.className = 'v5-attach-box';
-    box.style.cssText = 'border:1px dashed #cbd5e1;background:#f8fafc;margin-top:14px';
+    box.style.cssText = 'border:1px dashed #cbd5e1;background:#F9FBFA;margin-top:14px';
     box.innerHTML =
       '<div class="v5-attach-head">'
         + '<div class="v5-attach-ico">📎</div>'
@@ -189,7 +189,7 @@
     if(input) input.addEventListener('change', function(){ addFiles(input.files); input.value = ''; });
     if(drop){
       ['dragenter','dragover'].forEach(function(ev){
-        drop.addEventListener(ev, function(e){ e.preventDefault(); drop.style.background = '#eef6ff'; });
+        drop.addEventListener(ev, function(e){ e.preventDefault(); drop.style.background = '#EDF2EE'; });
       });
       ['dragleave','drop'].forEach(function(ev){
         drop.addEventListener(ev, function(e){ e.preventDefault(); drop.style.background = '#fff'; });
@@ -212,7 +212,7 @@
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'
           + '<span style="color:#64748b;font-size:12px">Aucune pièce détectée dans le dépôt sécurisé — optionnel.</span>'
           + '<a href="vault.html?space=' + VAULT_SPACE + '&return=' + returnUrl
-            + '" style="font-size:12px;font-weight:700;color:#0079c1;white-space:nowrap">📂 Déposer des pièces →</a>'
+            + '" style="font-size:12px;font-weight:700;color:#1F4A3D;white-space:nowrap">📂 Déposer des pièces →</a>'
         + '</div>';
     }
   }

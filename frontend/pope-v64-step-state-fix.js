@@ -92,7 +92,7 @@
     }
     var vault=$('vaultExpertList');
     if(vault && (!vault.innerHTML || /Aucune pièce disponible/i.test(vault.textContent))){
-      vault.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="color:#64748b;font-size:12px">Aucune pièce détectée dans le dépôt sécurisé — optionnel.</span><a href="vault.html?space='+(isPrivate?'private':'public')+'&return='+(isPrivate?'dashboard-private.html':'dashboard.html')+'%3Fstep%3D3" style="font-size:12px;font-weight:700;color:#0079c1;white-space:nowrap">📂 Déposer des pièces →</a></div>';
+      vault.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="color:#64748b;font-size:12px">Aucune pièce détectée dans le dépôt sécurisé — optionnel.</span><a href="vault.html?space='+(isPrivate?'private':'public')+'&return='+(isPrivate?'dashboard-private.html':'dashboard.html')+'%3Fstep%3D3" style="font-size:12px;font-weight:700;color:#1F4A3D;white-space:nowrap">📂 Déposer des pièces →</a></div>';
     }
     var lnk=$('lnkDraftStep3'); if(lnk) lnk.href=(isPrivate?'app-private.html':'app.html')+'?from=dashboard&step=2';
   }

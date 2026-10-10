@@ -8,14 +8,14 @@
 <link rel="stylesheet" href="./app.css"/>
 <style>
 :root {
-  --pf-bg:#f0f4f8;
+  --pf-bg:#F1F7F4;
   --pf-surface:#ffffff;
-  --pf-sidebar-bg:linear-gradient(180deg,#0b2440 0%,#0d2d52 100%);
+  --pf-sidebar-bg:linear-gradient(180deg,#1F2622 0%,#1C4333 100%);
   --pf-border:rgba(0,0,0,.08);
   --pf-border2:rgba(0,0,0,.05);
-  --pf-accent:#0079c1;
-  --pf-accent2:#00b4d8;
-  --pf-text:#0f172a;
+  --pf-accent:#1F4A3D;
+  --pf-accent2:#3F9974;
+  --pf-text:#11281E;
   --pf-muted:#64748b;
   --pf-muted2:#94a3b8;
   --pf-green:#16a34a;
@@ -34,9 +34,9 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 /* ─── Sidebar ───────────────────────────────────────────── */
 .pf-sidebar {
   position:sticky; top:80px;
-  background:linear-gradient(180deg,#0b2440 0%,#0d2d52 100%);
+  background:linear-gradient(180deg,#1F2622 0%,#1C4333 100%);
   border-radius:20px; overflow:hidden;
-  box-shadow:0 8px 32px rgba(11,36,64,.18);
+  box-shadow:0 8px 32px rgba(22,32,28,.18);
 }
 .pf-profile-card {
   padding:28px 20px 20px;
@@ -45,14 +45,14 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 }
 .pf-profile-card::before {
   content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,transparent,#00b4d8,transparent);
+  background:linear-gradient(90deg,transparent,#3F9974,transparent);
 }
 .pf-avatar {
   width:68px; height:68px; border-radius:20px; margin:0 auto 12px;
-  background:linear-gradient(135deg,#0079c1,#00b4d8);
+  background:linear-gradient(135deg,#1F4A3D,#3F9974);
   display:flex; align-items:center; justify-content:center;
   font-size:26px; font-weight:900; color:#fff;
-  box-shadow:0 8px 24px rgba(0,121,193,.4);
+  box-shadow:0 8px 24px rgba(31,74,61,.4);
 }
 .pf-name  { font-size:16px; font-weight:800; letter-spacing:-.02em; color:#fff; }
 .pf-email { font-size:11.5px; color:rgba(255,255,255,.5); margin-top:3px; }
@@ -60,7 +60,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
   display:inline-flex; align-items:center; gap:5px;
   margin-top:12px; padding:4px 14px; border-radius:99px;
   font-size:11.5px; font-weight:700;
-  background:rgba(0,180,216,.15); color:#00d4ff;
+  background:rgba(0,180,216,.15); color:#609F85;
   border:1px solid rgba(0,180,216,.25);
 }
 
@@ -78,8 +78,8 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 }
 .pf-nav-item:hover { background:rgba(255,255,255,.08); color:#fff; }
 .pf-nav-item.active {
-  background:rgba(0,180,216,.15); color:#00d4ff;
-  font-weight:700; border-left:3px solid #00b4d8; margin-left:5px;
+  background:rgba(0,180,216,.15); color:#609F85;
+  font-weight:700; border-left:3px solid #3F9974; margin-left:5px;
   padding-left:15px;
 }
 .pf-nav-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
@@ -106,7 +106,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 .pf-card.active { display:block; }
 .pf-card-head {
   display:flex; align-items:center; gap:14px;
-  padding:20px 26px; background:#f8fafc;
+  padding:20px 26px; background:#F9FBFA;
   border-bottom:1px solid var(--pf-border);
 }
 .pf-card-icon { font-size:22px; flex-shrink:0; }
@@ -121,12 +121,12 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 .pf-label  { font-size:11px; font-weight:700; color:var(--pf-muted); letter-spacing:.04em; text-transform:uppercase; }
 .pf-input  {
   padding:11px 16px; border-radius:12px;
-  background:#f8fafc; border:1.5px solid rgba(0,0,0,.09);
+  background:#F9FBFA; border:1.5px solid rgba(0,0,0,.09);
   color:var(--pf-text); font-size:13.5px; outline:none; font-family:inherit;
   transition:all .15s;
 }
-.pf-input:focus { border-color:var(--pf-accent); background:#eff6ff; box-shadow:0 0 0 3px rgba(0,121,193,.09); }
-.pf-input[readonly] { background:#f1f5f9; color:var(--pf-muted); cursor:default; }
+.pf-input:focus { border-color:var(--pf-accent); background:#EDF2EE; box-shadow:0 0 0 3px rgba(31,74,61,.09); }
+.pf-input[readonly] { background:#F2F7F5; color:var(--pf-muted); cursor:default; }
 
 /* Buttons */
 .pf-btn {
@@ -136,12 +136,12 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
   transition:all .2s; text-decoration:none; white-space:nowrap;
 }
 .pf-btn:disabled { opacity:.6; cursor:not-allowed; transform:none!important; }
-.pf-btn-primary { background:linear-gradient(135deg,#0079c1,#00a8e8); color:#fff; box-shadow:0 4px 14px rgba(0,121,193,.3); }
-.pf-btn-primary:hover { box-shadow:0 6px 22px rgba(0,121,193,.45); transform:translateY(-1px); }
-.pf-btn-ghost { background:#f1f5f9; color:var(--pf-text); border:1.5px solid rgba(0,0,0,.08); }
+.pf-btn-primary { background:linear-gradient(135deg,#1F4A3D,#43A57C); color:#fff; box-shadow:0 4px 14px rgba(31,74,61,.3); }
+.pf-btn-primary:hover { box-shadow:0 6px 22px rgba(31,74,61,.45); transform:translateY(-1px); }
+.pf-btn-ghost { background:#F2F7F5; color:var(--pf-text); border:1.5px solid rgba(0,0,0,.08); }
 .pf-btn-ghost:hover { background:#e2e8f0; }
 .pf-btn-outline { background:transparent; color:var(--pf-accent); border:1.5px solid var(--pf-accent); }
-.pf-btn-outline:hover { background:rgba(0,121,193,.06); }
+.pf-btn-outline:hover { background:rgba(31,74,61,.06); }
 .pf-btn-danger { background:rgba(220,38,38,.08); color:var(--pf-red); border:1.5px solid rgba(220,38,38,.2); }
 .pf-btn-danger:hover { background:rgba(220,38,38,.14); }
 .pf-btn-sm { padding:8px 16px; font-size:12px; border-radius:10px; }
@@ -152,8 +152,8 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 
 /* ─── Section Abonnement ─────────────────────────────────── */
 .pf-plan-hero {
-  background:linear-gradient(135deg,#eff6ff,#e0f7ff);
-  border:1.5px solid rgba(0,121,193,.15); border-radius:16px;
+  background:linear-gradient(135deg,#EDF2EE,#ECF3F0);
+  border:1.5px solid rgba(31,74,61,.15); border-radius:16px;
   padding:22px 24px; margin-bottom:20px;
   display:flex; align-items:center; justify-content:space-between; gap:16px;
 }
@@ -161,13 +161,13 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 .pf-plan-detail{ font-size:13px; color:var(--pf-muted); margin-top:4px; }
 .pf-stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-bottom:20px; }
 .pf-stat {
-  background:#f8fafc; border:1.5px solid rgba(0,121,193,.08);
+  background:#F9FBFA; border:1.5px solid rgba(31,74,61,.08);
   border-radius:14px; padding:14px 16px; text-align:center;
 }
 .pf-stat-val   { font-size:24px; font-weight:900; letter-spacing:-.04em; color:var(--pf-accent); }
 .pf-stat-label { font-size:11px; color:var(--pf-muted); margin-top:4px; font-weight:600; }
 .pf-info-box {
-  background:rgba(0,121,193,.04); border:1px solid rgba(0,121,193,.12);
+  background:rgba(31,74,61,.04); border:1px solid rgba(31,74,61,.12);
   border-radius:12px; padding:16px 18px;
   font-size:13px; color:var(--pf-muted); line-height:1.7;
 }
@@ -179,28 +179,28 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 .pf-invoice-table th {
   text-align:left; padding:10px 16px; font-size:10px; font-weight:700;
   letter-spacing:.07em; text-transform:uppercase; color:var(--pf-muted2);
-  background:#f8fafc; border-bottom:1px solid var(--pf-border);
+  background:#F9FBFA; border-bottom:1px solid var(--pf-border);
 }
 .pf-invoice-table td { padding:13px 16px; border-bottom:1px solid rgba(0,0,0,.04); }
 .pf-invoice-table tr:last-child td { border-bottom:none; }
-.pf-invoice-table tr:hover td { background:#fafbff; }
+.pf-invoice-table tr:hover td { background:#FCFDFD; }
 .pf-badge { display:inline-flex; padding:3px 10px; border-radius:99px; font-size:10.5px; font-weight:700; }
 .pf-badge-green { background:rgba(22,163,74,.1); color:#16a34a; border:1px solid rgba(22,163,74,.2); }
-.pf-badge-grey  { background:#f1f5f9; color:var(--pf-muted); border:1px solid rgba(0,0,0,.07); }
+.pf-badge-grey  { background:#F2F7F5; color:var(--pf-muted); border:1px solid rgba(0,0,0,.07); }
 .pf-dl-btn {
   display:inline-flex; align-items:center; gap:5px;
   padding:5px 12px; border-radius:8px; font-size:11.5px; font-weight:600;
-  background:rgba(0,121,193,.08); color:var(--pf-accent); border:1px solid rgba(0,121,193,.18);
+  background:rgba(31,74,61,.08); color:var(--pf-accent); border:1px solid rgba(31,74,61,.18);
   cursor:pointer; text-decoration:none; transition:all .15s;
 }
-.pf-dl-btn:hover { background:rgba(0,121,193,.15); }
+.pf-dl-btn:hover { background:rgba(31,74,61,.15); }
 
 /* ─── Section Sécurité ───────────────────────────────────── */
 .pf-pw-strength { height:4px; border-radius:99px; background:#e2e8f0; margin-top:8px; overflow:hidden; }
 .pf-pw-strength-bar { height:100%; border-radius:99px; transition:all .3s; width:0; }
 .pf-pw-hint { font-size:11px; color:var(--pf-muted); margin-top:4px; }
 .pf-security-sessions {
-  background:#f8fafc; border:1px solid var(--pf-border);
+  background:#F9FBFA; border:1px solid var(--pf-border);
   border-radius:14px; padding:18px 20px; margin-top:24px;
 }
 .pf-security-sessions h4 { font-size:13px; font-weight:700; margin-bottom:12px; }
@@ -307,6 +307,9 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
       <button class="pf-nav-item" data-sec="abonnement">
         <span class="pf-nav-icon">💎</span> Mon abonnement
       </button>
+      <button class="pf-nav-item" data-sec="conseils">
+        <span class="pf-nav-icon">✍️</span> Mes Conseils Expert
+      </button>
       <button class="pf-nav-item" data-sec="paiements">
         <span class="pf-nav-icon">🧾</span> Paiements & Factures
       </button>
@@ -387,12 +390,8 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
           </div>
           <div class="pf-stats-grid">
             <div class="pf-stat">
-              <div class="pf-stat-val" id="statTickets">—</div>
-              <div class="pf-stat-label">Tickets IA</div>
-            </div>
-            <div class="pf-stat">
               <div class="pf-stat-val" id="statExpert">—</div>
-              <div class="pf-stat-label">Conseils Experts</div>
+              <div class="pf-stat-label">Conseils Expert disponibles</div>
             </div>
             <div class="pf-stat">
               <div class="pf-stat-val" id="statStatus" style="font-size:15px;margin-top:4px">—</div>
@@ -408,13 +407,27 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
             </div>
           </div>
           <div class="pf-info-box">
-            Pour ajouter des crédits, passer en Pro ou Premium, ou toute question sur votre offre :<br>
+            Pour ajouter des crédits, passer à l'offre Élu ou Collectivité, ou toute question sur votre offre :<br>
             <a href="mailto:contact@pope-online.com">contact@pope-online.com</a> · <a href="tel:0970703055">09 70 70 30 55</a>
           </div>
         </div>
       </div>
 
       <!-- Paiements & Factures -->
+      <!-- Conseils Expert : réponses et pièces jointes de l'expert -->
+      <div class="pf-card" id="secConseils">
+        <div class="pf-card-head">
+          <span class="pf-card-icon">✍️</span>
+          <div>
+            <div class="pf-card-title">Mes Conseils Expert</div>
+            <div class="pf-card-sub">Vos demandes, les réponses de l'expert et ses pièces jointes</div>
+          </div>
+        </div>
+        <div class="pf-card-body">
+          <div id="conseilsList" style="color:var(--pf-muted)">Chargement…</div>
+        </div>
+      </div>
+
       <div class="pf-card" id="secPaiements">
         <div class="pf-card-head">
           <span class="pf-card-icon">🧾</span>
@@ -569,6 +582,9 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
     <button class="pf-mobile-nav-item" data-sec="abonnement">
       <span class="pf-nav-icon">💎</span>Offre
     </button>
+    <button class="pf-mobile-nav-item" data-sec="conseils">
+      <span class="pf-nav-icon">✍️</span>Conseils
+    </button>
     <button class="pf-mobile-nav-item" data-sec="paiements">
       <span class="pf-nav-icon">🧾</span>Factures
     </button>
@@ -582,7 +598,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
 </nav>
 
 <script type="module">
-import { apiFetch, getApiMessage, clearSession } from './api.js';
+import { apiFetch, apiDownload, getApiMessage, clearSession } from './api.js';
 import { requireLogin, wireLogout, showToast } from './app.js';
 if (!requireLogin('profile.html')) {}
 wireLogout();
@@ -594,11 +610,42 @@ function esc(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 const SEC_MAP = {
   infos:       'secInfos',
   abonnement:  'secAbonnement',
+  conseils:    'secConseils',
   paiements:   'secPaiements',
   securite:    'secSecurite',
   resiliation: 'secResiliation',
   donnees:     'secDonnees'
 };
+
+// ── Mes Conseils Expert ───────────────────────────────────
+async function loadConseils() {
+  const box = el('conseilsList');
+  try {
+    const data = await apiFetch('/expert/my-requests');
+    const reqs = data.requests || [];
+    if (!reqs.length) { box.innerHTML = '<p>Aucune demande pour le moment. <a href="dashboard.html">Poser une question à un expert</a>.</p>'; return; }
+    const fmt = d => d ? new Date(d).toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' }) : '';
+    box.innerHTML = reqs.map(r => {
+      const replied = !!(r.reply_text && r.reply_text.trim());
+      const rf = (r.files || []).filter(f => f.kind === 'reply');
+      return '<div style="border:1px solid var(--pf-border,#dfe6e1);border-radius:12px;padding:14px 16px;margin-bottom:12px">'
+        + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>' + esc(r.objective || 'Demande') + '</strong>'
+        + '<span style="font-size:12px;color:' + (replied ? '#14663f' : '#8a6d00') + '">' + (replied ? '✓ Répondu le ' + esc(fmt(r.replied_at)) : 'En attente · sous 24 h ouvrées') + '</span></div>'
+        + '<div style="font-size:12px;opacity:.7;margin:3px 0 8px">' + esc(r.domain || '') + (r.domain ? ' · ' : '') + 'envoyée le ' + esc(fmt(r.created_at)) + '</div>'
+        + (replied ? '<div style="white-space:pre-wrap;font-size:14px;line-height:1.55">' + esc(r.reply_text) + '</div>' : '')
+        + rf.map(f => '<button type="button" class="pf-btn pf-btn-primary" style="margin-top:10px;margin-right:8px" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '">⬇ Télécharger la pièce jointe de l’expert : ' + esc(f.name) + '</button>').join('')
+        + '</div>';
+    }).join('');
+  } catch (e) { box.textContent = getApiMessage(e); }
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-ef]');
+  if (!b) return;
+  b.disabled = true;
+  try { await apiDownload('/expert/files/' + encodeURIComponent(b.dataset.ef), b.dataset.name || 'document'); }
+  catch (err) { showToast(err.message || 'Téléchargement impossible', 'err'); }
+  b.disabled = false;
+});
 
 // ── Fonction centrale de navigation ───────────────────────
 function navigateTo(secKey) {
@@ -615,6 +662,7 @@ function navigateTo(secKey) {
   }
   // Actions spécifiques par section
   if (secKey === 'paiements') loadInvoices();
+  if (secKey === 'conseils') loadConseils();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -626,7 +674,7 @@ document.querySelectorAll('.pf-sidebar [data-sec], #pfMobileNav [data-sec]').for
 // ── Chargement initial : afficher secInfos ────────────────
 // (CORRECTION du bug: appeler navigateTo au lieu de compter sur la classe HTML
 //  qui est supprimée lors du bundling Vite)
-navigateTo('infos');
+navigateTo(SEC_MAP[new URLSearchParams(location.search).get('sec')] ? new URLSearchParams(location.search).get('sec') : 'infos');
 
 // ── Chargement des données utilisateur ───────────────────
 async function load() {
@@ -654,12 +702,12 @@ async function load() {
 
     // Abonnement
     el('subPlan').textContent = w.plan_label || 'Free';
-    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente' };
+    const statusLabels = { active:'✅ Actif', trial_active:'🟡 Essai actif', trial_expired:'🔴 Essai expiré', pending_verification:'⏳ En attente', cancelled:'⚪ Résilié', verified_no_trial:'⚪ Sans essai' };
     const statusLabel  = statusLabels[w.status] || w.status || '—';
-    el('subDetails').textContent = (w.plan_label || 'Free') + ' · ' + statusLabel;
+    el('subDetails').textContent = (w.plan_label || 'Découverte') + ' · ' + statusLabel;
 
-    el('statTickets').textContent = w.ai_unlimited ? '∞' : (w.tickets_ai ?? '—');
-    el('statExpert').textContent  = w.expert_left   ?? (w.expert_limit ?? '—');
+    // V88.5 : carte « Tickets IA » retirée (l'outil de rédaction n'est plus mis en avant)
+    el('statExpert').textContent  = w.expert_unlimited ? '∞' : (w.expert_left ?? (w.expert_limit ?? '—'));
     el('statStatus').textContent  = statusLabel;
 
     // Date de début du plan
@@ -670,13 +718,13 @@ async function load() {
     if (el('statPlanStart')) el('statPlanStart').textContent = _planStartStr;
     if (el('statPlanStartLabel')) {
       const _isPaidCheck = (w.plan_label||w.plan||'').toLowerCase();
-      const _paidCheck = _isPaidCheck==='starter'||_isPaidCheck==='pro'||_isPaidCheck==='premium';
+      const _paidCheck = /^(elu|collectivite|starter|pro|premium)$/.test(_isPaidCheck);
       el('statPlanStartLabel').textContent = _paidCheck ? 'Abonnement depuis' : 'Membre depuis';
     }
 
     // Détection plan payant — vérifier plan ET plan_label
     const _planRaw = (w.plan || w.plan_type || w.plan_label || '').toLowerCase().trim();
-    const _isPaid = _planRaw === 'starter' || _planRaw === 'pro' || _planRaw === 'premium'
+    const _isPaid = /^(elu|collectivite|starter|pro|premium)$/.test(_planRaw)
                  || _planRaw === 'pro monthly' || _planRaw === 'starter monthly'
                  || _planRaw === 'pro annual' || _planRaw === 'starter annual';
     const _renewRaw = w.renews_at || w.next_billing_at || w.current_period_end || w.period_end || null;
@@ -703,7 +751,7 @@ async function load() {
       const _tDays = Math.ceil((_tExp - Date.now()) / 86400000);
       if (_lbl) _lbl.textContent = _tExpired ? 'Essai expiré le' : 'Fin d\'essai';
       el('statTrialEnd').textContent = _tFmt;
-      el('statTrialEnd').style.color = _tExpired ? '#dc2626' : (_tDays <= 3 ? '#d97706' : '#0079c1');
+      el('statTrialEnd').style.color = _tExpired ? '#dc2626' : (_tDays <= 3 ? '#d97706' : '#1F4A3D');
     } else if (w.status === 'pending_verification') {
       if (_lbl) _lbl.textContent = 'Statut';
       el('statTrialEnd').textContent = 'Email à vérifier';
@@ -716,7 +764,7 @@ async function load() {
       // Espace gratuit sans date d'essai configurée
       if (_lbl) _lbl.textContent = 'Offre';
       el('statTrialEnd').textContent = 'Gratuit';
-      el('statTrialEnd').style.color = '#50627a';
+      el('statTrialEnd').style.color = '#4B5650';
     }
 
     // Infos session sécurité
@@ -877,5 +925,7 @@ el('btnDeleteAccount').onclick = async function() {
 // Lancement
 load();
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

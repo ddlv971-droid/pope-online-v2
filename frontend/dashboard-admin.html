@@ -7,14 +7,14 @@
 <link rel="icon" href="./favicon.png"/>
 <style>
 :root {
-  --bg: #0f1923;
-  --surface: #162032;
-  --surface2: #1c2d42;
-  --border: rgba(0,121,193,.18);
+  --bg: #0F231B;
+  --surface: #163226;
+  --surface2: #1C4232;
+  --border: rgba(31,74,61,.18);
   --border2: rgba(255,255,255,.1);
-  --accent: #0079c1;
-  --accent2: #00b4d8;
-  --text: #edf2f8;
+  --accent: #1F4A3D;
+  --accent2: #3F9974;
+  --text: #EDF1EE;
   --muted: rgba(255,255,255,.7);
   --muted2: rgba(255,255,255,.45);
   --green: #22c55e;
@@ -45,8 +45,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   display: flex; align-items: center; gap: 6px;
   padding: 5px 12px; border-radius: 99px;
   font-size: 11px; font-weight: 600;
-  background: rgba(0,121,193,.12); color: var(--accent2);
-  border: 1px solid rgba(0,121,193,.2);
+  background: rgba(31,74,61,.12); color: var(--accent2);
+  border: 1px solid rgba(31,74,61,.2);
 }
 .adm-bar-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .adm-bar-btn {
@@ -62,7 +62,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-main { display: flex; flex: 1; }
 .adm-sidebar {
   width: 220px; flex-shrink: 0; padding: 20px 12px;
-  background: #131e2d; border-right: 1px solid rgba(255,255,255,.06);
+  background: #132D22; border-right: 1px solid rgba(255,255,255,.06);
   display: flex; flex-direction: column; gap: 4px;
 }
 .adm-nav-label { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); padding: 12px 10px 6px; }
@@ -74,7 +74,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   text-decoration: none; transition: all .15s;
 }
 .adm-nav-item:hover { background: rgba(255,255,255,.05); color: var(--text); }
-.adm-nav-item.active { background: rgba(0,121,193,.15); color: var(--accent2); font-weight: 700; }
+.adm-nav-item.active { background: rgba(31,74,61,.15); color: var(--accent2); font-weight: 700; }
 .adm-nav-item .adm-nav-icon { font-size: 16px; width: 20px; text-align: center; }
 .adm-nav-badge {
   margin-left: auto; font-size: 10px; font-weight: 700;
@@ -86,7 +86,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* Hero KPIs */
 .adm-hero {
-  background: linear-gradient(135deg, var(--surface) 0%, #0a1830 100%);
+  background: linear-gradient(135deg, var(--surface) 0%, #11291F 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius); padding: 28px;
   margin-bottom: 24px;
@@ -115,7 +115,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* Cards */
 .adm-card {
-  background: #162032; border: 1px solid rgba(0,121,193,.12);
+  background: #163226; border: 1px solid rgba(31,74,61,.12);
   border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
 }
 .adm-card-head {
@@ -132,18 +132,18 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-input {
   padding: 10px 14px; border-radius: 10px; font-size: 13px;
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
-  color: #edf2f8; transition: all .15s; outline: none;
+  color: #EDF1EE; transition: all .15s; outline: none;
   font-family: inherit;
 }
-.adm-input:focus { border-color: var(--accent); background: rgba(0,121,193,.07); }
+.adm-input:focus { border-color: var(--accent); background: rgba(31,74,61,.07); }
 .adm-select {
   appearance: none;
-  background: #162032 !important;
-  color: #edf2f8 !important;
+  background: #163226 !important;
+  color: #EDF1EE !important;
 }
 .adm-select option {
-  background: #162032;
-  color: #edf2f8;
+  background: #163226;
+  color: #EDF1EE;
 }
 .adm-form-full { grid-column: 1 / -1; }
 
@@ -154,9 +154,9 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   font-size: 13px; font-weight: 700; border: none; cursor: pointer;
   transition: all .2s; text-decoration: none; white-space: nowrap;
 }
-.adm-btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(0,121,193,.35); }
-.adm-btn-primary:hover { box-shadow: 0 6px 20px rgba(0,121,193,.5); transform: translateY(-1px); }
-.adm-btn-ghost { background: rgba(255,255,255,.07); color: #e8f0f8; border: 1px solid rgba(255,255,255,.12); }
+.adm-btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(31,74,61,.35); }
+.adm-btn-primary:hover { box-shadow: 0 6px 20px rgba(31,74,61,.5); transform: translateY(-1px); }
+.adm-btn-ghost { background: rgba(255,255,255,.07); color: #ECF4F1; border: 1px solid rgba(255,255,255,.12); }
 .adm-btn-ghost:hover { background: rgba(255,255,255,.12); }
 .adm-btn-danger { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); }
 .adm-btn-danger:hover { background: rgba(239,68,68,.18); }
@@ -183,7 +183,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   font-size: 10.5px; font-weight: 700; letter-spacing: .03em;
 }
 .adm-badge-green { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
-.adm-badge-blue  { background: rgba(0,121,193,.1); color: var(--accent2); border: 1px solid rgba(0,121,193,.2); }
+.adm-badge-blue  { background: rgba(31,74,61,.1); color: var(--accent2); border: 1px solid rgba(31,74,61,.2); }
 .adm-badge-red   { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); }
 .adm-badge-grey  { background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid var(--border2); }
 .adm-badge-yellow{ background: rgba(245,158,11,.1); color: var(--yellow); border: 1px solid rgba(245,158,11,.2); }
@@ -221,7 +221,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   padding: 20px; border-bottom: 1px solid var(--border2);
   display: flex; align-items: center; gap: 12px;
 }
-.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; background: #131e2d; color: #edf2f8; }
+.adm-user-panel-body { flex: 1; overflow-y: auto; padding: 20px; background: #132D22; color: #EDF1EE; }
 .adm-user-avatar {
   width: 44px; height: 44px; border-radius: 12px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -235,7 +235,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-close-btn:hover { color: #fff; }
 .adm-detail-section { margin-bottom: 20px; }
 .adm-detail-section-title { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 10px; }
-.adm-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; color: #edf2f8; }
+.adm-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; color: #EDF1EE; }
 .adm-detail-row:last-child { border-bottom: none; }
 .adm-detail-key { color: var(--muted); }
 .adm-detail-val { font-weight: 600; text-align: right; }
@@ -245,7 +245,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .adm-textarea {
   width: 100%; padding: 10px 14px; border-radius: 10px; font-size: 13px; min-height: 100px;
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
-  color: #edf2f8; resize: vertical; font-family: inherit; outline: none;
+  color: #EDF1EE; resize: vertical; font-family: inherit; outline: none;
 }
 .adm-textarea:focus { border-color: var(--accent); }
 
@@ -279,7 +279,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   border: none; cursor: pointer; background: none; color: rgba(255,255,255,.65); transition: all .15s;
 }
 .adm-tab:hover { background: rgba(255,255,255,.06); color: #fff; }
-.adm-tab.active { background: var(--accent); color: #fff !important; box-shadow: 0 2px 8px rgba(0,121,193,.3); }
+.adm-tab.active { background: var(--accent); color: #fff !important; box-shadow: 0 2px 8px rgba(31,74,61,.3); }
 
 /* Responsive */
 /* ── Responsive Admin ─────────────────────────────────────── */
@@ -390,7 +390,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .fiche-section-title {
   font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  text-transform: uppercase; color: #0099e6;
+  text-transform: uppercase; color: #43A37B;
   margin-bottom: 16px; padding-bottom: 10px;
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
@@ -420,12 +420,12 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .fiche-input:focus {
   outline: none;
-  border-color: #0099e6;
+  border-color: #43A37B;
   background: rgba(0,153,230,.1);
   box-shadow: 0 0 0 3px rgba(0,153,230,.15);
 }
-.fiche-input option { background: #0d1e30; color: #fff; }
-.fiche-input optgroup { background: #07162a; color: rgba(255,255,255,.5); }
+.fiche-input option { background: #1A2A23; color: #fff; }
+.fiche-input optgroup { background: #163629; color: rgba(255,255,255,.5); }
 .fiche-textarea { min-height: 90px; resize: vertical; }
 
 /* Chips domaines */
@@ -440,11 +440,11 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75);
   cursor: pointer; transition: .15s; user-select: none;
 }
-.fiche-chip:hover { border-color: #0099e6; color: #7dcfff; }
+.fiche-chip:hover { border-color: #43A37B; color: #AECEC1; }
 .fiche-chip:has(input:checked) {
   background: rgba(0,153,230,.2);
-  border-color: #0099e6;
-  color: #7dcfff;
+  border-color: #43A37B;
+  color: #AECEC1;
 }
 .fiche-chip input { display: none; }
 
@@ -631,6 +631,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
               <label class="adm-label">Réponse de l'expert</label>
               <textarea class="adm-textarea" id="expertReply" placeholder="Rédigez votre retour expert…"></textarea>
             </div>
+            <div class="adm-form-group" style="margin-bottom:12px">
+              <label class="adm-label">Pièce jointe (facultative)</label>
+              <input type="file" id="expertReplyFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip,.jpg,.jpeg,.png,.gif,.webp" style="color:inherit">
+            </div>
             <div style="display:flex;gap:10px">
               <button class="adm-btn adm-btn-primary" id="expertSendBtn">✓ Envoyer la réponse</button>
               <button class="adm-btn adm-btn-ghost" id="expertCancelBtn">Annuler</button>
@@ -678,10 +682,16 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
               <div class="adm-form-group adm-form-full">
                 <label class="adm-label">Offre</label>
                 <select class="adm-input adm-select" id="createPlan">
-                  <option value="free">Free / Essai</option>
-                  <option value="starter">Starter</option>
-                  <option value="pro">Pro</option>
-                  <option value="premium">Premium</option>
+                  <option value="free">Découverte / Essai</option>
+                  <option value="elu_m">Élu (mensuel)</option>
+                  <option value="elu_a">Élu (annuel)</option>
+                  <option value="commune_m">Commune (mensuel)</option>
+                  <option value="commune_a">Commune (annuel)</option>
+                  <option value="collectivite_m">Collectivité (mensuel)</option>
+                  <option value="collectivite_a">Collectivité (annuel)</option>
+                  <option value="starter">Starter (historique)</option>
+                  <option value="pro">Pro (historique)</option>
+                  <option value="premium">Premium (historique)</option>
                 </select>
               </div>
             </div>
@@ -752,7 +762,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
             <button class="adm-btn adm-btn-ghost adm-btn-sm" id="closePortfolioBtn">&#10005; Fermer</button>
           </div>
           <div class="adm-card-body">
-            <div style="margin-bottom:16px;padding:14px;background:rgba(0,121,193,.06);border:1px solid rgba(0,121,193,.15);border-radius:12px">
+            <div style="margin-bottom:16px;padding:14px;background:rgba(31,74,61,.06);border:1px solid rgba(31,74,61,.15);border-radius:12px">
               <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Ajouter un client au portefeuille</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <select class="adm-input adm-select" id="expertTabClientSelect" style="flex:1;min-width:180px">
@@ -1264,18 +1274,24 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </div>
 
       <div class="adm-detail-section">
-        <div class="adm-detail-section-title">Tickets & Accès</div>
+        <div class="adm-detail-section-title">Conseils Expert à l&rsquo;unité &amp; offre</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-          <input class="adm-input" type="number" id="panelTickets" placeholder="Nb tickets" style="width:120px"/>
+          <input class="adm-input" type="number" id="panelTickets" placeholder="Crédits à ajouter (ex. 1, ou -1)" title="Ajoute (ou retire) des Conseils Expert à l&rsquo;unité, en plus du quota mensuel de l&rsquo;offre" style="width:220px"/>
           <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveTickets">Mettre à jour</button>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <select class="adm-input adm-select" id="panelPlan" style="flex:1">
-            <option value="free">Free</option>
-            <option value="starter">Starter</option>
-            <option value="pro">Pro</option>
-            <option value="premium">Premium</option>
-          </select>
+                  <option value="free">Découverte / Essai</option>
+                  <option value="elu_m">Élu (mensuel)</option>
+                  <option value="elu_a">Élu (annuel)</option>
+                  <option value="commune_m">Commune (mensuel)</option>
+                  <option value="commune_a">Commune (annuel)</option>
+                  <option value="collectivite_m">Collectivité (mensuel)</option>
+                  <option value="collectivite_a">Collectivité (annuel)</option>
+                  <option value="starter">Starter (historique)</option>
+                  <option value="pro">Pro (historique)</option>
+                  <option value="premium">Premium (historique)</option>
+                </select>
           <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSavePlan">Appliquer</button>
         </div>
         <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelPromoteStandard" style="width:100%;justify-content:center;margin-bottom:8px">
@@ -1337,7 +1353,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 
 <script type="module">
-import { apiFetch, getToken, getApiMessage, setSession, clearSession } from './api.js';
+import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSession } from './api.js';
 window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
@@ -1587,9 +1603,9 @@ el('panelSaveTickets').onclick = async () => {
   const n = parseInt(el('panelTickets').value);
   if (isNaN(n)) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ ticketsAi:n, status:'active' } } });
-    showToast('Tickets mis à jour', 'ok');
-    el('panelMsg').textContent = '✓ Tickets mis à jour';
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ addExpertCredits:n } } });
+    showToast('Conseils Expert mis à jour', 'ok');
+    el('panelMsg').textContent = '✓ ' + (n >= 0 ? n + ' Conseil(s) Expert ajouté(s)' : (-n) + ' Conseil(s) Expert retiré(s)');
     el('panelMsg').className = 'adm-msg ok';
     await loadUsers();
   } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
@@ -1727,8 +1743,8 @@ el('panelSaveRole').onclick = async () => {
 el('panelPromoteStandard').onclick = async () => {
   if (!selectedUser) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ planCode:'STARTER', status:'active', ticketsAi:50 } } });
-    showToast('Passé en offre standard', 'ok');
+    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ wallet:{ planCode:'ELU_M', status:'active', ticketsAi:9999 } } });
+    showToast('Passé en offre Élu', 'ok');
     await loadUsers();
   } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
 };
@@ -1807,14 +1823,14 @@ async function loadExpert() {
     const statusCfg = {
       new:         { label:'En attente',  bg:'rgba(245,158,11,.12)',  color:'#f59e0b', border:'rgba(245,158,11,.25)' },
       pending:     { label:'En attente',  bg:'rgba(245,158,11,.12)',  color:'#f59e0b', border:'rgba(245,158,11,.25)' },
-      in_progress: { label:'En cours',    bg:'rgba(0,121,193,.12)',   color:'#60a5fa', border:'rgba(0,121,193,.25)'  },
+      in_progress: { label:'En cours',    bg:'rgba(31,74,61,.12)',   color:'#6E9E89', border:'rgba(31,74,61,.25)'  },
       replied:     { label:'Repondu \u2713',   bg:'rgba(34,197,94,.1)',    color:'#22c55e', border:'rgba(34,197,94,.2)'   },
       closed:      { label:'Cloture',     bg:'rgba(255,255,255,.07)', color:'#94a3b8', border:'rgba(255,255,255,.1)' }
     };
     el('expertList').innerHTML = missions.map(function(m) {
       var sc = statusCfg[m.status] || statusCfg.new;
       var hasReply = !!(m.reply_text && m.reply_text.trim());
-      var borderColor = hasReply ? 'rgba(34,197,94,.25)' : 'rgba(0,121,193,.15)';
+      var borderColor = hasReply ? 'rgba(34,197,94,.25)' : 'rgba(31,74,61,.15)';
       var replyHtml = '';
       if (hasReply) {
         var byStr = m.reply_by ? ' &middot; par ' + esc(m.reply_by) : '';
@@ -1824,30 +1840,42 @@ async function loadExpert() {
               '\u2713 R\u00e9ponse de l\'expert &middot; ' + fmtDate(m.replied_at) + byStr +
             '</div>' +
             '<p style="font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.65;white-space:pre-wrap">' + esc(m.reply_text) + '</p>' +
+            (m.files || []).filter(function(f){ return f.kind === 'reply'; }).map(function(f){ return '<button class="adm-btn adm-btn-sm" type="button" data-expert-file="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin-top:10px">\u2B07 Pi\u00e8ce jointe de la r\u00e9ponse : ' + esc(f.name) + '</button>'; }).join('') +
           '</div>';
       }
-      var expectHtml = m.expectations ?
-        '<div style="margin-bottom:10px">' +
-          '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Attentes client</span>' +
-          '<p style="font-size:13px;color:rgba(255,255,255,.65);margin:5px 0 0;line-height:1.55">' + esc(m.expectations.substring(0,200)) + (m.expectations.length > 200 ? '&hellip;' : '') + '</p>' +
-        '</div>' : '';
+      var lbl = function(t){ return '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">' + t + '</span>'; };
+      var para = function(t){ return '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55;white-space:pre-wrap;word-break:break-word">' + esc(t) + '</p>'; };
+      var expectHtml = m.expectations ? '<div style="margin-bottom:10px">' + lbl('Demande / attentes du client') + para(m.expectations) + '</div>' : '';
+      var contextHtml = m.context ? '<div style="margin-bottom:10px">' + lbl('Contexte') + para(m.context) + '</div>' : '';
+      var domainHtml = m.domain ? '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(0,176,240,.12);color:#7dd3fc;border:1px solid rgba(0,176,240,.25)">' + esc(m.domain) + '</span>' : '';
+      var ga = m.generation_attachment;
+      if (typeof ga === 'string') { try { ga = JSON.parse(ga); } catch (e) { ga = null; } }
+      var genHtml = (ga && ga.result) ? '<details style="margin-bottom:10px"><summary style="cursor:pointer;font-size:12px;color:#7dd3fc">Premier jet joint par le client (' + esc(ga.usecaseLabel || 'texte généré') + ')</summary>' + para(ga.result) + '</details>' : '';
+      var files = (m.files || []).filter(function(f){ return f.kind !== 'generation'; });
+      var genFile = (m.files || []).filter(function(f){ return f.kind === 'generation'; })[0];
+      var fileBtns = (m.files || []).filter(function(f){ return f.kind !== 'reply'; }).map(function(f){
+        var kb = f.size >= 1048576 ? (f.size/1048576).toFixed(1) + ' Mo' : Math.max(1, Math.round(f.size/1024)) + ' Ko';
+        return '<button class="adm-btn adm-btn-sm" type="button" data-expert-file="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin:0 6px 6px 0">\u2B07 ' + esc(f.name) + ' <small style="opacity:.6">(' + kb + ')</small></button>';
+      }).join('');
+      var filesHtml = fileBtns ? '<div style="margin-bottom:10px">' + lbl('Pi\u00e8ces jointes du client (' + (m.files||[]).filter(function(f){ return f.kind !== 'reply'; }).length + ')') + '<div style="margin-top:6px">' + fileBtns + '</div></div>' : '';
+      var mailWarn = (m.mail_sent === false) ? '<div style="margin-bottom:10px;font-size:12px;color:#fbbf24">\u26a0 L\'e-mail de notification vers contact@pope-online.com n\'a pas pu partir : cette demande n\'est visible qu\'ici.</div>' : '';
       var btnLabel = hasReply ? '\u270f\ufe0f Modifier la r\u00e9ponse' : '\u270d\ufe0f R\u00e9diger la r\u00e9ponse';
-      return '<div style="border:1px solid ' + borderColor + ';border-radius:14px;padding:18px;margin-bottom:14px;background:#162032">' +
+      return '<div style="border:1px solid ' + borderColor + ';border-radius:14px;padding:18px;margin-bottom:14px;background:#163226">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
           '<div>' +
-            '<div style="font-weight:700;color:#edf2f8;font-size:14px">' + esc(m.full_name || m.email || '\u2014') + '</div>' +
+            '<div style="font-weight:700;color:#EDF1EE;font-size:14px">' + esc(m.full_name || m.email || '\u2014') + '</div>' +
             '<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">' + esc(m.email || m.user_email || '') + '</div>' +
           '</div>' +
           '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
-            '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:' + sc.bg + ';color:' + sc.color + ';border:1px solid ' + sc.border + '">' + sc.label + '</span>' +
+            domainHtml + '<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:' + sc.bg + ';color:' + sc.color + ';border:1px solid ' + sc.border + '">' + sc.label + '</span>' +
             '<span style="font-size:11px;color:rgba(255,255,255,.4)">' + fmtDate(m.created_at) + '</span>' +
           '</div>' +
         '</div>' +
         '<div style="margin-bottom:10px">' +
           '<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;text-transform:uppercase">Objectif</span>' +
-          '<p style="font-size:13px;color:rgba(255,255,255,.8);margin:5px 0 0;line-height:1.55">' + esc((m.objective || '\u2014').substring(0, 200)) + (m.objective && m.objective.length > 200 ? '&hellip;' : '') + '</p>' +
+          para(m.objective || '\u2014') +
         '</div>' +
-        expectHtml +
+        expectHtml + contextHtml + genHtml + filesHtml + mailWarn +
         replyHtml +
         '<div style="margin-top:12px">' +
           '<button class="adm-btn adm-btn-primary adm-btn-sm" onclick="startReply(\'' + esc(m.id) + '\')">' + btnLabel + '</button>' +
@@ -1856,6 +1884,14 @@ async function loadExpert() {
     }).join('');
   } catch(e) { el('expertList').innerHTML = '<p style="color:var(--red);padding:16px">Erreur: '+esc(getApiMessage(e))+'</p>'; }
 }
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-expert-file]');
+  if (!b) return;
+  b.disabled = true;
+  try { await apiDownload('/expert/files/' + encodeURIComponent(b.dataset.expertFile), b.dataset.name || 'document'); }
+  catch (err) { showToast(err.message || 'Téléchargement impossible', 'err'); }
+  b.disabled = false;
+});
 let currentMissionId = null;
 window.startReply = (id) => {
   currentMissionId = id;
@@ -1868,7 +1904,14 @@ window.startReply = (id) => {
 el('expertSendBtn').onclick = async () => {
   if (!currentMissionId) return;
   try {
-    await apiFetch(`/expert/${currentMissionId}/reply`, { method:'POST', body:{ reply_text: el('expertReply').value.trim() } });
+    const f = el('expertReplyFile').files[0];
+    let attachment = null;
+    if (f) {
+      if (f.size > 10*1024*1024) { el('expertMsg').textContent = 'Pièce jointe trop volumineuse (10 Mo maximum).'; el('expertMsg').className = 'adm-msg err'; return; }
+      attachment = { name: f.name, contentBase64: await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => { const t = String(r.result || ''); ok(t.slice(t.indexOf(',') + 1)); }; r.onerror = ko; r.readAsDataURL(f); }) };
+    }
+    await apiFetch(`/expert/${currentMissionId}/reply`, { method:'POST', body:{ reply_text: el('expertReply').value.trim(), attachment } });
+    el('expertReplyFile').value = '';
     showToast('Réponse envoyée', 'ok');
     el('expertReplyBox').hidden = true;
     await loadExpert();
@@ -2361,5 +2404,7 @@ window.saveFicheClient=saveFicheClient; window.loadFicheClient=loadFicheClient; 
 <script src="./admin-v52.js"></script>
 <script src="./admin-v53.js"></script>
 <script src="./admin-v54.js"></script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

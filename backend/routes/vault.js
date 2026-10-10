@@ -16,8 +16,25 @@ fs.mkdirSync(storageDir, { recursive: true });
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const AI_ANALYZABLE_TYPES = ['text/plain', 'text/csv', 'application/msword', 'application/pdf'];
-const ALLOWED_UPLOAD_TYPES = ['text/plain', 'text/csv', 'application/msword', 'application/pdf'];
-const ALLOWED_EXTENSIONS = ['.txt', '.csv', '.doc', '.pdf'];
+// Formats acceptés au dépôt sécurisé : le contrôle se fait sur l'extension + la signature du fichier
+// (le type MIME envoyé par le navigateur est trop variable pour être fiable).
+const EXT_TYPES = {
+  '.txt': 'text/plain', '.csv': 'text/csv', '.md': 'text/plain', '.rtf': 'application/rtf',
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.xls': 'application/vnd.ms-excel',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.ppt': 'application/vnd.ms-powerpoint',
+  '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  '.odt': 'application/vnd.oasis.opendocument.text',
+  '.ods': 'application/vnd.oasis.opendocument.spreadsheet',
+  '.odp': 'application/vnd.oasis.opendocument.presentation',
+  '.zip': 'application/zip',
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.gif': 'image/gif', '.webp': 'image/webp'
+};
+const ALLOWED_EXTENSIONS = Object.keys(EXT_TYPES);
+const ALLOWED_UPLOAD_TYPES = [...new Set(Object.values(EXT_TYPES))];
 
 
 const OCR_TEXT_MIN_LENGTH = 120;
@@ -187,22 +204,14 @@ function extensionOf(name='') {
 }
 
 function inferTypeFromName(name='') {
-  const ext = extensionOf(name);
-  if (ext === '.txt') return 'text/plain';
-  if (ext === '.csv') return 'text/csv';
-  if (ext === '.doc') return 'application/msword';
-  if (ext === '.pdf') return 'application/pdf';
-  return 'application/octet-stream';
+  return EXT_TYPES[extensionOf(name)] || 'application/octet-stream';
 }
 
 function normalizeUploadType(name='', type='') {
-  const normalizedType = String(type || '').trim().toLowerCase();
   const ext = extensionOf(name);
-  const inferred = inferTypeFromName(name);
-  if (!ALLOWED_EXTENSIONS.includes(ext)) return { ok: false, ext, type: normalizedType || inferred };
-  if (!normalizedType || normalizedType === 'application/octet-stream') return { ok: true, ext, type: inferred };
-  if (!ALLOWED_UPLOAD_TYPES.includes(normalizedType)) return { ok: false, ext, type: normalizedType };
-  return { ok: true, ext, type: normalizedType };
+  if (!ALLOWED_EXTENSIONS.includes(ext)) return { ok: false, ext, type: String(type || '') };
+  // Le type est déduit de l'extension : un navigateur peut envoyer n'importe quel MIME (ou aucun).
+  return { ok: true, ext, type: inferTypeFromName(name) };
 }
 
 function isProbablyText(buffer) {
@@ -216,20 +225,45 @@ function isProbablyText(buffer) {
   return weird / Math.max(cleaned.length, 1) < 0.02;
 }
 
-function validateUploadBuffer(name = '', type = '', buffer = Buffer.alloc(0)) {
-  const ext = extensionOf(name);
-  if (ext === '.pdf') {
-    return buffer.slice(0, 5).toString('ascii') === '%PDF-' ? { ok: true } : { ok: false, error: 'invalid_file_content' };
-  }
-  if (ext === '.doc') {
-    return buffer.slice(0, 8).equals(Buffer.from([0xd0,0xcf,0x11,0xe0,0xa1,0xb1,0x1a,0xe1])) ? { ok: true } : { ok: false, error: 'invalid_file_content' };
-  }
-  if (ext === '.txt' || ext === '.csv') {
-    return isProbablyText(buffer) ? { ok: true } : { ok: false, error: 'invalid_file_content' };
-  }
-  return { ok: false, error: 'invalid_file_type' };
+function startsWith(buffer, bytes) {
+  return buffer.length >= bytes.length && buffer.slice(0, bytes.length).equals(Buffer.from(bytes));
 }
 
+function validateUploadBuffer(name = '', type = '', buffer = Buffer.alloc(0)) {
+  const ext = extensionOf(name);
+  const bad = { ok: false, error: 'invalid_file_content' };
+  const ok = { ok: true };
+  const OLE = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1];
+  switch (ext) {
+    case '.pdf': return buffer.slice(0, 1024).toString('latin1').includes('%PDF-') ? ok : bad;
+    case '.doc': case '.xls': case '.ppt':
+      // Les anciens formats Office sont des conteneurs OLE ; certains .doc sont en réalité du RTF ou du XML/HTML.
+      return startsWith(buffer, OLE) || startsWith(buffer, [0x7b, 0x5c, 0x72, 0x74, 0x66]) || startsWith(buffer, [0x50, 0x4b, 0x03, 0x04]) || isProbablyText(buffer) ? ok : bad;
+    case '.docx': case '.xlsx': case '.pptx': case '.odt': case '.ods': case '.odp': case '.zip':
+      return startsWith(buffer, [0x50, 0x4b]) ? ok : bad;
+    case '.jpg': case '.jpeg': return startsWith(buffer, [0xff, 0xd8, 0xff]) ? ok : bad;
+    case '.png': return startsWith(buffer, [0x89, 0x50, 0x4e, 0x47]) ? ok : bad;
+    case '.gif': return startsWith(buffer, [0x47, 0x49, 0x46, 0x38]) ? ok : bad;
+    case '.webp': return buffer.slice(0, 4).toString('ascii') === 'RIFF' && buffer.slice(8, 12).toString('ascii') === 'WEBP' ? ok : bad;
+    case '.rtf': return buffer.slice(0, 5).toString('ascii') === '{\\rtf' ? ok : bad;
+    case '.txt': case '.csv': case '.md': return isProbablyText(buffer) ? ok : bad;
+    default: return { ok: false, error: 'invalid_file_type' };
+  }
+}
+
+
+// Contrôle d'un fichier envoyé hors dépôt (ex. pièce jointe d'une réponse d'expert)
+export function checkAttachment(name = '', contentBase64 = '') {
+  const clean = safeName(name || 'document');
+  const normalized = normalizeUploadType(clean, '');
+  if (!normalized.ok) return { ok: false, error: 'invalid_file_type' };
+  const buffer = Buffer.from(String(contentBase64 || ''), 'base64');
+  if (!buffer.length) return { ok: false, error: 'missing_file' };
+  if (buffer.length > MAX_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+  const check = validateUploadBuffer(clean, normalized.type, buffer);
+  if (!check.ok) return { ok: false, error: check.error };
+  return { ok: true, name: clean, type: normalized.type, buffer };
+}
 
 function cleanExtractedText(raw = '') {
   return String(raw || '')

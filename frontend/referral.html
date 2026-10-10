@@ -7,19 +7,19 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style>
-.ref-hero{background:linear-gradient(135deg,#07162a,#0b3060 50%,#0079c1);border-radius:24px;padding:40px;color:#fff;margin-bottom:28px;text-align:center}
+.ref-hero{background:linear-gradient(135deg,#163629,#163629 50%,#1F4A3D);border-radius:24px;padding:40px;color:#fff;margin-bottom:28px;text-align:center}
 .ref-hero h1{margin:0 0 10px;font-size:clamp(22px,4vw,30px);font-weight:800;hyphens:none}
 .ref-hero p{margin:0;color:rgba(255,255,255,.75);font-size:15px}
-.ref-card{background:#fff;border-radius:20px;box-shadow:0 2px 18px rgba(11,36,64,.07);padding:32px;margin-bottom:16px}
-.ref-url-box{background:#f0f7fc;border:2px solid #b8dcf0;border-radius:12px;padding:14px 18px;font-family:monospace;font-size:14px;color:#0b2440;word-break:break-all;margin:14px 0}
-.ref-stat{text-align:center;background:#f8fafc;border:1px solid #dce9f4;border-radius:16px;padding:20px}
-.ref-stat .n{font-size:36px;font-weight:800;color:#0079c1}
-.ref-stat .l{font-size:13px;color:#50627a;margin-top:4px}
+.ref-card{background:#fff;border-radius:20px;box-shadow:0 2px 18px rgba(22,32,28,.07);padding:32px;margin-bottom:16px}
+.ref-url-box{background:#EFF3F0;border:2px solid #C9D8CF;border-radius:12px;padding:14px 18px;font-family:monospace;font-size:14px;color:#1F2622;word-break:break-all;margin:14px 0}
+.ref-stat{text-align:center;background:#F9FBFA;border:1px solid #D6DDD8;border-radius:16px;padding:20px}
+.ref-stat .n{font-size:36px;font-weight:800;color:#1F4A3D}
+.ref-stat .l{font-size:13px;color:#4B5650;margin-top:4px}
 .ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
-.ref-step{display:flex;gap:14px;align-items:flex-start;padding:16px;background:#f8fafc;border-radius:14px;margin-bottom:10px}
-.ref-step .num{min-width:32px;height:32px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
-.ref-step h3{margin:0 0 4px;font-size:15px;color:#0b2440}
-.ref-step p{margin:0;font-size:13px;color:#50627a}
+.ref-step{display:flex;gap:14px;align-items:flex-start;padding:16px;background:#F9FBFA;border-radius:14px;margin-bottom:10px}
+.ref-step .num{min-width:32px;height:32px;background:linear-gradient(135deg,#1F4A3D,#2F6B58);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+.ref-step h3{margin:0 0 4px;font-size:15px;color:#1F2622}
+.ref-step p{margin:0;font-size:13px;color:#4B5650}
 @media(max-width:500px){.ref-grid{grid-template-columns:1fr}}
 </style>
 <style id="v40-topbar-fix">
@@ -29,7 +29,7 @@ html body header.v40-topbar{
   height:58px!important;min-height:58px!important;max-height:58px!important;
   display:flex!important;align-items:center!important;
   flex-direction:row!important;flex-wrap:nowrap!important;
-  background:rgba(7,22,42,.97)!important;
+  background:rgba(22,32,28,.97)!important;
   backdrop-filter:blur(16px)!important;
   border-bottom:1px solid rgba(255,255,255,.07)!important;
   overflow:visible!important;
@@ -80,7 +80,7 @@ html body header.v40-topbar #v40Burger span{
   display:none;position:fixed!important;
   top:58px!important;left:0!important;right:0!important;bottom:0!important;
   z-index:201!important;
-  background:rgba(7,22,42,.98)!important;
+  background:rgba(22,32,28,.98)!important;
   backdrop-filter:blur(20px)!important;
   -webkit-backdrop-filter:blur(20px)!important;
   padding:20px!important;overflow-y:auto!important;
@@ -111,7 +111,7 @@ html body header.v40-topbar #v40Burger span{
 }
 </style>
 <style id="v40-override">
-header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(7,22,42,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
+header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!important;height:58px!important;min-height:58px!important;max-height:58px!important;background:rgba(22,32,28,.97)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid rgba(255,255,255,.07)!important;display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;overflow:visible!important;width:100%!important;}
 .v40-topbar-inner{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;padding:0 16px!important;gap:8px!important;height:58px!important;overflow:visible!important;}
 .v40-topbar-brand{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;text-decoration:none!important;flex-shrink:0!important;min-width:0!important;width:auto!important;}
 .v40-topbar-brand img{height:26px!important;width:auto!important;flex-shrink:0!important;display:block!important;}
@@ -124,7 +124,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 .v40-topbar-btn{display:inline-flex!important;align-items:center!important;padding:6px 12px!important;border-radius:9px!important;font-size:12px!important;font-weight:600!important;text-decoration:none!important;border:none!important;cursor:pointer!important;white-space:nowrap!important;background:rgba(255,255,255,.07)!important;color:rgba(255,255,255,.75)!important;width:auto!important;}
 .v40-burger{display:none!important;flex-direction:column!important;gap:5px!important;background:none!important;border:none!important;cursor:pointer!important;padding:6px!important;flex-shrink:0!important;width:auto!important;margin-left:auto!important;}
 .v40-burger span{display:block!important;width:22px!important;height:2px!important;background:rgba(255,255,255,.8)!important;border-radius:2px!important;transition:transform .25s ease,opacity .25s ease!important;}
-.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(7,22,42,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.v40-mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:9998;background:rgba(22,32,28,.98);backdrop-filter:blur(20px);padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
 .v40-mobile-menu.open{display:flex!important;}
 .v40-mobile-menu a,.v40-mobile-menu button{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;font-size:15px;font-weight:600;color:rgba(255,255,255,.85);text-decoration:none;background:none;border:none;cursor:pointer;transition:.15s;width:100%;text-align:left;}
 .v40-mobile-menu a:hover,.v40-mobile-menu button:hover{background:rgba(255,255,255,.07);color:#fff;}
@@ -141,10 +141,10 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
 <header class="v40-topbar">
   <div class="v40-topbar-inner">
     <a class="v40-topbar-brand" href="dashboard.html" id="topbarHomeLink">
-      <img src="./assets/popeonline-logo.png" alt="POPE Online"/>
+      <img src="./assets/pope-mark-light.png" alt="POPE Online"/>
       <div class="v40-topbar-brand-text">
         <strong>POPE Online</strong>
-        <small>Conseil &amp; Expertise</small>
+        <small>L&rsquo;expertise au service des &eacute;lus</small>
       </div>
     </a>
     <div class="v40-topbar-sep"></div>
@@ -174,8 +174,8 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 
   <div class="ref-card">
-    <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;color:#0b2440">Votre lien de parrainage</h2>
-    <p style="color:#50627a;font-size:14px;margin:0 0 12px">Partagez ce lien — vos filleuls sont automatiquement associés à votre compte.</p>
+    <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;color:#1F2622">Votre lien de parrainage</h2>
+    <p style="color:#4B5650;font-size:14px;margin:0 0 12px">Partagez ce lien — vos filleuls sont automatiquement associés à votre compte.</p>
     <div class="ref-url-box" id="refUrl">Chargement...</div>
     <div class="row gap wrap">
       <button class="btn" id="btnCopy" type="button">📋 Copier le lien</button>
@@ -186,7 +186,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
   </div>
 
   <div class="ref-card">
-    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#0b2440">Vos statistiques</h2>
+    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#1F2622">Vos statistiques</h2>
     <div class="ref-grid">
       <div class="ref-stat">
         <div class="n" id="invitesCount">—</div>
@@ -197,11 +197,11 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
         <div class="l">Filleuls abonnés</div>
       </div>
     </div>
-    <p style="font-size:13px;color:#7a8fa8;margin:8px 0 0">Les statistiques sont mises à jour en temps réel.</p>
+    <p style="font-size:13px;color:#6E7A73;margin:8px 0 0">Les statistiques sont mises à jour en temps réel.</p>
   </div>
 
   <div class="ref-card">
-    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#0b2440">Comment ça fonctionne</h2>
+    <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#1F2622">Comment ça fonctionne</h2>
     <div class="ref-step">
       <div class="num">1</div>
       <div>
@@ -220,7 +220,7 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
       <div class="num">3</div>
       <div>
         <h3>Vos filleuls bénéficient de l'essai complet</h3>
-        <p>15 jours d'accès gratuit, 2 relectures expertes offertes, clausier documentaire inclus — sans carte bancaire.</p>
+        <p>15 jours d'accès gratuit, 2 Conseils Expert offerts, clausier documentaire inclus — sans carte bancaire.</p>
       </div>
     </div>
     <div class="ref-step">
@@ -232,14 +232,14 @@ header.v40-topbar{position:sticky!important;top:0!important;z-index:9999!importa
     </div>
   </div>
 
-  <div class="ref-card" style="background:linear-gradient(135deg,#eef7ff,#f5fbff);border:1.5px solid #b8dcf0">
-    <h2 style="margin:0 0 10px;font-size:16px;font-weight:700;color:#0b2440">💡 Suggestions de message</h2>
-    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#50627a;line-height:1.7;margin-bottom:12px">
-      <strong style="color:#0b2440">Pour un collègue :</strong><br>
+  <div class="ref-card" style="background:linear-gradient(135deg,#EDF2EE,#F6F8F5);border:1.5px solid #C9D8CF">
+    <h2 style="margin:0 0 10px;font-size:16px;font-weight:700;color:#1F2622">💡 Suggestions de message</h2>
+    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#4B5650;line-height:1.7;margin-bottom:12px">
+      <strong style="color:#1F2622">Pour un collègue :</strong><br>
       "Tu connais POPE Online ? C'est une plateforme qui génère des livrables professionnels par IA (courriers, délibérations, réponses aux marchés) et les fait relire par un expert humain. J'utilise ça pour [cas d'usage]. Tu peux essayer gratuitement pendant 15 jours : [ton lien]"
     </div>
-    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#50627a;line-height:1.7">
-      <strong style="color:#0b2440">Pour un réseau professionnel :</strong><br>
+    <div style="background:#fff;border-radius:12px;padding:16px;font-size:13px;color:#4B5650;line-height:1.7">
+      <strong style="color:#1F2622">Pour un réseau professionnel :</strong><br>
       "Je teste POPE Online depuis quelques semaines — outil très pratique pour accélérer la production documentaire et sécuriser les livrables avec un conseiller expert. Essai gratuit 15 jours, pas de CB : [ton lien]"
     </div>
   </div>
@@ -339,5 +339,7 @@ init();
 })();
 
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

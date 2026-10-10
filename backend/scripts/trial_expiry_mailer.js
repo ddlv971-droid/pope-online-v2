@@ -20,114 +20,42 @@ dotenv.config();
 
 const BASE_URL = resolveFrontendBaseUrl();
 
-function buildTrialExpiredMail({ fullName, email, accountSpace }) {
-  const spaceLabel = accountSpace === 'private' ? 'privé' : 'public';
+function buildTrialExpiredMail({ fullName, email }) {
   const pricingUrl = `${BASE_URL}/pricing.html`;
   const loginUrl   = `${BASE_URL}/login.html`;
+  const firstName  = (fullName || '').split(' ')[0] || 'Madame, Monsieur';
 
-  const firstName = (fullName || '').split(' ')[0] || 'Utilisateur';
-
-  const html = `
-<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
-<body style="margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;background:#f0f7fc;color:#0b2440">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f7fc;padding:40px 20px">
+  // V88 : offre Élu unique, ton sobre, palette sapin
+  const html = `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Votre essai POPE Online est terminé</title></head>
+<body style="margin:0;background:#F6F7F4;font-family:Arial,Helvetica,sans-serif;color:#1F2622">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F7F4;padding:32px 12px">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.08)">
-
-  <!-- Header -->
-  <tr><td style="background:linear-gradient(135deg,#0079c1,#03a0d7);padding:32px 40px;text-align:center">
-    <div style="font-size:32px;margin-bottom:8px">🎯</div>
-    <h1 style="margin:0;color:#fff;font-size:24px;font-weight:800;letter-spacing:-.02em">Votre période d'essai est terminée</h1>
-    <p style="margin:8px 0 0;color:rgba(255,255,255,.85);font-size:15px">Merci d'avoir utilisé POPE Online espace ${spaceLabel}</p>
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #D6DDD8;border-radius:6px">
+  <tr><td style="padding:28px 32px 8px;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:bold;color:#1F4A3D">POPE Online</td></tr>
+  <tr><td style="padding:8px 32px 0;font-size:15px;line-height:1.6">
+    <p>Bonjour ${firstName},</p>
+    <p>Votre essai gratuit de POPE Online est terminé. Votre compte, vos échanges et vos documents restent consultables.</p>
+    <p>Pour continuer à solliciter un expert, l'offre <strong>Élu</strong> est à <strong>49&nbsp;€ HT par mois</strong>, sans engagement&nbsp;:</p>
+    <ul style="padding-left:18px;margin:0 0 18px">
+      <li>10 Conseils Expert par mois</li>
+      <li>Réponse en moins de 24&nbsp;h</li>
+      <li>Clausier, dépôt sécurisé et outil de rédaction</li>
+    </ul>
+    <p style="margin:24px 0"><a href="${pricingUrl}" style="display:inline-block;background:#1F4A3D;color:#ffffff;border-radius:6px;padding:13px 24px;font-weight:bold;text-decoration:none">Souscrire l'offre Élu</a></p>
+    <p style="font-size:13px;color:#4B5650">Vous pouvez aussi <a href="${loginUrl}" style="color:#1F4A3D">vous connecter</a> pour consulter votre espace.<br>
+    Une question&nbsp;? Un conseiller vous répond au 09&nbsp;70&nbsp;70&nbsp;30&nbsp;55 ou à <a href="mailto:contact@pope-online.com" style="color:#1F4A3D">contact@pope-online.com</a>.</p>
   </td></tr>
-
-  <!-- Corps -->
-  <tr><td style="padding:36px 40px">
-    <p style="font-size:16px;line-height:1.7;margin:0 0 20px">Bonjour ${firstName},</p>
-    <p style="font-size:15px;line-height:1.7;color:#50627a;margin:0 0 20px">
-      Votre essai gratuit de 15 jours sur POPE Online s'est terminé. Vous avez pu découvrir la puissance
-      de notre plateforme : production guidée et <strong style="color:#0b2440">validation experte humaine</strong>
-      pour des livrables fiables, sécurisés et exploitables immédiatement.
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#50627a;margin:0 0 32px">
-      Pour continuer à produire et faire sécuriser vos documents par nos conseillers, choisissez le plan adapté à votre usage.
-    </p>
-
-    <!-- Plans -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px">
-      <tr>
-        <!-- Starter -->
-        <td width="31%" style="background:#f0f7fc;border-radius:14px;padding:20px 16px;vertical-align:top;border:1.5px solid #dce9f4">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#50627a;margin-bottom:6px">Starter</div>
-          <div style="font-size:24px;font-weight:800;color:#0b2440;margin-bottom:4px">49€<span style="font-size:13px;font-weight:400">/mois</span></div>
-          <div style="font-size:11px;color:#065f46;font-weight:600;margin-bottom:12px">ou 499€/an (−15%)</div>
-          <ul style="margin:0;padding:0 0 0 14px;font-size:12px;color:#0b2440;line-height:2">
-            <li>Production illimitée</li>
-            <li>5 relectures expertes/mois</li>
-            <li>Closier documentaire</li>
-          </ul>
-        </td>
-        <td width="4%"></td>
-        <!-- Pro -->
-        <td width="31%" style="background:linear-gradient(135deg,#eef7ff,#e0f0fb);border-radius:14px;padding:20px 16px;vertical-align:top;border:2px solid #0079c1">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0079c1;margin-bottom:6px">⭐ Pro — Recommandé</div>
-          <div style="font-size:24px;font-weight:800;color:#0b2440;margin-bottom:4px">89€<span style="font-size:13px;font-weight:400">/mois</span></div>
-          <div style="font-size:11px;color:#065f46;font-weight:600;margin-bottom:12px">ou 890€/an (−15%)</div>
-          <ul style="margin:0;padding:0 0 0 14px;font-size:12px;color:#0b2440;line-height:2">
-            <li>Production illimitée</li>
-            <li>15 relectures expertes/mois</li>
-            <li>Accompagnement inclus</li>
-          </ul>
-        </td>
-        <td width="4%"></td>
-        <!-- Premium -->
-        <td width="31%" style="background:#f0f7fc;border-radius:14px;padding:20px 16px;vertical-align:top;border:1.5px solid #dce9f4">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#50627a;margin-bottom:6px">Premium</div>
-          <div style="font-size:20px;font-weight:800;color:#0b2440;margin-bottom:4px">Sur devis</div>
-          <div style="font-size:11px;color:#50627a;margin-bottom:12px">Collectivités & Entreprises</div>
-          <ul style="margin:0;padding:0 0 0 14px;font-size:12px;color:#0b2440;line-height:2">
-            <li>Production illimitée</li>
-            <li>Relectures illimitées</li>
-            <li>Conseiller dédié</li>
-          </ul>
-        </td>
-      </tr>
-    </table>
-
-    <!-- CTA -->
-    <div style="text-align:center;margin-bottom:28px">
-      <a href="${pricingUrl}" style="display:inline-block;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:14px;padding:15px 32px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,121,193,.3)">
-        Choisir mon plan →
-      </a>
-    </div>
-
-    <p style="font-size:13px;color:#50627a;text-align:center;margin:0">
-      Vous pouvez aussi <a href="${loginUrl}" style="color:#0079c1">vous connecter</a> pour consulter votre espace en lecture seule.<br/>
-      Des questions ? <a href="mailto:contact@pope-online.com" style="color:#0079c1">contact@pope-online.com</a>
-    </p>
-  </td></tr>
-
-  <!-- Footer -->
-  <tr><td style="background:#f8fbfd;border-top:1px solid #dce9f4;padding:20px 40px;text-align:center">
-    <p style="margin:0;font-size:12px;color:#7a8fa8">
-      POPE Online — Expertise humaine sécurisée<br/>
-      <a href="${BASE_URL}" style="color:#0079c1;text-decoration:none">pope-online.com</a>
-    </p>
-  </td></tr>
-
+  <tr><td style="padding:16px 32px 26px;font-size:12px;color:#4B5650;border-top:1px solid #D6DDD8">Pope Online, une offre Pope Consulting · <a href="${BASE_URL}" style="color:#4B5650">pope-online.com</a></td></tr>
 </table>
-</td></tr>
-</table>
-</body>
-</html>`;
+</td></tr></table>
+</body></html>`;
 
-  const text = `Bonjour ${firstName},\n\nVotre essai gratuit POPE Online (espace ${spaceLabel}) s'est terminé.\n\nPour continuer à produire et faire sécuriser vos documents :\n\n• Starter : 49€/mois — 5 relectures expertes\n• Pro : 89€/mois — 15 relectures expertes (recommandé)\n• Premium : Sur devis — Relectures illimitées\n\nChoisir mon plan : ${pricingUrl}\n\nQuestions : contact@pope-online.com\n\n— L'équipe POPE Online`;
+  const text = `Bonjour ${firstName},\n\nVotre essai gratuit de POPE Online est terminé. Votre compte, vos échanges et vos documents restent consultables.\n\nPour continuer à solliciter un expert, l'offre Élu est à 49 € HT par mois, sans engagement :\n• 10 Conseils Expert par mois\n• Réponse en moins de 24 h\n• Clausier, dépôt sécurisé et outil de rédaction\n\nSouscrire : ${pricingUrl}\n\nUne question ? 09 70 70 30 55 — contact@pope-online.com\n\nL'équipe POPE Online`;
 
   return {
     to: email,
-    subject: `POPE Online — Votre période d'essai est terminée, ${firstName}`,
+    subject: 'POPE Online — Votre essai gratuit est terminé',
     html,
     text
   };

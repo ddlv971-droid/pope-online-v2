@@ -1,0 +1,194 @@
+/* ==========================================================================
+   POPE Online V88 — Thème commun (toutes les pages)
+   Chargé en dernier dans chaque page : polices auto-hébergées, jetons de
+   couleur et neutralisation des éléments visuels « tech / IA » hérités.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-opsz-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-opsz-italic.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/public-sans-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/public-sans-latin-wght-italic.woff2') format('woff2-variations');
+}
+
+:root {
+  /* Palette V88 */
+  --ink:        #1F2622;   /* texte principal */
+  --ink-soft:   #4B5650;   /* texte secondaire */
+  --sapin:      #1F4A3D;   /* couleur principale */
+  --sapin-deep: #163629;   /* survol, sections sombres */
+  --sapin-mid:  #2F6B58;
+  --lichen:     #DDE6DF;   /* teinte claire */
+  --lichen-2:   #EDF2EE;
+  --paper:      #F6F7F4;   /* fond de page */
+  --white:      #FFFFFF;
+  --ocre:       #A8741F;   /* accent, usage parcimonieux */
+  --ocre-text:  #85591A;   /* accent lisible en texte */
+  --line:       #D6DDD8;
+  --brique:     #A33A2A;   /* erreurs */
+
+  --font-serif: 'Source Serif 4', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* Variables héritées de app.css, réalignées sur la palette */
+  --pope-blue:   var(--sapin);
+  --pope-cyan:   var(--sapin-mid);
+  --v36-blue:    var(--sapin);
+  --v36-blue-dark: var(--sapin-deep);
+  --v36-blue-soft: var(--lichen-2);
+  --v36-teal:    var(--sapin-mid);
+  --v36-ink:     var(--ink);
+  --v36-muted:   var(--ink-soft);
+  --v36-line:    var(--line);
+  --v36-bg:      var(--paper);
+  --po-accent:   #9CC1AF;
+  --po-accent-2: var(--sapin-mid);
+  --po-fuchsia:  var(--ocre);
+  --po-fuchsia-2:#C9953E;
+}
+
+/* Typographie globale */
+html body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body h1, body h2, body .v5-panel-head h2, body .v40-auth-right-head h1, body .v40-auth-headline {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+button, input, select, textarea { font-family: inherit; }
+
+:focus-visible { outline: 2px solid var(--ocre); outline-offset: 2px; }
+
+/* ---------- Neutralisation des visuels « banque d'images » / « IA » ---------- */
+.po-tree-filigrane,
+.po-tree-filigrane-svg,
+.v39-mosaic, .v39-panel { display: none !important; }
+
+/* Pages d'authentification : panneau gauche sobre, sans mosaïque photo */
+/* V88.4 : panneau gauche des pages de connexion / inscription — la photo
+   « visage humain » de l'accueil, teintée sapin, en écho à l'ancienne version */
+.v40-auth-left {
+  background: var(--sapin-deep) !important;
+  background-image: none !important;
+  overflow: hidden;
+}
+.v40-auth-left::before, .v40-auth-left::after { display: none !important; }
+.v40-auth-mosaic { display: block !important; position: absolute; inset: 0; z-index: 0; }
+.v40-auth-mosaic img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 22% 30%;
+  filter: grayscale(.35) saturate(.85) contrast(1.08) brightness(.92) !important;
+  transform: scale(1.04);
+}
+.v40-auth-mosaic::after {
+  content: '' !important; position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(22,54,41,.38) 0%, rgba(22,54,41,.72) 38%, rgba(22,54,41,.9) 62%, rgba(22,54,41,.94) 100%),
+    linear-gradient(0deg, rgba(22,54,41,.55) 0%, transparent 40%) !important;
+}
+@media (max-width: 860px) {
+  .v40-auth-mosaic::after {
+    background: linear-gradient(180deg, rgba(22,54,41,.55) 0%, rgba(22,54,41,.9) 70%) !important;
+  }
+}
+.v40-auth-left-content { position: relative; z-index: 1; }
+.v40-auth-tagline { font-family: var(--font-serif); font-style: italic; }
+
+/* Domaines du tableau de bord (V88) */
+.v88-domain-sep {
+  grid-column: 1 / -1;
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.v5-domain-pill.v88-primary { font-weight: 650; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Anciennes illustrations flottantes (photo d'ambiance, logo en filigrane animé) */
+.hero-media, .po-watermark-centered { display: none !important; }
+
+/* Boutons de validation des formulaires d'authentification : aplat sapin, sans dégradé */
+.v40-submit, .v40-submit.pub, .v40-submit.priv {
+  background: var(--sapin) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+.v40-submit:hover { background: var(--sapin-deep) !important; }
+
+/* ==========================================================================
+   V88.2 — Fonds harmonisés avec le site vitrine (espace connecté)
+   Même papier, mêmes halos, même arbre POPE en filigrane fixe.
+   ========================================================================== */
+html { background-color: var(--paper); }
+body.bg, body.v69-page, body.po-vault-page, body.v40-auth-body {
+  background:
+    radial-gradient(1100px 700px at 88% -10%, rgba(221,230,223,.75), transparent 65%),
+    radial-gradient(900px 600px at -10% 110%, rgba(232,223,204,.40), transparent 60%),
+    var(--paper) !important;
+  color: var(--ink);
+}
+body.bg::before, body.v69-page::before, body.po-vault-page::before {
+  content: '' !important; position: fixed !important; inset: 0 !important;
+  pointer-events: none !important; z-index: 0 !important;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'><circle cx='17' cy='13' r='11' fill='%231F4A3D'/><path d='M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3' stroke='%23F6F7F4' stroke-width='1.1' stroke-linecap='round' fill='none'/><path d='M17 23.5v7' stroke='%231F4A3D' stroke-width='1.6' stroke-linecap='round'/><path d='M11.5 31h11' stroke='%231F4A3D' stroke-width='1' stroke-linecap='round'/></svg>") 62% 55% / auto min(88vh, 900px) no-repeat !important;
+  opacity: .035 !important;
+}
+body.v69-page > *, body.po-vault-page > * { position: relative; z-index: 1; }
+.v40-auth-right { background: rgba(255,255,255,.86) !important; }
+
+/* Barre supérieure de l'espace connecté : sapin profond (au lieu du quasi-noir) */
+html body header.v40-topbar, .v40-topbar { background: rgba(22,54,41,.97) !important; }
+html body header.v40-topbar .v40-topbar-brand img { height: 30px !important; }
+
+/* Connexion / inscription sur mobile : panneau photo compact (logo + accroche),
+   le formulaire apparaît dès l'arrivée */
+@media (max-width: 860px) {
+  .v40-auth-left { min-height: 0 !important; padding: 26px 24px 30px !important; }
+  .v40-auth-sub, .v40-auth-features, .v40-auth-tagline, .v40-trial-badge { display: none !important; }
+  .v40-auth-headline { font-size: 1.45rem !important; margin: 6px 0 0 !important; }
+  .v40-auth-brand-logo { max-height: 40px; width: auto; }
+  .v40-mobile-logo { display: none !important; }
+}
+
+/* V88.7 — Espace connecté sur mobile portrait */
+@media (max-width: 640px) {
+  .v40-topbar-brand-text small { display: none !important; }
+  .v5-tabs-bar { overflow-x: auto !important; flex-wrap: nowrap !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .v5-tabs-bar::-webkit-scrollbar { display: none; }
+  .v5-tab { flex: none !important; white-space: nowrap; min-height: 44px; }
+  input, select, textarea { font-size: 16px !important; }   /* pas de zoom automatique sur iOS */
+  .v5-domain-pill { min-height: 44px; }
+}
+
+/* V88.9 — Panneau des pages de connexion / inscription : lignes justifiées à gauche */
+.v40-auth-features { text-align: left !important; }
+.v40-auth-feature { display: flex !important; align-items: flex-start !important; justify-content: flex-start !important; gap: 10px; text-align: left !important; }
+.v40-auth-feature-icon { flex: none; }

@@ -7,7 +7,7 @@
 <link href="app.css" rel="stylesheet"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <style>
-:root{--blue:#0079c1;--cyan:#03a0d7;--dark:#0b2440;--muted:#50627a;--line:#dce9f4}
+:root{--blue:#1F4A3D;--cyan:#2F6B58;--dark:#1F2622;--muted:#4B5650;--line:#D6DDD8}
 .clausier-wrap{max-width:1100px;margin:0 auto;padding:32px 20px}
 .clausier-hero{text-align:center;padding:40px 0 32px}
 .clausier-hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;color:var(--dark);letter-spacing:-.02em;margin-bottom:12px}
@@ -17,7 +17,7 @@
 .clausier-search input:focus{border-color:var(--blue)}
 .clausier-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;justify-content:center}
 .cat-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s}
-.cat-btn:hover,.cat-btn.active{border-color:var(--blue);color:var(--blue);background:#eef7ff}
+.cat-btn:hover,.cat-btn.active{border-color:var(--blue);color:var(--blue);background:#EDF2EE}
 .clausier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .doc-card{background:#fff;border-radius:18px;border:1.5px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s;cursor:pointer}
 .doc-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
@@ -25,10 +25,10 @@
 .doc-title{font-size:15px;font-weight:700;color:var(--dark);line-height:1.35}
 .doc-desc{font-size:13px;color:var(--muted);line-height:1.5}
 .doc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
-.doc-type{font-size:11px;font-weight:600;color:var(--muted);background:#f0f7fc;border-radius:6px;padding:3px 8px}
+.doc-type{font-size:11px;font-weight:600;color:var(--muted);background:#EFF3F0;border-radius:6px;padding:3px 8px}
 .doc-action{font-size:12px;font-weight:700;color:var(--blue);text-decoration:none}
 .doc-action:hover{text-decoration:underline}
-.clausier-locked{background:linear-gradient(135deg,#fafafa,#f0f7fc);border:2px dashed var(--line);text-align:center;padding:40px;border-radius:18px;grid-column:1/-1}
+.clausier-locked{background:linear-gradient(135deg,#fafafa,#EFF3F0);border:2px dashed var(--line);text-align:center;padding:40px;border-radius:18px;grid-column:1/-1}
 .clausier-locked h3{font-size:18px;font-weight:800;color:var(--dark);margin-bottom:8px}
 .clausier-locked p{font-size:14px;color:var(--muted);margin-bottom:16px}
 @media(max-width:768px){.clausier-grid{grid-template-columns:1fr 1fr}}
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function() {
           '<div style="font-size:40px;margin-bottom:12px">🔒</div>' +
           '<h3>Clausier disponible dès le plan Starter</h3>' +
           '<p>Votre période d\'essai est terminée. Souscrivez un plan pour accéder à la bibliothèque documentaire.</p>' +
-          '<a href="pricing.html" style="display:inline-flex;margin-top:8px;background:linear-gradient(135deg,#0079c1,#03a0d7);color:#fff;border-radius:12px;padding:11px 24px;font-weight:700;text-decoration:none">Voir les plans</a>' +
+          '<a href="pricing.html" style="display:inline-flex;margin-top:8px;background:linear-gradient(135deg,#1F4A3D,#2F6B58);color:#fff;border-radius:12px;padding:11px 24px;font-weight:700;text-decoration:none">Voir les plans</a>' +
           '</div>';
         return;
       }
@@ -180,5 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
   renderDocs();
 });
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

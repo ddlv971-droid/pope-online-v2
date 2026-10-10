@@ -7,10 +7,10 @@
 <link rel="icon" href="./favicon.png"/>
 <style>
 :root {
-  --bg: #0f1923; --surface: #162032; --surface2: #1c2d42;
+  --bg: #0F231B; --surface: #163226; --surface2: #1C4232;
   --border: rgba(124,58,237,.2); --border2: rgba(255,255,255,.08);
-  --accent: #7c3aed; --accent2: #a78bfa; --accent-blue: #0079c1;
-  --text: #edf2f8; --muted: rgba(255,255,255,.65); --muted2: rgba(255,255,255,.4);
+  --accent: #7c3aed; --accent2: #a78bfa; --accent-blue: #1F4A3D;
+  --text: #EDF1EE; --muted: rgba(255,255,255,.65); --muted2: rgba(255,255,255,.4);
   --green: #22c55e; --red: #ef4444; --yellow: #f59e0b; --radius: 16px;
 }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
@@ -50,7 +50,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 .exp-main { display:flex; flex:1; }
 .exp-sidebar {
   width:220px; flex-shrink:0; padding:20px 12px;
-  background:linear-gradient(180deg,#0b2440 0%,#0d2d52 100%); border-right:1px solid rgba(0,180,216,.15);
+  background:linear-gradient(180deg,#1F2622 0%,#1C4333 100%); border-right:1px solid rgba(0,180,216,.15);
   display:flex; flex-direction:column; gap:4px;
 }
 .exp-nav-label { font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:rgba(0,180,216,.75); padding:12px 10px 6px; }
@@ -90,7 +90,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 
 /* Request card */
 .exp-req {
-  background:#0f1923; border:1px solid rgba(124,58,237,.15);
+  background:#0F231B; border:1px solid rgba(124,58,237,.15);
   border-radius:14px; padding:20px; margin-bottom:14px;
   transition:border-color .15s;
 }
@@ -99,7 +99,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 .exp-req-client { display:flex; align-items:center; gap:10px; }
 .exp-req-avatar {
   width:36px; height:36px; border-radius:10px; flex-shrink:0;
-  background:linear-gradient(135deg,var(--accent-blue),#00b4d8);
+  background:linear-gradient(135deg,var(--accent-blue),#3F9974);
   display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:800; color:#fff;
 }
@@ -117,7 +117,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 .exp-textarea {
   width:100%; padding:12px 16px; border-radius:12px; font-size:13px;
   background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
-  color:#edf2f8; resize:vertical; font-family:inherit; outline:none; min-height:120px;
+  color:#EDF1EE; resize:vertical; font-family:inherit; outline:none; min-height:120px;
 }
 .exp-textarea:focus { border-color:var(--accent); }
 .exp-btn-row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
@@ -151,7 +151,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 .exp-client-row:last-child { border-bottom:none; }
 .exp-client-avatar {
   width:36px; height:36px; border-radius:10px; flex-shrink:0;
-  background:linear-gradient(135deg,var(--accent-blue),#00b4d8);
+  background:linear-gradient(135deg,var(--accent-blue),#3F9974);
   display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:800; color:#fff;
 }
@@ -172,7 +172,7 @@ body { display:flex; flex-direction:column; min-height:100vh; }
 .exp-login p { color:var(--muted); font-size:13.5px; margin-bottom:28px; line-height:1.6; }
 .exp-form-group { display:flex; flex-direction:column; gap:6px; text-align:left; margin-bottom:12px; }
 .exp-label { font-size:11.5px; font-weight:600; color:var(--muted); }
-.exp-input { padding:10px 14px; border-radius:10px; font-size:13px; background:rgba(255,255,255,.05); border:1px solid var(--border2); color:#edf2f8; font-family:inherit; outline:none; transition:all .15s; }
+.exp-input { padding:10px 14px; border-radius:10px; font-size:13px; background:rgba(255,255,255,.05); border:1px solid var(--border2); color:#EDF1EE; font-family:inherit; outline:none; transition:all .15s; }
 .exp-input:focus { border-color:var(--accent); }
 
 /* ── Responsive Expert Dashboard ─────────────────────────── */
@@ -457,7 +457,7 @@ function renderRequests(statusFilter) {
 
     var genHtml = '';
     if (req.generation_attachment && req.generation_attachment.result) {
-      var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration IA');
+      var genLabel = esc(req.generation_attachment.usecaseLabel || 'G\u00e9n\u00e9ration');
       var genText  = esc(req.generation_attachment.result || '');
       var genDomain = req.generation_attachment.domain ? ' (' + esc(req.generation_attachment.domain) + ')' : '';
       genHtml = '<div class="exp-req-separator"></div>'
@@ -471,19 +471,17 @@ function renderRequests(statusFilter) {
 
     // Pièces déposées par le client
     var vaultHtml = '';
-    var vids = (req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids 
-              : (req.files && req.files.length) ? req.files
-              : (req.attachments && req.attachments.length) ? req.attachments
-              : [];
-    if (vids.length) {
-      var _APIBASE = (function(){ var h=location.hostname; if(h==='localhost'||h==='127.0.0.1')return'http://localhost:3000'; if(h.indexOf('staging')!==-1)return'https://popeonline-staging.onrender.com'; return'https://pope-online-v2.onrender.com'; })();
+    var rfiles = (req.files && req.files.length) ? req.files.filter(function(f){ return f.kind === 'vault'; }) : [];
+    var legacy = (!rfiles.length && req.vault_file_ids && req.vault_file_ids.length) ? req.vault_file_ids : [];
+    if (rfiles.length || legacy.length) {
+      var btnStyle = 'display:inline-flex;align-items:center;gap:5px;background:rgba(31,74,61,.1);border:1px solid rgba(31,74,61,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#6E9E89;cursor:pointer;font-family:inherit;';
       vaultHtml = '<div class="exp-req-separator"></div>'
         + '<div style="margin-bottom:10px">'
-        + '<div class="exp-req-section-label">&#x1F4CE; Pi&egrave;ces d&eacute;pos&eacute;es (' + vids.length + ')</div>'
+        + '<div class="exp-req-section-label">&#x1F4CE; Pi&egrave;ces jointes (' + (rfiles.length || legacy.length) + ')</div>'
         + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">'
-        + vids.map(function(fid){
-            var nm = decodeURIComponent(String(fid)).split('/').pop();
-            return '<button onclick="downloadVaultFile(\'' + encodeURIComponent(fid) + '\')" '              + 'style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,121,193,.1);border:1px solid rgba(0,121,193,.25);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#60a5fa;cursor:pointer;font-family:inherit;">&#x1F4C4; ' + esc(nm) + '</button>';          }).join('')
+        + (rfiles.length
+          ? rfiles.map(function(f){ return '<button type="button" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="' + btnStyle + '">&#x1F4C4; ' + esc(f.name) + '</button>'; }).join('')
+          : legacy.map(function(fid){ var nm = decodeURIComponent(String(fid)).split('/').pop(); return '<button type="button" onclick="downloadVaultFile(\'' + encodeURIComponent(fid) + '\')" style="' + btnStyle + '">&#x1F4C4; ' + esc(nm) + '</button>'; }).join(''))
         + '</div></div>';
     }
 
@@ -491,11 +489,16 @@ function renderRequests(statusFilter) {
     if (isReplied) {
       replyOrForm = '<div class="exp-req-separator"></div>'
         + '<div><div class="exp-req-section-label">Votre r\u00e9ponse (' + fmtDate(req.replied_at) + ')</div>'
-        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">' + esc(req.reply_text || '') + '</div></div>';
+        + '<div class="exp-req-text" style="color:rgba(34,197,94,.85)">' + esc(req.reply_text || '') + '</div>'
+        + (req.files || []).filter(function(f){ return f.kind === 'reply'; }).map(function(f){ return '<button type="button" data-ef="' + esc(f.id) + '" data-name="' + esc(f.name) + '" style="margin-top:8px;display:inline-flex;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:#22c55e;cursor:pointer;font-family:inherit">&#x1F4CE; ' + esc(f.name) + '</button>'; }).join('')
+        + '</div>';
     } else {
       replyOrForm = '<div class="exp-reply-zone" id="replyZone-' + rid + '">'
         + '<div class="exp-req-section-label" style="margin-bottom:8px">R\u00e9diger votre r\u00e9ponse experte</div>'
         + '<textarea class="exp-textarea" id="replyText-' + rid + '" placeholder="R\u00e9digez votre analyse fond &amp; forme."></textarea>'
+        + '<div style="margin:10px 0 4px"><label class="exp-req-section-label" for="replyFile-' + rid + '">Pi\u00e8ce jointe (facultative)</label>'
+        + '<input type="file" id="replyFile-' + rid + '" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip,.jpg,.jpeg,.png,.gif,.webp" style="display:block;margin-top:6px;font-size:12px;color:inherit">'
+        + '<div style="font-size:11px;opacity:.6;margin-top:3px">PDF, Word, Excel, PowerPoint, images\u2026 10 Mo max. Le client la t\u00e9l\u00e9charge depuis son espace.</div></div>'
         + '<div class="exp-btn-row">'
         + '<button class="exp-action-btn exp-btn-primary" onclick="submitReply(&quot;' + rid + '&quot;)">\u2713 Envoyer</button>'
         + '<button class="exp-action-btn exp-btn-secondary" onclick="cancelReply(&quot;' + rid + '&quot;)">Annuler</button>'
@@ -529,6 +532,16 @@ function renderRequests(statusFilter) {
   }).join('');
 }
 
+
+document.addEventListener('click', function(e) {
+  var b = e.target.closest('[data-ef]'); if (!b) return;
+  var tk = sessionStorage.getItem('pope_session_token') || localStorage.getItem('pope_session_token') || '';
+  var apiBase = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:3000' : location.hostname.indexOf('staging') !== -1 ? 'https://popeonline-staging.onrender.com' : 'https://pope-online-v2.onrender.com';
+  fetch(apiBase + '/expert/files/' + encodeURIComponent(b.getAttribute('data-ef')), { headers: { Authorization: 'Bearer ' + tk }, credentials: 'include' })
+    .then(function(r) { if (!r.ok) throw new Error('Erreur ' + r.status); return r.blob(); })
+    .then(function(blob) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = b.getAttribute('data-name') || 'document'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function() { URL.revokeObjectURL(a.href); }, 60000); })
+    .catch(function(err) { showToast('Téléchargement impossible : ' + err.message, 'err'); });
+});
 
 // Téléchargement de pièces avec authentification
 function downloadVaultFile(encodedFid) {
@@ -580,13 +593,28 @@ window.cancelReply = (id) => {
   openReplyId = null;
 };
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => { const t = String(r.result || ''); resolve(t.slice(t.indexOf(',') + 1)); };
+    r.onerror = () => reject(new Error('Lecture du fichier impossible.'));
+    r.readAsDataURL(file);
+  });
+}
 window.submitReply = async (id) => {
   const ta = el('replyText-'+id);
   const msg = el('replyMsg-'+id);
   const text = ta?.value?.trim();
   if (!text) { msg.textContent = 'Rédigez votre réponse avant d\'envoyer.'; msg.className = 'exp-msg err'; return; }
   try {
-    await apiFetch('/expert/'+id+'/expert-reply', { method:'POST', body:{ reply_text: text } });
+    const fi = el('replyFile-'+id);
+    const f = fi && fi.files && fi.files[0];
+    let attachment = null;
+    if (f) {
+      if (f.size > 10*1024*1024) { msg.textContent = 'Pièce jointe trop volumineuse (10 Mo maximum).'; msg.className = 'exp-msg err'; return; }
+      attachment = { name: f.name, contentBase64: await fileToBase64(f) };
+    }
+    await apiFetch('/expert/'+id+'/expert-reply', { method:'POST', body:{ reply_text: text, attachment } });
     showToast('Réponse envoyée au client', 'ok');
     await loadRequests();
   } catch(e) { msg.textContent = getApiMessage(e); msg.className = 'exp-msg err'; }
@@ -696,5 +724,7 @@ if (getToken()) {
   } catch(e) { clearSession(); }
 }
 </script>
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="robots" content="noindex,nofollow"/>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>POPE Online — Cr&eacute;er un compte priv&eacute;</title>
 <link href="app.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
+<script src="./site-config.js"></script>
+<script>
+/* V88 : espace entreprises en veille. Le formulaire reste dans le code, masqué tant
+   que POPE_SITE.privateSpaceEnabled vaut false (voir public/site-config.js). */
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.POPE_SITE && window.POPE_SITE.privateSpaceEnabled) return;
+  var box = document.querySelector('.v40-auth-right');
+  if (!box) return;
+  box.innerHTML = '<div class="v40-auth-right-head"><h1>Inscriptions momentanément fermées</h1>' +
+    '<p>L&rsquo;offre destinée aux entreprises et aux ind&eacute;pendants est suspendue pour le moment. ' +
+    'POPE Online se consacre aujourd&rsquo;hui aux &eacute;lus locaux et aux collectivit&eacute;s.</p>' +
+    '<p>Pour un besoin ponctuel, &eacute;crivez-nous &agrave; <a href="mailto:contact@pope-online.com">contact@pope-online.com</a> ' +
+    'ou appelez le 09&nbsp;70&nbsp;70&nbsp;30&nbsp;55.</p>' +
+    '<p><a href="login.html">J&rsquo;ai d&eacute;j&agrave; un compte : me connecter</a></p></div>';
+});
+</script>
 </head>
 <body class="v40-auth-body">
 <div class="v40-auth-wrap">
@@ -14,7 +31,7 @@
   <!-- Panneau gauche -->
   <div class="v40-auth-left">
     <div class="v40-auth-mosaic">
-      <img src="./assets/mosaic.png" alt=""/>
+      <img src="./assets/pope-visage-humain.jpg" alt="" aria-hidden="true" decoding="async"/>
     </div>
     <div class="v40-auth-left-content">
       <img class="v40-auth-brand-logo" src="./assets/popeoline-logo-ligne.png" alt="POPE Online"/>
@@ -41,7 +58,7 @@
       <div style="display:none;margin-bottom:20px" class="v40-mobile-logo">
         <a href="index.html" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none">
           <img src="./assets/popeonline-logo.png" alt="POPE Online" style="height:28px"/>
-          <strong style="font-size:15px;font-weight:800;color:#0b2440">POPE Online</strong>
+          <strong style="font-size:15px;font-weight:800;color:#1F2622">POPE Online</strong>
         </a>
       </div>
       <h1>Cr&eacute;er un compte priv&eacute;</h1>
@@ -67,12 +84,12 @@
       <label>T&eacute;l&eacute;phone</label>
       <div style="display:grid;grid-template-columns:140px 1fr;gap:10px">
         <div>
-          <label class="label small" style="font-size:11px;color:#7a8fa8;display:block;margin-bottom:5px">Indicatif</label>
+          <label class="label small" style="font-size:11px;color:#6E7A73;display:block;margin-bottom:5px">Indicatif</label>
           <select class="v40-input" id="phoneCountrySelect" style="padding:11px 12px"></select>
           <input type="hidden" id="phoneCountry"/>
         </div>
         <div>
-          <label class="label small" style="font-size:11px;color:#7a8fa8;display:block;margin-bottom:5px">Num&eacute;ro</label>
+          <label class="label small" style="font-size:11px;color:#6E7A73;display:block;margin-bottom:5px">Num&eacute;ro</label>
           <input class="v40-input" id="phoneNumber" type="tel" placeholder="Votre num&eacute;ro" autocomplete="off"/>
         </div>
       </div>
@@ -80,7 +97,7 @@
     </div>
 
     <div class="v40-field">
-      <label for="password">Mot de passe <span style="color:#9aabbc;font-weight:400;font-size:12px">(8 caract&egrave;res min.)</span></label>
+      <label for="password">Mot de passe <span style="color:#8C978F;font-weight:400;font-size:12px">(8 caract&egrave;res min.)</span></label>
       <div class="v40-pw-wrap">
         <input class="v40-input" id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password"/>
         <button class="v40-pw-eye" id="togglePw" type="button">&#128065;</button>
@@ -193,5 +210,7 @@ $('btnSignup').addEventListener('click', async function() {
 })();
 </script>
 
+<!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
+<link rel="stylesheet" href="/theme-v88.css"/>
 </body>
 </html>

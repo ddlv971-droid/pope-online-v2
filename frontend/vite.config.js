@@ -20,9 +20,13 @@ function isCompiledOutput(fp) {
 function htmlInputs(dir) {
   const entries = {};
   for (const name of readdirSync(dir)) {
+    // V88 : filtrer sur l'extension AVANT statSync (le fichier temporaire
+    // vite.config.js.timestamp-*.mjs peut disparaître entre readdir et stat)
+    if (!name.endsWith('.html') || EXCLUDED_HTML.has(name)) continue;
     const full = resolve(dir, name);
-    if (statSync(full).isFile() && name.endsWith('.html')
-        && !EXCLUDED_HTML.has(name) && !isCompiledOutput(full)) {
+    let isFile = false;
+    try { isFile = statSync(full).isFile(); } catch (_) { continue; }
+    if (isFile && !isCompiledOutput(full)) {
       entries[name.replace(/\.html$/i, '')] = full;
     }
   }
@@ -42,6 +46,9 @@ export default defineConfig(({ mode }) => ({
         // Eviter que api.js soit extrait en chunk separe
         // qui peut etre bloque par certains proxies/firewalls
         manualChunks: (id) => {
+          // V88.8 : polyfill Vite isolé. Sinon Rollup le range dans un chunk commun
+          // porteur d'app.css, qui se retrouvait chargé sur les pages du site vitrine.
+          if (id.includes('modulepreload-polyfill')) return 'polyfill';
           // Chunk partagé stable pour éviter que app.js finisse dans cgu
           if (id.includes('/app.js') || id.includes('/api.js') ||
               id.includes('/archive.js') || id.includes('/turnstile.js') ||

@@ -8,6 +8,8 @@ import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, canonicalizeEmailForAbuse, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
+import { isPrivateSpaceEnabled } from '../services/features.js';
+import { planFamily, isPaidPlan, isUnlimited, TRIAL_DAYS, TRIAL_EXPERT_LIMIT } from '../services/plans.js';
 
 const router = express.Router();
 
@@ -39,9 +41,15 @@ function walletPayload(row = {}) {
     ? Math.max(0, Math.ceil((trialExpires.getTime() - now) / 86400000))
     : null;
   const isTrialExpired = trialExpires ? trialExpires.getTime() < now : false;
-  const expertLimit = Number(row.expert_limit ?? 2);
+  const expertLimit = Number(row.expert_limit ?? TRIAL_EXPERT_LIMIT);
   const expertUsed  = Number(row.expert_used  ?? 0);
-  const expertLeft  = Math.max(0, expertLimit - expertUsed);
+  // Conseils Expert achetés à l'unité. Une valeur ≥ 1000 est l'ancienne sentinelle
+  // « illimité » de la V87 (9999) : elle ne doit jamais être comptée comme crédits.
+  const rawCredits  = Number(row.tickets_expert || 0);
+  const creditsExpired = row.credits_expire_at && new Date(row.credits_expire_at) < new Date();
+  const credits     = (rawCredits >= 1000 || creditsExpired) ? 0 : Math.max(0, rawCredits);
+  const unlimited   = isUnlimited(expertLimit);
+  const expertLeft  = unlimited ? 9999 : Math.max(0, expertLimit - expertUsed) + credits;
   // Date de renouvellement (stockée par billing.js lors du webhook invoice.paid)
   const renewsAt = row.renews_at || null;
   // Date de début du plan actuel (stockée lors de checkout.session.completed)
@@ -49,7 +57,12 @@ function walletPayload(row = {}) {
 
   return {
     plan_code:             row.plan_code   || 'FREE',
-    plan_label:            row.plan_label  || 'Free',
+    plan_label:            row.plan_label  || 'Découverte',
+    plan:                  planFamily(row.plan_code),      // V88 : elu | collectivite | free | starter | pro…
+    is_paid:               isPaidPlan(row.plan_code) && String(row.status || '') === 'active',
+    expert_unlimited:      unlimited,
+    expert_credits:        credits,
+    expert_credits_expire_at: credits > 0 ? (row.credits_expire_at || null) : null,
     status:                row.status      || 'pending_verification',
     ai_unlimited:          Boolean(row.ai_unlimited),
     expert_limit:          expertLimit,
@@ -57,6 +70,7 @@ function walletPayload(row = {}) {
     expert_left:           expertLeft,
     // Champs techniques internes (admin uniquement)
     tickets_ai:            Number(row.tickets_ai    || 0),
+    ai_unlimited_effective: Boolean(row.ai_unlimited) || Number(row.tickets_ai || 0) >= 1000,
     tickets_expert:        Number(row.tickets_expert || 0),
     public_dossiers_used:  Number(row.public_dossiers_used  || 0),
     private_dossiers_used: Number(row.private_dossiers_used || 0),
@@ -134,6 +148,14 @@ router.post('/signup', async (req, res) => {
   if (password.length < 8) return res.status(400).json({ error: 'password_too_short' });
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
+  // V88 : espace privé en veille (code conservé, nouvelles inscriptions refusées)
+  if (accountSpace === 'private' && !isPrivateSpaceEnabled()) return res.status(403).json({ error: 'private_space_disabled' });
+
+  // V88 : profil de l'élu (facultatif, sert à la segmentation et à l'offre Collectivité)
+  const ALLOWED_FUNCTIONS = ['maire','adjoint','conseiller','dgs','secretaire_mairie','autre'];
+  const ALLOWED_SIZES = ['moins_1000','1000_3500','3500_10000','10000_50000','plus_50000'];
+  const userFunction = ALLOWED_FUNCTIONS.includes(String(req.body?.userFunction || '')) ? String(req.body.userFunction) : null;
+  const communeSize = ALLOWED_SIZES.includes(String(req.body?.communeSize || '')) ? String(req.body.communeSize) : null;
 
   const fp_hash = fpHash(fp);
   let verifyToken = null;
@@ -165,10 +187,10 @@ router.post('/signup', async (req, res) => {
       } catch (_) { /* table absente */ }
 
       const userIns = await client.query(
-        `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious, phone_country, phone_number, phone_full)
-         values($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        `insert into users(email, password_hash, full_name, organization, account_space, is_suspicious, phone_country, phone_number, phone_full, user_function, commune_size)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          returning id, email, account_space, is_email_verified, is_suspicious, role, phone_country, phone_number, phone_full`,
-        [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull]
+        [email, password_hash, fullName, organization, accountSpace, suspicious, phoneCountry, phoneNumber, phoneFull, userFunction, communeSize]
       );
       const user = userIns.rows[0];
       const entitlements = resolveFreeTrialEntitlements(accountSpace);
@@ -183,7 +205,7 @@ router.post('/signup', async (req, res) => {
             ai_unlimited, expert_limit, expert_used,
             public_dossiers_used, private_dossiers_used,
             public_dossiers_limit, private_dossiers_limit, private_users_limit
-          ) values($1,'FREE','Free',$2,$3,$3,$4,$5,0,0,0,$6,$7,$8)`,
+          ) values($1,'FREE','Découverte',$2,$3,0,$4,$5,0,0,0,$6,$7,$8)`,
           [user.id, initialWalletStatus,
            entitlements.ticketsAi,
            entitlements.aiUnlimited, entitlements.expertLimit,
@@ -198,7 +220,7 @@ router.post('/signup', async (req, res) => {
               user_id, plan_code, status, tickets_ai, tickets_expert,
               public_dossiers_used, private_dossiers_used,
               public_dossiers_limit, private_dossiers_limit, private_users_limit
-            ) values($1,'FREE',$2,$3,$3,0,0,$4,$5,$6)`,
+            ) values($1,'FREE',$2,$3,0,0,0,$4,$5,$6)`,
             [user.id, initialWalletStatus,
              Math.min(entitlements.ticketsAi, 9999),
              entitlements.publicDossiersLimit, entitlements.privateDossiersLimit, entitlements.privateUsersLimit]
@@ -542,10 +564,10 @@ async function handleVerify(req, res) {
           const entitlements = resolveFreeTrialEntitlements(row.account_space);
           awardedFreeTickets = entitlements.ticketsAi;
           const startedAt = new Date();
-          const expiresAt = trialExpiryDate(15);
+          const expiresAt = trialExpiryDate(TRIAL_DAYS);
           await client.query(
             `update wallets
-                set plan_code='FREE', plan_label='Free', status='trial_active', tickets_ai=$2, tickets_expert=$2, ai_unlimited=true, expert_limit=2, expert_used=0,
+                set plan_code='FREE', plan_label='Découverte', status='trial_active', tickets_ai=$2, tickets_expert=0, ai_unlimited=true, expert_limit=2, expert_used=0,
                     public_dossiers_used=0, private_dossiers_used=0,
                     public_dossiers_limit=$3, private_dossiers_limit=$4, private_users_limit=$5,
                     trial_started_at=$6, trial_expires_at=$7, updated_at=now()

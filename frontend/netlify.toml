@@ -28,6 +28,25 @@
   status = 200
 
 
+# ── V88 : repositionnement élus ─────────────────────────────────────────────
+# L'ancienne page « Espace public » devient la page « Pour les élus ».
+[[redirects]]
+  from = "/public"
+  to = "/elus"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/public.html"
+  to = "/elus"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/elus"
+  to = "/elus.html"
+  status = 200
+
 [[redirects]]
   from = "/app"
   to = "/app.html"
@@ -89,6 +108,22 @@
   status = 200
   force = false
 
+
+# V88 : espace entreprises en veille, pages exclues des moteurs de recherche
+[[headers]]
+  for = "/private.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/signup-private.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/trial-start-private.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
   for = "/*"

@@ -13,6 +13,11 @@ export const APP_STAGE =
   'production';
 
 const FR_MESSAGES = {
+  payment_not_configured: "Le paiement en ligne est momentanément indisponible. Écrivez-nous à contact@pope-online.com.",
+  payment_provider_error: "Le service de paiement n'a pas répondu. Merci de réessayer dans un instant.",
+  unknown_plan: "Offre inconnue.",
+  vault_file_missing: "Une pièce jointe a expiré (conservation 48 h). Déposez-la de nouveau, puis renvoyez la demande.",
+  file_too_large: "Fichier trop volumineux (10 Mo maximum).",
   invalid_credentials: "Identifiants invalides.",
   invalid_email: "Adresse e-mail invalide.",
   missing_password: "Le mot de passe manquant.",
@@ -35,7 +40,12 @@ const FR_MESSAGES = {
   forbidden: "Action non autorisée.",
   user_not_found: "Utilisateur introuvable.",
   wallet_missing: "Aucun accès n'est associé à ce compte.",
-  trial_expired: "Votre période d'essai est terminée.",
+  trial_expired: "Votre période d'essai est terminée. Souscrivez l'offre Élu pour continuer à solliciter un expert.",
+  contact_missing_fields: "Indiquez votre nom et un moyen de vous joindre (e-mail ou téléphone).",
+  private_space_disabled: "Les inscriptions à l'espace entreprises sont momentanément fermées. Contactez-nous au 09 70 70 30 55.",
+  subscription_required: "Pour solliciter un expert, souscrivez l'offre Élu (49 € HT par mois, sans engagement).",
+  expert_limit_reached: "Vos Conseils Expert du mois sont utilisés. Ajoutez un pack de 3 Conseils Expert (25 € HT) ou passez à l'offre Commune depuis la page Tarifs.",
+  email_not_verified: "Confirmez d'abord votre adresse e-mail grâce au lien reçu à l'inscription.",
   no_tickets: "Votre quota gratuit est atteint.",
   public_dossier_limit_reached: "Le quota gratuit des dossiers publics est atteint.",
   private_dossier_limit_reached: "Le quota gratuit des dossiers privés est atteint.",
@@ -48,7 +58,7 @@ const FR_MESSAGES = {
   missing_expectations: "Les attentes sont manquantes.",
   missing_subject: "L'objet est manquant.",
   missing_description: "La description est manquante.",
-  invalid_file_type: "Format de fichier non autorisé. Utilisez uniquement TXT, DOC, CSV ou PDF.",
+  invalid_file_type: "Format de fichier non autorisé. Utilisez uniquement PDF, Word, Excel, PowerPoint, TXT, CSV, RTF ou image (JPG, PNG).",
   invalid_file_content: "Le contenu du fichier ne correspond pas au format annoncé.",
   account_deleted: "Votre compte a été supprimé.",
   missing_need: "Le besoin est manquant.",
@@ -135,4 +145,31 @@ export async function apiFetch(path, { method='GET', body=null } = {}) {
     throw err;
   }
   return data;
+}
+
+
+// Téléchargement d'un fichier protégé (en-tête Authorization) : récupère le contenu puis déclenche l'enregistrement.
+export async function apiDownload(path, fallbackName = 'document') {
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}${path}`, { headers, credentials: 'include' });
+  if (!res.ok) {
+    let data = null;
+    try { data = await res.json(); } catch {}
+    const err = new Error(getApiMessage(data, 'Téléchargement impossible.'));
+    err.status = res.status;
+    throw err;
+  }
+  const cd = res.headers.get('Content-Disposition') || '';
+  const m = /filename="?([^";]+)"?/i.exec(cd);
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (m && m[1]) || fallbackName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
 }

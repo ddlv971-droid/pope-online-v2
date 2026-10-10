@@ -7,7 +7,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-import { apiFetch, API_BASE } from './api.js';
+import { apiFetch, API_BASE, getApiMessage } from './api.js';
 import { requireLogin, wireLogout, setTicketsBadge, showToast } from './app.js';
 if (!requireLogin('vault.html')) {}
 wireLogout();
@@ -64,7 +64,7 @@ function applySpaceLabels(){
   if (homeLink) homeLink.href = privateMode ? 'dashboard-private.html' : 'dashboard.html';
   if (generateLink) {
     generateLink.href = privateMode ? 'app-private.html' : 'app.html';
-    generateLink.textContent = privateMode ? 'Génération IA privée' : 'Génération guidée';
+    generateLink.textContent = privateMode ? 'Outil de rédaction privé' : 'Génération guidée';
   }
   if (expertLink) expertLink.href = privateMode ? 'expert-private.html' : 'expert.html';
   if (returnLink) {
@@ -78,11 +78,11 @@ function applySpaceLabels(){
   const note = document.querySelector('.vault-hero-note span');
   if (note) note.textContent = 'DCE, règlement de consultation, mémoire technique, courrier reçu, justificatifs, statuts, pièces de formalité ou documents transmis par POPE Online.';
   const intro = document.querySelector('.vault-upload-card .muted');
-  if (intro) intro.textContent = 'Formats autorisés : TXT, DOC, CSV et PDF. Les fichiers TXT, DOC, CSV et PDF peuvent désormais être analysés pour la génération quand vous les sélectionnez.';
+  if (intro) intro.textContent = 'Formats autorisés : PDF, Word, Excel, PowerPoint, TXT, CSV, RTF, images (JPG, PNG) et ZIP, 10 Mo maximum par fichier.';
   const purpose = el('vaultPurpose');
   if (purpose) {
     purpose.replaceChildren();
-    [['generation','Génération IA privée'],['expert','Conseil Expert'],['mission','Accompagnement sur mesure'],['general','Usage général']].forEach(([value, label]) => {
+    [['generation','Outil de rédaction privé'],['expert','Conseil Expert'],['mission','Accompagnement sur mesure'],['general','Usage général']].forEach(([value, label]) => {
       const option = document.createElement('option');
       option.value = value;
       option.textContent = label;
@@ -120,7 +120,7 @@ el('vaultUploadBtn').addEventListener('click', async ()=>{
     applySpaceLabels();
 load();
   } catch (e) {
-    console.error(e); el('vaultMsg').textContent = 'Dépôt impossible.'; showToast('Dépôt impossible', 'err');
+    console.error(e); const why = getApiMessage(e, ''); el('vaultMsg').textContent = why && why !== 'api_error' ? `Dépôt impossible : ${why}` : 'Dépôt impossible. Vérifiez le format (PDF, Word, Excel, PowerPoint, TXT, CSV, image) et la taille (10 Mo maximum).'; showToast('Dépôt impossible', 'err');
   }
 });
 applySpaceLabels();

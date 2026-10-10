@@ -1,6 +1,6 @@
 // Provider-agnostic mail sender (Resend or SendGrid)
 
-export async function sendMail({ to, from: customFrom, replyTo, subject, text, html, attachments=[] }) {
+export async function sendMail({ to, cc, from: customFrom, replyTo, subject, text, html, attachments=[] }) {
   const provider = (process.env.MAIL_PROVIDER || 'resend').toLowerCase();
   const from = customFrom || process.env.MAIL_FROM;
   const apiKey = process.env.MAIL_API_KEY;
@@ -20,6 +20,7 @@ export async function sendMail({ to, from: customFrom, replyTo, subject, text, h
       body: JSON.stringify({
         from,
         to: Array.isArray(to) ? to : [to],
+        cc: cc ? (Array.isArray(cc) ? cc : [cc]) : undefined,
         subject,
         text,
         html,
@@ -45,7 +46,7 @@ export async function sendMail({ to, from: customFrom, replyTo, subject, text, h
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        personalizations: [{ to: (Array.isArray(to) ? to : [to]).map(email => ({ email })) }],
+        personalizations: [{ to: (Array.isArray(to) ? to : [to]).map(email => ({ email })), ...(cc ? { cc: (Array.isArray(cc) ? cc : [cc]).map(email => ({ email })) } : {}) }],
         from: { email: from },
         reply_to: replyTo ? { email: replyTo } : undefined,
         subject,
