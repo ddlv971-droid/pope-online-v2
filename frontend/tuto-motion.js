@@ -1,8 +1,9 @@
 // POPE Online — motion design du tutoriel : 6 scènes avec avatars, animées en SVG/CSS.
 const INK = '#1F2622', GREEN = '#1F4A3D', BLUE = '#0070C0', CYAN = '#00B0F0', LIGHT = '#EDF2EE', AMBER = '#F5A524';
 
-function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, headset = false, flip = false, d = 0 }) {
+function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, headset = false, longHair = false, flip = false, d = 0 }) {
   return `<g transform="translate(${x},${y}) scale(${flip ? -s : s},${s})"><g class="pm-bob" style="animation-delay:${d}s">
+    ${longHair ? `<path d="M-41 -4 Q-48 -52 0 -50 Q48 -52 41 -4 L44 52 Q30 62 16 50 L-16 50 Q-30 62 -44 52 Z" fill="${hair}"/>` : ''}
     <path d="M-72 150 Q-72 54 0 54 Q72 54 72 150 Z" fill="${shirt}"/>
     <rect x="-10" y="28" width="20" height="30" rx="6" fill="${skin}"/>
     <path d="M-16 54 L0 78 L16 54 Z" fill="#fff"/>
@@ -18,7 +19,7 @@ function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, h
 
 const ELU = (o = {}) => avatar({ x: 215, y: 250, s: 1.25, skin: '#F2C6A0', hair: '#5A3A22', shirt: GREEN, glasses: false, ...o });
 const EXPERT = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#C98E64', hair: '#222', shirt: '#14304A', glasses: true, tie: BLUE, ...o });
-const CONSEILLER = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#8D5A3B', hair: '#1a1a1a', shirt: BLUE, headset: true, ...o });
+const CONSEILLER = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#EDC7A6', hair: '#4A2C1A', shirt: BLUE, headset: true, longHair: true, ...o });
 
 const desk = (x = 40, w = 360) => `<rect x="${x}" y="372" width="${w}" height="20" rx="8" fill="#B79A74"/><rect x="${x + 24}" y="392" width="12" height="100" fill="#9B805C"/><rect x="${x + w - 36}" y="392" width="12" height="100" fill="#9B805C"/>`;
 const laptop = (x = 40) => `<g><rect x="${x + 110}" y="326" width="130" height="46" rx="6" fill="#2B3A35"/><rect x="${x + 96}" y="368" width="158" height="6" rx="3" fill="#44544E"/><circle cx="${x + 175}" cy="349" r="5" fill="#fff" opacity=".85"/></g>`;
@@ -110,7 +111,7 @@ const SCENES = [
   },
   {
     title: 'Un besoin plus large ? Le sur mesure',
-    text: 'Pour un dossier complexe, un projet à structurer ou un accompagnement suivi : qualifiez votre besoin. Il est envoyé à contact@pope-online.com, avec copie à Pope Consulting, et un conseiller vous rappelle.',
+    text: 'Pour un dossier complexe, un projet à structurer ou un accompagnement suivi : qualifiez votre besoin. Il est envoyé à contact@pope-online.com, avec copie à Pope Consulting, et une conseillère vous rappelle.',
     svg: () => bg + `<rect x="40" y="372" width="880" height="20" rx="8" fill="#B79A74"/>` + ELU({ x: 190 }) + CONSEILLER({ x: 770, d: 0.5 }) +
       `<g class="pm-a pm-pop" style="--d:.4s"><rect x="150" y="76" width="300" height="72" rx="16" fill="#fff" stroke="#C9D8CF" stroke-width="2"/>${T(300, 108, 'Mon projet est plus large…', { anchor: 'middle', size: 16, w: 800 })}${T(300, 130, 'un accompagnement suivi', { anchor: 'middle', size: 14, fill: '#4B5650' })}</g>` +
       `<g class="pm-a pm-up" style="--d:1.4s"><rect x="360" y="190" width="240" height="96" rx="16" fill="${GREEN}"/>${T(480, 226, 'Sur mesure', { anchor: 'middle', size: 18, fill: '#fff', w: 800 })}<rect x="396" y="244" width="168" height="30" rx="15" fill="#fff"/>${T(480, 264, 'Qualifier mon besoin', { anchor: 'middle', size: 13.5, fill: GREEN, w: 800 })}</g>` +
