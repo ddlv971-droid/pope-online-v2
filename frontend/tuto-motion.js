@@ -45,10 +45,15 @@ function pill(x, y, w, label, d, selected = false) {
   return base + `<g class="pm-a pm-pop" style="--d:3s"><rect x="${x}" y="${y}" width="${w}" height="40" rx="20" fill="${GREEN}"/>${T(x + w / 2, y + 26, '✓ ' + label, { anchor: 'middle', size: 14, fill: '#fff', w: 700 })}</g>`;
 }
 
-function field(y, label, w, d) {
+// Champ de saisie : le texte se tape lettre par lettre, avec un curseur clignotant.
+function field(y, label, text, d, last = false) {
+  const n = text.length, w = Math.round(n * 6.9), dur = (n * 0.04).toFixed(2);
   return `${T(504, y, label, { size: 13, fill: '#4B5650', w: 700 })}
     <rect x="504" y="${y + 8}" width="372" height="34" rx="9" fill="#F6F8F5" stroke="#C9D8CF"/>
-    <rect class="pm-a pm-grow" style="--d:${d}s" x="514" y="${y + 21}" width="${w}" height="8" rx="4" fill="${BLUE}" opacity=".75"/>`;
+    <rect class="pm-focus${last ? ' pm-focus-last' : ''}" style="--d:${d - 0.2}s;--o:${(d + Number(dur) + 0.4).toFixed(2)}s" x="504" y="${y + 8}" width="372" height="34" rx="9" fill="none" stroke="${BLUE}" stroke-width="2"/>
+    ${T(514, y + 30, text, { size: 13.5, w: 500 })}
+    <rect class="pm-type" style="--d:${d}s;--t:${dur}s;--n:${n}" x="512" y="${y + 11}" width="${w + 8}" height="28" fill="#F6F8F5"/>
+    <rect class="pm-caret${last ? ' pm-caret-last' : ''}" style="--d:${d - 0.2}s;--t:${dur}s;--n:${n};--w:${w}px;--o:${(d + Number(dur) + 0.4).toFixed(2)}s" x="514" y="${y + 15}" width="2" height="20" fill="${INK}"/>`;
 }
 
 function file(x, y, ext, color, d) {
@@ -75,11 +80,13 @@ const SCENES = [
   },
   {
     title: '2. Qualifiez votre besoin',
-    text: 'Décrivez votre situation, ce que vous attendez et votre échéance. Quelques lignes suffisent : plus c’est précis, plus la réponse est utile.',
+    text: 'Tapez votre besoin en quelques lignes : votre situation, ce que vous attendez et votre échéance. Plus c’est précis, plus la réponse est utile.',
     svg: () => bg + desk() + ELU({ d: 0.3 }) + laptop() +
       card('Qualifiez votre besoin', 2,
-        field(190, 'Contexte', 330, 0.8) + field(252, 'Ce que vous attendez', 270, 1.6) + field(314, 'Échéance', 150, 2.4) +
-        `<g class="pm-a pm-pop" style="--d:3.2s"><rect x="704" y="378" width="172" height="40" rx="12" fill="${GREEN}"/>${T(790, 403, 'Continuer →', { anchor: 'middle', size: 14, fill: '#fff', w: 800 })}</g>`, 0.2)
+        field(190, 'Contexte', 'Agent en CDD depuis 2 ans, fin le 30 novembre', 0.8) +
+        field(252, 'Ce que vous attendez', 'Peut-on le renouveler, et sur quel fondement ?', 2.9) +
+        field(314, 'Échéance', 'Avant le 20 novembre', 5.0, true) +
+        `<g class="pm-a pm-pop" style="--d:6.2s"><rect x="704" y="378" width="172" height="40" rx="12" fill="${GREEN}"/>${T(790, 403, 'Continuer →', { anchor: 'middle', size: 14, fill: '#fff', w: 800 })}</g>`, 0.2)
   },
   {
     title: '3. Joignez vos pièces',
@@ -119,7 +126,7 @@ const SCENES = [
       `<g class="pm-a pm-pop" style="--d:4s"><rect x="620" y="76" width="280" height="66" rx="16" fill="#fff" stroke="#C9D8CF" stroke-width="2"/>${T(760, 104, 'Je vous rappelle', { anchor: 'middle', size: 16, w: 800 })}${T(760, 126, 'sous 24 h ouvrées', { anchor: 'middle', size: 14, fill: '#4B5650' })}</g>`
   }
 ];
-const DUR = [6500, 6500, 7000, 7000, 7000, 7500];
+const DUR = [6500, 8500, 7000, 7000, 7000, 7500];
 
 export function mountTutoMotion(root) {
   if (!root) return;
