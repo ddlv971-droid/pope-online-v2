@@ -41,3 +41,16 @@
 
 .v37-dash-grid.pm-two{grid-template-columns:1.35fr 1fr}
 @media(max-width:860px){.v37-dash-grid.pm-two{grid-template-columns:1fr}}
+
+/* Saisie animée (étape 2) : texte tapé lettre par lettre + curseur */
+.pm-focus{opacity:0;animation:pm-caret-in .01s linear var(--d) forwards,pm-caret-out .3s linear var(--o) forwards}
+.pm-focus-last{animation:pm-caret-in .01s linear var(--d) forwards}
+.pm-type{animation:pm-type var(--t) steps(var(--n)) var(--d) both;transform-box:fill-box;transform-origin:right center}
+.pm-caret{opacity:0;animation:pm-caret-in .01s linear var(--d) forwards,pm-caret-move var(--t) steps(var(--n)) calc(var(--d) + .2s) both,pm-caret-out .01s linear var(--o) forwards}
+.pm-caret-last{animation:pm-caret-in .01s linear var(--d) forwards,pm-caret-move var(--t) steps(var(--n)) calc(var(--d) + .2s) both,pm-caret-blink .9s step-end calc(var(--o) - .2s) infinite}
+@keyframes pm-type{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes pm-caret-in{to{opacity:1}}
+@keyframes pm-caret-out{to{opacity:0}}
+@keyframes pm-caret-move{from{transform:translateX(0)}to{transform:translateX(var(--w))}}
+@keyframes pm-caret-blink{0%{opacity:1}50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.pm-type,.pm-caret{display:none}}

@@ -1,8 +1,9 @@
 // POPE Online — motion design du tutoriel : 6 scènes avec avatars, animées en SVG/CSS.
 const INK = '#1F2622', GREEN = '#1F4A3D', BLUE = '#0070C0', CYAN = '#00B0F0', LIGHT = '#EDF2EE', AMBER = '#F5A524';
 
-function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, headset = false, flip = false, d = 0 }) {
+function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, headset = false, longHair = false, flip = false, d = 0 }) {
   return `<g transform="translate(${x},${y}) scale(${flip ? -s : s},${s})"><g class="pm-bob" style="animation-delay:${d}s">
+    ${longHair ? `<path d="M-41 -4 Q-48 -52 0 -50 Q48 -52 41 -4 L44 52 Q30 62 16 50 L-16 50 Q-30 62 -44 52 Z" fill="${hair}"/>` : ''}
     <path d="M-72 150 Q-72 54 0 54 Q72 54 72 150 Z" fill="${shirt}"/>
     <rect x="-10" y="28" width="20" height="30" rx="6" fill="${skin}"/>
     <path d="M-16 54 L0 78 L16 54 Z" fill="#fff"/>
@@ -18,7 +19,7 @@ function avatar({ x, y, s = 1, skin, hair, shirt, glasses = false, tie = null, h
 
 const ELU = (o = {}) => avatar({ x: 215, y: 250, s: 1.25, skin: '#F2C6A0', hair: '#5A3A22', shirt: GREEN, glasses: false, ...o });
 const EXPERT = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#C98E64', hair: '#222', shirt: '#14304A', glasses: true, tie: BLUE, ...o });
-const CONSEILLER = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#8D5A3B', hair: '#1a1a1a', shirt: BLUE, headset: true, ...o });
+const CONSEILLER = (o = {}) => avatar({ x: 745, y: 250, s: 1.25, skin: '#EDC7A6', hair: '#4A2C1A', shirt: BLUE, headset: true, longHair: true, ...o });
 
 const desk = (x = 40, w = 360) => `<rect x="${x}" y="372" width="${w}" height="20" rx="8" fill="#B79A74"/><rect x="${x + 24}" y="392" width="12" height="100" fill="#9B805C"/><rect x="${x + w - 36}" y="392" width="12" height="100" fill="#9B805C"/>`;
 const laptop = (x = 40) => `<g><rect x="${x + 110}" y="326" width="130" height="46" rx="6" fill="#2B3A35"/><rect x="${x + 96}" y="368" width="158" height="6" rx="3" fill="#44544E"/><circle cx="${x + 175}" cy="349" r="5" fill="#fff" opacity=".85"/></g>`;
@@ -44,10 +45,15 @@ function pill(x, y, w, label, d, selected = false) {
   return base + `<g class="pm-a pm-pop" style="--d:3s"><rect x="${x}" y="${y}" width="${w}" height="40" rx="20" fill="${GREEN}"/>${T(x + w / 2, y + 26, '✓ ' + label, { anchor: 'middle', size: 14, fill: '#fff', w: 700 })}</g>`;
 }
 
-function field(y, label, w, d) {
+// Champ de saisie : le texte se tape lettre par lettre, avec un curseur clignotant.
+function field(y, label, text, d, last = false) {
+  const n = text.length, w = Math.round(n * 6.9), dur = (n * 0.04).toFixed(2);
   return `${T(504, y, label, { size: 13, fill: '#4B5650', w: 700 })}
     <rect x="504" y="${y + 8}" width="372" height="34" rx="9" fill="#F6F8F5" stroke="#C9D8CF"/>
-    <rect class="pm-a pm-grow" style="--d:${d}s" x="514" y="${y + 21}" width="${w}" height="8" rx="4" fill="${BLUE}" opacity=".75"/>`;
+    <rect class="pm-focus${last ? ' pm-focus-last' : ''}" style="--d:${d - 0.2}s;--o:${(d + Number(dur) + 0.4).toFixed(2)}s" x="504" y="${y + 8}" width="372" height="34" rx="9" fill="none" stroke="${BLUE}" stroke-width="2"/>
+    ${T(514, y + 30, text, { size: 13.5, w: 500 })}
+    <rect class="pm-type" style="--d:${d}s;--t:${dur}s;--n:${n}" x="512" y="${y + 11}" width="${w + 8}" height="28" fill="#F6F8F5"/>
+    <rect class="pm-caret${last ? ' pm-caret-last' : ''}" style="--d:${d - 0.2}s;--t:${dur}s;--n:${n};--w:${w}px;--o:${(d + Number(dur) + 0.4).toFixed(2)}s" x="514" y="${y + 15}" width="2" height="20" fill="${INK}"/>`;
 }
 
 function file(x, y, ext, color, d) {
@@ -74,11 +80,13 @@ const SCENES = [
   },
   {
     title: '2. Qualifiez votre besoin',
-    text: 'Décrivez votre situation, ce que vous attendez et votre échéance. Quelques lignes suffisent : plus c’est précis, plus la réponse est utile.',
+    text: 'Tapez votre besoin en quelques lignes : votre situation, ce que vous attendez et votre échéance. Plus c’est précis, plus la réponse est utile.',
     svg: () => bg + desk() + ELU({ d: 0.3 }) + laptop() +
       card('Qualifiez votre besoin', 2,
-        field(190, 'Contexte', 330, 0.8) + field(252, 'Ce que vous attendez', 270, 1.6) + field(314, 'Échéance', 150, 2.4) +
-        `<g class="pm-a pm-pop" style="--d:3.2s"><rect x="704" y="378" width="172" height="40" rx="12" fill="${GREEN}"/>${T(790, 403, 'Continuer →', { anchor: 'middle', size: 14, fill: '#fff', w: 800 })}</g>`, 0.2)
+        field(190, 'Contexte', 'Agent en CDD depuis 2 ans, fin le 30 novembre', 0.8) +
+        field(252, 'Ce que vous attendez', 'Peut-on le renouveler, et sur quel fondement ?', 2.9) +
+        field(314, 'Échéance', 'Avant le 20 novembre', 5.0, true) +
+        `<g class="pm-a pm-pop" style="--d:6.2s"><rect x="704" y="378" width="172" height="40" rx="12" fill="${GREEN}"/>${T(790, 403, 'Continuer →', { anchor: 'middle', size: 14, fill: '#fff', w: 800 })}</g>`, 0.2)
   },
   {
     title: '3. Joignez vos pièces',
@@ -110,7 +118,7 @@ const SCENES = [
   },
   {
     title: 'Un besoin plus large ? Le sur mesure',
-    text: 'Pour un dossier complexe, un projet à structurer ou un accompagnement suivi : qualifiez votre besoin. Il est envoyé à contact@pope-online.com, avec copie à Pope Consulting, et un conseiller vous rappelle.',
+    text: 'Pour un dossier complexe, un projet à structurer ou un accompagnement suivi : qualifiez votre besoin. Il est envoyé à contact@pope-online.com, avec copie à Pope Consulting, et une conseillère vous rappelle.',
     svg: () => bg + `<rect x="40" y="372" width="880" height="20" rx="8" fill="#B79A74"/>` + ELU({ x: 190 }) + CONSEILLER({ x: 770, d: 0.5 }) +
       `<g class="pm-a pm-pop" style="--d:.4s"><rect x="150" y="76" width="300" height="72" rx="16" fill="#fff" stroke="#C9D8CF" stroke-width="2"/>${T(300, 108, 'Mon projet est plus large…', { anchor: 'middle', size: 16, w: 800 })}${T(300, 130, 'un accompagnement suivi', { anchor: 'middle', size: 14, fill: '#4B5650' })}</g>` +
       `<g class="pm-a pm-up" style="--d:1.4s"><rect x="360" y="190" width="240" height="96" rx="16" fill="${GREEN}"/>${T(480, 226, 'Sur mesure', { anchor: 'middle', size: 18, fill: '#fff', w: 800 })}<rect x="396" y="244" width="168" height="30" rx="15" fill="#fff"/>${T(480, 264, 'Qualifier mon besoin', { anchor: 'middle', size: 13.5, fill: GREEN, w: 800 })}</g>` +
@@ -118,7 +126,7 @@ const SCENES = [
       `<g class="pm-a pm-pop" style="--d:4s"><rect x="620" y="76" width="280" height="66" rx="16" fill="#fff" stroke="#C9D8CF" stroke-width="2"/>${T(760, 104, 'Je vous rappelle', { anchor: 'middle', size: 16, w: 800 })}${T(760, 126, 'sous 24 h ouvrées', { anchor: 'middle', size: 14, fill: '#4B5650' })}</g>`
   }
 ];
-const DUR = [6500, 6500, 7000, 7000, 7000, 7500];
+const DUR = [6500, 8500, 7000, 7000, 7000, 7500];
 
 export function mountTutoMotion(root) {
   if (!root) return;
