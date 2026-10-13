@@ -7,6 +7,7 @@
     ['Tester gratuitement', 'signup-public.html', 'essai gratuit inscription créer un compte 15 jours'],
     ['Connexion', 'login.html', 'se connecter compte espace mot de passe'],
     ['Charte de déontologie', 'deontologie.html', 'éthique neutralité confidentialité opposition'],
+    ['Diagnostic flash', 'diagnostic.html', 'diagnostic auto-diagnostic flash besoin orientation questions vigilance 2 minutes'],
     ['Tutoriel', 'tutoriel.html', 'vidéo prise en main fonctionnement comment ça marche'],
     ['Résilier mon abonnement', 'resiliation.html', 'résiliation arrêter abonnement'],
     ['Mentions légales', 'legal.html', 'éditeur hébergeur société'],

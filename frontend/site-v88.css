@@ -1044,3 +1044,15 @@ button.s-btn { font-family: var(--font-sans); }
 
 /* V88_15 : options spécifiques Commune / Collectivité */
 .s-plan li.s-plan-plus strong { color: var(--sapin, #1F4A3D); }
+
+/* ==========================================================================
+   V89 — Diagnostic flash : accroches sur l'accueil
+   ========================================================================== */
+.s-hero-diag { margin: 14px 0 0; font-size: .98rem; }
+.s-hero-diag a { color: var(--sapin); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.s-hero-diag a:hover { color: var(--sapin-deep); }
+.s-section-diag { padding: 56px 0; }
+.dg-teaser { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 28px 32px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+.dg-teaser > div { flex: 1 1 420px; }
+.dg-teaser h2 { font-family: var(--font-serif); font-size: 1.55rem; line-height: 1.25; margin: 0 0 8px; color: var(--ink); }
+.dg-teaser p { margin: 0; color: var(--ink-soft); }

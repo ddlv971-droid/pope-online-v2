@@ -8,7 +8,7 @@
   var isProd = host === 'pope-online.com' || host === 'www.pope-online.com';
 
   window.POPE_SITE = {
-    version: 'V88',
+    version: 'V89',
     isProd: isProd,
 
     // Espace privé (artisans, TPE) : en veille. Passer à true pour le réactiver
