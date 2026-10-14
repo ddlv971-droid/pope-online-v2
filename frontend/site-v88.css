@@ -1073,3 +1073,106 @@ button.s-btn { font-family: var(--font-sans); }
   .s-diag-go { width: 32px; height: 32px; }
 }
 @media (prefers-reduced-motion: reduce) { .s-diag-tile { transition: none; } }
+
+/* ==========================================================================
+   V89.4 — Accueil : présentation après le bandeau déroulant
+   Même charte (sapin, lichen, ocre en touche) ; plus d'air, des filets fins,
+   des pictogrammes au trait, un seul moment fort : la bande « Comment ça marche ».
+   ========================================================================== */
+.h-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--sapin); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.h-link::after { content: ''; width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
+.h-link:hover { color: var(--sapin-deep); }
+
+/* Sujets : introduction à gauche, quatre sujets à droite */
+.h-topics { padding: 112px 0 104px; }
+.h-topics-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: start; }
+.h-topics-intro .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); line-height: 1.14; letter-spacing: -.01em; }
+.h-topics-intro p { color: var(--ink-soft); font-size: 1.06rem; margin: 20px 0 26px; max-width: 30em; }
+.h-topics-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.h-topics-list li { padding: 30px 30px 30px 0; border-bottom: 1px solid var(--line); }
+.h-topics-list li:nth-child(odd) { border-right: 1px solid var(--line); }
+.h-topics-list li:nth-child(even) { padding-left: 30px; padding-right: 0; }
+.h-ico { width: 30px; height: 30px; color: var(--sapin); display: block; margin-bottom: 18px; }
+.h-topics-list h3 { font-family: var(--font-serif); font-size: 1.32rem; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+.h-topics-list p { margin: 0; color: var(--ink-soft); font-size: .97rem; line-height: 1.6; }
+
+/* Comment ça marche : la bande sapin, avec l'arbre de la marque */
+.h-method { position: relative; overflow: hidden; padding: 112px 0 96px; color: #fff;
+  background: radial-gradient(90% 120% at 100% 0%, #24574A 0%, var(--sapin) 38%, var(--sapin-deep) 100%); }
+.h-method-tree { position: absolute; right: -170px; top: -120px; width: 520px; color: #fff; opacity: .045; pointer-events: none; }
+.h-method-tree svg { width: 100%; height: auto; display: block; }
+.h-method .s-wrap { position: relative; }
+.h-method-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: end; margin-bottom: 64px; }
+.h-method-head .s-h2 { color: #fff; font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-method-head p { margin: 0; color: rgba(255,255,255,.76); font-size: 1.08rem; max-width: 34em; }
+.h-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.h-steps li { position: relative; padding: 0 40px 0 0; }
+.h-steps li + li { padding-left: 40px; border-left: 1px solid rgba(255,255,255,.14); }
+.h-step-n { display: block; font-family: var(--font-serif); font-size: 3.4rem; line-height: 1; font-weight: 400; color: #D7B47A; margin-bottom: 22px; }
+.h-steps h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; margin: 0 0 10px; color: #fff; }
+.h-steps p { margin: 0; color: rgba(255,255,255,.74); line-height: 1.62; }
+.h-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 72px 0 0; padding: 30px 0 0; border-top: 1px solid rgba(255,255,255,.18); }
+.h-facts > div { padding-right: 20px; }
+.h-facts dt { font-family: var(--font-serif); font-size: 2.1rem; line-height: 1; color: #fff; font-weight: 500; }
+.h-facts dd { margin: 10px 0 0; font-size: .9rem; color: rgba(255,255,255,.68); max-width: 15em; }
+
+/* En-têtes de section en deux colonnes */
+.h-head { max-width: none; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: end; margin-bottom: 52px; }
+.h-head .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-head p { margin: 0; font-size: 1.06rem; max-width: 36em; }
+
+/* Experts : pictogramme du domaine à la place de la silhouette */
+.h-experts { padding: 112px 0; }
+.h-experts .s-profile { border-radius: 10px; border-color: #DCE3DE; padding: 28px 26px 24px; transition: border-color .2s, box-shadow .2s; }
+.h-experts .s-profile:not(.s-profile-more):hover { border-color: var(--sapin-mid); box-shadow: 0 18px 40px -28px rgba(22,54,41,.45); }
+.h-xp-ico { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--lichen-2); color: var(--sapin); box-shadow: inset 0 0 0 1px var(--lichen); }
+.h-xp-ico svg { width: 24px; height: 24px; }
+.h-experts .s-profile-head { padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--lichen-2); }
+.h-experts .s-profile-years { font-weight: 500; font-size: 1.9rem; }
+.h-experts .s-profile-more { border-radius: 10px; background: radial-gradient(120% 90% at 100% 0%, #24574A 0%, var(--sapin-deep) 70%); }
+
+/* Exemple de Conseil Expert */
+.h-sample { padding: 112px 0; background: linear-gradient(180deg, var(--lichen-2), var(--paper)) !important; }
+.h-sample .s-sample { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; }
+.h-doc { width: 100%; max-width: 330px; justify-self: center; padding: 30px 28px; gap: 12px; border-radius: 6px; transform: rotate(-2.5deg);
+  box-shadow: 0 40px 60px -40px rgba(22,54,41,.55), 12px 12px 0 -1px #fff, 12px 12px 0 0 var(--line), 24px 24px 0 -1px #fff, 24px 24px 0 0 #E3E8E4; }
+.h-doc .s-sample-doc-title { font-size: 1.25rem; }
+.h-doc-sub { font-size: .74rem; font-weight: 700; color: var(--sapin); margin-top: 6px; }
+.h-doc-lines { display: grid; gap: 7px; }
+.h-doc-lines i { display: block; height: 6px; border-radius: 3px; background: #E6EBE7; }
+.h-doc-lines i.short { width: 62%; }
+.h-sample-copy .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-sample-copy > p { font-size: 1.06rem; margin: 18px 0 22px; }
+.h-sample-points { list-style: none; margin: 0 0 30px; padding: 0; border-top: 1px solid var(--line); max-width: 34em; }
+.h-sample-points li { padding: 12px 0 12px 26px; border-bottom: 1px solid var(--line); position: relative; color: var(--ink); }
+.h-sample-points li::before { content: ''; position: absolute; left: 2px; top: 19px; width: 10px; height: 5px; border-left: 1.5px solid var(--sapin); border-bottom: 1.5px solid var(--sapin); transform: rotate(-45deg); }
+
+/* Témoignages : citations sans cadre, séparées par des filets */
+.h-quotes { padding: 112px 0; }
+.h-quotes .s-testimonials { gap: 0; }
+.h-quotes .s-testimonial { background: none; border: 0; border-radius: 0; padding: 4px 36px 0; gap: 22px; }
+.h-quotes .s-testimonial:first-child { padding-left: 0; }
+.h-quotes .s-testimonial + .s-testimonial { border-left: 1px solid var(--line); }
+.h-quotes .s-testimonial blockquote { font-size: 1.12rem; line-height: 1.6; }
+.h-quotes .s-testimonial figcaption { border-top: 0; padding-top: 0; }
+.h-quotes .s-testimonial figcaption::before { content: ''; display: block; width: 28px; height: 1.5px; background: var(--sapin); margin-bottom: 12px; }
+
+@media (max-width: 960px) {
+  .h-topics, .h-method, .h-experts, .h-sample, .h-quotes { padding: 80px 0; }
+  .h-topics-grid, .h-method-head, .h-head, .h-sample .s-sample { grid-template-columns: 1fr; gap: 28px; }
+  .h-method-head { margin-bottom: 44px; }
+  .h-steps { grid-template-columns: 1fr; gap: 34px; }
+  .h-steps li, .h-steps li + li { padding: 0 0 0 0; border-left: 0; }
+  .h-steps li { display: grid; grid-template-columns: 54px minmax(0, 1fr); column-gap: 10px; }
+  .h-step-n { grid-row: span 2; font-size: 2.6rem; margin: 0; }
+  .h-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 0; margin-top: 52px; }
+  .h-quotes .s-testimonial, .h-quotes .s-testimonial:first-child { padding: 0 4px; }
+  .h-quotes .s-testimonial + .s-testimonial { border-left: 0; }
+  .h-method-tree { width: 360px; right: -150px; top: -90px; }
+}
+@media (max-width: 640px) {
+  .h-topics-list { grid-template-columns: 1fr; }
+  .h-topics-list li, .h-topics-list li:nth-child(odd), .h-topics-list li:nth-child(even) { padding: 24px 0; border-right: 0; }
+  .h-doc { max-width: 250px; }
+}
+@media (prefers-reduced-motion: reduce) { .h-experts .s-profile { transition: none; } }

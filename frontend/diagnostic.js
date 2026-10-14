@@ -114,7 +114,6 @@ function progress() {
 function renderIntro() {
   root.innerHTML = `
     <div class="dg-card dg-intro">
-      <p class="s-kicker">Diagnostic flash · 2 minutes</p>
       <h1 class="s-h1 dg-title">Faites le point sur votre situation avant d'agir</h1>
       <p class="s-lead">Huit questions courtes, et un champ libre facultatif, pour qualifier votre difficulté : vous obtenez un niveau de vigilance, les points qu'un expert examinera, les pièces à rassembler et la bonne façon d'être accompagné.</p>
       <ul class="dg-promises">
