@@ -73,6 +73,20 @@ export async function requireAdmin(req, res, next) {
   }
 }
 
+// V89.6 : équipe interne (administrateurs et conseillers) — tableau des rendez-vous
+export async function requireStaff(req, res, next) {
+  try {
+    const result = await resolveAuthenticatedUser(req);
+    if (result.error) return res.status(result.status).json({ error: result.error });
+    if (!['admin', 'conseiller'].includes(result.user.role)) return res.status(403).json({ error: 'forbidden' });
+    if (!isAdminIpAllowed(req)) return res.status(403).json({ error: 'forbidden' });
+    req.user = result.user;
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+}
+
 export async function optionalAuth(req, _res, next) {
   try {
     const result = await resolveAuthenticatedUser(req);

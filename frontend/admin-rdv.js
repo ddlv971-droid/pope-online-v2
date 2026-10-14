@@ -15,7 +15,9 @@ const STATUS = { new: ['À confirmer', 'yellow'], confirmed: ['Confirmé', 'gree
 const LEVEL = { moderee: 'Vigilance modérée', elevee: 'Vigilance élevée', critique: 'Vigilance critique' };
 const MY_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris';
 
-let items = [], team = [], filter = 'upcoming', who = '', q = '', current = null;
+let items = [], team = [], filter = 'upcoming', who = '', q = '', current = null, me = { id: null, role: 'admin' };
+const isConseiller = () => me.role === 'conseiller';
+const canEdit = (it) => !isConseiller() || !it.assigned_to || it.assigned_to === me.id;
 
 const dayKey = (d, tz = MY_TZ) => new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 const hm = (d, tz = MY_TZ) => new Intl.DateTimeFormat('fr-FR', { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(d).replace(':', ' h ');
@@ -57,8 +59,14 @@ function kpis() {
   const badge = $('#sideRdvCount'); if (badge) { const n = items.filter((i) => i.status === 'new').length; badge.textContent = n; badge.hidden = !n; }
 }
 
+// Liste « Avec » groupée par profil, avec la charge de chacun (rendez-vous à venir)
 function teamOptions(sel) {
-  return `<option value="">Non attribué</option>` + team.map((m) => `<option value="${esc(m.id)}"${m.id === sel ? ' selected' : ''}>${esc(m.full_name || m.email)}${m.role === 'expert' ? ' · expert' : ''}</option>`).join('');
+  const groups = [['conseiller', 'Conseillers'], ['expert', 'Experts'], ['admin', 'Administrateurs']];
+  const list = isConseiller() ? team.filter((m) => m.id === me.id || m.id === sel) : team;
+  return `<option value="">Non attribué</option>` + groups.map(([r, l]) => {
+    const g = list.filter((m) => m.role === r); if (!g.length) return '';
+    return `<optgroup label="${l}">${g.map((m) => `<option value="${esc(m.id)}"${m.id === sel ? ' selected' : ''}>${esc(m.full_name || m.email)}${m.id === me.id ? ' (moi)' : ` (${m.upcoming || 0})`}</option>`).join('')}</optgroup>`;
+  }).join('');
 }
 
 function row(it) {
@@ -75,11 +83,13 @@ function row(it) {
       <div class="rdv-meta">${src}</div>
       ${it.title ? `<div class="rdv-title">${esc(it.title)}</div>` : ''}
     </div>
-    <div class="rdv-assign"><label>Avec<select class="adm-input adm-select" data-assign>${teamOptions(it.assigned_to)}</select></label></div>
+    <div class="rdv-assign">${!canEdit(it) ? `<label>Avec<span class="rdv-owner">${esc(it.assignee_name || '—')}</span></label>`
+      : isConseiller() && !it.assigned_to ? '<label>Avec<button class="adm-btn adm-btn-primary adm-btn-sm" data-act="take">Je le prends</button></label>'
+      : `<label>Avec<select class="adm-input adm-select" data-assign>${teamOptions(it.assigned_to)}</select></label>`}</div>
     <div class="rdv-state"><span class="adm-badge adm-badge-${sc}">${sl}</span>
       <div class="rdv-actions">
-        ${it.status === 'new' ? '<button class="adm-btn adm-btn-primary adm-btn-sm" data-act="confirm">Confirmer</button>' : ''}
-        ${it.status === 'confirmed' ? '<button class="adm-btn adm-btn-ghost adm-btn-sm" data-act="done">Terminé</button>' : ''}
+        ${canEdit(it) && it.status === 'new' ? '<button class="adm-btn adm-btn-primary adm-btn-sm" data-act="confirm">Confirmer</button>' : ''}
+        ${canEdit(it) && it.status === 'confirmed' ? '<button class="adm-btn adm-btn-ghost adm-btn-sm" data-act="done">Terminé</button>' : ''}
         <button class="adm-btn adm-btn-ghost adm-btn-sm" data-act="open">Détails</button>
       </div></div>
   </article>`;
@@ -99,7 +109,8 @@ function render() {
 }
 
 async function patch(it, body) {
-  const r = await apiFetch(`/admin/appointments/${it.kind}/${it.id}`, { method: 'PATCH', body });
+  const r = await apiFetch(`/staff/appointments/${it.kind}/${it.id}`, { method: 'PATCH', body });
+  if (body.assigned_to !== undefined) refreshTeam();
   const i = items.findIndex((x) => x.id === it.id); if (i >= 0 && r.item) items[i] = r.item;
   render();
   return r;
@@ -141,6 +152,7 @@ function openDrawer(it, preset = {}) {
       <p class="adm-msg" id="rdvMsg"></p>
     </div>
     <div class="rdv-dr-foot"><button class="adm-btn adm-btn-ghost" data-act="close">Fermer</button><button class="adm-btn adm-btn-primary" data-act="save">Enregistrer</button></div>`;
+  if (!canEdit(it)) { dr.querySelectorAll('select, input, textarea').forEach((x) => { x.disabled = true; }); const sv = dr.querySelector('[data-act="save"]'); if (sv) sv.hidden = true; const m = dr.querySelector('#rdvMsg'); if (m) m.textContent = `Rendez-vous suivi par ${it.assignee_name || 'un autre conseiller'} : lecture seule.`; }
   $('#rdvOverlay').classList.add('open'); dr.classList.add('open');
 }
 function closeDrawer() { $('#rdvOverlay').classList.remove('open'); $('#rdvDrawer').classList.remove('open'); current = null; }
@@ -167,15 +179,32 @@ function toast(t) { const el = $('#rdvToast'); el.textContent = t; el.classList.
 export async function loadRdv() {
   $('#rdvList').innerHTML = '<div class="rdv-empty">Chargement…</div>';
   try {
-    const [a, t] = await Promise.all([apiFetch('/admin/appointments'), team.length ? Promise.resolve({ team }) : apiFetch('/admin/team')]);
-    items = a.items || []; team = t.team || [];
-    $('#rdvWho').innerHTML = '<option value="">Tous les conseillers</option><option value="__none">Non attribués</option>' + team.map((m) => `<option value="${esc(m.id)}">${esc(m.full_name || m.email)}</option>`).join('');
-    $('#rdvWho').value = who;
+    const [a, t] = await Promise.all([apiFetch('/staff/appointments'), apiFetch('/staff/team')]);
+    items = a.items || []; team = t.team || []; me = a.me || me;
+    if (isConseiller() && !loadRdv.done) { who = me.id; loadRdv.done = true; }
+    fillWho();
+    const auto = $('#rdvAuto'); if (auto) auto.style.display = (isConseiller() || !items.some((i) => isOpen(i) && !i.assigned_to && whenOf(i) >= Date.now() - 3600e3) || !team.some((m) => m.role === 'conseiller')) ? 'none' : '';
+    const title = document.querySelector('#tabRdv .adm-hero-title'); if (title) title.textContent = isConseiller() ? 'Mes rendez-vous' : 'Rendez-vous';
     render();
   } catch (e) { $('#rdvList').innerHTML = `<div class="rdv-empty">Chargement impossible : ${esc(e.message || 'erreur')}</div>`; }
 }
 
+function fillWho() {
+  const sel = $('#rdvWho');
+  sel.innerHTML = (isConseiller() ? `<option value="${esc(me.id)}">Mes rendez-vous</option><option value="__none">Non attribués</option><option value="">Toute l'équipe</option>`
+    : '<option value="">Tous les conseillers</option><option value="__none">Non attribués</option>' + team.map((m) => `<option value="${esc(m.id)}">${esc(m.full_name || m.email)} (${m.upcoming || 0})</option>`).join(''));
+  sel.value = who;
+}
+async function refreshTeam() { try { team = (await apiFetch('/staff/team')).team || team; fillWho(); } catch (_) {} }
+
+// Ouvre l'onglet sur les rendez-vous d'un membre de l'équipe (page Conseillers)
+export function setRdvWho(id) { who = id; filter = 'upcoming'; document.querySelectorAll('#rdvFilters [data-f]').forEach((x) => x.classList.toggle('active', x.dataset.f === 'upcoming')); const s = $('#rdvWho'); if (s) s.value = id; render(); }
+
 export function initRdv() {
+  $('#rdvAuto')?.addEventListener('click', async () => {
+    if (!confirm('Attribuer chaque rendez-vous à venir sans conseiller au conseiller le moins chargé ?')) return;
+    try { const r = await apiFetch('/staff/appointments/auto-assign', { method: 'POST' }); toast(`${r.assigned} rendez-vous répartis entre les conseillers.`); loadRdv(); } catch (e) { toast('Répartition impossible : ' + (e.message || 'erreur')); }
+  });
   $('#rdvFilters').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (!b) return; filter = b.dataset.f; document.querySelectorAll('#rdvFilters [data-f]').forEach((x) => x.classList.toggle('active', x === b)); render(); });
   $('#rdvWho').addEventListener('change', (e) => { who = e.target.value; render(); });
   $('#rdvSearch').addEventListener('input', (e) => { q = e.target.value; render(); });
@@ -189,6 +218,7 @@ export function initRdv() {
   $('#rdvList').addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]'); if (!b) return;
     const it = items.find((x) => `${x.kind}:${x.id}` === b.closest('[data-key]').dataset.key); if (!it) return;
+    if (b.dataset.act === 'take') { try { await patch(it, { assigned_to: me.id }); toast('Rendez-vous ajouté à vos rendez-vous.'); } catch { toast('Ce rendez-vous vient d\'être pris par un autre conseiller.'); loadRdv(); } return; }
     if (b.dataset.act === 'open') openDrawer(it);
     if (b.dataset.act === 'confirm') openDrawer(it, { status: 'confirmed' });
     if (b.dataset.act === 'done') { try { await patch(it, { status: 'done' }); toast('Rendez-vous marqué comme terminé.'); } catch { toast('Mise à jour impossible.'); } }
