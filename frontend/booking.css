@@ -61,7 +61,6 @@
 }
 
 /* Fenêtre « Parler à un conseiller » (contact-booking.js) */
-.s-modal.ct-has-bk { max-width: 760px; }
 .ct-bk { margin: 2px 0 6px; padding: 18px; border: 1px solid var(--line, #dfe6e1); border-radius: 16px; background: linear-gradient(180deg, #fff, #f7faf8); }
 .ct-bk[hidden] { display: none; }
 .ct-bk-steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 16px; counter-reset: s; }
@@ -81,7 +80,61 @@
 .bk-done-when { font-size: 1.05rem; }
 .bk-done-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
 .s-modal .bk-done-actions .s-btn, .s-modal .bk .s-btn { width: auto; }
-@media (max-width: 720px) {
+
+
+/* V89.5 — Booking sans bascule de mode (le choix est fait au-dessus) */
+.bk-nomode .bk-mode { display: none; }
+.bk-nomode .bk-top { justify-content: flex-start; }
+
+/* V89.5 — Fenêtre « Parler à un conseiller » à deux volets (comme la connexion) */
+.s-modal.ct-split { max-width: 1040px; width: 100%; padding: 0; display: grid; grid-template-columns: 340px minmax(0, 1fr);
+  max-height: calc(100vh - 40px); overflow: hidden; border-radius: 16px; box-shadow: 0 40px 90px -30px rgba(8,24,18,.6); }
+.ct-split .s-modal-close { z-index: 3; top: 14px; right: 16px; border-radius: 50%; }
+.ct-split .s-modal-close:hover { background: var(--lichen-2); color: var(--ink); }
+.ct-aside { position: relative; color: #fff; padding: 40px 32px; display: flex; align-items: center;
+  background: linear-gradient(160deg, rgba(31,74,61,.9) 0%, rgba(22,54,41,.94) 55%, rgba(14,36,27,.97) 100%), url('./assets/pope-visage-humain.jpg') center 30% / cover no-repeat; }
+.ct-aside-in { display: flex; flex-direction: column; gap: 22px; width: 100%; }
+.ct-aside-logo { height: 30px; width: auto; align-self: flex-start; filter: drop-shadow(0 2px 12px rgba(0,0,0,.3)); }
+.ct-aside-title { margin: 6px 0 0; font-family: var(--font-serif); font-size: 1.6rem; line-height: 1.2; font-weight: 600; color: #fff; }
+.s-modal .ct-aside-list, .ct-aside-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ct-aside-list li { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-radius: 12px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); font-size: .9rem; color: rgba(255,255,255,.88); }
+.ct-aside-list svg { flex: none; margin-top: 2px; color: #D7B47A; }
+.ct-aside-phone { margin: 6px 0 0; font-size: .88rem; color: rgba(255,255,255,.7); display: flex; flex-direction: column; gap: 6px; }
+.ct-aside-phone a { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.ct-aside-phone a:hover { color: #D7B47A; }
+.ct-nowrap { white-space: nowrap; }
+.ct-aside-devis { margin: 0; font-size: .85rem; color: rgba(255,255,255,.65); padding-top: 16px; border-top: 1px solid rgba(255,255,255,.12); }
+.ct-aside-devis a { color: #fff; font-weight: 600; }
+.ct-main { overflow-y: auto; padding: 36px 40px 30px; background: #fff; }
+.ct-main h2 { margin: 0 0 4px; }
+.ct-sub { margin: 0 0 22px; color: var(--ink-soft); }
+.ct-subject-hidden { display: none !important; }
+.ct-choice { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ct-opt { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left;
+  padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font: inherit; color: var(--ink); cursor: pointer; transition: border-color .15s, background .15s; }
+.ct-opt:hover { border-color: var(--sapin-mid); }
+.ct-opt[aria-checked="true"] { border-color: var(--sapin); background: var(--lichen-2); box-shadow: inset 0 0 0 1px var(--sapin); }
+.ct-opt-ico { grid-row: span 2; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--lichen-2); color: var(--sapin); }
+.ct-opt[aria-checked="true"] .ct-opt-ico { background: var(--sapin); color: #fff; }
+.ct-opt-t { font-weight: 700; font-size: .93rem; }
+.ct-opt-d { font-size: .78rem; color: var(--ink-soft); }
+.ct-main .s-form-actions .s-btn { width: auto; min-width: 240px; }
+.ct-main a[href^="tel:"] { white-space: nowrap; }
+@media (max-width: 860px) {
+  .s-modal.ct-split { grid-template-columns: 1fr; overflow-y: auto; max-height: calc(100vh - 24px); }
+  .ct-aside { padding: 22px 20px; }
+  .ct-aside-in { gap: 12px; }
+  .ct-aside-title { font-size: 1.2rem; margin: 0; }
+  .s-modal .ct-aside-list, .ct-aside-list, .ct-aside-devis { display: none; }
+  .ct-aside-phone { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0; }
+  .ct-aside-phone a { font-size: 1.1rem; }
+  .ct-main { overflow: visible; padding: 24px 18px 22px; }
+  .ct-split .s-modal-close { color: #fff; }
+  .ct-choice { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .ct-opt { grid-template-columns: 1fr; justify-items: center; text-align: center; row-gap: 6px; padding: 12px 6px; }
+  .ct-opt-ico { grid-row: auto; }
+  .ct-opt-t { font-size: .82rem; line-height: 1.2; }
+  .ct-opt-d { display: none; }
   .ct-bk { padding: 14px 12px; }
-  .s-modal.ct-has-bk { padding: 26px 16px 22px; }
+  .ct-main .s-form-actions .s-btn { width: 100%; }
 }

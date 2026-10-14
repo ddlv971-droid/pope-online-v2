@@ -48,7 +48,7 @@ function zoned(y, m, d, h, min, tz) {   // instant correspondant à une heure mu
 }
 const dayKey = (y, m, d) => `${y}-${two(m)}-${two(d)}`;
 
-export function mountBooking(host, { onChange, mode: initialMode } = {}) {
+export function mountBooking(host, { onChange, mode: initialMode, showMode = true } = {}) {
   const cfg = Object.assign({}, DEF, (window.POPE_SITE && window.POPE_SITE.callback) || {});
   let tz = 'Europe/Paris';
   try { const det = Intl.DateTimeFormat().resolvedOptions().timeZone; const t = ALIASES[det] || det; if (ZONES.some((z) => z.tz === t)) tz = t; } catch (e) {}
@@ -89,6 +89,7 @@ export function mountBooking(host, { onChange, mode: initialMode } = {}) {
   const zoneLabel = () => (ZONES.find((z) => z.tz === state.tz) || {}).label || state.tz;
 
   host.classList.add('bk');
+  if (!showMode) host.classList.add('bk-nomode');
   host.innerHTML = `
     <div class="bk-top">
       <div class="bk-mode" role="radiogroup" aria-label="Comment souhaitez-vous être contacté ?">

@@ -38,6 +38,9 @@ router.post('/', limiter, async (req, res) => {
   const subject = SUBJECTS[clean(b.subject, 40)] ? clean(b.subject, 40) : 'question';
   const slot = clean(b.slot, 220);
   const contactMode = b.contact_mode === 'visio' ? 'visio' : (b.contact_mode === 'phone' ? 'phone' : '');
+  const timezone = /^[A-Za-z_]+\/[A-Za-z_]+$/.test(String(b.timezone || '')) ? String(b.timezone) : null;
+  let slotAt = null;
+  if (b.slot_at) { const d = new Date(String(b.slot_at)); if (!isNaN(d) && d.getTime() > Date.now() - 3600e3 && d.getTime() < Date.now() + 90 * 864e5) slotAt = d.toISOString(); }
   const message = clean(b.message, 3000);
   const population = clean(b.population, 40);
   const seats = clean(b.seats, 60);
@@ -62,10 +65,10 @@ router.post('/', limiter, async (req, res) => {
 
   try {
     await withClient((client) => client.query(
-      `insert into contact_requests(name, email, phone, role, organization, subject, slot, message, user_agent, population, seats, billing_address)
-       values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+      `insert into contact_requests(name, email, phone, role, organization, subject, slot, message, user_agent, population, seats, billing_address, slot_at, timezone, contact_mode)
+       values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
       [name, email || null, phone || null, role || null, organization || null, subject, slot || null, message || null,
-       clean(req.headers['user-agent'], 300), population || null, seats || null, billingAddress || null]
+       clean(req.headers['user-agent'], 300), population || null, seats || null, billingAddress || null, slotAt, timezone, contactMode || null]
     ));
   } catch (e) { console.warn('[contact] enregistrement impossible :', e.message); }
 

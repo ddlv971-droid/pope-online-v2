@@ -372,6 +372,55 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   .adm-bar-btn { padding: 5px 8px; font-size: 11px; }
   .adm-login { margin: 20px 12px; padding: 24px 16px; border-radius: 18px; }
 }
+
+/* ════ V89.5 — Rendez-vous ════ */
+.rdv-toolbar { flex-wrap: wrap; }
+.rdv-seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 10px; background: rgba(255,255,255,.05); margin-right: auto; }
+.rdv-seg button { border: 0; background: transparent; color: var(--muted); font: 600 12px/1 inherit; font-family: inherit; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.rdv-seg button.active { background: var(--accent); color: #fff; }
+.rdv-day { font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--accent2); margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); }
+.rdv-day:first-child { margin-top: 0; }
+.rdv-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 210px 190px; gap: 16px; align-items: center; padding: 14px 14px; border-radius: 12px; background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.05); margin-bottom: 8px; border-left: 3px solid rgba(255,255,255,.12); }
+.rdv-row.rdv-new { border-left-color: var(--yellow); }
+.rdv-row.rdv-confirmed { border-left-color: var(--green); }
+.rdv-row.rdv-done, .rdv-row.rdv-cancelled, .rdv-row.rdv-no_show { opacity: .62; }
+.rdv-time strong { display: block; font-size: 20px; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.rdv-time small { display: block; font-size: 11px; color: var(--muted2); margin-top: 3px; line-height: 1.35; }
+.rdv-name { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #fff; }
+.rdv-mode { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: rgba(63,153,116,.16); color: var(--accent2); flex: none; }
+.rdv-mode-visio { background: rgba(139,92,246,.14); color: #a78bfa; }
+.rdv-meta { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.rdv-src { color: var(--muted2); }
+.rdv-title { font-size: 12.5px; color: #fff; margin-top: 5px; opacity: .9; }
+.rdv-assign label { display: flex; flex-direction: column; gap: 4px; font-size: 10.5px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: .06em; }
+.rdv-assign select { padding: 7px 10px; font-size: 12.5px; text-transform: none; letter-spacing: 0; }
+.rdv-state { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.rdv-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.rdv-empty { padding: 34px 10px; text-align: center; color: var(--muted2); font-size: 13px; }
+.rdv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 300; }
+.rdv-overlay.open { opacity: 1; pointer-events: auto; }
+.rdv-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100vw); background: #132D22; border-left: 1px solid var(--border2); z-index: 301; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; }
+.rdv-drawer.open { transform: none; }
+.rdv-dr-head { display: flex; justify-content: space-between; gap: 12px; padding: 22px 22px 16px; border-bottom: 1px solid var(--border2); }
+.rdv-dr-head h2 { font-size: 20px; font-weight: 800; margin: 4px 0 2px; }
+.rdv-dr-k { font-size: 11px; color: var(--accent2); font-weight: 700; }
+.rdv-dr-body { padding: 18px 22px; overflow-y: auto; flex: 1; }
+.rdv-dr-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--border2); }
+.rdv-contact { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.rdv-contact a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.06); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.rdv-contact a:hover { background: rgba(255,255,255,.1); }
+.rdv-when-box { padding: 14px; border-radius: 12px; background: rgba(63,153,116,.1); border: 1px solid rgba(63,153,116,.25); margin-bottom: 14px; }
+.rdv-when-box strong { display: block; font-size: 15px; color: #fff; }
+.rdv-when-box small { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.rdv-block { margin-bottom: 14px; }
+.rdv-block p { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.rdv-lab { font-size: 11px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: .06em; }
+.rdv-check { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--muted); margin-top: 12px; line-height: 1.4; }
+.rdv-check input { margin-top: 2px; accent-color: var(--accent2); }
+.rdv-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: #fff; color: #163226; font-size: 13px; font-weight: 600; padding: 11px 18px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.35); opacity: 0; pointer-events: none; transition: all .2s; z-index: 400; }
+.rdv-toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 1100px) { .rdv-row { grid-template-columns: 100px minmax(0, 1fr); } .rdv-assign, .rdv-state { grid-column: 2; align-items: flex-start; } .rdv-actions { justify-content: flex-start; } }
+@media (max-width: 640px) { .rdv-row { grid-template-columns: 1fr; } .rdv-assign, .rdv-state { grid-column: 1; } .rdv-seg { width: 100%; } .rdv-seg button { flex: 1; padding: 8px 4px; } }
 </style>
 
 <style id="fiche-client-style">
@@ -512,6 +561,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </button>
       <button class="adm-nav-item" data-tab="relectures">
         <span class="adm-nav-icon">✍️</span> Relectures
+      </button>
+      <button class="adm-nav-item" data-tab="rdv">
+        <span class="adm-nav-icon">📅</span> Rendez-vous
+        <span class="adm-nav-badge" id="sideRdvCount" hidden>0</span>
       </button>
       <button class="adm-nav-item" data-tab="creer">
         <span class="adm-nav-icon">➕</span> Créer un compte
@@ -793,6 +846,35 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
         </div>
       </div>
       <!-- ════ ONGLET SATISFACTION ════ -->
+      <!-- ════ ONGLET RENDEZ-VOUS (V89.5) ════ -->
+      <div id="tabRdv" hidden>
+        <div class="adm-hero">
+          <div class="adm-hero-header">
+            <div>
+              <div class="adm-hero-title">Rendez-vous</div>
+              <div class="adm-hero-sub">Demandes du diagnostic flash et de « Parler à un conseiller » · heures affichées dans votre fuseau</div>
+            </div>
+            <button class="adm-btn adm-btn-ghost adm-btn-sm" id="rdvRefresh">🔄 Actualiser</button>
+          </div>
+          <div class="adm-kpis">
+            <div class="adm-kpi clickable" id="rdvKpiNewCard" style="border-color:rgba(245,158,11,.25)"><div class="adm-kpi-label">À confirmer</div><div class="adm-kpi-value" id="rdvKpiNew" style="color:var(--yellow)">—</div><div class="adm-kpi-sub">Cliquer pour filtrer</div></div>
+            <div class="adm-kpi"><div class="adm-kpi-label">Aujourd'hui</div><div class="adm-kpi-value" id="rdvKpiToday">—</div></div>
+            <div class="adm-kpi"><div class="adm-kpi-label">7 prochains jours</div><div class="adm-kpi-value" id="rdvKpiWeek">—</div></div>
+            <div class="adm-kpi"><div class="adm-kpi-label">Sans conseiller</div><div class="adm-kpi-value red" id="rdvKpiFree">—</div></div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head rdv-toolbar">
+            <div class="rdv-seg" id="rdvFilters" role="group" aria-label="Filtrer">
+              <button class="active" data-f="upcoming">À venir</button><button data-f="todo">À confirmer</button><button data-f="past">Passés</button><button data-f="all">Tous</button>
+            </div>
+            <select class="adm-input adm-select" id="rdvWho" style="width:auto;padding:8px 12px;font-size:12px"></select>
+            <div class="adm-search-wrap" style="max-width:240px"><input class="adm-search" id="rdvSearch" placeholder="Nom, collectivité, téléphone…"/></div>
+          </div>
+          <div class="adm-card-body" id="rdvList"></div>
+        </div>
+      </div>
+
       <div id="tabSatisfaction" hidden>
         <div class="adm-hero" style="margin-bottom:20px">
           <div class="adm-hero-header">
@@ -839,6 +921,9 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 <!-- Overlay -->
 <div class="adm-overlay" id="panelOverlay"></div>
+<div class="rdv-overlay" id="rdvOverlay"></div>
+<aside class="rdv-drawer" id="rdvDrawer" role="dialog" aria-modal="true" aria-label="Rendez-vous"></aside>
+<div class="rdv-toast" id="rdvToast" role="status" aria-live="polite"></div>
 
 <!-- Panneau détail utilisateur -->
 <div class="adm-user-panel" id="userPanel">
@@ -1357,6 +1442,7 @@ import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSessio
 window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
+import { initRdv, loadRdv } from './admin-rdv.js';   // V89.5 : rendez-vous
 
 wireLogout();
 const el = (id) => document.getElementById(id);
@@ -1401,6 +1487,7 @@ function fmtDate(d) {
 async function loadUsers() {
   try {
     const data = await apiFetch('/admin/users/');
+    if (!window.__rdvLoaded) { window.__rdvLoaded = true; loadRdv(); }   // V89.5 : pastille des rendez-vous à confirmer
     const raw = Array.isArray(data) ? data : (data.users || []);
     // Construire l'objet wallet nested depuis les champs plats retournés par le SQL
     usersCache = raw.map(u => ({
@@ -1575,17 +1662,20 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    ['Clients','Relectures','Creer','Experts','Satisfaction'].forEach(t => {
+    ['Clients','Relectures','Rdv','Creer','Experts','Satisfaction'].forEach(t => {
       const el2 = el('tab'+t);
       if (el2) el2.hidden = true;
     });
     const target = btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1);
     if (el('tab'+target)) el('tab'+target).hidden = false;
     if (btn.dataset.tab === 'relectures') loadExpert();
+    if (btn.dataset.tab === 'rdv') loadRdv();
     if (btn.dataset.tab === 'experts') loadExperts();
     if (btn.dataset.tab === 'satisfaction') renderSatTable();
   };
 });
+
+initRdv();   // V89.5
 
 // KPI risk click
 el('riskKpi').onclick = () => {
