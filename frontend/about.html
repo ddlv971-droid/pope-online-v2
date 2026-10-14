@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="./site-v88.css"/>
 <script src="./site-config.js"></script>
 <script src="./site-search.js" defer></script>
-<script src="./slot-picker.js" defer></script>
+<script type="module" src="./contact-booking.js"></script>
 </head>
 <body class="s-body">
 <a class="s-skip" href="#contenu">Aller au contenu</a>
@@ -151,6 +151,7 @@
       <a href="about.html">Qui sommes-nous ?</a>
       <a href="pricing.html">Tarifs</a>
       <a href="#contact" data-contact="rappel" class="s-foot-contact" aria-label="Être rappelé ou nous écrire" title="Être rappelé"><svg viewBox="0 0 28 24" width="30" height="26" aria-hidden="true" focusable="false"><path d="M6.2 3.2c.9-.9 2.3-.8 3 .2l1.5 2.2c.6.9.4 2-.4 2.7l-1 .8c.9 2 2.5 3.7 4.5 4.8l1-.9c.7-.6 1.8-.6 2.6 0l2 1.6c.9.7 1 2 .2 2.9-1.1 1.3-2.8 1.8-4.4 1.4C9.600 17.700 4.800 12.700 3.800 7.400c-.2-1.600.4-3.200 1.600-4.200z" fill="currentColor"/><rect x="14.500" y="2" width="12" height="9" rx="1.200" fill="none" stroke="currentColor" stroke-width="1.600"/><path d="M15 3l5.500 4.500L26 3" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linejoin="round"/></svg></a>
+      <a href="diagnostic.html">Diagnostic flash</a>
       <a href="tutoriel.html">Tutoriel</a>
       <a href="deontologie.html">Charte de déontologie</a>
       <a href="legal.html">Mentions légales</a>
@@ -166,7 +167,7 @@
   <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
     <button class="s-modal-close" type="button" id="ctClose" aria-label="Fermer">×</button>
     <h2 id="ctTitle">Parler à un conseiller</h2>
-    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
+    <p class="s-muted" style="margin:0 0 16px">Choisissez votre créneau : un conseiller vous appelle ou vous reçoit en visioconférence, 15 minutes, gratuitement et sans engagement. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
     <form id="ctForm" class="s-form" novalidate>
       <label class="s-field s-field-full">Votre demande
         <select name="subject" id="ctSubject">

@@ -1044,3 +1044,144 @@ button.s-btn { font-family: var(--font-sans); }
 
 /* V88_15 : options spécifiques Commune / Collectivité */
 .s-plan li.s-plan-plus strong { color: var(--sapin, #1F4A3D); }
+
+/* ==========================================================================
+   V89.2 — Diagnostic flash : tuile du bloc principal de l'accueil
+   L'essai gratuit reste l'action principale ; le diagnostic est l'entrée
+   pour qui n'est « pas encore sûr », et son résultat ramène vers l'essai.
+   ========================================================================== */
+.s-diag-tile { display: flex; align-items: center; gap: 16px; margin: 22px 0 0; max-width: 34rem; padding: 14px 16px 14px 14px;
+  border: 1px solid #CFDDD5; border-left: 4px solid var(--ocre); border-radius: 14px; background: rgba(255,255,255,.88);
+  box-shadow: 0 10px 26px rgba(22,54,41,.08); color: var(--ink); text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.s-diag-tile:hover, .s-diag-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(22,54,41,.14); border-color: var(--sapin); border-left-color: var(--ocre); color: var(--ink); }
+.s-diag-ico { flex: none; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--sapin); color: #fff; }
+.s-diag-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.s-diag-k { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .78rem; font-weight: 600; color: var(--sapin); letter-spacing: .01em; }
+.s-diag-k b { padding: 2px 8px; border-radius: 999px; background: var(--ocre); color: #fff; font-size: .68rem; letter-spacing: .07em; text-transform: uppercase; }
+.s-diag-txt strong { font-size: 1rem; line-height: 1.35; font-weight: 600; }
+.s-diag-sub { font-size: .86rem; color: var(--ink-soft); }
+.s-diag-go { flex: none; margin-left: auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--sapin); color: var(--sapin); font-size: 1.15rem; font-weight: 700; transition: background .18s, color .18s; }
+.s-diag-tile:hover .s-diag-go, .s-diag-tile:focus-visible .s-diag-go { background: var(--sapin); color: #fff; }
+.s-final-diag { margin-top: 22px !important; font-size: .95rem; }
+.s-final-diag a { color: #fff; font-weight: 600; text-underline-offset: 3px; }
+.s-final-diag a:hover { color: var(--lichen, #E4EEE8); }
+@media (max-width: 560px) {
+  .s-diag-tile { gap: 12px; padding: 12px; }
+  .s-diag-ico { width: 40px; height: 40px; }
+  .s-diag-sub, .s-diag-opt { display: none; }
+  .s-diag-go { width: 32px; height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { .s-diag-tile { transition: none; } }
+
+/* ==========================================================================
+   V89.4 — Accueil : présentation après le bandeau déroulant
+   Même charte (sapin, lichen, ocre en touche) ; plus d'air, des filets fins,
+   des pictogrammes au trait, un seul moment fort : la bande « Comment ça marche ».
+   ========================================================================== */
+.h-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--sapin); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.h-link::after { content: ''; width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
+.h-link:hover { color: var(--sapin-deep); }
+
+/* Sujets : introduction à gauche, quatre sujets à droite */
+.h-topics { padding: 112px 0 104px; }
+.h-topics-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: start; }
+.h-topics-intro .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); line-height: 1.14; letter-spacing: -.01em; }
+.h-topics-intro p { color: var(--ink-soft); font-size: 1.06rem; margin: 20px 0 26px; max-width: 30em; }
+.h-topics-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.h-topics-list li { padding: 30px 30px 30px 0; border-bottom: 1px solid var(--line); }
+.h-topics-list li:nth-child(odd) { border-right: 1px solid var(--line); }
+.h-topics-list li:nth-child(even) { padding-left: 30px; padding-right: 0; }
+.h-ico { width: 30px; height: 30px; color: var(--sapin); display: block; margin-bottom: 18px; }
+.h-topics-list h3 { font-family: var(--font-serif); font-size: 1.32rem; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+.h-topics-list p { margin: 0; color: var(--ink-soft); font-size: .97rem; line-height: 1.6; }
+
+/* Comment ça marche : la bande sapin, avec l'arbre de la marque */
+.h-method { position: relative; overflow: hidden; padding: 112px 0 96px; color: #fff;
+  background: radial-gradient(90% 120% at 100% 0%, #24574A 0%, var(--sapin) 38%, var(--sapin-deep) 100%); }
+.h-method-tree { position: absolute; right: -170px; top: -120px; width: 520px; color: #fff; opacity: .045; pointer-events: none; }
+.h-method-tree svg { width: 100%; height: auto; display: block; }
+.h-method .s-wrap { position: relative; }
+.h-method-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: end; margin-bottom: 64px; }
+.h-method-head .s-h2 { color: #fff; font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-method-head p { margin: 0; color: rgba(255,255,255,.76); font-size: 1.08rem; max-width: 34em; }
+.h-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.h-steps li { position: relative; padding: 0 40px 0 0; }
+.h-steps li + li { padding-left: 40px; border-left: 1px solid rgba(255,255,255,.14); }
+.h-step-n { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid rgba(215,180,122,.75); background: rgba(215,180,122,.08); font-family: var(--font-serif); font-size: 1.9rem; line-height: 1; font-weight: 500; color: #E2C38F; margin-bottom: 24px; }
+.h-steps h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; margin: 0 0 10px; color: #fff; }
+.h-steps p { margin: 0; color: rgba(255,255,255,.74); line-height: 1.62; }
+.h-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 72px 0 0; padding: 30px 0 0; border-top: 1px solid rgba(255,255,255,.18); }
+.h-facts > div { padding-right: 20px; }
+.h-facts dt { font-family: var(--font-serif); font-size: 2.1rem; line-height: 1; color: #fff; font-weight: 500; }
+.h-facts dd { margin: 10px 0 0; font-size: .9rem; color: rgba(255,255,255,.68); max-width: 15em; }
+
+/* En-têtes de section en deux colonnes */
+.h-head { max-width: none; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: end; margin-bottom: 52px; }
+.h-head .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-head p { margin: 0; font-size: 1.06rem; max-width: 36em; }
+
+/* Experts : pictogramme du domaine à la place de la silhouette */
+.h-experts { padding: 112px 0; }
+.h-experts .s-profile { border-radius: 10px; border-color: #DCE3DE; padding: 28px 26px 24px; transition: border-color .2s, box-shadow .2s; }
+.h-experts .s-profile:not(.s-profile-more):hover { border-color: var(--sapin-mid); box-shadow: 0 18px 40px -28px rgba(22,54,41,.45); }
+.h-xp-ico { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--lichen-2); color: var(--sapin); box-shadow: inset 0 0 0 1px var(--lichen); }
+.h-xp-ico svg { width: 24px; height: 24px; }
+.h-experts .s-profile-head { padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--lichen-2); }
+.h-experts .s-profile-years { font-weight: 500; font-size: 1.9rem; }
+.h-experts .s-profile-more { border-radius: 10px; background: radial-gradient(120% 90% at 100% 0%, #24574A 0%, var(--sapin-deep) 70%); }
+
+/* Exemple de Conseil Expert */
+.h-sample { padding: 112px 0; background: linear-gradient(180deg, var(--lichen-2), var(--paper)) !important; }
+.h-sample .s-sample { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; }
+.h-doc { width: 100%; max-width: 330px; justify-self: center; padding: 30px 28px; gap: 12px; border-radius: 6px; transform: rotate(-2.5deg);
+  box-shadow: 0 40px 60px -40px rgba(22,54,41,.55), 12px 12px 0 -1px #fff, 12px 12px 0 0 var(--line), 24px 24px 0 -1px #fff, 24px 24px 0 0 #E3E8E4; }
+.h-doc .s-sample-doc-title { font-size: 1.25rem; }
+.h-doc-sub { font-size: .74rem; font-weight: 700; color: var(--sapin); margin-top: 6px; }
+.h-doc-lines { display: grid; gap: 7px; }
+.h-doc-lines i { display: block; height: 6px; border-radius: 3px; background: #E6EBE7; }
+.h-doc-lines i.short { width: 62%; }
+.h-sample-copy .s-h2 { font-size: clamp(1.9rem, 3vw, 2.5rem); }
+.h-sample-copy > p { font-size: 1.06rem; margin: 18px 0 22px; }
+.h-sample-points { list-style: none; margin: 0 0 30px; padding: 0; border-top: 1px solid var(--line); max-width: 34em; }
+.h-sample-points li { padding: 12px 0 12px 26px; border-bottom: 1px solid var(--line); position: relative; color: var(--ink); }
+.h-sample-points li::before { content: ''; position: absolute; left: 2px; top: 19px; width: 10px; height: 5px; border-left: 1.5px solid var(--sapin); border-bottom: 1.5px solid var(--sapin); transform: rotate(-45deg); }
+
+/* Témoignages : citations sans cadre, séparées par des filets */
+.h-quotes { padding: 112px 0; }
+.h-quotes .s-testimonials { gap: 0; }
+.h-quotes .s-testimonial { background: none; border: 0; border-radius: 0; padding: 4px 36px 0; gap: 22px; }
+.h-quotes .s-testimonial:first-child { padding-left: 0; }
+.h-quotes .s-testimonial + .s-testimonial { border-left: 1px solid var(--line); }
+.h-quotes .s-testimonial blockquote { font-size: 1.12rem; line-height: 1.6; }
+.h-quotes .s-testimonial figcaption { border-top: 0; padding-top: 0; }
+.h-quotes .s-testimonial figcaption::before { content: ''; display: block; width: 28px; height: 1.5px; background: var(--sapin); margin-bottom: 12px; }
+
+@media (max-width: 960px) {
+  .h-topics, .h-method, .h-experts, .h-sample, .h-quotes { padding: 80px 0; }
+  .h-topics-grid, .h-method-head, .h-head, .h-sample .s-sample { grid-template-columns: 1fr; gap: 28px; }
+  .h-method-head { margin-bottom: 44px; }
+  .h-steps { grid-template-columns: 1fr; gap: 34px; }
+  .h-steps li, .h-steps li + li { padding: 0 0 0 0; border-left: 0; }
+  .h-steps li { display: grid; grid-template-columns: 54px minmax(0, 1fr); column-gap: 10px; }
+  .h-step-n { grid-row: span 2; width: 46px; height: 46px; font-size: 1.4rem; margin: 0; }
+  .h-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 0; margin-top: 52px; }
+  .h-quotes .s-testimonial, .h-quotes .s-testimonial:first-child { padding: 0 4px; }
+  .h-quotes .s-testimonial + .s-testimonial { border-left: 0; }
+  .h-method-tree { width: 360px; right: -150px; top: -90px; }
+}
+@media (max-width: 640px) {
+  .h-topics-list { grid-template-columns: 1fr; }
+  .h-topics-list li, .h-topics-list li:nth-child(odd), .h-topics-list li:nth-child(even) { padding: 24px 0; border-right: 0; }
+  .h-doc { max-width: 250px; }
+}
+@media (prefers-reduced-motion: reduce) { .h-experts .s-profile { transition: none; } }
+
+/* V89.5 — Échanges de l'accueil : filigrane de l'institution côté élu,
+   arbre de Pope Online côté expert */
+.s-note { position: relative; overflow: hidden; }
+.s-note > * { position: relative; z-index: 1; }
+.s-note-q::after, .s-note-a::after { content: ''; position: absolute; z-index: 0; pointer-events: none; background-repeat: no-repeat; background-size: contain; }
+.s-note-q::after { right: -6px; bottom: -22px; width: 138px; height: 138px; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 fill=%22%231F4A3D%22%3E%3Crect x=%2231.2%22 y=%223%22 width=%221.6%22 height=%229%22 rx=%22.5%22/%3E%3Cpath d=%22M32.8 3.2h7.2l-2.3 2.3 2.3 2.3h-7.2z%22/%3E%3Cpath fill-rule=%22evenodd%22 d=%22M32 11.5 59 25H5zM32 15.6a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 1 0 0-5.2z%22/%3E%3Crect x=%228%22 y=%2226.5%22 width=%2248%22 height=%223.4%22 rx=%22.6%22/%3E%3Crect x=%229.6%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Crect x=%2215.6%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Crect x=%2221.6%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Crect x=%2238.2%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Crect x=%2244.2%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Crect x=%2250.2%22 y=%2231.5%22 width=%224.2%22 height=%2219.5%22 rx=%222.1%22/%3E%3Cpath fill-rule=%22evenodd%22 d=%22M28.4 51V38.6a3.6 3.6 0 0 1 7.2 0V51zM31.7 36.5h.6V51h-.6z%22/%3E%3Crect x=%229%22 y=%2252.4%22 width=%2246%22 height=%222.4%22 rx=%22.4%22/%3E%3Crect x=%226.5%22 y=%2256%22 width=%2251%22 height=%222.4%22 rx=%22.4%22/%3E%3Crect x=%224%22 y=%2259.6%22 width=%2256%22 height=%222.4%22 rx=%22.4%22/%3E%3C/svg%3E"); }
+.s-note-a::after { right: -18px; bottom: -46px; width: 200px; height: 200px; opacity: .085; background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 34 34%22%3E%3Ccircle cx=%2217%22 cy=%2213%22 r=%2211%22 fill=%22%231F4A3D%22/%3E%3Cpath d=%22M17 23V12.5M17 16.2l-4.2-3.4M17 13.6l3.9-3.3%22 stroke=%22%23fff%22 stroke-width=%221.1%22 stroke-linecap=%22round%22 fill=%22none%22/%3E%3Ccircle cx=%2222.4%22 cy=%228.6%22 r=%222.4%22 fill=%22%231F4A3D%22 opacity=%22.55%22/%3E%3Cpath d=%22M17 23.5v7%22 stroke=%22%231F4A3D%22 stroke-width=%221.6%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M11.5 31h11%22 stroke=%22%231F4A3D%22 stroke-width=%221%22 stroke-linecap=%22round%22/%3E%3C/svg%3E"); }
+@media (max-width: 640px) { .s-note-q::after { width: 110px; height: 110px; } .s-note-a::after { width: 140px; height: 140px; } }

@@ -1,0 +1,142 @@
+/* ==========================================================================
+   POPE Online V89 — Diagnostic flash
+   S'appuie sur les jetons du thème V88 (theme-v88.css) et les classes s-* du site.
+   ========================================================================== */
+.dg-section { padding: 56px 0 88px; }
+.dg-wrap { max-width: 820px; }
+.s-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.dg-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 40px 44px; box-shadow: 0 10px 30px rgba(22, 54, 41, .06); }
+.dg-title { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+.dg-promises { list-style: none; padding: 0; margin: 22px 0 28px; display: grid; gap: 10px; }
+.dg-promises li { position: relative; padding-left: 28px; color: var(--ink-soft); }
+.dg-promises li::before { content: ''; position: absolute; left: 0; top: .35em; width: 16px; height: 16px; border-radius: 50%; background: var(--lichen); box-shadow: inset 0 0 0 5px var(--sapin); }
+
+/* Progression */
+.dg-progress { height: 6px; border-radius: 3px; background: var(--lichen-2); overflow: hidden; }
+.dg-progress > i { display: block; height: 100%; background: var(--sapin); border-radius: 3px; transition: width .3s ease; }
+.dg-count { margin: 10px 0 22px; font-size: .9rem; color: var(--ink-soft); }
+
+/* Question */
+.dg-q { font-family: var(--font-serif); font-size: clamp(1.5rem, 3.2vw, 1.95rem); line-height: 1.2; margin: 0 0 8px; color: var(--ink); outline: none; }
+.dg-hint { margin: 0 0 18px; color: var(--ink-soft); }
+.dg-options { display: grid; gap: 10px; margin-top: 18px; }
+.dg-options-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dg-opt { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 56px; padding: 12px 18px; text-align: left; font: inherit; font-size: 1rem; color: var(--ink);
+  background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: border-color .15s, background .15s; }
+.dg-opt:hover { border-color: var(--sapin-mid); background: #fff; }
+.dg-opt:focus-visible { outline: 3px solid var(--sapin-mid); outline-offset: 2px; }
+.dg-opt-mark { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--sapin-mid); background: #fff; }
+.dg-opt[aria-pressed] .dg-opt-mark { border-radius: 5px; }
+.dg-opt.is-on { border-color: var(--sapin); background: var(--lichen-2); }
+.dg-opt.is-on .dg-opt-mark { background: var(--sapin); box-shadow: inset 0 0 0 3px #fff; }
+.dg-free textarea { width: 100%; box-sizing: border-box; margin-top: 14px; padding: 14px 16px; font: inherit; font-size: 1rem; line-height: 1.5; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); resize: vertical; }
+.dg-free textarea:focus { outline: 3px solid var(--lichen); border-color: var(--sapin-mid); background: #fff; }
+.dg-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.dg-nav .s-btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* Résultat */
+.dg-res-title { margin: 0 0 8px; }
+.dg-summary { color: var(--ink-soft); margin: 0 0 22px; font-size: 1.05rem; }
+.dg-level { display: flex; align-items: center; gap: 18px; padding: 16px 20px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); }
+.dg-level-gauge { display: flex; gap: 5px; }
+.dg-level-gauge i { width: 26px; height: 10px; border-radius: 5px; background: var(--line); }
+.dg-level-moderee .dg-level-gauge i:nth-child(1) { background: var(--sapin-mid); }
+.dg-level-elevee .dg-level-gauge i:nth-child(-n+2) { background: var(--ocre); }
+.dg-level-critique .dg-level-gauge i { background: var(--brique); }
+.dg-level-k { display: block; font-size: .85rem; color: var(--ink-soft); }
+.dg-level strong { font-size: 1.25rem; }
+.dg-level-elevee strong { color: var(--ocre-text); }
+.dg-level-critique strong { color: var(--brique); }
+.dg-alerts { margin: 16px 0 0; padding: 14px 18px; border-radius: 12px; background: #FBF4E6; border: 1px solid #EAD7B0; }
+.dg-alerts p { margin: 0; color: #5E4214; }
+.dg-alerts p + p { margin-top: 8px; }
+.dg-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin: 28px 0; }
+.dg-cols h3, .dg-path h3, .dg-callback h3 { font-family: var(--font-serif); font-size: 1.2rem; margin: 0 0 10px; }
+.dg-cols ul { margin: 0; padding-left: 20px; color: var(--ink-soft); }
+.dg-cols li + li { margin-top: 6px; }
+.dg-check { list-style: none; padding-left: 0 !important; }
+.dg-check li { position: relative; padding-left: 26px; }
+.dg-check li::before { content: ''; position: absolute; left: 0; top: .3em; width: 14px; height: 14px; border: 1.5px solid var(--sapin-mid); border-radius: 3px; }
+.dg-path { padding: 24px 26px; border-radius: 16px; background: var(--sapin-deep); color: #fff; }
+.dg-path-k { margin: 0 0 6px; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: #9CC1AF; font-weight: 600; }
+.dg-path h3 { color: #fff; }
+.dg-path p { color: #DDE6DF; margin: 0 0 18px; }
+.dg-path .s-btn-primary { background: #fff; color: var(--sapin-deep); }
+.dg-path .s-btn-primary:hover { background: var(--lichen); color: var(--sapin-deep); }
+.dg-path .s-btn-ghost { color: #fff; border-color: rgba(255,255,255,.6); }
+.dg-path .s-btn-ghost:hover { background: rgba(255,255,255,.08); color: #fff; }
+.dg-path-note { font-size: .9rem; margin: 14px 0 0 !important; color: #BFD3C8 !important; }
+.dg-consent { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; color: var(--ink-soft); }
+.dg-consent input { margin-top: .25em; }
+.dg-foot { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 22px; }
+.dg-link { background: none; border: 0; padding: 0; font: inherit; color: var(--sapin); text-decoration: underline; cursor: pointer; }
+.dg-disclaimer { margin: 14px 0 0; font-size: .85rem; color: var(--ink-soft); }
+
+/* V89.1 — compteur, situation « différente » */
+.dg-count { display: flex; justify-content: space-between; gap: 12px; }
+.dg-count span { color: var(--ink-soft); opacity: .8; }
+.dg-opt-other { border-style: dashed; background: #fff; }
+.dg-opt-other .dg-opt-mark { border-style: dashed; }
+.dg-other-text { display: block; margin-top: 16px; font-weight: 600; color: var(--ink); animation: dg-in .25s ease; }
+.dg-other-text textarea { font-weight: 400; }
+@keyframes dg-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* V89.1 — prise de rendez-vous */
+.dg-callback { margin-top: 28px; padding: 28px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: 0 12px 34px rgba(22,54,41,.08); }
+.dg-cb-head h3 { margin: 0 0 6px; }
+.dg-cb-head p { margin: 0; color: var(--ink-soft); }
+.dg-cb-steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 18px 0 20px; counter-reset: s; }
+.dg-cb-steps li { counter-increment: s; flex: 1; font-size: .82rem; font-weight: 600; color: var(--ink-soft); padding-top: 10px; border-top: 3px solid var(--line); }
+.dg-cb-steps li::before { content: counter(s) '. '; }
+.dg-cb-steps li.is-on { color: var(--sapin); border-top-color: var(--sapin); }
+.dg-cb-form { margin-top: 20px; }
+.dg-req { font-weight: 400; color: var(--ink-soft); font-size: .85em; }
+.dg-cb-alt { font-size: .9rem; color: var(--ink-soft); align-self: center; }
+.dg-cb-done { text-align: center; padding: 10px 0 4px; animation: dg-in .3s ease; }
+.dg-done-ico { color: var(--sapin); display: inline-block; }
+.dg-done-ico path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: dg-draw .5s .15s ease forwards; }
+@keyframes dg-draw { to { stroke-dashoffset: 0; } }
+.dg-cb-done h4 { font-family: var(--font-serif); font-size: 1.5rem; margin: 8px 0 6px; }
+.dg-done-when { font-size: 1.05rem; }
+.dg-cb-done p { color: var(--ink-soft); margin: 6px 0; }
+.dg-cb-done p strong { color: var(--ink); }
+.dg-done-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+
+@media (max-width: 720px) {
+  .dg-card { padding: 26px 20px; border-radius: 14px; }
+  .dg-options-2, .dg-cols { grid-template-columns: 1fr; }
+  .dg-nav { flex-direction: column-reverse; }
+  .dg-nav .s-btn { width: 100%; }
+  .dg-callback { padding: 22px 0 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; }
+  .dg-cb-steps li { font-size: .74rem; }
+}
+@media print {
+  .s-header, .s-footer, .s-mbar, .dg-path .s-actions, .dg-path-note, .dg-callback, .dg-foot, .s-skip, .s-watermark { display: none !important; }
+  .dg-section { padding: 0; }
+  .dg-card { border: 0; box-shadow: none; padding: 0; }
+  .dg-path { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .dg-path h3, .dg-path p { color: var(--ink) !important; }
+}
+
+/* V89.4 — bandeau sapin et arbre de la marque : la carte du diagnostic vient
+   s'y poser, comme une feuille sur un bureau (remplace le filigrane V89.3) */
+.dg-section { position: relative; padding-top: 34px; }
+.dg-band { position: absolute; left: 0; right: 0; top: 0; height: 330px; overflow: hidden;
+  background: radial-gradient(80% 140% at 100% 0%, #24574A 0%, var(--sapin) 40%, var(--sapin-deep) 100%); }
+.dg-band::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(215,180,122,.5); }
+.dg-band-tree { position: absolute; right: max(-60px, calc(50% - 760px)); top: -70px; width: 430px; height: auto; color: #fff; opacity: .07; }
+.dg-wrap { position: relative; }
+.dg-band-k { display: flex; align-items: center; gap: 14px; margin: 0 0 22px; color: #fff; }
+.dg-band-k span { display: flex; flex-direction: column; gap: 2px; font-size: .9rem; color: rgba(255,255,255,.72); }
+.dg-band-k strong { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: #fff; }
+.dg-band-mark { flex: none; width: 40px; height: 40px; padding: 7px; border-radius: 50%; color: #fff; background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
+.dg-band-mark path[stroke="var(--sapin-deep)"] { stroke: var(--sapin); }
+.dg-card { box-shadow: 0 30px 60px -30px rgba(10,30,22,.45), 0 2px 6px rgba(22,54,41,.06); }
+@media (max-width: 720px) {
+  .dg-section { padding-top: 22px; }
+  .dg-band { height: 250px; }
+  .dg-band-tree { width: 300px; right: -110px; top: -50px; }
+  .dg-band-k { margin-left: 4px; }
+}
+@media print { .dg-band, .dg-band-k { display: none !important; } }

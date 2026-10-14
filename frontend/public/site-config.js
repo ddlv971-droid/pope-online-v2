@@ -8,7 +8,7 @@
   var isProd = host === 'pope-online.com' || host === 'www.pope-online.com';
 
   window.POPE_SITE = {
-    version: 'V88',
+    version: 'V89.5',
     isProd: isProd,
 
     // Espace privé (artisans, TPE) : en veille. Passer à true pour le réactiver
@@ -30,6 +30,12 @@
     // Prise de rendez-vous : lien d'agenda en ligne optionnel (Calendly, Cal.com…).
     // Vide = le formulaire de contact propose un créneau souhaité.
     bookingUrl: '',
+
+    // V89.1 — Rendez-vous du diagnostic flash. Les créneaux sont proposés dans
+    // l'heure locale de l'élu (Hexagone ou outre-mer), du lundi au vendredi.
+    // Heures en minutes depuis minuit : 8 h 30 = 510. Il s'agit d'une demande
+    // de créneau, confirmée ensuite par l'équipe (pas de synchronisation d'agenda).
+    callback: { start: 510, end: 1080, step: 30, lunch: [720, 810], horizonDays: 21, leadMinutes: 120, durationMin: 15 },
 
     phone: { display: '09 70 70 30 55', href: 'tel:+33970703055' },
     email: 'contact@pope-online.com',

@@ -14,6 +14,8 @@ import clientRoutes from './routes/client.js';
 import vaultRoutes from './routes/vault.js';
 import contactRoutes from './routes/contact.js';
 import clientFicheRoutes from './routes/client_fiche.js'; // ← V5 : fiches client BDD
+import diagnosticRoutes from './routes/diagnostic.js';     // ← V89 : diagnostic flash
+import appointmentRoutes from './routes/appointments.js'; // ← V89.5 : tableau de bord des rendez-vous
 import { localizeApiBody } from './services/i18n.js';
 import { pool } from './db/index.js';
 
@@ -96,7 +98,7 @@ const aiVaultLimiter = rateLimit({
 app.use('/ai',    aiVaultLimiter);
 app.use('/vault', aiVaultLimiter);
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'v88-elus' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'v89.5' }));
 
 app.use('/auth',    authRoutes);
 app.use('/ai',      aiRoutes);
@@ -109,6 +111,8 @@ app.use('/admin',   clientFicheRoutes);  // ← V5 : GET/POST /admin/client-fich
 app.use('/client',  clientRoutes);
 app.use('/vault',   vaultRoutes);
 app.use('/contact', contactRoutes);   // V88.6 : contact, rendez-vous, devis
+app.use('/',        diagnosticRoutes); // V89 : POST /diagnostic, GET|PATCH /admin/diagnostics
+app.use('/',        appointmentRoutes); // V89.5 : GET /admin/appointments, PATCH /admin/appointments/:kind/:id, GET /admin/team
 
 app.use((err, _req, res, _next) => {
   if (String(err?.message || '').includes('CORS')) return res.status(403).json({ error: 'cors_blocked' });
@@ -125,10 +129,10 @@ async function ensureSchemaV89() {
     const path = await import('path');
     const { fileURLToPath } = await import('url');
     const dir = path.dirname(fileURLToPath(import.meta.url));
-    for (const f of ['schema_patch_v89.sql', 'schema_patch_v90.sql', 'schema_patch_v91.sql', 'schema_patch_v92.sql']) {
+    for (const f of ['schema_patch_v89.sql', 'schema_patch_v90.sql', 'schema_patch_v91.sql', 'schema_patch_v92.sql', 'schema_patch_v93.sql', 'schema_patch_v94.sql']) {
       await pool.query(fs.readFileSync(path.join(dir, 'db', f), 'utf8'));
     }
-    console.log('[boot] patchs V89-V92 vérifiés');
+    console.log('[boot] patchs V89-V94 vérifiés');
   } catch (err) { console.error('[boot] patch V89 non appliqué :', err.message); }
 }
 ensureSchemaV89();
