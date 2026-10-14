@@ -1051,8 +1051,57 @@ button.s-btn { font-family: var(--font-sans); }
 .s-hero-diag { margin: 14px 0 0; font-size: .98rem; }
 .s-hero-diag a { color: var(--sapin); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .s-hero-diag a:hover { color: var(--sapin-deep); }
-.s-section-diag { padding: 56px 0; }
-.dg-teaser { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 28px 32px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
-.dg-teaser > div { flex: 1 1 420px; }
-.dg-teaser h2 { font-family: var(--font-serif); font-size: 1.55rem; line-height: 1.25; margin: 0 0 8px; color: var(--ink); }
-.dg-teaser p { margin: 0; color: var(--ink-soft); }
+
+/* ==========================================================================
+   V89.1 — Diagnostic flash : section d'accueil (première question intégrée,
+   aperçu du résultat, trois étapes)
+   ========================================================================== */
+.dgh { position: relative; padding: 88px 0 72px; background: linear-gradient(180deg, #F1F6F3 0%, #FFFFFF 100%); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; }
+.dgh::before { content: ''; position: absolute; right: -180px; top: -160px; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(47,107,88,.12), rgba(47,107,88,0) 70%); pointer-events: none; }
+.dgh-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: 56px; align-items: center; position: relative; }
+.dgh-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 16px; font-size: .92rem; font-weight: 600; color: var(--sapin); }
+.dgh-new { padding: 4px 11px; border-radius: 999px; background: var(--ocre); color: #fff; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+.dgh-title { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.4vw, 2.7rem); line-height: 1.12; margin: 0 0 14px; color: var(--ink); }
+.dgh-lead { font-size: 1.08rem; color: var(--ink-soft); margin: 0 0 26px; max-width: 34em; }
+.dgh-q { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px 22px; box-shadow: 0 14px 34px rgba(22,54,41,.08); }
+.dgh-q-top { display: flex; align-items: center; gap: 14px; font-size: .82rem; font-weight: 600; color: var(--ink-soft); }
+.dgh-q-bar { flex: 1; height: 5px; border-radius: 3px; background: var(--lichen-2); overflow: hidden; }
+.dgh-q-bar i { display: block; width: 12%; height: 100%; background: var(--sapin); border-radius: 3px; }
+.dgh-q-title { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; margin: 12px 0 14px; color: var(--ink); }
+.dgh-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.dgh-chip { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); font-size: .95rem; font-weight: 500; text-decoration: none; transition: border-color .15s, background .15s, transform .15s, box-shadow .15s; }
+.dgh-chip:hover, .dgh-chip:focus-visible { border-color: var(--sapin); background: #fff; color: var(--sapin-deep); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(31,74,61,.14); }
+.dgh-chip:focus-visible { outline: 3px solid var(--sapin-mid); outline-offset: 2px; }
+.dgh-safe { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-size: .9rem; color: var(--ink-soft); }
+.dgh-preview { position: relative; margin: 0; padding: 18px 0 30px; }
+.dgh-tag { position: absolute; top: 0; left: 22px; z-index: 2; padding: 5px 12px; border-radius: 999px; background: var(--sapin-deep); color: #fff; font-size: .78rem; font-weight: 600; letter-spacing: .04em; }
+.dgh-card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 30px 26px 24px; box-shadow: 0 24px 60px rgba(22,54,41,.16); transform: rotate(1.2deg); }
+.dgh-k { margin: 0; font-size: .82rem; font-weight: 600; color: var(--sapin); }
+.dgh-h { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; line-height: 1.25; margin: 6px 0 14px; color: var(--ink); }
+.dgh-level { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); }
+.dgh-level small { display: block; font-size: .75rem; color: var(--ink-soft); }
+.dgh-level strong { color: var(--ocre-text); }
+.dgh-gauge { display: flex; gap: 4px; }
+.dgh-gauge i { width: 22px; height: 8px; border-radius: 4px; background: var(--line); }
+.dgh-gauge i:nth-child(-n+2) { background: var(--ocre); }
+.dgh-sub { margin: 16px 0 6px; font-weight: 700; font-size: .92rem; }
+.dgh-card ul { margin: 0; padding-left: 18px; color: var(--ink-soft); font-size: .92rem; }
+.dgh-card li + li { margin-top: 4px; }
+.dgh-reco { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: var(--sapin-deep); color: #fff; }
+.dgh-reco span { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #9CC1AF; }
+.dgh-reco strong { font-size: .95rem; }
+.dgh-float { position: absolute; right: -10px; bottom: 0; display: flex; flex-direction: column; padding: 12px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(22,54,41,.16); font-size: .85rem; color: var(--ink-soft); }
+.dgh-float strong { color: var(--sapin); font-size: .95rem; }
+.dgh-steps { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding: 0; margin: 48px 0 0; }
+.dgh-steps li { display: flex; gap: 14px; align-items: flex-start; }
+.dgh-steps b { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--sapin); color: #fff; font-weight: 700; }
+.dgh-steps span { color: var(--ink-soft); font-size: .95rem; }
+.dgh-steps strong { display: block; color: var(--ink); font-size: 1rem; margin-bottom: 2px; }
+@media (max-width: 960px) {
+  .dgh { padding: 64px 0 56px; }
+  .dgh-grid { grid-template-columns: 1fr; gap: 36px; }
+  .dgh-preview { max-width: 460px; }
+  .dgh-float { right: 8px; }
+  .dgh-steps { grid-template-columns: 1fr; margin-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .dgh-chip { transition: none; } .dgh-card { transform: none; } }

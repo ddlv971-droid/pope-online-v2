@@ -30,3 +30,9 @@ CREATE TABLE IF NOT EXISTS diag_flash_requests (
 );
 CREATE INDEX IF NOT EXISTS idx_diag_flash_created ON diag_flash_requests(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_diag_flash_status ON diag_flash_requests(status);
+
+-- V89.1 : prise de rendez-vous (créneau précis, fuseau horaire de l'élu, téléphone ou visio)
+ALTER TABLE diag_flash_requests ADD COLUMN IF NOT EXISTS slot_at timestamptz;
+ALTER TABLE diag_flash_requests ADD COLUMN IF NOT EXISTS timezone text;
+ALTER TABLE diag_flash_requests ADD COLUMN IF NOT EXISTS contact_mode text;
+CREATE INDEX IF NOT EXISTS idx_diag_flash_slot ON diag_flash_requests(slot_at);

@@ -203,3 +203,20 @@ export const SCOPES = [
   { id: 'document', label: 'Un avis sur un document ou une décision déjà préparée', objective: 'Faire relire et sécuriser un document ou une décision avant de la prendre.' },
   { id: 'accompagnement', label: 'Un accompagnement sur plusieurs semaines', objective: 'Être accompagné dans la durée : projet, réorganisation ou situation complexe.' },
 ];
+
+// V89.1 — « Ma situation est différente » : aucune liste ne peut être exhaustive.
+// L'élu décrit sa situation en une phrase ; l'analyse s'appuie alors sur les points
+// et pièces communs au domaine, et l'expert lit sa description.
+export const OTHER_SITUATION = { id: 'autre', label: 'Ma situation est différente', w: 1 };
+export const GENERIC = {
+  rh: { title: 'Question de ressources humaines', q: ['Le statut et la situation exacte de l\'agent concerné', 'Les règles et la procédure applicables', 'Les risques pour l\'employeur et les précautions à prendre'], p: ['Dossier ou situation administrative de l\'agent', 'Délibérations et actes en vigueur', 'Échanges écrits sur le sujet'] },
+  fin: { title: 'Question budgétaire et financière', q: ['Les règles budgétaires et comptables applicables', 'L\'impact sur les équilibres de la collectivité', 'Les options et leurs conséquences'], p: ['Budget et derniers comptes', 'Délibérations concernées', 'Échanges avec le comptable public'] },
+  urba: { title: 'Question d\'urbanisme', q: ['Les règles d\'urbanisme applicables au terrain ou au projet', 'Les pouvoirs du maire et la procédure', 'Les risques de recours'], p: ['Document d\'urbanisme applicable', 'Dossier ou demande concerné', 'Courriers échangés'] },
+  mp: { title: 'Question de commande publique', q: ['Les règles de la commande publique applicables', 'Les marges de manœuvre de l\'acheteur', 'Les risques de contentieux'], p: ['Pièces du marché ou de la consultation', 'Échanges avec les entreprises'] },
+  jur: { title: 'Question de droit public', q: ['Le cadre juridique applicable', 'La compétence et la procédure', 'Les risques d\'annulation et les précautions'], p: ['Acte ou projet d\'acte concerné', 'Délibérations antérieures', 'Courriers reçus'] },
+  med: { title: 'Situation de tension', q: ['Les acteurs et les causes de la tension', 'Le cadre à rappeler à chacun', 'Les voies de sortie amiables'], p: ['Chronologie des faits', 'Échanges écrits'] },
+  com: { title: 'Question de communication sensible', q: ['Les publics concernés et le bon calendrier', 'Les messages à porter et ceux à éviter', 'Les risques de réaction'], p: ['Faits établis', 'Publications ou articles parus'] },
+  orga: { title: 'Question d\'organisation des services', q: ['Le diagnostic de la situation', 'Les solutions possibles et leur conduite', 'Les consultations nécessaires'], p: ['Organigramme', 'Éléments de contexte disponibles'] },
+  trav: { title: 'Question de travaux et d\'équipement', q: ['Le cadre contractuel et réglementaire', 'Les responsabilités de chacun', 'Les options pour avancer'], p: ['Marchés et pièces techniques', 'Comptes rendus et courriers'] },
+  autre: { title: 'Demande d\'expertise', q: ['La qualification juridique et pratique de la situation', 'Les options possibles', 'Les risques à maîtriser'], p: ['Tout document utile à la compréhension'] },
+};

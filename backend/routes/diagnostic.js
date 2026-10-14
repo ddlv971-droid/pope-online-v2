@@ -50,17 +50,22 @@ router.post('/diagnostic', limiter, optionalAuth, async (req, res) => {
   const freeText = cleanText(d.text, 600);
   const role = clean(b.role, 80);
   const organization = clean(b.organization, 160);
-  const slot = clean(b.slot, 160);
+  const slot = clean(b.slot, 200);
+  const contactMode = b.contact_mode === 'visio' ? 'visio' : 'phone';
+  const timezone = /^[A-Za-z_]+\/[A-Za-z_]+$/.test(String(b.timezone || '')) ? String(b.timezone) : null;
+  let slotAt = null;
+  if (b.slot_at) { const d = new Date(String(b.slot_at)); if (!isNaN(d) && d.getTime() > Date.now() - 3600e3 && d.getTime() < Date.now() + 90 * 864e5) slotAt = d.toISOString(); }
+  if (contactMode === 'visio' && !email) return res.status(400).json({ error: 'email_required_for_visio' });
 
   let id = null;
   try {
     const r = await withClient((client) => client.query(
       `insert into diag_flash_requests(user_id, name, email, phone, role, organization, slot, domain, situation, level, path, urgent,
-                                       title, summary, free_text, answers, user_agent)
-       values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) returning id`,
+                                       title, summary, free_text, answers, user_agent, slot_at, timezone, contact_mode)
+       values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) returning id`,
       [req.user?.id || null, name, email || null, phone || null, role || null, organization || null, slot || null,
        answers.domain, answers.situation, level, path, urgent, title || null, summary || null, freeText || null,
-       JSON.stringify(answers), clean(req.headers['user-agent'], 300)]
+       JSON.stringify(answers), clean(req.headers['user-agent'], 300), slotAt, timezone, contactMode]
     ));
     id = r.rows[0]?.id || null;
   } catch (e) { console.warn('[diagnostic] enregistrement impossible :', e.message); }
@@ -74,7 +79,8 @@ router.post('/diagnostic', limiter, optionalAuth, async (req, res) => {
     `Synthèse : ${summary || '—'}`,
     '',
     `Nom : ${name}`, `Fonction : ${role || '—'}`, `Collectivité : ${organization || '—'}`,
-    `E-mail : ${email || '—'}`, `Téléphone : ${phone || '—'}`, `Créneau souhaité : ${slot || '—'}`,
+    `E-mail : ${email || '—'}`, `Téléphone : ${phone || '—'}`,
+    `Rendez-vous demandé : ${slot || '—'} — ${contactMode === 'visio' ? 'visioconférence (envoyer le lien)' : 'appel téléphonique'}`,
     `Compte connecté : ${req.user?.email || 'non'}`,
     '',
     'Description :', freeText || '(aucune)',
@@ -87,7 +93,7 @@ router.post('/diagnostic', limiter, optionalAuth, async (req, res) => {
         to: email,
         subject: 'POPE Online — Votre demande de rappel',
         text: `Bonjour ${name},\n\nNous avons bien reçu votre diagnostic flash (${title || 'votre situation'}) et votre demande de rappel. ` +
-          (urgent ? 'Votre échéance étant très proche, un conseiller vous rappelle en priorité.' : `Un conseiller vous rappelle sous un jour ouvré${slot ? `, en tenant compte du créneau indiqué (${slot})` : ''}.`) +
+          (slot ? `Vous avez demandé un rendez-vous ${contactMode === 'visio' ? 'en visioconférence' : 'téléphonique'} le ${slot}. Un conseiller vous le confirme rapidement${contactMode === 'visio' ? ', avec le lien de connexion' : ''}.` : (urgent ? 'Votre échéance étant très proche, un conseiller vous rappelle en priorité.' : 'Un conseiller vous rappelle sous un jour ouvré.')) +
           `\n\nSi la situation évolue d'ici là, appelez-nous au 09 70 70 30 55.\n\nL'équipe POPE Online\ncontact@pope-online.com`,
       });
     }
@@ -102,11 +108,11 @@ router.get('/admin/diagnostics', requireAdmin, async (req, res) => {
   const limit = Math.min(200, Math.max(1, parseInt(req.query.limit, 10) || 50));
   try {
     const r = await withClient((c) => c.query(
-      `select id, created_at, name, email, phone, role, organization, slot, domain, situation, level, path, urgent,
+      `select id, created_at, name, email, phone, role, organization, slot, slot_at, timezone, contact_mode, domain, situation, level, path, urgent,
               title, summary, free_text, status, mail_sent
          from diag_flash_requests
         where ($1::text is null or status = $1)
-        order by urgent desc, created_at desc
+        order by urgent desc, coalesce(slot_at, created_at) asc
         limit $2`, [status, limit]));
     res.json({ items: r.rows });
   } catch (e) { console.error('[diagnostic] liste :', e.message); res.status(500).json({ error: 'server_error' }); }
