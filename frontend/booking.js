@@ -6,7 +6,10 @@
 //
 // Il s'agit d'une DEMANDE de créneau : l'équipe la confirme par e-mail ou SMS.
 // Réglages : window.POPE_SITE.callback (voir site-config.js).
+// V89.3 : styles dans booking.css ; utilisé aussi par la fenêtre « Parler à un
+// conseiller » (contact-booking.js) ; setMode() pour piloter le mode de l'extérieur.
 // ============================================================================
+import './booking.css';
 
 const ZONES = [
   { tz: 'Europe/Paris', label: 'Hexagone et Corse' },
@@ -45,11 +48,11 @@ function zoned(y, m, d, h, min, tz) {   // instant correspondant à une heure mu
 }
 const dayKey = (y, m, d) => `${y}-${two(m)}-${two(d)}`;
 
-export function mountBooking(host, { onChange } = {}) {
+export function mountBooking(host, { onChange, mode: initialMode } = {}) {
   const cfg = Object.assign({}, DEF, (window.POPE_SITE && window.POPE_SITE.callback) || {});
   let tz = 'Europe/Paris';
   try { const det = Intl.DateTimeFormat().resolvedOptions().timeZone; const t = ALIASES[det] || det; if (ZONES.some((z) => z.tz === t)) tz = t; } catch (e) {}
-  const state = { mode: 'phone', tz, day: null, time: null, month: null };
+  const state = { mode: initialMode === 'visio' ? 'visio' : 'phone', tz, day: null, time: null, month: null };
 
   // Jours ouvrés (dans le fuseau de l'élu) et créneaux disponibles
   function slotsFor(y, m, d) {
@@ -112,6 +115,8 @@ export function mountBooking(host, { onChange } = {}) {
 
   const $ = (s) => host.querySelector(s);
   $('.bk-tz select').value = state.tz;
+  const paintMode = () => host.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === state.mode)));
+  paintMode();
 
   function selected() {
     if (!state.day || state.time == null) return null;
@@ -196,7 +201,11 @@ export function mountBooking(host, { onChange } = {}) {
     days = availableDays(); const f = days[0]; state.month = f ? { y: f.y, m: f.m } : null; renderAll();
   });
   renderAll();
-  return { reset() { state.day = null; state.time = null; renderAll(); }, get mode() { return state.mode; } };
+  return {
+    reset() { state.day = null; state.time = null; renderAll(); },
+    setMode(m) { const v = m === 'visio' ? 'visio' : 'phone'; if (v === state.mode) return; state.mode = v; paintMode(); renderSum(); emit(); },
+    get mode() { return state.mode; },
+  };
 }
 
 // Fichier .ics et lien Google Agenda pour le créneau demandé

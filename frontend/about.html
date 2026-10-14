@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="./site-v88.css"/>
 <script src="./site-config.js"></script>
 <script src="./site-search.js" defer></script>
-<script src="./slot-picker.js" defer></script>
+<script type="module" src="./contact-booking.js"></script>
 </head>
 <body class="s-body">
 <a class="s-skip" href="#contenu">Aller au contenu</a>
@@ -167,7 +167,7 @@
   <div class="s-modal s-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
     <button class="s-modal-close" type="button" id="ctClose" aria-label="Fermer">×</button>
     <h2 id="ctTitle">Parler à un conseiller</h2>
-    <p class="s-muted" style="margin:0 0 16px">Un conseiller revient vers vous sous un jour ouvré, par téléphone ou en visioconférence. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
+    <p class="s-muted" style="margin:0 0 16px">Choisissez votre créneau : un conseiller vous appelle ou vous reçoit en visioconférence, 15 minutes, gratuitement et sans engagement. Vous pouvez aussi appeler le <a href="tel:+33970703055">09 70 70 30 55</a>. Pour une commune ou une collectivité : <a href="#devis" data-devis="commune" onclick="document.getElementById('ctBack').classList.remove('open')">demander un devis</a>.</p>
     <form id="ctForm" class="s-form" novalidate>
       <label class="s-field s-field-full">Votre demande
         <select name="subject" id="ctSubject">

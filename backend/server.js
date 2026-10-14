@@ -97,7 +97,7 @@ const aiVaultLimiter = rateLimit({
 app.use('/ai',    aiVaultLimiter);
 app.use('/vault', aiVaultLimiter);
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'v89.2' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'v89.3' }));
 
 app.use('/auth',    authRoutes);
 app.use('/ai',      aiRoutes);

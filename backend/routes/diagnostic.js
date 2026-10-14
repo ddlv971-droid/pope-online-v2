@@ -11,25 +11,16 @@ import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { optionalAuth, requireAdmin } from '../middleware/auth.js';
-import { verifyTurnstileToken } from '../services/security.js';
+import { humanCheck, takeAckBudget, badPhone, URLISH } from '../services/antiabuse.js';
 
 const router = express.Router();
 // ─── Anti-abus (V89.2) ───────────────────────────────────────────────────────
 // 1. 8 demandes par heure et par adresse IP ; 2. pot de miel ; 3. délai minimal
-// de saisie ; 4. Cloudflare Turnstile (si configuré) ; 5. dédoublonnage 15 min ;
-// 6. l'accusé de réception à l'élu n'est envoyé que si la demande est vérifiée,
-// au plus 2 fois par adresse en 24 h et 40 fois par heure au total : le
-// formulaire ne peut pas servir à envoyer des e-mails à des tiers.
+// de saisie et Cloudflare Turnstile (services/antiabuse.js) ; 4. dédoublonnage
+// 15 min ; 5. accusé de réception à l'élu au plus 2 fois par adresse en 24 h et
+// 40 fois par heure au total : le formulaire ne peut pas servir à envoyer des
+// e-mails à des tiers.
 const limiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 8, standardHeaders: true, legacyHeaders: false, message: { error: 'too_many_requests' } });
-const MIN_FILL_MS = 3000;
-const ACK_PER_HOUR = 40;
-let ackWindow = { start: Date.now(), n: 0 };
-function ackBudget() {
-  if (Date.now() - ackWindow.start > 3600e3) ackWindow = { start: Date.now(), n: 0 };
-  if (ackWindow.n >= ACK_PER_HOUR) return false;
-  ackWindow.n += 1; return true;
-}
-const URLISH = /(https?:\/\/|www\.|\.(com|net|org|ru|xyz|io|info)\b)/i;
 
 const clean = (v, max = 300) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
 const cleanText = (v, max = 600) => String(v ?? '').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').trim().slice(0, max);
@@ -43,26 +34,18 @@ const STATUSES = new Set(['new', 'contacted', 'converted', 'closed']);
 router.post('/diagnostic', limiter, optionalAuth, async (req, res) => {
   const b = req.body || {};
   if (clean(b.website)) return res.json({ ok: true });            // pot de miel anti-robots
-  const elapsed = Number(b.elapsed_ms) || 0;
-  if (elapsed > 0 && elapsed < MIN_FILL_MS) return res.json({ ok: true });   // rempli trop vite : robot
+  const hc = await humanCheck(b, req.ip);
+  if (hc.drop) return res.json({ ok: true });                      // rempli trop vite : robot
+  if (hc.reject) return res.status(403).json({ error: 'bot_protection_failed' });
   if (!b.consent) return res.status(400).json({ error: 'consent_required' });
-
-  // Turnstile : jeton invalide = refus ; absent ou service injoignable = demande
-  // acceptée mais « non vérifiée » (pas d'accusé de réception envoyé).
-  let verified = false;
-  try {
-    const ts = await verifyTurnstileToken({ token: b.turnstileToken, ip: req.ip });
-    if (ts.success) verified = true;
-    else if (ts.code === 'turnstile_not_configured') verified = elapsed >= MIN_FILL_MS;
-    else if (ts.code !== 'missing_turnstile_token') return res.status(403).json({ error: 'bot_protection_failed' });
-  } catch (e) { console.warn('[diagnostic] turnstile injoignable :', e.message); }
+  const verified = !!hc.verified;
 
   const name = clean(b.name, 120);
   const email = clean(b.email, 160).toLowerCase();
   const phone = clean(b.phone, 40);
   if (!name || (!email && !phone)) return res.status(400).json({ error: 'contact_missing_fields' });
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'invalid_email' });
-  if (phone) { const digits = phone.replace(/\D/g, '').length; if (digits < 6 || digits > 20 || /[^0-9+().\s-]/.test(phone)) return res.status(400).json({ error: 'invalid_phone' }); }
+  if (badPhone(phone)) return res.status(400).json({ error: 'invalid_phone' });
   if (URLISH.test(name) || URLISH.test(String(b.organization || ''))) return res.status(400).json({ error: 'invalid_name' });
 
   const d = (b.diag && typeof b.diag === 'object') ? b.diag : {};
@@ -130,7 +113,7 @@ router.post('/diagnostic', limiter, optionalAuth, async (req, res) => {
   let mailOk = true;
   try {
     await sendMail({ to, replyTo: email || undefined, subject: `${prefix}[POPE Online] Diagnostic flash — ${title || 'demande de rappel'} — ${name}`, text: lines.join('\n') });
-    if (email && verified && acksToEmail < 2 && ackBudget()) {
+    if (email && verified && acksToEmail < 2 && takeAckBudget()) {
       await sendMail({
         to: email,
         subject: 'POPE Online — Votre demande de rappel',
