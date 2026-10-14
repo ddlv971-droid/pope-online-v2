@@ -48,6 +48,12 @@
       <p>Essai gratuit de 15 jours, r&eacute;serv&eacute; aux &eacute;lus locaux et &agrave; leurs collaborateurs.</p>
     </div>
 
+    <!-- V89.2 : suite du diagnostic flash -->
+    <div id="diagBanner" hidden style="gap:12px;align-items:flex-start;margin:0 0 18px;padding:12px 14px;border:1px solid #CFDDD5;border-left:4px solid #B07A2A;border-radius:12px;background:#F3F8F5;font-size:13.5px;line-height:1.45;color:#1F2622">
+      <span aria-hidden="true" style="flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:#1F4A3D;color:#fff"><svg viewBox="0 0 24 24" width="17" height="17"><path d="M3 12h4l2.2-5 4.2 10 2.4-5H21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span><strong style="display:block;color:#1F4A3D">Votre diagnostic flash est pr&ecirc;t</strong><span id="diagBannerText"></span></span>
+    </div>
+
     <div class="v40-field">
       <label for="fullName">Nom &amp; pr&eacute;nom</label>
       <input class="v40-input" id="fullName" type="text" placeholder="Jean Dupont" autocomplete="off"/>
@@ -221,5 +227,25 @@ $('btnSignup').addEventListener('click', async function() {
 
 <!-- V88 : thème chargé en dernier pour primer sur les feuilles de style regroupées par Vite -->
 <link rel="stylesheet" href="/theme-v88.css"/>
+<script>
+// V89.2 — Arrivée depuis le diagnostic flash : rappel du diagnostic et pré-remplissage
+(function () {
+  try {
+    var raw = localStorage.getItem('pope_diag_flash_v1'); if (!raw) return;
+    var d = JSON.parse(raw); if (!d || !d.need || (Date.now() - (d.at || 0)) > 7 * 864e5) return;
+    var t = String(d.need.title || '').slice(0, 120).replace(/[.\s]+$/, '');
+    var box = document.getElementById('diagBanner'), txt = document.getElementById('diagBannerText');
+    if (box && txt) {
+      txt.textContent = '\u00ab ' + t + ' \u00bb : cr\u00e9ez votre compte, votre premi\u00e8re demande \u00e0 un expert sera pr\u00e9-remplie. Elle compte parmi vos 2 Conseils Expert offerts.';
+      box.hidden = false; box.style.display = 'flex';
+    }
+    var fn = { maire: 'maire', adjoint: 'adjoint', conseiller: 'conseiller', dgs: 'dgs', elu_autre: 'autre', agent: 'autre' }[d.profile];
+    var sz = { lt1000: 'moins_1000', '1000_3500': '1000_3500', '3500_10000': '3500_10000', '10000_50000': '10000_50000', gt50000: 'plus_50000' }[d.size];
+    var f = document.getElementById('userFunction'), c = document.getElementById('communeSize');
+    if (f && fn && !f.value) f.value = fn;
+    if (c && sz && !c.value) c.value = sz;
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

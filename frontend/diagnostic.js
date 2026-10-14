@@ -3,12 +3,14 @@
 // L'élu répond à 8 questions courtes, en 2 minutes. Le diagnostic est calculé
 // dans le navigateur : rien n'est envoyé tant que l'élu ne le demande pas
 // (transmission à un expert, ou demande de rappel).
-// V89.1 : on commence par le sujet (démarrage direct depuis l'accueil avec
-// ?domaine=…), « Ma situation est différente » dans chaque domaine, prise de
+// V89.1 : « Ma situation est différente » dans chaque domaine, prise de
 // rendez-vous moderne pour le rappel.
+// V89.2 : ordre des questions de la V89 (profil d'abord), anti-abus du formulaire
+// de rendez-vous (Turnstile si configuré, délai minimal de saisie).
 // ============================================================================
 import { PROFILES, SIZES, DOMAINS, SITUATIONS, TENSION, DEADLINES, STAKES, SCOPES, OTHER_SITUATION, GENERIC } from './diagnostic-tree.js';
 import { mountBooking, calendarLinks } from './booking.js';
+import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
 
 const API = ((import.meta.env && import.meta.env.VITE_API_URL) || 'https://pope-online-v2.onrender.com').trim().replace(/\/$/, '');
 export const DIAG_KEY = 'pope_diag_flash_v1';   // lu par dashboard.html pour pré-remplir la demande
@@ -17,8 +19,10 @@ const byId = (list, id) => list.find((x) => x.id === id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sitList = (domain) => (domain === 'autre' ? [] : [...(SITUATIONS[domain] || []), OTHER_SITUATION]);
 
-// ─── Les questions, dans l'ordre : d'abord le problème, ensuite le profil ───
+// ─── Les questions, dans l'ordre de la V89 : qui vous êtes, puis le sujet ───
 const STEPS = [
+  { key: 'profile', title: 'Vous êtes…', options: () => PROFILES },
+  { key: 'size', title: 'Votre collectivité compte…', options: () => SIZES },
   { key: 'domain', title: 'Votre sujet concerne…', options: () => DOMAINS },
   { key: 'situation', title: 'Plus précisément, votre situation est…', options: (a) => sitList(a.domain),
     hint: 'Les situations les plus fréquentes. Rien ne correspond ? Choisissez « Ma situation est différente » : un expert du domaine lira votre description.' },
@@ -26,8 +30,6 @@ const STEPS = [
   { key: 'deadline', title: 'Quand devez-vous décider ou agir ?', options: () => DEADLINES },
   { key: 'stakes', title: 'Quels enjeux sont en cause ?', hint: 'Plusieurs réponses possibles.', multi: true, options: () => STAKES },
   { key: 'scope', title: 'Ce dont vous avez besoin, c\'est plutôt…', options: () => SCOPES },
-  { key: 'profile', title: 'Vous êtes…', options: () => PROFILES },
-  { key: 'size', title: 'Votre collectivité compte…', options: () => SIZES },
   { key: 'text', title: 'En quelques mots, que se passe-t-il ?', hint: 'Facultatif. Ces lignes pré-rempliront votre demande ; n\'indiquez pas de nom de personne.', free: true },
 ];
 
@@ -87,11 +89,12 @@ const root = document.getElementById('dgApp');
 const answers = { stakes: [] };
 let index = -1;            // -1 = écran d'accueil
 
-// Démarrage direct depuis l'accueil : diagnostic.html?domaine=mp
-(function startFromUrl() {
+// Lien avec un domaine (diagnostic.html?domaine=mp) : le domaine est présélectionné,
+// le parcours commence normalement par l'écran d'accueil.
+(function preselectFromUrl() {
   try {
     const d = new URLSearchParams(location.search).get('domaine');
-    if (d && byId(DOMAINS, d)) { answers.domain = d; index = 1; }
+    if (d && byId(DOMAINS, d)) answers.domain = d;
   } catch (e) {}
 })();
 
@@ -176,7 +179,7 @@ function renderStep() {
 
 function renderResult() {
   const r = computeResult(answers);
-  try { localStorage.setItem(DIAG_KEY, JSON.stringify({ v: 1, at: Date.now(), domain: r.dom.domain, domainIcon: '🎯', need: r.need, level: r.level })); } catch (e) {}
+  try { localStorage.setItem(DIAG_KEY, JSON.stringify({ v: 1, at: Date.now(), domain: r.dom.domain, domainIcon: '🎯', need: r.need, level: r.level, profile: answers.profile || '', size: answers.size || '' })); } catch (e) {}
   const logged = isLoggedIn();
   const sendHref = logged ? 'dashboard.html?diag=1' : 'signup-public.html?from=diag';
   const delay = esc((window.POPE_SITE && window.POPE_SITE.responseDelay) || '24 h');
@@ -205,10 +208,10 @@ function renderResult() {
         <p class="dg-path-k">Notre recommandation</p>
         ${pathCard}
         <div class="s-actions">
-          <a class="s-btn s-btn-primary" href="${sendHref}">${logged ? 'Transmettre à un expert' : 'Créer mon compte et transmettre'} →</a>
+          <a class="s-btn s-btn-primary" href="${sendHref}">${logged ? 'Transmettre à un expert' : 'Utiliser mon Conseil Expert offert'} →</a>
           <button class="s-btn s-btn-ghost" type="button" data-act="callback">${r.urgent || r.path === 'surmesure' ? 'Prendre rendez-vous rapidement' : 'Prendre rendez-vous avec un conseiller'}</button>
         </div>
-        <p class="dg-path-note">${logged ? 'Votre demande sera pré-remplie avec ce diagnostic : il vous restera à la relire et à joindre vos pièces.' : 'Essai gratuit 15 jours, 2 Conseils Expert offerts, sans carte bancaire. Votre demande sera pré-remplie avec ce diagnostic.'}</p>
+        <p class="dg-path-note">${logged ? 'Votre demande sera pré-remplie avec ce diagnostic : il vous restera à la relire et à joindre vos pièces.' : 'Avec l\'essai gratuit de 15 jours, 2 Conseils Expert vous sont offerts, sans carte bancaire : votre première demande est déjà pré-remplie avec ce diagnostic.'}</p>
       </div>
 
       <section class="dg-callback" id="dgCallback" hidden>
@@ -225,6 +228,7 @@ function renderResult() {
           <label class="s-field">E-mail<span class="dg-req" data-req="email" hidden> (requis pour la visio)</span><input name="email" type="email" autocomplete="email"/></label>
           <label class="s-field-full dg-consent"><input type="checkbox" name="consent" value="1"/> J'accepte que ce diagnostic et mes coordonnées soient transmis à l'équipe Pope Online pour être recontacté. <a href="privacy.html">Confidentialité</a></label>
           <input name="website" tabindex="-1" autocomplete="off" class="s-hp" aria-hidden="true"/>
+          <div id="dgTurnstile" class="s-field-full" hidden></div>
           <p class="s-form-msg" id="dgCbMsg" role="status"></p>
           <div class="s-field-full s-form-actions"><button class="s-btn s-btn-primary" type="submit" id="dgCbSubmit">Confirmer mon rendez-vous</button>
             <span class="dg-cb-alt">Pas de créneau qui convient ? <a href="tel:+33970703055">09 70 70 30 55</a></span></div>
@@ -257,6 +261,8 @@ function setupCallback(r) {
     },
   });
   const prof = byId(PROFILES, answers.profile);
+  let openedAt = 0;
+  root.addEventListener('dg:callback-open', () => { if (!openedAt) { openedAt = Date.now(); mountTurnstile('dgTurnstile').catch(() => {}); } });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('dgCbMsg');
@@ -273,6 +279,7 @@ function setupCallback(r) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({
           ...data, role: prof ? prof.label : '',
+          elapsed_ms: openedAt ? Date.now() - openedAt : 0, turnstileToken: getTurnstileToken(),
           slot: slot.human, slot_at: slot.iso, timezone: slot.tz, contact_mode: mode,
           diag: {
             answers: { profile: answers.profile, size: answers.size, domain: answers.domain, situation: answers.situation, tension: answers.tension, deadline: answers.deadline, stakes: answers.stakes, scope: answers.scope },
@@ -280,7 +287,10 @@ function setupCallback(r) {
           },
         }),
       });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        const e3 = new Error('HTTP ' + res.status); e3.status = res.status; e3.code = j.error; throw e3;
+      }
       setStep(2);
       const how = mode === 'visio' ? 'Visioconférence' : 'Appel téléphonique';
       const links = calendarLinks({ iso: slot.iso, durationMin: slot.durationMin, title: `Pope Online — ${how} avec un conseiller`,
@@ -296,6 +306,10 @@ function setupCallback(r) {
           <a class="s-btn s-btn-ghost s-btn-sm" href="${links.googleUrl}" target="_blank" rel="noopener">Google Agenda</a></div>`;
       done.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (e2) {
+      resetTurnstile();
+      if (e2.status === 429) { err('Trop de demandes depuis cette connexion. Réessayez dans une heure, ou appelez le 09 70 70 30 55.'); return; }
+      if (e2.code === 'bot_protection_failed') { err('La vérification anti-robot n\'a pas abouti. Cochez la case de vérification puis réessayez.'); return; }
+      if (e2.code === 'invalid_phone') { err('Le numéro de téléphone ne semble pas valide.'); return; }
       msg.innerHTML = 'L\'envoi n\'a pas abouti. Appelez le <a href="tel:+33970703055">09 70 70 30 55</a> ou écrivez à <a href="mailto:contact@pope-online.com">contact@pope-online.com</a>.';
       msg.className = 's-form-msg err';
     } finally { btn.disabled = false; btn.textContent = 'Confirmer mon rendez-vous'; }
@@ -345,7 +359,7 @@ root.addEventListener('click', (e) => {
   else if (a === 'back') { index = Math.max(-1, index - 1); render(); }
   else if (a === 'restart') { Object.keys(answers).forEach((k) => delete answers[k]); answers.stakes = []; index = 0; render(); }
   else if (a === 'print') window.print();
-  else if (a === 'callback') { const f = document.getElementById('dgCallback'); f.hidden = false; f.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  else if (a === 'callback') { const f = document.getElementById('dgCallback'); f.hidden = false; root.dispatchEvent(new Event('dg:callback-open')); f.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 });
 
 render();
