@@ -396,6 +396,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .rdv-assign select { padding: 7px 10px; font-size: 12.5px; text-transform: none; letter-spacing: 0; }
 .rdv-state { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .rdv-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.rdv-owner { display: block; font-size: 13px; color: #fff; font-weight: 600; text-transform: none; letter-spacing: 0; padding: 6px 0; }
 .rdv-empty { padding: 34px 10px; text-align: center; color: var(--muted2); font-size: 13px; }
 .rdv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 300; }
 .rdv-overlay.open { opacity: 1; pointer-events: auto; }
@@ -421,6 +422,47 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .rdv-toast.show { opacity: 1; transform: translate(-50%, 0); }
 @media (max-width: 1100px) { .rdv-row { grid-template-columns: 100px minmax(0, 1fr); } .rdv-assign, .rdv-state { grid-column: 2; align-items: flex-start; } .rdv-actions { justify-content: flex-start; } }
 @media (max-width: 640px) { .rdv-row { grid-template-columns: 1fr; } .rdv-assign, .rdv-state { grid-column: 1; } .rdv-seg { width: 100%; } .rdv-seg button { flex: 1; padding: 8px 4px; } }
+
+/* ════ V89.6 — Profils et assignations ════ */
+.tm-toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 4px 0 16px; }
+.tm-toolbar .adm-search { max-width: 320px; }
+.tm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.tm-card { background: #163226; border: 1px solid rgba(255,255,255,.07); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.tm-head { display: grid; grid-template-columns: 44px minmax(0, 1fr) 150px; gap: 12px; align-items: center; }
+.tm-av { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.tm-id { display: flex; flex-direction: column; min-width: 0; }
+.tm-id strong { font-size: 14.5px; color: #fff; }
+.tm-id span { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-role-box label { display: block; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted2); margin-bottom: 3px; }
+.tm-role-box select { padding: 6px 8px; font-size: 12px; }
+.tm-stats { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+.tm-stats b { color: #fff; }
+.tm-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
+.tm-client, .tm-orphan { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05); }
+.tm-client > div, .tm-orphan > div { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tm-client strong, .tm-orphan strong { font-size: 13px; color: #fff; }
+.tm-client span:not(.adm-badge), .tm-orphan span:not(.adm-badge) { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-orphan select { width: 210px; padding: 7px 10px; font-size: 12.5px; }
+.tm-orphans { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 8px; }
+.tm-x { border: 0; background: rgba(239,68,68,.1); color: var(--red); width: 26px; height: 26px; border-radius: 8px; cursor: pointer; flex: none; }
+.tm-x:hover { background: rgba(239,68,68,.22); }
+.tm-add select { padding: 8px 10px; font-size: 12.5px; }
+.tm-empty { padding: 22px; text-align: center; color: var(--muted2); font-size: 13px; }
+.tm-hint { font-size: 12px; color: var(--muted2); }
+.tm-promote { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tm-promote input { flex: 1; min-width: 260px; }
+.tm-load-top { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+.tm-load-top b { color: #fff; font-size: 15px; }
+.tm-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.07); margin: 8px 0; overflow: hidden; }
+.tm-bar i { display: block; height: 100%; background: var(--accent2); border-radius: 3px; }
+.tm-load-sub { font-size: 11.5px; color: var(--muted2); }
+.tm-actions { display: flex; gap: 8px; }
+.tm-mini { font-size: 11px; color: var(--accent2); margin-top: 2px; }
+.tm-mini-warn { color: var(--yellow); }
+.tm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 10px; border-radius: 99px; background: rgba(63,153,116,.14); color: #fff; font-size: 12.5px; }
+.tm-chip button { border: 0; background: rgba(255,255,255,.1); color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; cursor: pointer; }
+@media (max-width: 640px) { .tm-head { grid-template-columns: 40px minmax(0, 1fr); } .tm-role-box { grid-column: 1 / -1; } .tm-grid, .tm-orphans { grid-template-columns: 1fr; } .tm-orphan { flex-wrap: wrap; } .tm-orphan select { width: 100%; } }
 </style>
 
 <style id="fiche-client-style">
@@ -554,29 +596,36 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   <div class="adm-main">
     <!-- Sidebar -->
     <nav class="adm-sidebar">
-      <div class="adm-nav-label">Principal</div>
-      <button class="adm-nav-item active" data-tab="clients">
+      <div class="adm-nav-label" data-admin-only>Principal</div>
+      <button class="adm-nav-item active" data-tab="clients" data-admin-only>
         <span class="adm-nav-icon">👥</span> Clients
         <span class="adm-nav-badge" id="sideRiskCount">0</span>
       </button>
-      <button class="adm-nav-item" data-tab="relectures">
+      <button class="adm-nav-item" data-tab="relectures" data-admin-only>
         <span class="adm-nav-icon">✍️</span> Relectures
       </button>
       <button class="adm-nav-item" data-tab="rdv">
         <span class="adm-nav-icon">📅</span> Rendez-vous
         <span class="adm-nav-badge" id="sideRdvCount" hidden>0</span>
       </button>
-      <button class="adm-nav-item" data-tab="creer">
+      <div class="adm-nav-label" data-admin-only>Équipe</div>
+      <button class="adm-nav-item" data-tab="experts" data-admin-only>
+        <span class="adm-nav-icon">🎓</span> Experts
+        <span class="adm-nav-badge" id="sideOrphanCount" hidden title="Clients sans expert">0</span>
+      </button>
+      <button class="adm-nav-item" data-tab="conseillers" data-admin-only>
+        <span class="adm-nav-icon">🎧</span> Conseillers
+      </button>
+      <button class="adm-nav-item" data-tab="admins" data-admin-only>
+        <span class="adm-nav-icon">🔐</span> Administrateurs
+      </button>
+      <div class="adm-nav-label" data-admin-only>Outils</div>
+      <button class="adm-nav-item" data-tab="creer" data-admin-only>
         <span class="adm-nav-icon">➕</span> Créer un compte
       </button>
-      <div class="adm-nav-label">Outils</div>
-      <button class="adm-nav-item" data-tab="experts">
-        <span class="adm-nav-icon">🎓</span> Experts & Portefeuilles
-      </button>
-      <button class="adm-nav-item" data-tab="satisfaction">
+      <button class="adm-nav-item" data-tab="satisfaction" data-admin-only>
         <span class="adm-nav-icon">📊</span> Satisfaction
       </button>
-
     </nav>
 
     <!-- Content -->
@@ -757,7 +806,11 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       </div>
 
 
-      <div id="tabExperts" hidden>
+      <!-- V89.6 : profils (experts, conseillers, administrateurs) -->
+      <div id="tabTeam" hidden></div>
+
+      <!-- Ancienne page Experts & Portefeuilles, remplacée par #tabTeam (conservée pour le code existant) -->
+      <div id="tabExpertsLegacy" hidden style="display:none">
         <div class="adm-hero" style="margin-bottom:20px">
           <div class="adm-hero-header">
             <div>
@@ -870,6 +923,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
             </div>
             <select class="adm-input adm-select" id="rdvWho" style="width:auto;padding:8px 12px;font-size:12px"></select>
             <div class="adm-search-wrap" style="max-width:240px"><input class="adm-search" id="rdvSearch" placeholder="Nom, collectivité, téléphone…"/></div>
+            <button class="adm-btn adm-btn-primary adm-btn-sm" id="rdvAuto" style="display:none" title="Attribue chaque rendez-vous à venir sans conseiller au conseiller le moins chargé">Répartir les rendez-vous sans conseiller</button>
           </div>
           <div class="adm-card-body" id="rdvList"></div>
         </div>
@@ -945,6 +999,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
     <!-- Tab Infos -->
     <div id="ptabInfo">
+      <div class="adm-detail-section" id="panelExperts" hidden></div>
       <div class="adm-detail-section">
         <div class="adm-detail-section-title">Compte</div>
         <div class="adm-detail-row"><span class="adm-detail-key">ID</span><span class="adm-detail-val" id="dId">—</span></div>
@@ -1352,6 +1407,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
           <select class="adm-input adm-select" id="panelRole" style="flex:1">
             <option value="client">👤 Client</option>
             <option value="expert">🎓 Expert</option>
+            <option value="conseiller">🎧 Conseiller</option>
             <option value="admin">🔐 Administrateur</option>
           </select>
           <button class="adm-btn adm-btn-ghost adm-btn-sm" id="panelSaveRole">Appliquer</button>
@@ -1438,11 +1494,12 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 
 <script type="module">
-import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSession } from './api.js';
+import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSession, getSessionUser } from './api.js';
 window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module
 import { wireLogout, showToast } from './app.js';
 import { mountTurnstile, getTurnstileToken, resetTurnstile } from './turnstile.js';
-import { initRdv, loadRdv } from './admin-rdv.js';   // V89.5 : rendez-vous
+import { initRdv, loadRdv, setRdvWho } from './admin-rdv.js';   // V89.5 : rendez-vous
+import { initTeam, loadTeam, loadTeamData, setUsers, expertsOfClient, renderClientExperts } from './admin-team.js';   // V89.6 : profils
 
 wireLogout();
 const el = (id) => document.getElementById(id);
@@ -1520,8 +1577,8 @@ async function loadUsers() {
 }
 
 function updateKpis() {
-  el('userCount').textContent = usersCache.length;
-  const risk = usersCache.filter(u => u.wallet?.status !== 'active' && (!u.wallet?.trial_expires_at || new Date(u.wallet.trial_expires_at) < new Date()));
+  el('userCount').textContent = usersCache.filter(u => (u.role || 'client') === 'client').length;
+  const risk = usersCache.filter(u => (u.role || 'client') === 'client' && u.wallet?.status !== 'active' && (!u.wallet?.trial_expires_at || new Date(u.wallet.trial_expires_at) < new Date()));
   el('riskCount').textContent = risk.length;
   el('sideRiskCount').textContent = risk.length;
   const sent = usersCache.filter(u => u.satisfaction_mail_sent_at).length;
@@ -1542,6 +1599,7 @@ function filterUsers() {
   const sp = el('filterSpace')?.value || '';
   const st = el('filterStatus')?.value || '';
   let filtered = usersCache.filter(u => {
+    if ((u.role || 'client') !== 'client') return false;   // V89.6 : l'équipe est gérée dans ses propres pages
     const txt = (u.email+' '+(u.full_name||'')+' '+(u.organization||'')).toLowerCase();
     if (q && !txt.includes(q)) return false;
     if (sp && u.account_space !== sp) return false;
@@ -1553,8 +1611,11 @@ function filterUsers() {
     }
     return true;
   });
+  lastFiltered = filtered;
   renderTable(filtered);
 }
+var lastFiltered = null;
+function currentFiltered() { return lastFiltered || usersCache.filter(u => (u.role || 'client') === 'client'); }
 
 window.filterUsers = filterUsers;
 
@@ -1575,6 +1636,7 @@ function renderTable(users) {
           <div>
             <div style="font-weight:600;font-size:13px">${esc(u.full_name||'—')}</div>
             <div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div>
+            ${(() => { const ex = expertsOfClient(u.id); return ex.length ? `<div class="tm-mini">🎓 ${ex.map(x => esc(x.full_name || x.email)).join(', ')}</div>` : (teamLoaded ? '<div class="tm-mini tm-mini-warn">Sans expert</div>' : ''); })()}
           </div>
         </div>
       </td>
@@ -1602,7 +1664,9 @@ function openPanel(id) {
   const w = u.wallet || {};
   el('dId').textContent = u.id?.substring(0,8)+'…';
   el('dSpace').textContent = u.account_space === 'private' ? '🔒 Privé' : '🏛️ Public';
-  el('dRole').textContent = { client: '👤 Client', expert: '🎓 Expert', admin: '🔐 Admin' }[u.role||'client'] || u.role;
+  el('dRole').textContent = { client: '👤 Client', expert: '🎓 Expert', conseiller: '🎧 Conseiller', admin: '🔐 Admin' }[u.role||'client'] || u.role;
+  { const pe = el('panelExperts');   // V89.6 : experts référents du client
+    if (pe) { const isClient = (u.role || 'client') === 'client'; pe.hidden = !isClient; if (isClient) renderClientExperts(pe, u.id); } }
   el('panelRole').value = u.role || 'client';
   // Afficher le plan — plan_label est la source fiable (w.plan peut être null)
   const _planLabel = w.plan_label || w.plan_code || w.plan || 'Free';
@@ -1659,23 +1723,29 @@ document.querySelectorAll('[data-ptab]').forEach(b => b.onclick = () => switchPt
 
 // Tabs sidebar
 document.querySelectorAll('[data-tab]').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    ['Clients','Relectures','Rdv','Creer','Experts','Satisfaction'].forEach(t => {
-      const el2 = el('tab'+t);
-      if (el2) el2.hidden = true;
-    });
-    const target = btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1);
-    if (el('tab'+target)) el('tab'+target).hidden = false;
-    if (btn.dataset.tab === 'relectures') loadExpert();
-    if (btn.dataset.tab === 'rdv') loadRdv();
-    if (btn.dataset.tab === 'experts') loadExperts();
-    if (btn.dataset.tab === 'satisfaction') renderSatTable();
-  };
+  btn.onclick = () => showTab(btn.dataset.tab);
 });
+// V89.6 : navigation entre onglets (les profils partagent la page #tabTeam)
+function showTab(tab) {
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  ['Clients','Relectures','Rdv','Creer','Team','Satisfaction'].forEach(t => { const e2 = el('tab'+t); if (e2) e2.hidden = true; });
+  const team = { experts: 'expert', conseillers: 'conseiller', admins: 'admin' }[tab];
+  const target = team ? 'Team' : tab.charAt(0).toUpperCase() + tab.slice(1);
+  if (el('tab'+target)) el('tab'+target).hidden = false;
+  if (tab === 'relectures') loadExpert();
+  if (tab === 'rdv') loadRdv();
+  if (team) loadTeam(team, usersCache);
+  if (tab === 'satisfaction') renderSatTable();
+}
+window.showAdminTab = showTab;
 
 initRdv();   // V89.5
+initTeam({   // V89.6
+  reloadUsers: async () => { await loadUsers(); setUsers(usersCache); },
+  showToast: (m, t) => showToast(m, t),
+  openRdvFor: (id) => { showTab('rdv'); setRdvWho(id); },
+  afterAssign: () => { renderTable(currentFiltered()); updateOrphanBadge(); },
+});
 
 // KPI risk click
 el('riskKpi').onclick = () => {
@@ -1806,28 +1876,6 @@ el('panelClearTrialDate').onclick = async function() {
     showToast('Date supprim\u00e9e', 'ok');
   } catch(e) { msg.textContent = 'Erreur: ' + getApiMessage(e); msg.className = 'adm-msg adm-msg-err'; }
   finally { this.disabled = false; }
-};
-
-el('panelSaveRole').onclick = async () => {
-  if (!selectedUser) return;
-  const role = el('panelRole').value;
-  if (role === 'admin' && !confirm('Accorder les droits administrateur ? Cette action est irréversible sans accès direct à la base.')) return;
-  try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, { method:'PUT', body:{ user:{
-      role,
-      email:        selectedUser.email,
-      fullName:     selectedUser.full_name    || null,
-      organization: selectedUser.organization || null,
-      phoneFull:    selectedUser.phone_full   || null,
-      accountSpace: selectedUser.account_space || 'public'
-    } } });
-    showToast('Rôle mis à jour', 'ok');
-    const roleLabel = { client:'Client', expert:'Expert conseiller', admin:'Administrateur' }[role] || role;
-    el('panelMsg').textContent = '✓ Rôle changé : ' + roleLabel + (role==='expert' ? ' — allez dans l\'onglet Experts pour lui assigner des clients' : '');
-    el('panelMsg').className = 'adm-msg ok';
-    await loadUsers();
-    openPanel(selectedUser.id);
-  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
 };
 
 el('panelPromoteStandard').onclick = async () => {
@@ -2198,19 +2246,24 @@ el('closePortfolioBtn').onclick = () => {
 
 el('refreshExpertsBtn').onclick = loadExperts;
 
-// Sauvegarder le rôle depuis le panneau
+// Sauvegarder le profil depuis le panneau (V89.6 : route dédiée, sans toucher aux autres champs)
 el('panelSaveRole').onclick = async () => {
   if (!selectedUser) return;
   const role = el('panelRole').value;
+  const label = { client:'client', expert:'expert', conseiller:'conseiller', admin:'administrateur' }[role] || role;
+  if (!confirm(`Passer ${selectedUser.full_name || selectedUser.email} en ${label} ?`)) return;
   try {
-    await apiFetch(`/admin/users/${selectedUser.id}`, {
-      method: 'PUT',
-      body: { user: { ...selectedUser, role } }
-    });
-    showToast('Rôle mis à jour', 'ok');
-    el('panelMsg').textContent = '✓ Rôle: '+role; el('panelMsg').className = 'adm-msg ok';
+    const r = await apiFetch(`/admin/users/${selectedUser.id}/role`, { method: 'PATCH', body: { role } });
+    showToast('Profil mis à jour', 'ok');
+    const where = { expert: ' — il apparaît maintenant dans la page Experts', conseiller: ' — il apparaît dans la page Conseillers et peut se connecter à l\'onglet Rendez-vous', admin: ' — il apparaît dans la page Administrateurs' }[role] || '';
+    el('panelMsg').textContent = '✓ Profil : ' + label + where + (r.removedAssignments ? ` (${r.removedAssignments} client(s) libéré(s))` : '');
+    el('panelMsg').className = 'adm-msg ok';
     await loadUsers();
-  } catch(e) { el('panelMsg').textContent = getApiMessage(e); el('panelMsg').className = 'adm-msg err'; }
+    openPanel(selectedUser.id);
+  } catch(e) {
+    const m = { last_admin: 'Impossible : c\'est le dernier administrateur.', cannot_demote_self: 'Vous ne pouvez pas retirer vos propres droits.' }[getApiMessage(e)] || getApiMessage(e);
+    el('panelMsg').textContent = m; el('panelMsg').className = 'adm-msg err';
+  }
 };
 
 // Mettre à jour openPanel pour afficher le rôle
@@ -2219,7 +2272,7 @@ window.openPanel = function(id) {
   _origOpenPanel(id);
   const u = usersCache.find(x => x.id === id);
   if (!u) return;
-  const roleMap = { client:'👤 Client', expert:'🎓 Expert', admin:'🔐 Admin' };
+  const roleMap = { client:'👤 Client', expert:'🎓 Expert', conseiller:'🎧 Conseiller', admin:'🔐 Admin' };
   const dRole = el('dRole');
   if (dRole) dRole.textContent = roleMap[u.role||'client'] || u.role || 'client';
   const panelRole = el('panelRole');
@@ -2244,7 +2297,7 @@ el('adminLoginBtn').addEventListener('click', async () => {
     el('adminBar').hidden = false;
     el('adminApp').hidden = false;
     el('adminApp').style.display = 'flex';
-    await loadUsers();
+    await bootApp();
   } catch(e) {
     const code = (typeof getApiMessage === 'function') ? getApiMessage(e) : (e.message || 'error');
     const MSGS = {
@@ -2267,7 +2320,27 @@ if (getToken()) {
   el('adminBar').hidden = false;
   el('adminApp').hidden = false;
   el('adminApp').style.display = 'flex';
-  loadUsers();
+  bootApp();
+}
+
+// V89.6 : démarrage selon le profil (un conseiller ne voit que l'onglet Rendez-vous)
+var teamLoaded = false;
+function updateOrphanBadge() {
+  const b = el('sideOrphanCount'); if (!b) return;
+  const n = (window.__teamData && window.__teamData.clients_without_expert.length) || 0;
+  b.textContent = n; b.hidden = !n;
+}
+async function bootApp() {
+  const me = getSessionUser() || {};
+  if (me.role === 'conseiller') {
+    document.querySelectorAll('[data-admin-only]').forEach(n => { n.hidden = true; n.style.display = 'none'; });
+    const pill = el('adminOnlinePill'); if (pill) pill.textContent = 'Conseiller connecté';
+    showTab('rdv');
+    return;
+  }
+  await loadUsers();
+  setUsers(usersCache);
+  try { window.__teamData = await loadTeamData(); teamLoaded = true; renderTable(currentFiltered()); updateOrphanBadge(); } catch (_) {}
 }
 
 // Navigation mobile hamburger

@@ -2,16 +2,21 @@
 // POPE Online V89.5 — Tableau de bord des rendez-vous (administrateurs)
 // Réunit les demandes de rendez-vous du diagnostic flash et de la fenêtre
 // « Parler à un conseiller » (rappel téléphonique ou visio) :
-//   GET   /admin/appointments              liste (passé récent et à venir)
-//   PATCH /admin/appointments/:kind/:id    statut, conseiller désigné, créneau, notes
-//   GET   /admin/team                      administrateurs et experts (« avec qui »)
+//   GET   /staff/appointments              liste (passé récent et à venir)
+//   PATCH /staff/appointments/:kind/:id    statut, conseiller désigné, créneau, notes
+//   POST  /staff/appointments/auto-assign  répartition des rendez-vous sans conseiller (admin)
+//   GET   /staff/team                      conseillers, experts, administrateurs, avec leur charge
+// V89.6 : accessible aux administrateurs ET aux conseillers (préfixe /staff, hors du
+// routeur /admin réservé aux administrateurs). Un conseiller ne modifie que ses
+// rendez-vous ou ceux qui ne sont attribués à personne, et ne peut se les attribuer
+// qu'à lui-même.
 // À la confirmation, le demandeur peut être prévenu par e-mail ; le conseiller
 // désigné reçoit le rendez-vous avec un fichier d'agenda (.ics).
 // ============================================================================
 import express from 'express';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
-import { requireAdmin } from '../middleware/auth.js';
+import { requireStaff } from '../middleware/auth.js';
 
 const router = express.Router();
 const KINDS = { diag: 'diag_flash_requests', contact: 'contact_requests' };
@@ -61,26 +66,35 @@ const LIST_SQL = `
    order by coalesce(r.slot_at, r.created_at) asc
    limit 500`;
 
-router.get('/admin/appointments', requireAdmin, async (_req, res) => {
+router.get('/staff/appointments', requireStaff, async (req, res) => {
   try {
     const r = await withClient((c) => c.query(LIST_SQL));
-    res.json({ items: r.rows, now: new Date().toISOString() });
+    res.json({ items: r.rows, now: new Date().toISOString(), me: { id: req.user.sub, role: req.user.role } });
   } catch (e) { console.error('[rendez-vous] liste :', e.message); res.status(500).json({ error: 'server_error' }); }
 });
 
-router.get('/admin/team', requireAdmin, async (_req, res) => {
+const TEAM_SQL = `
+  select u.id, u.full_name, u.email, u.role,
+         (select count(*) from diag_flash_requests d where d.assigned_to = u.id and d.status in ('new', 'confirmed', 'contacted') and coalesce(d.slot_at, d.created_at) >= now() - interval '1 hour')::int
+       + (select count(*) from contact_requests c where c.assigned_to = u.id and c.subject in ('rappel', 'visio') and c.status in ('new', 'confirmed', 'contacted') and coalesce(c.slot_at, c.created_at) >= now() - interval '1 hour')::int as upcoming
+    from users u
+   where u.role in ('conseiller', 'expert', 'admin')
+   order by case u.role when 'conseiller' then 0 when 'expert' then 1 else 2 end, u.full_name asc nulls last`;
+
+router.get('/staff/team', requireStaff, async (_req, res) => {
   try {
-    const r = await withClient((c) => c.query(
-      `select id, full_name, email, role from users where role in ('admin', 'expert') order by role asc, full_name asc nulls last`));
+    const r = await withClient((c) => c.query(TEAM_SQL));
     res.json({ team: r.rows });
   } catch (e) { console.error('[rendez-vous] équipe :', e.message); res.status(500).json({ error: 'server_error' }); }
 });
 
-router.patch('/admin/appointments/:kind/:id', requireAdmin, async (req, res) => {
+router.patch('/staff/appointments/:kind/:id', requireStaff, async (req, res) => {
   const table = KINDS[req.params.kind];
   if (!table) return res.status(400).json({ error: 'invalid_kind' });
   if (!UUID.test(req.params.id)) return res.status(400).json({ error: 'invalid_id' });
   const b = req.body || {};
+  const isConseiller = req.user.role === 'conseiller';
+  if (isConseiller && b.assigned_to !== undefined && b.assigned_to !== null && b.assigned_to !== req.user.sub) return res.status(403).json({ error: 'assign_self_only' });
   const sets = []; const vals = [];
   const set = (col, v) => { vals.push(v); sets.push(`${col} = $${vals.length}`); };
   if (b.status !== undefined) { if (!STATUSES.has(String(b.status))) return res.status(400).json({ error: 'invalid_status' }); set('status', String(b.status)); }
@@ -101,8 +115,13 @@ router.patch('/admin/appointments/:kind/:id', requireAdmin, async (req, res) => 
   let row;
   try {
     row = await withClient(async (c) => {
+      if (isConseiller) {
+        const cur = await c.query(`select assigned_to from ${table} where id = $1`, [req.params.id]);
+        const owner = cur.rows[0]?.assigned_to;
+        if (cur.rowCount && owner && owner !== req.user.sub) { const e = new Error('not_your_appointment'); e.code403 = true; throw e; }
+      }
       if (b.assigned_to) {
-        const u = await c.query(`select 1 from users where id = $1 and role in ('admin', 'expert')`, [b.assigned_to]);
+        const u = await c.query(`select 1 from users where id = $1 and role in ('conseiller', 'admin', 'expert')`, [b.assigned_to]);
         if (!u.rowCount) { const e = new Error('invalid_assignee'); e.code400 = true; throw e; }
       }
       vals.push(req.params.id);
@@ -113,6 +132,7 @@ router.patch('/admin/appointments/:kind/:id', requireAdmin, async (req, res) => 
     });
   } catch (e) {
     if (e.code400) return res.status(400).json({ error: e.message });
+    if (e.code403) return res.status(403).json({ error: e.message });
     console.error('[rendez-vous] mise à jour :', e.message); return res.status(500).json({ error: 'server_error' });
   }
   if (!row) return res.status(404).json({ error: 'not_found' });
@@ -154,6 +174,31 @@ router.patch('/admin/appointments/:kind/:id', requireAdmin, async (req, res) => 
     } catch (e) { console.error('[rendez-vous] e-mail conseiller :', e.message); }
   }
   res.json({ ok: true, item: row, mails });
+});
+
+// Répartition automatique : chaque rendez-vous à venir sans conseiller va au
+// conseiller le moins chargé (à égalité, ordre alphabétique). Administrateurs seulement.
+router.post('/staff/appointments/auto-assign', requireStaff, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
+  try {
+    const out = await withClient(async (c) => {
+      const team = (await c.query(TEAM_SQL)).rows.filter((m) => m.role === 'conseiller');
+      if (!team.length) return { assigned: 0, reason: 'no_conseiller' };
+      const open = (await c.query(`select * from (${LIST_SQL.replace('limit 500', '')}) x
+         where x.assigned_to is null and x.status in ('new', 'confirmed') and coalesce(x.slot_at, x.created_at) >= now() - interval '1 hour'
+         order by coalesce(x.slot_at, x.created_at) asc`)).rows;
+      const load = new Map(team.map((m) => [m.id, m.upcoming]));
+      const done = [];
+      for (const it of open) {
+        const pick = team.slice().sort((a, b) => (load.get(a.id) - load.get(b.id)) || String(a.full_name || '').localeCompare(String(b.full_name || '')))[0];
+        await c.query(`update ${KINDS[it.kind]} set assigned_to = $1, updated_at = now() where id = $2 and assigned_to is null`, [pick.id, it.id]);
+        load.set(pick.id, load.get(pick.id) + 1);
+        done.push({ id: it.id, to: pick.full_name || pick.email });
+      }
+      return { assigned: done.length, details: done };
+    });
+    res.json(out);
+  } catch (e) { console.error('[rendez-vous] répartition :', e.message); res.status(500).json({ error: 'server_error' }); }
 });
 
 export default router;

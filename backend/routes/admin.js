@@ -172,7 +172,7 @@ router.put('/users/:id', async (req, res) => {
       await client.query('begin');
       if (req.body.user) {
         const u = req.body.user;
-        const allowedRoles = ['client', 'expert', 'admin'];
+        const allowedRoles = ['client', 'expert', 'conseiller', 'admin'];
         const role = allowedRoles.includes(u.role) ? u.role : null;
         if (role) {
           await client.query(

@@ -508,7 +508,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
       if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
       const user = u.rows[0];
       const ok = await bcrypt.compare(password, user.password_hash);
-      if (!ok || user.role !== 'admin') return res.status(401).json({ error: 'invalid_credentials' });
+      if (!ok || !['admin', 'conseiller'].includes(user.role)) return res.status(401).json({ error: 'invalid_credentials' });   // V89.6 : conseillers admis (onglet Rendez-vous)
 
       await client.query(`insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
          values($1,$2,$3,$4)

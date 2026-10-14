@@ -78,6 +78,7 @@ async function main() {
   await applyPatch('schema_patch_v92.sql', 'Patch V92 applied (pièces jointes des demandes expert, demandes sur mesure)');
   await applyPatch('schema_patch_v93.sql', 'Patch V93 applied (diagnostic flash : demandes de rappel)');
   await applyPatch('schema_patch_v94.sql', 'Patch V94 applied (tableau de bord des rendez-vous)');
+  await applyPatch('schema_patch_v95.sql', 'Patch V95 applied (gestion des profils)');
   await seedAdmin();
   await pool.end();
 }
