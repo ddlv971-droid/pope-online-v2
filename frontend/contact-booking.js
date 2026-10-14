@@ -109,10 +109,12 @@ function init() {
   const setStep = (n) => steps.forEach((li, i) => li.classList.toggle('is-on', i <= n));
 
   // Indications « requis » sur l'e-mail et le téléphone
+  // Mention « requis » ajoutée au texte du libellé (garde les champs alignés)
   const req = (name, txt) => {
     const lab = form.querySelector(`[name=${name}]`)?.closest('label'); if (!lab) return null;
-    const sp = document.createElement('span'); sp.className = 'ct-req'; sp.textContent = txt; sp.hidden = true;
-    lab.insertBefore(sp, lab.querySelector('input')); return sp;
+    const node = [...lab.childNodes].find((n) => n.nodeType === 3 && n.nodeValue.trim()); if (!node) return null;
+    const base = node.nodeValue.trim();
+    return { set hidden(h) { node.nodeValue = h ? base : base + txt; } };
   };
   const reqPhone = req('phone', ' (requis pour un appel)');
   const reqEmail = req('email', ' (requis)');

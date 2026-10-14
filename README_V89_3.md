@@ -36,7 +36,7 @@ Technique : `booking.js` + `booking.css` (composant commun), `contact-booking.js
 
 Le formulaire de contact envoyait lui aussi un accusé de réception à l'adresse saisie,
 sans contrôle. Il applique désormais les mêmes règles que le diagnostic, regroupées
-dans `backend/services/antiabuse.js` : délai minimal de saisie, Turnstile si
+dans `backend/services/formGuard.js` : délai minimal de saisie, Turnstile si
 configuré (jeton invalide = refus), téléphone contrôlé, liens interdits dans le nom et
 la collectivité, e-mail requis pour une visio, dédoublonnage 15 min, accusé de
 réception au plus 3 fois par adresse en 24 h et 40 fois par heure au total.
@@ -53,7 +53,7 @@ Une demande non vérifiée est toujours transmise à l'équipe, sans accusé de 
 | `frontend/index.html`, `about.html`, `deontologie.html`, `elus.html`, `pricing.html` | nouveau script, texte de la fenêtre |
 | `frontend/public/slot-picker.js` | supprimé |
 | `frontend/public/site-config.js` | version `V89.3` |
-| `backend/services/antiabuse.js` | nouveau |
+| `backend/services/formGuard.js` | nouveau |
 | `backend/routes/contact.js`, `backend/routes/diagnostic.js` | anti-abus commun |
 | `backend/server.js` | `/health` → `v89.3` |
 

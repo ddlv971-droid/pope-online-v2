@@ -8,7 +8,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
-import { humanCheck, takeAckBudget, badPhone, URLISH } from '../services/antiabuse.js';
+import { humanCheck, takeAckBudget, badPhone, URLISH } from '../services/formGuard.js';
 
 const router = express.Router();
 // V89.3 : anti-abus aligné sur le diagnostic flash (délai de saisie, Turnstile si

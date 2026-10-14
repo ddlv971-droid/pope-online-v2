@@ -11,12 +11,12 @@ import rateLimit from 'express-rate-limit';
 import { withClient } from '../db/index.js';
 import { sendMail } from '../services/mailer.js';
 import { optionalAuth, requireAdmin } from '../middleware/auth.js';
-import { humanCheck, takeAckBudget, badPhone, URLISH } from '../services/antiabuse.js';
+import { humanCheck, takeAckBudget, badPhone, URLISH } from '../services/formGuard.js';
 
 const router = express.Router();
 // ─── Anti-abus (V89.2) ───────────────────────────────────────────────────────
 // 1. 8 demandes par heure et par adresse IP ; 2. pot de miel ; 3. délai minimal
-// de saisie et Cloudflare Turnstile (services/antiabuse.js) ; 4. dédoublonnage
+// de saisie et Cloudflare Turnstile (services/formGuard.js) ; 4. dédoublonnage
 // 15 min ; 5. accusé de réception à l'élu au plus 2 fois par adresse en 24 h et
 // 40 fois par heure au total : le formulaire ne peut pas servir à envoyer des
 // e-mails à des tiers.
