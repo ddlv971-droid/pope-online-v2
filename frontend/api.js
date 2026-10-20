@@ -50,6 +50,7 @@ const FR_MESSAGES = {
   public_dossier_limit_reached: "Le quota gratuit des dossiers publics est atteint.",
   private_dossier_limit_reached: "Le quota gratuit des dossiers privés est atteint.",
   sensitive_data: "Des données directement sensibles ont été détectées. Merci de les anonymiser avant génération.",
+  ai_unavailable: "L'assistant de rédaction est momentanément indisponible. Votre quota n'a pas été débité. Réessayez dans quelques minutes ou sollicitez un expert (réponse sous 24 h).",
   ai_error: "La génération IA n'a pas pu aboutir.",
   cors_blocked: "Accès refusé depuis cette origine.",
   server_error: "Une erreur technique est survenue.",
