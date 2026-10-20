@@ -975,6 +975,51 @@ async function refreshWallet() {
   }
 }
 
+// L'IA est OPTIONNELLE : si elle échoue, le client n'est jamais bloqué.
+// On conserve sa saisie, on rouvre le bouton et on affiche la suite (expert / réessayer).
+function showAiFallback(message, payload) {
+  setOutput(message);
+  try {
+    var rEmpty = document.getElementById('resultEmpty');
+    var rCard = document.getElementById('resultCard');
+    var rNext = document.getElementById('nextActions');
+    if (rEmpty) rEmpty.style.display = 'none';
+    if (rCard) { rCard.removeAttribute('hidden'); rCard.classList.add('show'); }
+    if (rNext) { rNext.removeAttribute('hidden'); rNext.classList.add('show'); }
+    if (typeof window.setWorkflowStep === 'function') window.setWorkflowStep(3);
+    // Dossier transmissible à l'expert même sans texte généré
+    if (payload) rememberLastGeneration({ usecaseLabel: currentUsecaseLabel(), prompt: { context: payload.context, objective: payload.objective, facts: payload.facts }, result: '', dossierAnalysis: null });
+    persistFormState();
+    // V90 : pré-remplit le formulaire expert avec le besoin saisi (qualification possible sans IA)
+    if (payload) {
+      try {
+        const dk = isPrivateSpace() ? 'pope_expert_form_private' : 'pope_expert_form_public';
+        const existing = JSON.parse(sessionStorage.getItem(dk) || 'null');
+        if (!existing || (!existing.subject && !existing.content)) {
+          sessionStorage.setItem(dk, JSON.stringify({
+            subject: String(payload.objective || '').slice(0, 180),
+            context: payload.context || '',
+            content: payload.facts || payload.objective || '',
+            archiveId: ''
+          }));
+        }
+      } catch (e3) {}
+      // Lien direct vers l'expert, toujours disponible
+      try {
+        const out = document.getElementById('output');
+        if (out && !document.getElementById('aiFallbackExpertLink')) {
+          const a = document.createElement('a');
+          a.id = 'aiFallbackExpertLink';
+          a.href = isPrivateSpace() ? 'expert-private.html' : 'expert.html';
+          a.textContent = 'Transmettre mon besoin à un expert POPE →';
+          a.style.cssText = 'display:inline-block;margin-top:14px;padding:11px 18px;border-radius:10px;background:#0c5ea8;color:#fff;font-weight:700;text-decoration:none';
+          out.insertAdjacentElement('afterend', a);
+        }
+      } catch (e4) {}
+    }
+  } catch (err) { console.warn(err); }
+}
+
 async function callAI() {
   const payload = buildPayload();
   const raw = `${payload.context}\n${payload.objective}\n${payload.facts}`;
@@ -992,6 +1037,7 @@ async function callAI() {
     const data = await apiFetch('/ai/generate', { method: 'POST', body: payload });
     const resultText = data.text || '(vide)';
     setOutput(resultText);
+    try { const fl = document.getElementById('aiFallbackExpertLink'); if (fl) fl.remove(); } catch (e) {}
     // V37: révéler la zone résultat
     var rEmpty = document.getElementById('resultEmpty');
     var rCard  = document.getElementById('resultCard');
@@ -1039,7 +1085,13 @@ async function callAI() {
       showToast('Données sensibles détectées', 'warn');
       return;
     }
-    setOutput('Erreur : ' + getApiMessage(e));
+    if (e.status === 503 && e.data?.error === 'ai_unavailable') {
+      showAiFallback("⏳ L'assistant de rédaction est momentanément indisponible. Votre saisie est conservée et votre quota n'a pas été débité. Vous pouvez réessayer dans quelques minutes ou transmettre directement votre dossier à un expert POPE (réponse sous 24 h).", payload);
+      setDossierIntel(null);
+      showToast('Assistant momentanément indisponible', 'warn');
+      return;
+    }
+    showAiFallback('La génération automatique n\'a pas pu aboutir (' + getApiMessage(e) + '). Votre saisie est conservée : réessayez ou transmettez votre dossier à un expert POPE (réponse sous 24 h).', payload);
     setDossierIntel(null);
     showToast('Erreur de génération', 'err');
   } finally {

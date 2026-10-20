@@ -100,38 +100,85 @@ ${facts || '(non fournis)'}
 `.trim();
 }
 
+const MISTRAL_TIMEOUT_MS = Number(process.env.MISTRAL_TIMEOUT_MS || 60000);
+const MISTRAL_MAX_TOKENS = Number(process.env.MISTRAL_MAX_TOKENS || 2500);
+const MISTRAL_MAX_PROMPT_CHARS = Number(process.env.MISTRAL_MAX_PROMPT_CHARS || 40000);
+
+// Disjoncteur : si Mistral répond « quota / clé / facturation », on cesse d'appeler
+// l'API pendant quelques minutes (évite de marteler un service indisponible).
+let breakerUntil = 0;
+const BREAKER_MS = 5 * 60 * 1000;
+
+function unavailable(reason, status, detail){
+  const err = new Error(detail || reason);
+  err.code = 'ai_unavailable';
+  err.reason = reason;
+  err.status = status;
+  return err;
+}
+
 export async function callMistral({ system, user }){
   const key = process.env.MISTRAL_API_KEY;
   const model = process.env.MISTRAL_MODEL || 'mistral-small-latest';
-  if(!key) throw new Error('MISTRAL_API_KEY manquant');
+  if(!key) throw unavailable('missing_key', 503, 'MISTRAL_API_KEY manquant');
 
   if (rejectIfSensitive(system + '\n' + user)) {
     throw new Error('Données sensibles détectées. Merci d\'anonymiser.');
   }
 
-  const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user }
-      ],
-      temperature: 0.3
-    })
-  });
+  if (Date.now() < breakerUntil) throw unavailable('circuit_open', 503, 'Mistral indisponible (disjoncteur)');
 
-  const txt = await r.text();
+  // Plafond de taille du prompt (le contexte des pièces jointes est tronqué en dernier recours)
+  if (user.length > MISTRAL_MAX_PROMPT_CHARS) {
+    user = user.slice(0, MISTRAL_MAX_PROMPT_CHARS) + '\n[… contenu tronqué]';
+  }
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), MISTRAL_TIMEOUT_MS);
+  let r, txt;
+  try {
+    r = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user }
+        ],
+        temperature: 0.3,
+        max_tokens: MISTRAL_MAX_TOKENS
+      })
+    });
+    txt = await r.text();
+  } catch (e) {
+    if (e?.name === 'AbortError') throw unavailable('timeout', 504, 'Mistral timeout');
+    throw unavailable('network', 503, String(e?.message || e));
+  } finally {
+    clearTimeout(timer);
+  }
+
   if(!r.ok) {
+    console.error('[mistral]', r.status, String(txt).slice(0, 300));
+    if ([401, 402, 403].includes(r.status)) {
+      breakerUntil = Date.now() + BREAKER_MS;
+      throw unavailable('quota_or_auth', r.status, 'Mistral refuse la requête (quota/clé)');
+    }
+    if (r.status === 429) {
+      breakerUntil = Date.now() + 60 * 1000;
+      throw unavailable('rate_limited', 429, 'Mistral limite le débit');
+    }
+    if (r.status >= 500) throw unavailable('upstream', r.status, 'Mistral erreur serveur');
     const err = new Error(txt || 'Mistral error');
     err.status = r.status;
     throw err;
   }
 
   const data = JSON.parse(txt);
+  if (data.usage) console.log('[mistral] tokens', JSON.stringify({ model, ...data.usage }));
   return data.choices?.[0]?.message?.content || '';
 }

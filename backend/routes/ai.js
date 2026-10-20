@@ -26,7 +26,8 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
     const uploadedFileIds = Array.isArray(payload.uploaded_file_ids) ? payload.uploaded_file_ids.slice(0, 8) : [];
     const fileBundle = await withClient(async (client) => getUserVaultFiles(client, userId, uploadedFileIds));
     const dossierAnalysis = buildDossierAnalysis(fileBundle);
-    const fileContext = buildAiFileContext(fileBundle);
+    // Plafond global du contexte issu des pièces jointes (évite des prompts de plusieurs dizaines de milliers de tokens)
+    const fileContext = String(buildAiFileContext(fileBundle) || '').slice(0, 24000);
     payload.facts = [payload.facts, fileContext].filter(Boolean).join('\n\n');
 
     const combined = `${payload.context}\n${payload.objective}\n${payload.facts}`;
@@ -76,28 +77,42 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
         await client.query('update wallets set tickets_ai = tickets_ai - 1, updated_at=now() where user_id=$1', [userId]);
       }
       await client.query('commit');
+      return { ok: true, charged: !unlimited };
+    });
 
-      const accountSpace = req.user.accountSpace || 'public';
-      const system = buildSystemPrompt(accountSpace);
-      const user = buildUserPrompt({ ...payload, accountSpace });
-      const text = await callMistral({ system, user });
+    if (!result.ok) return res.status(result.status).json(result.body);
 
+    // Appel Mistral HORS transaction / hors connexion DB, avec remboursement en cas d'échec.
+    const accountSpace = req.user.accountSpace || 'public';
+    const system = buildSystemPrompt(accountSpace);
+    const user = buildUserPrompt({ ...payload, accountSpace });
+    let text;
+    try {
+      text = await callMistral({ system, user });
+    } catch (err) {
+      if (result.charged) {
+        try {
+          await withClient((c) => c.query('update wallets set tickets_ai = tickets_ai + 1, updated_at=now() where user_id=$1', [userId]));
+        } catch (e2) { console.error('refund_failed', e2); }
+      }
+      throw err;
+    }
+
+    const w2 = await withClient(async (client) => {
       await client.query(
         `insert into usage_logs(user_id, kind, meta)
          values($1,$2,$3::jsonb)`,
         [userId, 'ai_generate', JSON.stringify({ usecase: payload.usecase, mode: payload.mode, len: combined.length, uploadedFiles: uploadedFileIds.length })]
       );
-
-      const w2 = await client.query('select * from wallets where user_id=$1', [userId]);
-      return { ok: true, text, wallet: w2.rows[0], dossierAnalysis };
+      return client.query('select * from wallets where user_id=$1', [userId]);
     });
-
-    if (!result.ok) return res.status(result.status).json(result.body);
-    return res.json({ text: result.text, wallet: result.wallet, dossierAnalysis: result.dossierAnalysis || null });
+    return res.json({ text, wallet: w2.rows[0], dossierAnalysis: dossierAnalysis || null });
   } catch (e) {
     console.error(e);
-    const status = e?.status === 401 ? 502 : 500;
-    return res.status(status).json({ error: 'ai_error', detail: String(e?.message || e) });
+    if (e?.code === 'ai_unavailable') {
+      return res.status(503).json({ error: 'ai_unavailable', reason: e.reason });
+    }
+    return res.status(500).json({ error: 'ai_error' });
   }
 });
 
