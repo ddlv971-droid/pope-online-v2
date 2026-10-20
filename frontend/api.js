@@ -90,6 +90,7 @@ export function hasSessionMarker() {
 }
 
 export function setSession(user = null, token = '') {
+  try { window.PopeDataGuard?.check(user); } catch {}
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
   if (token) {
@@ -108,6 +109,7 @@ export function getSessionUser() {
 }
 
 export function clearSession() {
+  try { window.PopeDataGuard?.onLogout(); } catch {}
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');

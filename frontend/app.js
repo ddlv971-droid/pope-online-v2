@@ -29,6 +29,7 @@ export async function apiFetch(path, { method='GET', body, auth=true } = {}) {
 }
 
 export function setSession(user = null, token = '') {
+  try { window.PopeDataGuard?.check(user); } catch {}
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
   if (token) { sessionStorage.setItem(TOKEN_KEY, String(token)); localStorage.setItem(TOKEN_KEY, String(token)); }
@@ -41,6 +42,7 @@ export function getToken(){
   return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || (localStorage.getItem(SESSION_KEY) === '1' ? '' : '');
 }
 export function clearToken(){
+  try { window.PopeDataGuard?.onLogout(); } catch {}
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');
