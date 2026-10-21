@@ -764,7 +764,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
               </div>
               <div class="adm-form-group">
                 <label class="adm-label">Mot de passe temporaire</label>
-                <input class="adm-input" type="password" id="createPassword" placeholder="Min. 8 caractères"/>
+                <input class="adm-input" type="password" id="createPassword" placeholder="Min. 10 caractères"/>
               </div>
               <div class="adm-form-group">
                 <label class="adm-label">Espace</label>
@@ -1493,6 +1493,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 </div>
 
 
+<script src="data-guard.js"></script>
 <script type="module">
 import { apiFetch, apiDownload, getToken, getApiMessage, setSession, clearSession, getSessionUser } from './api.js';
 window.apiFetch = apiFetch; // v56-fix: expose pour scripts non-module

@@ -9,7 +9,7 @@ export function randomToken(size = 32) {
 }
 
 export function ipToHash(req) {
-  const raw = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  const raw = (req.ip || req.socket.remoteAddress || '').toString();
   return sha256Hex(raw);
 }
 

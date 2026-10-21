@@ -6,6 +6,7 @@ import { withClient } from '../db/index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { sendMail } from '../services/mailer.js';
 import { normalizeEmail, canonicalizeEmailForAbuse, fpHash, computeSuspicion, hasPriorFreeTrialOnFingerprint } from '../services/antiAbuse.js';
+import { isLocked, recordFailure, recordSuccess, dummyCompare } from '../services/loginGuard.js';
 import { sha256Hex, randomToken, ipToHash, uaToHash, nowPlusHours, verifyTurnstileToken, setSessionCookie, clearSessionCookie } from '../services/security.js';
 import { resolveFrontendBaseUrl } from '../services/urls.js';
 import { isPrivateSpaceEnabled } from '../services/features.js';
@@ -26,7 +27,7 @@ function signJwt(user) {
   return jwt.sign(
     { sub: user.id, email: user.email, role: user.role || 'client', accountSpace: user.account_space || 'public', sv: Number(user.session_version || 1) },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '12h' }
+    { algorithm: 'HS256', expiresIn: process.env.JWT_EXPIRES_IN || '12h' }
   );
 }
 
@@ -115,7 +116,7 @@ function resolveFreeTrialEntitlements(accountSpace = 'public') {
 
 async function requireTurnstile(req, res) {
   try {
-    const remoteIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+    const remoteIp = (req.ip || req.socket.remoteAddress || '').toString();
     const outcome = await verifyTurnstileToken({ token: req.body?.turnstileToken, ip: remoteIp });
     if (outcome.success) return true;
     // V89.2 : TURNSTILE_ENFORCE=true refuse les inscriptions sans jeton (robots qui
@@ -152,7 +153,7 @@ router.post('/signup', async (req, res) => {
   const accountSpace = String(req.body?.accountSpace || 'public').trim().toLowerCase();
 
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'invalid_email' });
-  if (password.length < 8) return res.status(400).json({ error: 'password_too_short' });
+  if (password.length < 10) return res.status(400).json({ error: 'password_too_short' });
   if (!fp) return res.status(400).json({ error: 'missing_fp' });
   if (!['public','private'].includes(accountSpace)) return res.status(400).json({ error: 'invalid_account_space' });
   // V88 : espace privé en veille (code conservé, nouvelles inscriptions refusées)
@@ -296,6 +297,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
+  if (isLocked(email)) return res.status(429).json({ error: 'too_many_attempts' });
 
   try {
     await withClient(async (client) => {
@@ -306,10 +308,11 @@ router.post('/login', loginLimiter, async (req, res) => {
           where email=$1`,
         [email]
       );
-      if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
+      if (!u.rowCount) { await dummyCompare(password); recordFailure(email); return res.status(401).json({ error: 'invalid_credentials' }); }
       const user = u.rows[0];
       const ok = await bcrypt.compare(password, user.password_hash);
-      if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
+      if (!ok) { recordFailure(email); return res.status(401).json({ error: 'invalid_credentials' }); }
+      recordSuccess(email);
 
       await client.query(
         `insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
@@ -424,7 +427,7 @@ router.post('/reset-password', forgotPasswordLimiter, async (req, res) => {
   const password = String(req.body?.password || '');
 
   if (!token) return res.status(400).json({ error: 'missing_token' });
-  if (password.length < 8) return res.status(400).json({ error: 'password_too_short' });
+  if (password.length < 10) return res.status(400).json({ error: 'password_too_short' });
 
   const token_hash = sha256Hex(token);
 
@@ -498,6 +501,7 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
   let verifyToken = null;
   const ip_hash = ipToHash(req);
   const user_agent_hash = uaToHash(req);
+  if (isLocked(email)) return res.status(429).json({ error: 'too_many_attempts' });
 
   try {
     await withClient(async (client) => {
@@ -505,10 +509,11 @@ router.post('/admin-login', loginLimiter, async (req, res) => {
                 phone_country, phone_number, phone_full, session_version
            from users
           where email=$1`, [email]);
-      if (!u.rowCount) return res.status(401).json({ error: 'invalid_credentials' });
+      if (!u.rowCount) { await dummyCompare(password); recordFailure(email); return res.status(401).json({ error: 'invalid_credentials' }); }
       const user = u.rows[0];
       const ok = await bcrypt.compare(password, user.password_hash);
-      if (!ok || !['admin', 'conseiller'].includes(user.role)) return res.status(401).json({ error: 'invalid_credentials' });   // V89.6 : conseillers admis (onglet Rendez-vous)
+      if (!ok || !['admin', 'conseiller'].includes(user.role)) { recordFailure(email); return res.status(401).json({ error: 'invalid_credentials' }); }
+      recordSuccess(email);   // V89.6 : conseillers admis (onglet Rendez-vous)
 
       await client.query(`insert into devices(user_id, fp_hash, ip_hash, user_agent_hash)
          values($1,$2,$3,$4)
@@ -691,7 +696,7 @@ router.put('/me', requireAuth, async (req, res) => {
 router.put('/change-password', requireAuth, async (req, res) => {
   const currentPassword = String(req.body?.currentPassword || '');
   const newPassword = String(req.body?.newPassword || '');
-  if (newPassword.length < 8) return res.status(400).json({ error: 'password_too_short' });
+  if (newPassword.length < 10) return res.status(400).json({ error: 'password_too_short' });
   try {
     await withClient(async (client) => {
       const u = await client.query('select id, password_hash, must_change_password from users where id=$1', [req.user.sub]);

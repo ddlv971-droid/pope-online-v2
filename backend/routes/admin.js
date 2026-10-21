@@ -30,7 +30,7 @@ async function ensureExpertAssignmentSchema() {
 }
 
 function requestIp(req) {
-  return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  return (req.ip || req.socket.remoteAddress || '').toString();
 }
 
 function logAdminEvent(req, action, details = {}) {
@@ -71,7 +71,7 @@ function buildSatisfactionLink(user) {
 }
 
 function satisfactionMailHtml(user, formUrl) {
-  const displayName = user.full_name ? ` ${user.full_name}` : '';
+  const displayName = user.full_name ? ` ${String(user.full_name).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}` : '';
   return `<!doctype html>
 <html lang="fr">
   <body style="margin:0;padding:0;background:#f4f8fb;font-family:Arial,sans-serif;color:#0b2440;">

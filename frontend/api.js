@@ -21,7 +21,7 @@ const FR_MESSAGES = {
   invalid_credentials: "Identifiants invalides.",
   invalid_email: "Adresse e-mail invalide.",
   missing_password: "Le mot de passe manquant.",
-  password_too_short: "Le mot de passe doit contenir au moins 8 caractères.",
+  password_too_short: "Le mot de passe doit contenir au moins 10 caractères.",
   missing_fp: "Informations techniques manquantes. Merci de réessayer.",
   missing_turnstile_token: "Validation anti-bot manquante.",
   turnstile_not_configured: "La protection anti-bot n'est pas configurée sur le serveur.",
@@ -51,6 +51,9 @@ const FR_MESSAGES = {
   private_dossier_limit_reached: "Le quota gratuit des dossiers privés est atteint.",
   sensitive_data: "Des données directement sensibles ont été détectées. Merci de les anonymiser avant génération.",
   ai_unavailable: "L'assistant de rédaction est momentanément indisponible. Votre quota n'a pas été débité. Réessayez dans quelques minutes ou sollicitez un expert (réponse sous 24 h).",
+  ai_daily_limit: "Vous avez atteint la limite quotidienne de générations. Réessayez demain ou transmettez votre besoin à un expert.",
+  ai_busy: "Une génération est déjà en cours pour votre compte. Patientez quelques instants.",
+  too_many_requests: "Trop de demandes en peu de temps. Patientez une minute puis réessayez.",
   ai_error: "La génération IA n'a pas pu aboutir.",
   cors_blocked: "Accès refusé depuis cette origine.",
   server_error: "Une erreur technique est survenue.",
@@ -90,6 +93,7 @@ export function hasSessionMarker() {
 }
 
 export function setSession(user = null, token = '') {
+  try { window.PopeDataGuard?.check(user); } catch {}
   localStorage.setItem(SESSION_KEY, '1');
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
   if (token) {
@@ -108,6 +112,7 @@ export function getSessionUser() {
 }
 
 export function clearSession() {
+  try { window.PopeDataGuard?.onLogout(); } catch {}
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem('pope_token');

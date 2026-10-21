@@ -27,6 +27,10 @@ const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_BASE_URL', ...(isPr
 const missingEnv = requiredEnv.filter((key) => !String(process.env[key] || '').trim());
 if (missingEnv.length) { console.error(`Missing env: ${missingEnv.join(', ')}`); process.exit(1); }
 
+if (isProd && String(process.env.JWT_SECRET || '').length < 32) {
+  console.error('JWT_SECRET trop court (32 caractères minimum en production).'); process.exit(1);
+}
+
 const app = express();
 app.set('trust proxy', 1);
 
@@ -49,7 +53,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/billing/webhook', express.raw({ type: 'application/json' }));
-app.use(express.json({ limit: '15mb' }));
+// Fichiers en base64 : uniquement /vault et /expert (pièces jointes). Partout ailleurs : 1 Mo.
+app.use(['/vault', '/expert'], express.json({ limit: '15mb' }));
+app.use(express.json({ limit: '1mb' }));
 
 app.use((req, res, next) => {
   const originalJson = res.json.bind(res);
@@ -77,6 +83,17 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
+// V90.3 : anti-CSRF. Une requête qui MODIFIE des données et qui annonce une origine
+// (tout navigateur le fait en cross-site) doit venir d'une origine autorisée.
+app.use((req, res, next) => {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  if (req.path === '/billing/webhook') return next();   // appelé par Stripe, protégé par signature
+  const origin = req.headers.origin;
+  if (origin && origin !== 'null' && !allowedOrigins.includes(origin)) return res.status(403).json({ error: 'cors_blocked' });
+  if (origin === 'null') return res.status(403).json({ error: 'cors_blocked' });
+  return next();
+});
+
 app.use(rateLimit({ windowMs: 60*1000, max: 90, standardHeaders: true, legacyHeaders: false, skip: r => r.method === 'OPTIONS' }));
 
 // Rate limit strict sur les routes d'authentification
@@ -99,7 +116,7 @@ const aiVaultLimiter = rateLimit({
 app.use('/ai',    aiVaultLimiter);
 app.use('/vault', aiVaultLimiter);
 
-app.get('/health', (_req, res) => res.json({ ok: true, v: 'v90' }));
+app.get('/health', (_req, res) => res.json({ ok: true, v: 'v90.3' }));
 
 app.use('/auth',    authRoutes);
 app.use('/ai',      aiRoutes);
@@ -118,6 +135,7 @@ app.use('/',        teamRoutes);        // V89.6 : GET /admin/team-overview, PAT
 
 app.use((err, _req, res, _next) => {
   if (String(err?.message || '').includes('CORS')) return res.status(403).json({ error: 'cors_blocked' });
+  if (err?.type === 'entity.too.large') return res.status(413).json({ error: 'payload_too_large' });
   console.error(err);
   res.status(500).json({ error: 'server_error' });
 });
@@ -157,7 +175,7 @@ async function runTrialExpiryJob() {
     for (const row of expired.rows) {
       try {
         await pool.query(`UPDATE wallets SET status='trial_expired',updated_at=NOW() WHERE user_id=$1 AND status='trial_active'`, [row.id]);
-        const firstName = (row.full_name||'').split(' ')[0]||'Utilisateur';
+        const firstName = String((row.full_name||'').split(' ')[0]||'Utilisateur').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         await sendMail({
           to: row.email,
           subject: `POPE Online — Votre période d'essai est terminée`,
