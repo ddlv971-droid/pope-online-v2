@@ -15,8 +15,34 @@ const limiter = rateLimit({
   legacyHeaders: false
 });
 
-router.post('/generate', requireAuth, limiter, async (req, res) => {
+// ── V90.2 : garde-fous de dépense ─────────────────────────────────────────────
+const MAX_PER_USER_MIN = Number(process.env.AI_MAX_PER_USER_MIN || 5);
+const MAX_PER_USER_DAY = Number(process.env.AI_MAX_PER_USER_DAY || 40);
+const MAX_GLOBAL_DAY   = Number(process.env.AI_MAX_GLOBAL_DAY || 500);
+const MAX_CONCURRENT   = Number(process.env.AI_MAX_CONCURRENT || 6);
+
+// Limite par UTILISATEUR (et non par IP) : keyGenerator sur l'identifiant du compte.
+const userLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: MAX_PER_USER_MIN,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `u:${req.user?.sub || 'anon'}`,
+  validate: false,
+  message: { error: 'too_many_requests' }
+});
+
+const inFlightUsers = new Set();   // une seule génération à la fois par compte
+let inFlightTotal = 0;             // et un nombre borné au global
+
+router.post('/generate', requireAuth, userLimiter, limiter, async (req, res) => {
+  const lockId = String(req.user?.sub || '');
+  let locked = false;
   try {
+    if (inFlightUsers.has(lockId)) return res.status(429).json({ error: 'ai_busy' });
+    if (inFlightTotal >= MAX_CONCURRENT) return res.status(503).json({ error: 'ai_unavailable', reason: 'busy' });
+    inFlightUsers.add(lockId); inFlightTotal++; locked = true;
+
     const payload = req.body || {};
     payload.context = clamp(payload.context, 6000);
     payload.facts = clamp(payload.facts, 6000);
@@ -34,6 +60,14 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
     if (rejectIfSensitive(combined)) {
       return res.status(400).json({ error: 'sensitive_data' });
     }
+
+    // Plafonds glissants sur 24 h (comptés sur les générations réussies, tous comptes y compris « illimités »)
+    const caps = await withClient((c) => c.query(
+      `select count(*) filter (where user_id = $1)::int as mine, count(*)::int as total
+         from usage_logs where kind = 'ai_generate' and created_at > now() - interval '24 hours'`, [userId]));
+    const { mine, total } = caps.rows[0] || { mine: 0, total: 0 };
+    if (total >= MAX_GLOBAL_DAY) return res.status(503).json({ error: 'ai_unavailable', reason: 'global_cap' });
+    if (mine >= MAX_PER_USER_DAY) return res.status(429).json({ error: 'ai_daily_limit' });
 
     const result = await withClient(async (client) => {
       await client.query('begin');
@@ -113,6 +147,8 @@ router.post('/generate', requireAuth, limiter, async (req, res) => {
       return res.status(503).json({ error: 'ai_unavailable', reason: e.reason });
     }
     return res.status(500).json({ error: 'ai_error' });
+  } finally {
+    if (locked) { inFlightUsers.delete(lockId); inFlightTotal = Math.max(0, inFlightTotal - 1); }
   }
 });
 

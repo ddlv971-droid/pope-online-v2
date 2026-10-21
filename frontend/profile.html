@@ -472,7 +472,7 @@ html,body { background:var(--pf-bg)!important; color:var(--pf-text)!important;
           <div class="pf-form-grid">
             <div class="pf-field">
               <label class="pf-label">Nouveau mot de passe</label>
-              <input class="pf-input" id="newPassword" type="password" placeholder="Minimum 8 caractères" autocomplete="new-password"/>
+              <input class="pf-input" id="newPassword" type="password" placeholder="Minimum 10 caractères" autocomplete="new-password"/>
               <div class="pf-pw-strength" id="pwStrengthBar">
                 <div class="pf-pw-strength-bar" id="pwStrengthFill"></div>
               </div>
@@ -856,7 +856,7 @@ el('btnChangePassword').onclick = async function() {
   const msg = el('pwMsg');
   msg.textContent = '';
   if (!pw)       { msg.textContent = 'Renseignez un nouveau mot de passe.'; msg.className = 'pf-msg err'; return; }
-  if (pw.length < 8) { msg.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; msg.className = 'pf-msg err'; return; }
+  if (pw.length < 10) { msg.textContent = 'Le mot de passe doit faire au moins 10 caractères.'; msg.className = 'pf-msg err'; return; }
   if (pw !== cpw){ msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.className = 'pf-msg err'; return; }
   this.disabled = true;
   try {

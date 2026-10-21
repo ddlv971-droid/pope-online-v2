@@ -14,10 +14,12 @@ async function resolveAuthenticatedUser(req) {
   if (!token) return { error: 'unauthorized', status: 401 };
   let decoded;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
   } catch {
     return { error: 'unauthorized', status: 401 };
   }
+  // Les jetons à usage restreint (ex. formulaire de satisfaction) ne sont jamais des sessions
+  if (decoded?.scope) return { error: 'unauthorized', status: 401 };
 
   const sessionVersion = Number(decoded?.sv || 0);
   const row = await withClient(async (client) => {
@@ -40,7 +42,7 @@ async function resolveAuthenticatedUser(req) {
 }
 
 function requestIp(req) {
-  return (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+  return (req.ip || req.socket.remoteAddress || '').toString();
 }
 
 function isAdminIpAllowed(req) {
